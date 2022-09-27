@@ -1,0 +1,161 @@
+%!TEX root = ../thesis.tex
+
+\chapter{Background}
+
+
+\section{Notation}
+
+
+For a
+
+
+
+\section{Lagrangian Dynamics}
+
+
+We are typically interested in a spatial domain \(\Omega \subseteq \R^n\) and over some finite time interval \([0,T]\) for finite \(T\).
+Lagrangian trajectories are solutions of the first-order differential equation
+\begin{equation}
+	\dod{x_t}{t} = u\left(x_t, t\right), \qquad x_0 = x \in \Omega,
+	\label{eqn:det_ode}
+\end{equation}
+where \(u: \Omega\times[0,T] \to \R^n\) describes the velocity at a point in space and time.
+
+
+
+
+
+\subsection{Flow map}
+In the mathematical treatment of Lagrangian dynamics, and in particular Lagrangian coherent structures \citep{BalasuriyaEtAl_2018_GeneralizedLagrangianCoherent}, trajectories solving \eqref{eqn:det_ode} are summarised by the flow map.
+The flow map is an operator mapping
+
+The flow map can be defined more formally as follows.
+\begin{defn}[Flow map]
+	Suppose \(t_1, t_2 \in [0,T]\).
+	The \textbf{flow map} \(F_{t_1}^{t_2}: \R^n \to \R^n\) from time \(t_1\) to \(t_2\) associated with \eqref{eqn:det_ode} is the solution to
+	\[
+		\dpd{F_{t_1}^{\tau}(x)}{\tau} = u\left(F_{t_1}^\tau(x), \tau\right), \qquad F_{t_1}^{t_1}(x) = x,
+	\]
+	solved up to time \(\tau = t_2\).
+	Equivalently,
+	\[
+		F_{t_1}^{t_2}(x) = x + \int_{t_1}^{t_2}{u\left(F_{t_1}^\tau(x), \tau\right)\dif\tau}.
+	\]
+\end{defn}
+The flow map satisfies the following properties
+
+
+The gradient of the flow map satisfies a useful property; the equation of variations.
+\begin{theorem}
+	Let \(F_{t_0}^{t}\) be the flow map corresponding to \eqref{eqn:det_ode}.
+	Then, the spatial gradient \(\nabla F_{t_0}^t(x)\) satisfies the equation of variations
+	\begin{equation}
+		\dpd{\nabla F_{t_0}^{t}(x)}{t} = \nabla u\left(F_{t_0}^t(x), t\right) \nabla F_{t_0}^t(x).
+		\label{eqn:eqn_of_variations}
+	\end{equation}
+\end{theorem}
+\begin{proof}
+
+\end{proof}
+
+
+\subsection{Lagrangian coherent structures}
+\td{Briefly discuss LCSs. Do not need to go into too much detail here. Mention whatever is relevant}
+
+
+\section{Stochastic Differential Equations}
+
+
+\begin{equation}
+	\dif y_t = u\left(y_t, t\right)\dif t + \sigma\left(y_t, t\right)\dif W_t.
+	\label{eqn:gen_sde}
+\end{equation}
+
+A solution to the stochastic differential equation can be defined rigorously \cite{KallianpurSundar_2014_StochasticAnalysisDiffusion}.
+\begin{defn}
+	A stochastic process \(\set{y_t}_{t \in [0,T]}\) taking values in \(R^n\) is said to be a \textbf{strong solution} of \eqref{eqn:gen_sde} with initial condition \(y_0 = \xi\) if the following holds:
+	\begin{enumerate}
+		\item For each \(t\),
+		\item
+		      \[
+			      \int_0^T{\left(\norm{u\left(y_t, t\right)} + \norm{\sigma\left(y_t, t\right)}^2\right)\dif t} < \infty \alsu
+		      \]
+
+		\item For each \(t \in [0,T]\),
+	\end{enumerate}
+\end{defn}
+
+
+\section{Stochastic Sensitivity}
+In most practical situations, the Eulerian velocity data driving ocean and atmospheric models relies upon measurements of estimates obtained on a low resolution spatial discretisation.
+
+
+There are limited tools within the LCS context that explcitly characterise the impact of these uncertainties
+As such, there is recent interest in addressing this deficiency \citep{BalasuriyaGottwald_2018_EstimatingStableUnstablea, Balasuriya_2020_StochasticApproachesLagrangian}\lb{Probably need some non-Sanjeeva citations here}.
+\cite{Balasuriya_2020_StochasticSensitivityComputable} introduces stochastic sensitivity as a new tool for directly quantifying the impact of Eulerian uncertainty on Lagrangian trajectories.
+The evolution of Lagrangian trajectories is modelled as solution to a It\^o stochastic ordinary differential equation.
+
+\td{Deterministic}
+
+The SDE model is
+\begin{equation}
+	\sde{y_t}{u\left(y_t, t\right)}{\epsilon\sigma\left(y_t, t\right)},
+	\label{eqn:ss_sde},
+\end{equation}
+where \(0 < \epsilon \ll 1\) is a parameter quantifying the scale of the noise, \(\sigma:	\R^2\times[0,T] \to \R^{2\times 2}\) is the \(2\times 2\) diffusion matrix, and \(W_t\) is the canonical two-dimensional Wiener process.
+Since \(\sigma\) can vary by both space and time, the noise is multiplicative.
+
+To quantify uncertainty in a way that is independent of the noise scale \(\epsilon\), \cite{Balasuriya_2020_StochasticSensitivityComputable} defined the random variable \(z_\epsilon\left(x,t\right)\) on \(\R^2 \times [0,T]\) as
+\[
+	z_\epsilon\left(x,t\right) \coloneqq \frac{y_t - F_0^t(x)}{\epsilon}.
+\]
+The main aim is to compute statistics of \(z_\epsilon\) at the final time \(T\), so that of \(z_\epsilon\left(x,T\right)\).
+\cite{Balasuriya_2020_StochasticSensitivityComputable} then considers the signed projection of \(z_\epsilon\left(x,T\right)\) onto a ray emanating from the deterministic position \(F_0^T(x)\) in a given direction, defining
+\[
+	P_\epsilon\left(x,\theta\right) \coloneqq \hat{n}^{\T} z_\epsilon(x,T),
+\]
+where \(\theta \in \left[-\pi/2, \pi/2\right)\) and
+\[
+	\hat{n}(\theta) = \begin{bmatrix}
+		\cos{\theta} \\
+		\sin{\theta}
+	\end{bmatrix}.
+\]
+The statistics of \(z_\epsilon\left(x,T\right)\) and \(P_\epsilon(x,\theta)\) are considered in the limit as \(\epsilon\downarrow 0\), which \td{something}.
+
+The first result established by \cite{Balasuriya_2020_StochasticSensitivityComputable} is that the expected location is deterministic, in the following sense.
+\begin{theorem}[\cite{Balasuriya_2020_StochasticSensitivityComputable}]
+	For all \(x \in \R^2\),
+	\[
+		\lim_{\epsilon\downarrow 0}\avg{z_\epsilon(x,T)} = 0.
+	\]
+\end{theorem}
+
+The variance of \(P_\epsilon\left(x,\theta\right)\) is used to assign a computable scalar measure of uncertainty to the trajectory.
+
+\begin{defn}[\cite{Balasuriya_2020_StochasticSensitivityComputable}]
+	\begin{alpharate}
+		\item The \textbf{anisotropic uncertainty} is a scalar field \(A: \R^2\times\left[-\pi/2, \pi/2\right) \to [0,\infty)\) defined by
+		\[
+			A(x,\theta) \coloneqq \sqrt{\lim_{\epsilon\downarrow 0}\var{P_\epsilon(x,\theta)}}.
+		\]
+
+		\item The \textbf{stochastic sensitivity} is a scalar field \(S: \R^2 \to [0,\infty)\) defined by
+		\[
+			S^2(x) \coloneqq \lim_{\epsilon\downarrow 0}\sup_{\theta}{\var{P_\epsilon(x,\theta)}}.
+		\]
+	\end{alpharate}
+
+
+	\begin{theorem}[\cite{Balasuriya_2020_StochasticSensitivityComputable}]
+		For \(x \in \R^2\) and \(\theta \in \left[-\pi/2, \pi/2\right)\),
+		\[
+			A(x,\theta) = \left(\int_0^T{\norm{\Lambda\left(F_0^t(x), t\right)J\hat{n}(\theta)}\dif t}\right)^{1/2}
+		\]
+	\end{theorem}
+
+
+
+\end{defn}
+
+
