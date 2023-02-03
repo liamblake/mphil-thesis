@@ -1,0 +1,293 @@
+%!TEX root = ../thesis.tex
+
+\chapter{Theoretical Background}
+In this chapter, we establish the theoretical results needed throughout the thesis.
+
+
+\section{Notation}
+
+
+The norm symbol \(\norm{\cdot}\) without any additional qualifiers denotes the standard Euclidean norm for a vector, and the spectral (operator) norm induced by the Euclidean norm, i.e. for an \(n \times n\) matrix \(A\)
+\[
+	\norm{A} = \sup\left\{\frac{\norm{Av}}{\norm{v}}\,\middle|\,v \in \R^n, \, \norm{v} \neq 0\right\}.
+\]
+
+
+
+\section{Dynamical Systems \& Lagrangian Dynamics}
+
+
+We are typically interested in a spatial domain \(\Omega \subseteq \R^n\) and over some finite time interval \([0,T]\) for finite \(T\).
+Lagrangian trajectories are solutions of the first-order differential equation
+\begin{equation}
+	\dod{x_t}{t} = u\left(x_t, t\right), \qquad x_0 = x \in \Omega,
+	\label{eqn:det_ode}
+\end{equation}
+where \(u: \Omega\times[0,T] \to \R^n\) describes the velocity at a point in space and time.
+
+
+
+\subsection{Results from Dynamical Systems}
+In the mathematical treatment of Lagrangian dynamics, and in particular Lagrangian coherent structures \citep{BalasuriyaEtAl_2018_GeneralizedLagrangianCoherent}, trajectories solving \eqref{eqn:det_ode} are summarised by the flow map.
+The flow map is an operator mapping 
+
+The flow map can be defined formally as follows.
+\begin{defn}[Flow map]
+	Suppose \(t_1, t_2 \in [0,T]\).
+	The \textbf{flow map} \(F_{t_1}^{t_2}: \R^n \to \R^n\) from time \(t_1\) to \(t_2\) associated with \eqref{eqn:det_ode} is the unique solution to
+	\[
+		\dpd{F_{t_1}^{\tau}(x)}{\tau} = u\left(F_{t_1}^\tau(x), \tau\right), \qquad F_{t_1}^{t_1}(x) = x,
+	\]
+	solved up to time \(\tau = t_2\).
+	Equivalently,
+	\[
+		F_{t_1}^{t_2}(x) = x + \int_{t_1}^{t_2}{u\left(F_{t_1}^\tau(x), \tau\right)\dif\tau}.
+	\]
+\end{defn}
+The flow map satisfies the following properties
+
+
+The gradient of the flow map satisfies a useful property; the equation of variations.
+\begin{theorem}
+	Let \(F_{t_0}^{t}\) be the flow map corresponding to \eqref{eqn:det_ode}.
+	Then, the spatial gradient \(\nabla F_{t_0}^t(x)\) satisfies the equation of variations
+	\begin{equation}
+		\dpd{\nabla F_{t_0}^{t}(x)}{t} = \nabla u\left(F_{t_0}^t(x), t\right) \nabla F_{t_0}^t(x).
+		\label{eqn:eqn_of_variations}
+	\end{equation}
+\end{theorem}
+\begin{proof}
+
+\end{proof}
+
+
+% \subsection{Lagrangian coherent structures}
+% \td{Briefly discuss LCSs. Do not need to go into too much detail here. Mention whatever is relevant}
+
+An important inequality
+
+\begin{theorem}[Gr\"onwall's inequality]\label{thm:gronwall}
+	Let \(\alpha, \beta, u: [a,b] \to \R\) be functions such that \(\beta\) and \(u\) are continuous and that the negative part of \(\alpha\) is integrable on every closed and bounded subset of \([a,b]\). 
+	Then, if \(\beta\) is non-negative and for all \(t \in [a,b]\),
+	\[
+		u(t) \leq \alpha(t) + \int_a^t{\beta(\tau)u(\tau)\dif\tau}
+	\]
+	then 
+	\[
+		u(t) \leq \alpha(t) + \int_a^t{\alpha(\tau)\beta(\tau)\exp\left(\int_\tau^{t}{\beta(s)\dif s}\right)\dif\tau}.
+	\]
+	Additionally, if \(\alpha\) is non-decreasing, then 
+	\[
+		u(t) \leq \alpha(t) \exp\left(\int_a^t{\beta(\tau)\dif\tau}\right)
+	\]
+\end{theorem}
+
+
+
+\section{Stochastic Differential Equations}
+
+
+\begin{equation}
+	\dif y_t = u\left(y_t, t\right)\dif t + \sigma\left(y_t, t\right)\dif W_t.
+	\label{eqn:gen_sde}
+\end{equation}
+
+A solution to the stochastic differential equation can be defined rigorously \cite{KallianpurSundar_2014_StochasticAnalysisDiffusion}.
+\begin{defn}
+	A stochastic process \(\set{y_t}_{t \in [0,T]}\) taking values in \(R^n\) is said to be a \textbf{strong solution} of \eqref{eqn:gen_sde} with initial condition \(y_0 = \xi\) if the following holds:
+	\begin{enumerate}
+		\item For each \(t\),
+		\item
+		      \[
+			      \int_0^T{\left(\norm{u\left(y_t, t\right)} + \norm{\sigma\left(y_t, t\right)}^2\right)\dif t} < \infty \alsu
+		      \]
+
+		\item For each \(t \in [0,T]\),
+	\end{enumerate}
+\end{defn}
+
+
+\subsection{Existence and Uniqueness of Solutions}
+
+\begin{theorem}
+
+	Then, \eqref{eqn:gen_sde} has a unique strong solution.
+\end{theorem}
+\begin{proof}
+	See Theorem 6.2.1 of \cite{KallianpurSundar_2014_StochasticAnalysisDiffusion}, for instance.
+\end{proof}
+
+
+\subsection{Additive versus Multiplicative Noise}
+
+When \(\sigma = \sigma(t)\) depends only on \(t\), then noise is considered \emph{additive}.
+If there is spatial dependence in \(\sigma\), i.e. \(\sigma = \sigma(x,t)\), then the noise considered \emph{multiplicative}.
+
+
+
+For instance, \cite{SuraEtAl_2005_MultiplicativeNoiseNonGaussianity} shows that the non-Gaussian statistics observed in atmospheric regimes can arise from linear models with multiplicative noise.
+
+
+
+
+
+\subsection{Analytical Tools for It\^o Calculus}
+There are several tools available for the analytic treatment of It\^o integrals and solutions to stochastic differential equations, which we make use of throughout.
+The first is It\^o's Lemma (or the It\^o Formula), which is a change-of-variables formula in stochastic calculus and can be thought of as a generalisation of the chain rule from deterministic calculus.
+We state and use the multidimensional form of the Lemma for solutions to It\^o stochastic differential equations, although more general forms exist (e.g. see Theorem 5.4.1 of \cite{Bremaud_2020_ProbabilityTheoryStochastic}).
+\begin{theorem}[It\^o's Lemma]
+	Let \(X_t\) be the strong solution to the stochastic differential equation
+	\[
+		\dif X_t = a\left(X_t, t\right)\dif t + b\left(X_t, t\right)\dif W_t,
+	\]
+	where \(a: \R^n \times [0,\infty) \to \R^n\), \(b: \R^n \times [0,\infty) \to \R^{n\times p}\) and \(W_t\) is the canonical \(p\)-dimensional Wiener process.
+	If \(f: \R^n \times [0, \infty) \to \R^m\) is twice continuously-differentiable, then the stochastic process \(Y_t \coloneqq f\left(X_t, t\right)\) is a strong solution to the stochastic differential equation
+	\begin{align*}
+		\dif Y_t & = \left(\dpd{f}{t}\left(X_t, t\right) + \nabla f\left(X_t, t\right) a\left(X_t, t\right) + \frac12\mathrm{tr}\left[b\left(X_t, t\right)^{\T} \nabla\nabla f\left(X_t, t\right) b\left(X_t, t\right)\right] \right)\dif t \\
+		         & \qquad\qquad\qquad\qquad + \nabla f\left(X_t, t\right)b\left(X_t, t\right) \dif W_t.
+	\end{align*}
+\end{theorem}
+\begin{proof}
+
+\end{proof}
+
+
+
+\begin{theorem}[Burkholder-Davis-Gundy Inequality]
+	Let \(M_t\) be an It\^o-integrable stochastic process taking values in \(\R^n\).
+	Then, for any \(p > 0\) there exists constants \(c_p, C_p > 0\) independent of the stochastic process \(M_t\) such that
+	\[
+		c_p\avg{\left(\int_0^t{\norm{M_\tau}^2\dif \tau}\right)^p} \leq \avg{\sup_{\tau \in \left[0, t\right]}\norm{\int_0^\tau{M_s\dif W_s}}^{2p}} \leq C_p\avg{\left(\int_0^t{\norm{M_\tau}^2\dif \tau}\right)^p}.
+	\]
+\end{theorem}
+\begin{proof}
+
+\end{proof}
+
+
+
+
+\section{Stochastic Sensitivity}
+In most practical situations, the Eulerian velocity data driving ocean and atmospheric models relies upon measurements of estimates obtained on a low resolution spatial discretisation.
+
+
+There are limited tools within the LCS context that explcitly characterise the impact of these uncertainties
+As such, there is recent interest in addressing this deficiency \citep{BalasuriyaGottwald_2018_EstimatingStableUnstablea, Balasuriya_2020_StochasticApproachesLagrangian}\lb{Probably need some non-Sanjeeva citations here}.
+\cite{Balasuriya_2020_StochasticSensitivityComputable} introduces stochastic sensitivity as a new tool for directly quantifying the impact of Eulerian uncertainty on Lagrangian trajectories.
+The evolution of Lagrangian trajectories is modelled as solution to a It\^o stochastic ordinary differential equation.
+
+\td{Deterministic}
+
+The SDE model is
+\begin{equation}
+	\sde{y_t}{u\left(y_t, t\right)}{\epsilon\sigma\left(y_t, t\right)},
+	\label{eqn:ss_sde},
+\end{equation}
+where \(0 < \epsilon \ll 1\) is a parameter quantifying the scale of the noise, \(\sigma:	\R^2\times[0,T] \to \R^{2\times 2}\) is the \(2\times 2\) diffusion matrix, and \(W_t\) is the canonical two-dimensional Wiener process.
+Since \(\sigma\) can vary by both space and time, the noise is multiplicative.
+
+To quantify uncertainty in a way that is independent of the noise scale \(\epsilon\), \cite{Balasuriya_2020_StochasticSensitivityComputable} defined the random variable \(z_\epsilon\left(x,t\right)\) on \(\R^2 \times [0,T]\) as
+\[
+	z_\epsilon\left(x,t\right) \coloneqq \frac{y_t - F_0^t(x)}{\epsilon}.
+\]
+The main aim is to compute statistics of \(z_\epsilon\) at the final time \(T\), so that of \(z_\epsilon\left(x,T\right)\).
+\cite{Balasuriya_2020_StochasticSensitivityComputable} then considers the signed projection of \(z_\epsilon\left(x,T\right)\) onto a ray emanating from the deterministic position \(F_0^T(x)\) in a given direction, defining
+\[
+	P_\epsilon\left(x,\theta\right) \coloneqq \hat{n}^{\T} z_\epsilon(x,T),
+\]
+where \(\theta \in \left[-\pi/2, \pi/2\right)\) and
+\[
+	\hat{n}(\theta) = \begin{bmatrix}
+		\cos{\theta} \\
+		\sin{\theta}
+	\end{bmatrix}.
+\]
+The statistics of \(z_\epsilon\left(x,T\right)\) and \(P_\epsilon(x,\theta)\) are considered in the limit as \(\epsilon\downarrow 0\), which \td{something}.
+
+The first result established by \cite{Balasuriya_2020_StochasticSensitivityComputable} is that the expected location is deterministic, in the following sense.
+\begin{theorem}[\cite{Balasuriya_2020_StochasticSensitivityComputable}]
+	For all \(x \in \R^2\),
+	\[
+		\lim_{\epsilon\downarrow 0}\avg{z_\epsilon(x,T)} = 0.
+	\]
+\end{theorem}
+
+The variance of \(P_\epsilon\left(x,\theta\right)\) is used to assign a computable scalar measure of uncertainty to the trajectory.
+
+\begin{defn}[\cite{Balasuriya_2020_StochasticSensitivityComputable}]
+	\begin{alpharate}
+		\item The \textbf{anisotropic uncertainty} is a scalar field \(A: \R^2\times\left[-\pi/2, \pi/2\right) \to [0,\infty)\) defined by
+		\[
+			A(x,\theta) \coloneqq \sqrt{\lim_{\epsilon\downarrow 0}\var{P_\epsilon(x,\theta)}}.
+		\]
+
+		\item The \textbf{stochastic sensitivity} is a scalar field \(S: \R^2 \to [0,\infty)\) defined by
+		\[
+			S^2(x) \coloneqq \lim_{\epsilon\downarrow 0}\sup_{\theta}{\var{P_\epsilon(x,\theta)}}.
+		\]
+	\end{alpharate}
+\end{defn}
+
+By employing techniques from both deterministic and stochastic calculus (i.e. Gr\"onwall's inequality, the Burkholder-Davis-Gundy inequality, It\^o's Lemma), Balasuriya further established expressions for both the anisotropic uncertainty and the stochastic sensitivity that are computable given only the flow map and velocity data.
+
+\begin{theorem}[\cite{Balasuriya_2020_StochasticSensitivityComputable}]
+	For \(x \in \R^2\), set \(w \coloneqq F_0^t(x)\).
+	Then, for any \(\theta \in \left[-\pi/2, \pi/2\right)\),
+	\[
+		A(x,\theta) = \left(\int_0^T{\norm{\Lambda\left(x, t, T\right)J\hat{n}(\theta)}\dif t}\right)^{1/2},
+	\]
+	where
+	\[
+		\Lambda\left(x,t,T\right) \coloneqq e^{\int_t^T{\left[\nabla \cdot u\right]\left(F_0^\xi(x), \xi\right)\dif\xi}}\sigma\left(F_0^t(x), t\right)^{\T}J \nabla_w F_T^t\left(w\right),
+	\]
+	with the gradients \(\nabla_w\) of the flow map taken with respect to the mapped position \(w\), and 
+	\[
+		J \coloneqq \begin{bmatrix}
+			0 & -1 \\ 
+			1 & 0
+		\end{bmatrix}
+	\]
+	Additionally, stochastic sensitivity is computed as 
+	\[
+		S^2(x) = P(x) + N(x),
+	\]
+	with 
+	\begin{align*}
+		L(x) & \coloneqq \frac12\sum_{i=1}^2\int_0^T\left[\Lambda_{i2}\left(x,t, T\right)^2 - \Lambda_{i1}\left(x,t,T\right)^2\right]\dif t \\ 
+		M(x) & \coloneqq \sum_{i=1}^2\int_0^T{\Lambda_{i1}\left(x,t,T\right)\Lambda_{i2}\left(x,t,T\right)\dif t}\\ 
+		N(x) & \coloneqq \sqrt{L^2(x) + M^2(x)} \\ 
+		P(x) & \coloneqq \abs{\frac12\sum_{i=1}^2\sum_{j=1}^2{\int_0^T{\Lambda_{ij}\left(x,t,T\right)^2\dif t}}},
+	\end{align*}
+	where \(\Lambda_{ij}\) is the \((i,j)\)-element of \(\Lambda\).
+\end{theorem}
+
+
+\subsection{Current applications of stochastic sensitivity}
+Since stochastic sensitivity is only a recent development, it has only been applied in a limited number of places so far. 
+Here, we briefly review the literature in which the original formulation stochastic sensitivity by \cite{Balasuriya_2020_StochasticSensitivityComputable} has been applied.
+
+\begin{itemize}
+	\item \cite{Balasuriya_2020_UncertaintyFinitetimeLyapunov} uses stochastic sensitivity to compute an error bound for the finite-time Lyapunov computation.
+
+
+	\item \cite{FangEtAl_2020_DisentanglingResolutionPrecision} 
+
+
+	\item \cite{BadzaEtAl_2023_HowSensitiveAre} investigate the impact of velocity uncertainty on coherent structures extracted as robust sets with stochastic sensitivity.
+
+\end{itemize}
+
+\subsection{Shortcomings}
+Although
+
+\begin{enumerate}
+	\item The tools are restricted to two-dimensional models, and the constructions using projections have no obvious extension to \(n\)-dimensions.
+	      Extending stochastic sensitivity to \(n\)-dimensions will enable application to a much broader class of models beyond the fluid flow context, including high-dimensional climate and ??? models.
+
+	\item \cite{Balasuriya_2020_StochasticSensitivityComputable} only computes the expectation and variance of the projections \(P_\epsilon(x,\theta)\), which does not give us the distribution under the limit as \(\epsilon\) approaches 0.
+
+	\item The computational formula for the anisotropic uncertainty and stochastic sensitivity require knowledge of the divergence \(\nabla\cdot u\) of the velocity field.
+\end{enumerate}
+
+
+

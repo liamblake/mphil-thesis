@@ -1,4 +1,4 @@
-\documentclass[12pt,a4paper, twoside]{book}
+\documentclass[12pt, a4paper, twoside, draft]{book}
 \title{Incorporating stochastic sensitivity as an uncertainty measure for data assimilation and parcel trajectories in geophysical flows}
 \author{Liam Blake}
 \date{\today}
@@ -9,7 +9,7 @@
 % Any packages should go here
 \usepackage{graphicx,natbib,thesis} 
 \usepackage[twoside,left=2cm,right=2cm,bindingoffset=1cm]{geometry}
-\usepackage[notes, statistics]{lb}
+\usepackage{lb}
 
 \begin{document}
 \frontmatter
@@ -30,9 +30,10 @@
 \mainmatter
 
 % Chapters
-\include{chp01_introduction/introduction}
-\include{chp02_background/background}
-\include{chp03_extending_stochastic/extending_stochastic}
+\include{chp01_introduction}
+\include{chp02_background}
+\include{chp03_extending_stochastic}
+\include{chp04_the_gaussian_limit}
 
 % Appendices
 \appendix
@@ -44,7 +45,7 @@
 
 % What style to use and what file to use for the bibliography
 \bibliographystyle{agsm}
-\bibliography{bibliography/thesis}
+\bibliography{thesis}
 
 \end{document}
 
