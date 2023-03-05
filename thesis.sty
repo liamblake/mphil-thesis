@@ -13,7 +13,7 @@
 	\else\discipline\fi\\
 	at The University of Adelaide\\
 	Faculty of Sciences, Engineering and Technology \\
-	School of Mathematical Sciences
+	School of Computer and Mathematical Sciences
 	\\\vfil
 	\includegraphics{UoA_logo_col_vert}
 }
@@ -22,3 +22,325 @@
 \pagestyle{headings}
 % but avoid all capitals
 \let\MakeUppercase\textsf
+
+% Relevant contents of my style files
+% Packages which I almost always find useful
+\RequirePackage{amsmath}
+\RequirePackage{amsfonts}
+\RequirePackage{amssymb}
+\RequirePackage{mathtools}
+\RequirePackage{bm}
+\RequirePackage{commath}
+\RequirePackage{enumitem}
+% For more powerful command argument parsing
+\RequirePackage{xparse, xargs}
+% For more \mathbb support
+\RequirePackage{bbm}
+% Hyperlinks are cool
+\RequirePackage{url}
+\RequirePackage{hyperref}
+\hypersetup{colorlinks,linkcolor=blue,citecolor=red,urlcolor=magenta,filecolor=magenta,breaklinks,dvips,bookmarks,bookmarksopen}
+\usepackage[capitalise,nameinlink,noabbrev]{cleveref}
+% Units
+\RequirePackage{siunitx}
+
+% Pass the disable option to the todonotes package.
+\DeclareOption{notodo}{\PassOptionsToPackage{disable}{todonotes}}
+
+\ProcessOptions\relax
+
+% Provides warnings if labels are unused
+\RequirePackage{refcheck}
+\norefnames
+\nocitenames
+
+% Tell refcheck about cleveref. From: 
+% https://tex.stackexchange.com/questions/87610/making-refcheck-work-with-cleveref
+\makeatletter
+\newcommand{\refcheckize}[1]{%
+  \expandafter\let\csname @@\string#1\endcsname#1%
+  \expandafter\DeclareRobustCommand\csname relax\string#1\endcsname[1]{%
+    \csname @@\string#1\endcsname{##1}\wrtusdrf{##1}}%
+  \expandafter\let\expandafter#1\csname relax\string#1\endcsname
+}
+\makeatother
+
+\refcheckize{\cref}
+\refcheckize{\Cref}
+
+% Allow numbering of individuals lines in an align env
+\newcommand{\numberthis}{\addtocounter{equation}{1}\tag{\theequation}}
+
+
+% Numeric sets
+\newcommand{\R}{\mathbb{R}}		% Real numbers
+\newcommand{\Z}{\mathbb{Z}}		% Integers
+\newcommand{\N}{\mathbb{N}}		% Natural numbers
+\newcommand{\Q}{\mathbb{Q}}		% Rational numbers
+% TODO: RMarkdown on Windows dislikes this
+\newcommand{\C}{\mathbb{C}}		% Complex numbers
+
+% Set with a condition
+\newcommand{\setc}[2]{\left\{#1\,\middle|\,#2\right\}}
+
+% Bracketed fractions
+\newcommand{\bfrac}[2]{\left(\frac{#1}{#2}\right)}
+
+% Bracketed super script.
+\newcommand{\bs}{}
+
+% Floor and ceiling
+\newcommand{\floor}[1]{\left\lfloor#1\right\rfloor}
+\newcommand{\ceil}[1]{\left\lceil#1\right\rceil}
+
+% Smaller dot operator for dot product, etc.
+\makeatletter
+\newcommand*{\dotp}{\mathpalette\dotp@{.5}}
+\newcommand*{\dotp@}[2]{\mathbin{\vcenter{\hbox{\scalebox{#2}{$\m@th#1\bullet$}}}}}
+\makeatother
+
+% Inner product, simply langle and rangle
+\newcommand{\iprod}[2]{\langle #1\,,\,#2 \rangle}
+
+% Hyperbolic functions
+\DeclareMathOperator{\sech}{sech}
+\DeclareMathOperator{\csch}{csch}
+\DeclareMathOperator{\arcsinh}{arcsinh}
+\DeclareMathOperator{\arccosh}{arccosh}
+\DeclareMathOperator{\arctanh}{arctanh}
+\DeclareMathOperator{\arcsech}{arcsech}
+\DeclareMathOperator{\arccsch}{arccsch}
+\DeclareMathOperator{\arccoth}{arccoth}
+
+% Vector calculus operators
+\newcommand{\vder}{\nabla}					% Gradient
+\newcommand{\vdiv}{\vder \cdot}			% Divergence
+\newcommand{\curl}{\vder \times}    % Curl
+
+\newcommand{\hessian}{\nabla\nabla}
+
+% Vector integrals
+% TODO as required
+
+% Differential form of an SDE
+% TODO: Include an optional parameter for the noise, defaulting to W_t
+\newcommand{\sde}[3]{\dif #1 = #2\dif t + #3 \dif W_t}
+
+% Material derivative, in a fluid dynamics context
+\newcommand{\dmat}[2]{\frac{\text{D}#1}{\text{D}#2}}
+
+% Matrix trace
+\newcommand{\trace}[1]{\mathrm{tr}\left(#1\right)}
+
+% A sequence of the form a_1,...,a_n, where a is passed as an argument. The second and third arguments are optional and specify the two subscript values to include.
+\NewDocumentCommand{\seq}{O{1} O{n} m}{#3_{#1},\hdots,#3_{#2}}
+
+% Provide reasoning in a \text env alongside a line of maths
+\newcommand{\reason}[1]{\qquad \qquad \left(\text{#1}\right)}
+
+% argmax and argmin
+\DeclareMathOperator{\argmax}{argmax}
+\DeclareMathOperator{\argmin}{argmin}
+
+% Transpose operator with \T
+\newcommand{\T}{^{\intercal}}
+
+% Trace operator
+\newcommand{\tr}[1]{\mathrm{tr}\left[#1\right]}
+
+% Real and imaginary components
+\renewcommand{\Re}[1]{\mathrm{Re}\left(#1\right)}
+\renewcommand{\Im}[1]{\mathrm{Im}\left(#1\right)}
+
+% Big-O notation
+\newcommand{\bigO}[1]{\mathcal{O}\left(#1\right)}
+
+% Enumerate environment with alphabetic labels
+\newenvironment{alpharate}{
+	\begin{enumerate}[label=\alph*)]
+		}{
+	\end{enumerate}
+}
+
+% Enumerate environment with Roman numbers
+\newenvironment{romanate}{
+	\begin{enumerate}[label=(\roman*)]
+		}{
+	\end{enumerate}
+}
+
+% Todo notes, annotations, etc.
+% Thanks JM
+% TODO: Optional args seems to not be working
+\RequirePackage[colorinlistoftodos,prependcaption,textsize=scriptsize]{todonotes}
+
+\newcommandx{\note}[2][1=]{
+	\todo[inline,linecolor=black,backgroundcolor=violet!5,bordercolor=violet,#1]{
+		NOTE: #2
+	}
+}
+\newcommandx{\td}[2][1=]{
+	\todo[inline,linecolor=orange,backgroundcolor=orange!5,bordercolor=orange,tickmarkheight=2cm,#1]{
+		TODO: #2
+	}
+}
+\newcommandx{\lb}[2][1=]{
+	\todo[linecolor=teal,backgroundcolor=teal!5,bordercolor=teal,#1]{
+		#2
+	}
+}
+
+% Lazy todo
+\newcommand{\tds}{\td{something}}
+
+% Placeholder for a citation
+\newcommand{\citehere}{{\color{blue}{[citation needed]}}\wlog{Warning: Citation needed on input line \the\inputlineno} }
+
+% Some commonly-used names with accents
+\newcommand{\ito}{It\^{o}}
+\newcommand{\gronwall}{Gr\"{o}nwall}
+\newcommand{\holder}{H\"{o}lder}
+\newcommand{\burkholder}{Burkh\"{o}lder}
+
+% Neat trick to access environment variables
+% From https://tex.stackexchange.com/a/62032
+\ExplSyntaxOn
+\NewDocumentCommand{\getenv}{om}
+{
+	\sys_get_shell:nnN { kpsewhich ~ --var-value ~ #2 } { } \l_tmpa_tl
+	\tl_trim_spaces:N \l_tmpa_tl
+	\IfNoValueTF { #1 }
+	{
+		\tl_use:N \l_tmpa_tl
+	}
+	{
+		\tl_set_eq:NN #1 \l_tmpa_tl
+	}
+}
+\ExplSyntaxOff
+
+% This is needed to use a .bib file outside of the same directory as the TeX file via a relative
+% path, when using an output directory (e.g. /build).
+% Include the bibliography as
+%		\bibliography{\mainabsdir/the/relative/path}
+% From https://tex.stackexchange.com/a/383143
+% BibTeX is fucking stupid and this is a stupid hack.
+\RequirePackage{currfile-abspath}
+\getmainfile
+\getabspath{\themainfile}
+\let\mainabsdir\theabsdir
+\let\mainabspath\theabspath
+
+% Statistics
+\RequirePackage{dsfont}
+
+% Conditional probability
+\newcommand{\conp}[2]{P\left(#1\,\middle|\,#2\right)}
+
+% Conditional density notation, i.e. p(x|y). Used in Bayesian statistics for denoting conditional density/probabilities.
+\newcommand{\denp}[2]{p\left(#1\,\middle|\,#2\right)}
+
+% Conditional distribution, i.e. x | y. Similar to above but without the delimiters.
+\newcommand{\cond}[2]{\left.\,#1\,\middle|\,#2\right.}
+
+% Statistical operators
+\newcommand{\var}[1]{\mathds{V}\!\left[#1\right]}
+\newcommand{\avg}[1]{\mathds{E}\!\left[#1\right]}
+\newcommand{\cov}[1]{\operatorname{cov} \left(#1\right)}
+\newcommand{\sd}[1]{\operatorname{sd} \left(#1\right)}
+\newcommand{\cor}[1]{\operatorname{cor} \left(#1\right)}
+\newcommand{\mse}[2]{\operatorname{MSE}_{\,#1} \left(#2\right)}
+\newcommand{\bias}[2]{b_{\,#1}\left(#2\right)}
+
+% Likelihood theory
+\newcommand{\loglik}[2]{\ell\left(#1\,;\,#2\right)}
+\newcommand{\score}[2]{\mathcal{U}\left(#1\,;\,#2\right)}
+\newcommand{\finfo}[1]{\mathcal{I}\left(#1\right)}
+
+% Cumulative distribution function of the standard normal distribution
+\newcommand{\qnorm}[1]{\Phi\left(#1\right)}
+
+% Choose notation more consistent with other commands
+\newcommand{\nCr}[2]{{1\choose #2}}
+
+\newcommand{\alsu}{\,\text{a.s.}}
+
+% Distributions
+\newcommand{\Dist}[2]{#1\left(#2\right)}
+
+% Without \sim
+\newcommand{\Gauss}[1]{\Dist{\mathcal{N}}{#1}}
+\newcommand{\Bin}[1]{\Dist{\mathrm{Bin}}{#1}}
+\newcommand{\Geom}[1]{\Dist{\mathrm{Geom}}{#1}}
+\newcommand{\Bern}[1]{\Dist{\mathrm{Bern}}{#1}}
+\newcommand{\Exp}[1]{\Dist{\mathrm{Exp}}{#1}}
+\newcommand{\Pois}[1]{\Dist{\mathrm{Poisson}}{#1}}
+\newcommand{\HypGeo}[1]{\Dist{\mathrm{Hypergeometric}}{#1}}
+\newcommand{\Uniform}[1]{\Dist{\mathrm{U}}{#1}}
+\newcommand{\StdGauss}{\Gauss{0,1}}
+\newcommand{\NegBin}[1]{\Dist{\mathrm{NB}}{#1}}
+\newcommand{\GamDist}[1]{\Dist{\mathrm{Gamma}}{#1}}
+\newcommand{\BetaDist}[1]{\Dist{\mathrm{Beta}}{#1}}
+\newcommand{\Cauchy}[1]{\Dist{\mathrm{Cauchy}}{#1}}
+\newcommand{\Trinom}[1]{\Dist{\mathrm{Tri}}{#1}}
+\newcommand{\Dir}[1]{\Dist{\mathrm{Dirichlet}}{#1}}
+\newcommand{\LogNorm}[1]{\Dist{\mathrm{log-}\mathcal{N}}{#1}}
+\newcommand{\InvChiSq}[1]{\Dist{\mathrm{inv-}\chi^2}{#1}}
+\newcommand{\InvGam}[1]{\Dist{\mathrm{Inv-Gamma}}{#1}}
+
+% With \sim
+\newcommand{\isBern}[1]{\sim\Bern{#1}}
+\newcommand{\isPois}[1]{\sim\Pois{#1}}
+\newcommand{\isBin}[1]{\sim\Bin{#1}}
+\newcommand{\isGeom}[1]{\sim\Geom{#1}}
+\newcommand{\isGauss}[1]{\sim\Gauss{#1}}
+\newcommand{\isStdGauss}{\sim\StdGauss}
+\newcommand{\isNegBin}[1]{\sim\NegBin{#1}}
+\newcommand{\isUniform}[1]{\sim\Uniform{#1}}
+\newcommand{\isGamma}[1]{\sim\GamDist{#1}}
+\newcommand{\isExp}[1]{\sim\Exp{#1}}
+\newcommand{\isBeta}[1]{\sim\BetaDist{#1}}
+\newcommand{\isCauchy}[1]{\sim\Cauchy{#1}}
+\newcommand{\isTrinom}[1]{\sim\Trinom{#1}}
+\newcommand{\isDir}[1]{\sim\Dir{#1}}
+\newcommand{\isLogNorm}[1]{\sim\LogNorm{#1}}
+\newcommand{\isInvChiSq}[1]{\sim\InvChiSq{#1}}
+\newcommand{\isInvGam}[1]{\sim\InvGam{#1}}
+
+% Weirder notation using subscripts
+\newcommand{\ChiSq}[1]{\chi^2_{#1}}
+\newcommand{\FDist}[1]{F_{#1}}
+\newcommand{\TDist}[2]{t_{#1}\left(#2\right)}
+\newcommand{\StdT}[1]{t_{#1}}
+\newcommand{\Multinom}[2]{\mathrm{Multi}_{r}\left(#2\right)}
+
+\newcommand{\isChiSq}[1]{\sim\ChiSq{#1}}
+\newcommand{\isF}[1]{\sim\FDist{#1}}
+\newcommand{\isT}[2]{\sim\TDist{#1}{#2}}
+\newcommand{\isStdT}[1]{\sim\StdT{#1}}
+\newcommand{\isMultinom}[2]{\sim\Multinom{#1}{#2}}
+
+% Hypothesis tests
+\newcommand{\hypothesis}[1]{%
+	\[
+		H_0\,:\, #1
+	\]
+}
+
+% Theorem-like environments
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{defn}{Definition}[section]
+\newtheorem{corollary}{Corollary}[section]
+\newtheorem{example}{Example}[section]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{result}{Result}[section]
+\newtheorem{hypo}{Hypothesis}[section]
+\newtheorem{remark}{Remark}[section]
+
+% Proof environment, ended with box
+\newenvironment{proof}{%
+	\noindent{\bfseries Proof.}\hspace{0.5em}
+}{%
+	\ \null  \hfill $\square$ \par
+}
+
