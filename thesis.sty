@@ -23,6 +23,10 @@
 % but avoid all capitals
 \let\MakeUppercase\textsf
 
+% Default to using \varepsilon
+\let\oldepsilon\epsilon
+\renewcommand\epsilon\varepsilon
+
 % Relevant contents of my style files
 % Packages which I almost always find useful
 \RequirePackage{amsmath}
@@ -329,7 +333,7 @@
 
 % Theorem-like environments
 \newtheorem{theorem}{Theorem}[section]
-\newtheorem{defn}{Definition}[section]
+\newtheorem{definition}{Definition}[section]
 \newtheorem{corollary}{Corollary}[section]
 \newtheorem{example}{Example}[section]
 \newtheorem{lemma}{Lemma}[section]

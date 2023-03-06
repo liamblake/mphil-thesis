@@ -1,0 +1,527 @@
+\section{Introduction}
+Many phenomena across geophysical, biological and socio-economic applications can be modelled using a continuous-time dynamical system, i.e., an ordinary differential equation \cite[e.g.]{BrauerCastillo-Chavez_2012_MathematicalModelsPopulation,TelEtAl_2005_ChemicalBiologicalActivity,Wiggins_2005_DynamicalSystemsApproach}. 
+Given initial values of a multi-dimensional state variable, such equations can be solved numerically to predict the state at future times.
+The governing dynamics may be specified using existing phenomenological models, but in modern applications these are usually supplemented or driven by observed data.  
+Standard examples include the modelling of weather using available data \cite{LawEtAl_2015_DataAssimilationMathematical,ReichCotter_2015_ProbabilisticForecastingBayesian}, and predicting concentrations of, for instance, temperature, pollutants or phytoplankton in the ocean using observed current velocity data \cite{AbascalEtAl_2009_ApplicationHFRadar,dOvidioEtAl_2010_FluidDynamicalNiches}.
+
+All methods using this approach have uncertainties in the model specification arising from a variety of sources \cite{FangEtAl_2020_DisentanglingResolutionPrecision}: the model not capturing all phenomena because of the inevitable lack of a complete understanding of all processes involved, errors in measured data, information only available on spatio-temporal grids (resolution error), etc.  
+In the absence of any other understanding of these multitudinous issues, a well-established way of tackling such uncertainties in the model is to think of these as stochastic 
+\cite{BernerEtAl_2017_StochasticParameterizationNew,Oksendal_2003_StochasticDifferentialEquations}. 
+Running many realisations of stochastic perturbations to the deterministic model can generate statistics to improve predictions and estimate their associated uncertainties \cite[e.g.]{BadzaEtAl_2023_HowSensitiveAre,Collins_2007_EnsemblesProbabilitiesNew}.
+However, in practice a very large number of simulations is necessary to generate convergent statistics \cite{FepponLermusiaux_2018_DynamicallyOrthogonalNumerical, Leutbecher_2019_EnsembleSizeHow}.
+Thus, numerically solving such stochastic systems -- potentially with data-based terms -- is often computationally expensive, and does not necessarily provide conceptual insight into how the model uncertainties affect predictions.
+
+Clearly, possessing a broader theoretical understanding of how stochastic terms impact continuous dynamical systems would be valuable.  
+Stochastic differential equations (SDEs) provide a natural framework for introducing uncertainty, as a noise process, into the continuous time evolution of a variable.
+Generally, in modelling situations the dynamics are highly nonlinear and one expects the noise to be multiplicative (i.e. vary with both state and time), e.g. in atmospheric \cite{Sura_2003_StochasticAnalysisSouthern, SuraEtAl_2005_MultiplicativeNoiseNonGaussianity} and oceanic \cite{KamenkovichEtAl_2015_PropertiesOriginsAnisotropic} systems and from experimental and observational considerations.
+Such SDEs are intractable to solve analytically \cite{Oksendal_2003_StochasticDifferentialEquations} and computationally expensive to simulate accurately \cite{MoraEtAl_2017_StableNumericalScheme}.
+Having a data-based model---that is, possessing terms in the equations which are driven by data rather than by explicitly specified functions---renders additional problems in obtaining a theoretical understanding of the prediction error.  
+
+A common intuitive approach to characterising the uncertainty arising from an otherwise analytically intractable nonlinear SDE is via a multivariate Gaussian approximation, which is used across a diversity of literature. 
+For instance, one can formally ``linearise'' the SDE in some sense to obtain a Gaussian density, and this approach is used in filtering theory \cite{Jazwinski_2014_StochasticProcessesFiltering}.
+Other approaches first assume a Gaussian distribution and obtain formal computations for its mean and covariance \cite{SarkkaSolin_2019_AppliedStochasticDifferential}.
+However, both approaches lack rigorous justification and a precise understanding of \emph{how} the Gaussian distribution arises from the nonlinear SDE.
+This is particularly the case when the noise is multiplicative, which is a situation that is often ignored but necessary in practice.
+Sanz-Alonso and Stuart \cite{Sanz-AlonsoStuart_2017_GaussianApproximationsSmall} partially addressed these issues, by showing that the Kullback-Leibler (KL) divergence between the solutions of autonomous SDEs with additive noise and a linearised equivalent can be bounded by the scale of the noise. In this manuscript, we relax the hypotheses of \cite{Sanz-AlonsoStuart_2017_GaussianApproximationsSmall} to cater for time-dependent coefficients and for multiplicative noise. Furthermore, our result explicitly establishes the convergence rate of all moments of the deviation considered in \cite{Sanz-AlonsoStuart_2017_GaussianApproximationsSmall}, which cannot be inferred from the KL divergence alone.
+
+
+% In general, however, a rigorous justification (in the sense of a limit, say) of such Gaussian approximations is lacking \cite{Sanz-AlonsoStuart_2017_GaussianApproximationsSmall} when the SDE includes \emph{both} time-dependent coefficients and multiplicative noise.
+% A natural theoretical approach in the limit of small noise is to use a linearisation process for the SDE, reducing the otherwise analytically intractable SDE to a solvable linear one. 
+% Within the perspective of determining an uncertainty distribution for a prediction, though, such a linearisation has not been rigorously justified \cite{Sanz-AlonsoStuart_2017_GaussianApproximationsSmall}.  
+% Other approaches first assume a Gaussian distribution (again, without justification), and obtain formal computations for its mean and covariance \cite{SarkkaSolin_2019_AppliedStochasticDifferential}.
+% \sab{Perhaps make a direct quotation here about the fact that this is not justified}
+
+% We remedy these issues in this paper by developing an exact expression for a stochastic process such that solutions to the noisy SDE converge to this process in a precise fashion in the limit of small noise: notably, the expectation of the $ r $th mean of the difference between these converges at a rate of the $ r $th power of the noise parameter for any finite time for all $ r \ge 1 $ (see \Cref{thm:main}). 
+In this paper, we remedy this deficiency by proving rigorously that the noise-scaled deviation between the SDE solution and a reference deterministic solution converges towards a multivariate Gaussian distribution, in the limit of small noise.
+We consider a general class of SDEs with fully non-autonomous terms and multiplicative noise.
+The Gaussian distribution arises as the solution to a formal linearisation of the SDE about a deterministic trajectory (in the absence of noise).
+By bounding all raw moments of the difference between the SDE and the linearised solutions by the noise scale (see \Cref{thm:main}), we show that the stochastic deviation converges in distribution to a multivariate Gaussian random variable (see \Cref{thm:gauss_dist}). 
+The covariance matrix characterising this Gaussian can be explicitly written in terms of the flow map of the underlying deterministic system and the (potentially spatio-temporally varying) diffusion matrix, and is available even if the deterministic model is only available via data.
+The Gaussian distribution is consistent with that seen in other literature \cite{Jazwinski_2014_StochasticProcessesFiltering, Sanz-AlonsoStuart_2017_GaussianApproximationsSmall, SarkkaSolin_2019_AppliedStochasticDifferential}, while we additionally show convergence of \emph{all} the moments of the deviation distribution.
+The results hold independently of the initial condition and for all finite times; the uncertainty evolution of any deterministic trajectory with time is therefore encapsulated in our results.
+
+The quantification of prediction uncertainty that we present here was originally motivated by the ``stochastic sensitivity'' approach of Balasuriya \cite{Balasuriya_2020_StochasticSensitivityComputable}.
+In the context of two-dimensional, unsteady fluid flow, stochastic sensitivity works with Eulerian velocity data as the underlying deterministic model, and seeks to quantify the uncertainty in an eventual Lagrangian trajectory location.
+This methodology was developed as a tool for determining Lagrangian coherent structures (LCS) \cite{BalasuriyaEtAl_2018_GeneralizedLagrangianCoherent,HadjighasemEtAl_2017_CriticalComparisonLagrangian} in fluid flows, in that clusters of trajectories which have small uncertainty may be thought of as more ``coherent'' than others.  
+In particular, \cite{Balasuriya_2020_StochasticSensitivityComputable} derived the limiting mean and variance of the noise-scaled deviation, and provided computable expressions in terms of the deterministic flow map and velocity field.
+However, this was restricted to two-dimensional systems and did not characterise the limiting distribution itself.
+
+% {For discussion, my opinions: \\
+% 1. Perhaps less focus on DA, stochastic parametrisation as the primary motivators for the paper. These are applications down-the-line but not the main target of this paper. \\
+% 2a. I think stochastic sensitivity should come up earlier. "\cite{Balasuriya_2020_StochasticSensitivityComputable} derived the mean and covariance of a mathematical construct, albeit in two physical dimensions only. This paper extends the calculation of SS to arbitrary dimensions and additionally proves that SS is Gaussian" is a nice sentence!\\
+% 2b. Consider including something on the Fokker-Planck equation (FPE)---and impossibility of exact solution---and then on the alternatives: simulating SDEs many times or approximations. \\
+% 3. Point 2 leads nicely into discussing linearisations. I think you have
+% \begin{enumerate}[label=(\roman{*}), ref=(\roman{*})]  
+%  \item Jazwinski: gives the linearisation but as a Taylor series
+%  \item Sanz-Alonso: provides an error bound for the linearisation in terms of the KL divergence, but for additive noise
+%  \item Sarkka: \cite[\S5.5]{SarkkaSolin_2019_AppliedStochasticDifferential} gives a general expression for all moments of the sde solution, but one that requires the exact solution to the FPE. \cite[9.1]{SarkkaSolin_2019_AppliedStochasticDifferential} then discusses a \emph{Gaussian assumed density approximation}, that allows calculation of the moments of the sde, but without rigorous justification. 
+% \end{enumerate}
+% }  
+
+
+The contributions of this work are:
+\begin{itemize}
+    \item In \Cref{sec:theory}, we prove rigorously that all moments of the noise-scaled solution to a multidimensional stochastic differential equation with non-autonomous coefficients and multiplicative noise converges towards those of a linearised SDE, in the limit of small noise. 
+    % Be clear here. Two sentences - often lacks justification, OR when the justification is there, only additive or autonomous. "Albeit"
+    The Gaussian distribution solving the linearised SDE appears in other literature and applications but often lacks justification \cite{Jazwinski_2014_StochasticProcessesFiltering, SarkkaSolin_2019_AppliedStochasticDifferential}. 
+    On the other hand, when the linearisation is justified, this is disregarding time-dependence in the coefficients and multiplicative noise \cite{Sanz-AlonsoStuart_2017_GaussianApproximationsSmall}.
+    
+    \item We present characterisations of the limiting Gaussian distribution in terms of gradients of \emph{either} the velocity field (as an ODE consistent with that arising elsewhere \cite{Jazwinski_2014_StochasticProcessesFiltering, Sanz-AlonsoStuart_2017_GaussianApproximationsSmall, SarkkaSolin_2019_AppliedStochasticDifferential}) or the deterministic flow map. 
+    The latter is an alternative characterisation that allows the Gaussian distribution to be computed \emph{entirely from the solution dynamics} of a determinstic model and specification of any multiplicative noise effects known prior.
+
+    \item In \Cref{sec:theory_s2}, we generalise the two-dimensional stochastic sensitivity approach of \cite{Balasuriya_2020_StochasticSensitivityComputable} to arbitrary dimensions.  
+    Our expressions enable the computation of stochastic sensitivity in any dimension, as a scalar measure of uncertainty about any solution trajectory of the deterministic model.
+    This also extends stochastic sensitivity as a means of Lagrangian coherent structure extraction to fluid flows of arbitrary dimension.
+
+    \item In \Cref{sec:numerics}, we validate the results of \Cref{sec:theory} using stochastic simulations from a 2-dimensional model.
+    In particular, we demonstrate that the first four moments of the distance between the realisations and the Gaussian limit follow the predicted bound.
+    We also illustrate a key prediction from \Cref{sec:theory_s2}; that the computable covariance matrix of the Gaussian limit captures the time-evolution of uncertainty, even when the noise is multiplicative.
+    
+\end{itemize}
+
+% In full, we therefore present a framework for ascribing uncertainty distributions to solutions of a deterministic model, characterised \emph{entirely from the solution dynamics} of the model and specification of any multiplicative noise effects known \emph{a priori}.
+% The Gaussian distribution is rigorously established as a small noise limit, and serves as both an intrinsic characterisation of the impact of model dynamics on uncertainty, and as an approximate SDE solution.
+% By accounting for multiplicative noise, the framework can capture any non-uniform uncertainty known prior.\jm{This feels like the third time the result is discussed in detail. I appreciate the slow build up, but can/should we shorten?}
+% Discuss stochastic parameterisation here. Start with "Since this work is fundamental, we do not explicitly consider the parameters. However, the hope is that the work can aide the analysis of parameterisations or provide computationally efficient scheme.
+
+This work is relevant to the well-known ``stochastic parameterisation'' approach in weather and climate modelling, in which stochastic components are introduced to account for unresolved subgrid effects \cite{BernerEtAl_2017_StochasticParameterizationNew,LeutbecherEtAl_2017_StochasticRepresentationsModel,Palmer_2019_StochasticWeatherClimate}.
+Since this work is fundamental, in establishing a convergence result for a general class stochastic differential equations, we do not explicitly describe how to construct an appropriate stochastic parameterisation (e.g. specification of the coefficients of the SDE).
+Instead, we expect that this result will be useful in the analysis of stochastic parameterisations, and to convert otherwise computationally expensive schemes into an efficient approximations, a goal explicitly identified in \cite{LeutbecherEtAl_2017_StochasticRepresentationsModel}.
+We also expect that this work will find application in data assimilation \cite{BudhirajaEtAl_2019_AssimilatingDataModels,Jazwinski_2014_StochasticProcessesFiltering,LawEtAl_2015_DataAssimilationMathematical,ReichCotter_2015_ProbabilisticForecastingBayesian}, as a means of characterising forecast uncertainty.
+The original stochastic sensitivity tools have been applied to identify Lagrangian coherent structures (LCSs) in 2-dimensional fluid flow \cite{BadzaEtAl_2023_HowSensitiveAre, Balasuriya_2020_StochasticSensitivityComputable}.
+By extending the theory of these tools into arbitrary dimensions, our results can also be used to extract coherent structures in \(n\)-dimensional flows.
+These potential applications are discussed in \Cref{sec:discussion}.
+
+% This paper is organised as follows. 
+% \Cref{sec:theory} constructs the Gaussian limit and establishes the characterisation in terms of gradients of the flow map. 
+% \Cref{sec:theory_s2} extends the definition and computation of stochastic sensitivity in the original work \cite{Balasuriya_2020_StochasticSensitivityComputable} to the \(n\)-dimensional setting, in terms of the covariance matrix characterising the Gaussian limit.
+% The theoretical results are demonstrated numerically in \Cref{sec:numerics}, on an idealised meandering jet model for which the velocity field is known.
+% \Cref{sec:discussion} details some of the many anticipated applications and theoretical extensions of this work. 
+
+% \sab{Might need to take some of the information below and see whether it can be weaved into the above discussion. }
+
+% \td{END INTRODUCTION HERE}
+
+
+% For sufficiently small noise, the stochastic solution can be formally written as a power series in the noise scale \cite{Blagoveshchenskii_1962_DiffusionProcessesDepending}.
+
+% Here, we present a Gaussian approximation for the solution to an \(n\)-dimensional It\^o stochastic differential equation at a fixed time, with small multiplicative Gaussian noise.
+% A key contribution of this work is a novel characterisation of this Gaussian approximation entirely in terms of the flow map data and the diffusion matrix, without any reference to the velocity field or stochastic differential equation. 
+% This provides a framework for ascribing uncertainties to deterministic models \emph{entirely from the solution dynamics}, without explicit reference to 
+% By allowing for multiplicative noise, this framework is highly flexible in accounting for noise that may arise from a range of sources and consequently vary spatiotemporally.
+% The justification of the approximation is also novel in the sense that it differs from other attempts to justify similar Gaussian approximations, with, for instance, Kullback-Leibler divergence \cite{Sanz-AlonsoStuart_2017_GaussianApproximationsSmall}.
+% \td{Mention how both the drift and diffusion depend on time - more general than that presented elsewhere.}
+% Rather, the Gaussian approximation is shown to arise as the limiting distribution of the stochastic differential equation solution, in a similar approach to the one-dimensional work of \cite{LiZhang_2016_ModerateDeviationsCentral}\lb{Might not be needed here, but this is the paper that inspired my approach to the proof.}.\sab{This may then be an important reference to have in the introduction -- see if it can be fitted in in an appropriate place.}
+
+%The characterisation of the Gaussian approximation is in terms of spatial flow map gradients, which are quantities commonly used in the field of Lagrangian coherent structures to capture the nonlinear and unsteady dynamics of solutions \cite{BalasuriyaEtAl_2018_GeneralizedLagrangianCoherent, Haller_2015_LagrangianCoherentStructures}.
+%This characterisation therefore establishes new connections between aspects of \td{Explain how this opens up new connections between LCS computation and general SDE approximation.}
+%In particular, this may enable new practical schemes that generate Gaussian uncertainties directly from observed solution data, without any reference to the driving differential equation, by employing methods for approximating the flow map gradient directly \cite{Leung_2013_BackwardPhaseFlow, RabenEtAl_2013_ComputationFinitetimeLyapunov}.
+% For instance, in Lagrangian data assimilation schemes \cite{ApteEtAl_2008_BayesianApproachLagrangian, ApteJones_2013_ImpactNonlinearityLagrangian, StammerEtAl_2016_OceanDataAssimilation, MacleanEtAl_2017_CoherentStructureApproach, BudhirajaEtAl_2019_AssimilatingDataModels}\lb{Check that each of these are relevant} which improve ongoing predictions along trajectories by accounting for both measurement and model error (the latter which we address here).
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \input{theory}
+
+\section{The Gaussian limit}\label{sec:theory}
+Suppose we are interested in the evolution of a \(\R^n\)-valued state variable $ y_t $ over a finite time interval \([0,T]\). 
+Our model, accounting for uncertainties arising from a range of sources, for the evolution of this variable is the It\^o stochastic differential equation 
+\begin{equation}
+	\dif y_t^{(\epsilon)} = u\left(y_t^{(\epsilon)}, t\right)\dif t + \epsilon \, \sigma\left(y_t^{(\epsilon)}, t\right)\dif W_t,
+	\label{eqn:sde_y}
+\end{equation}
+where \(u: \R^n \times [0,T] \to \R^n\) is the governing reference vector field, and can be inferred from underlying physics or available data, for instance.  
+The canonical \(n\)-dimensional Wiener process \(W_t\)  is a continuous white-noise stochastic process with independent Gaussian increments.
+The scale of the noise is parameterised as \(0 < \epsilon \ll 1\) and \(\sigma: \R^n \times [0,T] \to \R^{n\times n}\) is a deterministic diffusion matrix.  
+The noise in \eqref{eqn:sde_y} is multiplicative, in that the diffusion matrix \(\sigma\) can vary with both state and time.
+We assume that \(\sigma\) is specified \textit{a priori}, or if no such information is known, then \(\sigma \equiv I_n\), the \(n \times n\) identity matrix, is a default choice.
+We assume certain generic smoothness and boundedness conditions on the various functions outlined; these are stated explicitly in \Cref{hyp:smooth} in \Cref{app:gauss} and ensure the existence of unique solutions to \eqref{eqn:sde_y}. 
+The stochastic solution \(y_t^{(\epsilon)}\) to \eqref{eqn:sde_y} describes the evolution of the state variable through time, accounting for ongoing uncertainty with noise-scale \(\epsilon\).
+
+In the absence of any uncertainty (i.e. \(\epsilon = 0\)), \eqref{eqn:sde_y} reduces to the ordinary differential equation
+\begin{equation}
+	\dod{w_t}{t} = u\left(w_t, t\right).
+	\label{eqn:ode_det}
+\end{equation}
+Let the flow map \(F_{0}^{t}: \R^n \to \R^n\) be the function which evolves an initial condition from time \(0\) to time \(t\) according to the flow of \eqref{eqn:ode_det}.
+We refer to \eqref{eqn:ode_det} as the \emph{reference} deterministic model associated with \eqref{eqn:sde_y} in that 
+it either demonstrates the dominant physics (as would be the case if we think of the noise in \eqref{eqn:sde_y} as
+capturing stochastic parameterisation) or is the best-available model (for example if $ u $ is available from data, and \eqref{eqn:sde_y} represents the uncertainty of such data). 
+%we will show that the stochastic solution to \eqref{eqn:sde_y} can be characterised and approximated by a Gaussian distribution constructed from the solutions of \eqref{eqn:ode_det}.
+Solutions to the reference deterministic model are more readily available, e.g. in terms of computational efficiency when solving numerically, than those of the stochastic model, but do not account for inevitable uncertainty.
+Here, we establish a Gaussian characterisation and approximation of the solution to \eqref{eqn:sde_y} constructed from the deterministic flow map, thereby taking advantage of the easily available solutions to \eqref{eqn:sde_y} and avoiding the need for computationally expensive stochastic simulation.
+
+% A simple example to keep in mind is $ u $ being an unsteady velocity field driving fluid particle trajectories $ w_t $. 
+% However, the model \eqref{eqn:ode_det} is generic to any time-evolving state variable in any dimension, but with a finite-time limitation.
+
+
+% There will always be uncertainty in the best-available model, i.e., in \(u\),  because \(u\) may be inferred from data which has measurement error, spatio-temporal discretisations may be necessary to evolve \eqref{eqn:ode_det}, and the fact that \eqref{eqn:ode_det}  is unlikely to capture every aspect which impacts the evolution of the state variable. We capture
+% such ``model uncertainty'' by replacing \eqref{eqn:ode_det} with an
+% It\^o stochastic differential equation (SDE)
+
+
+
+% \note{the former discussion is clearly motivated by stochastic sensitivity. On review I am not sure that we need the `best available model' framework... what about putting the stochastic model first and then referring to the deterministic model as a `reference' model? \\
+% There are 8 references to `best' model. Easy enough to replace them. A little more care would need to be taken in the abstract and stoch. sens. sections. Pls discuss. }
+% The diffusion matrix \(\sigma\) is related to the diffusion tensor \(\mathcal{K}\) by \(\mathcal{K} = 2\sigma\sigma^{\T}\).
+
+
+To characterise the uncertainty, we fix the {\em identical} initial condition \(x  \in \R^n\) to {\em both} the stochastic model \eqref{eqn:sde_y} and the reference deterministic model \eqref{eqn:ode_det}, and consider their evolution in time.  We will show that the stochastic deviation between solutions of these can be characterised exactly in terms of a Gaussian in the limit of small noise, i.e. \(\epsilon \rightarrow 0\).  
+This quantifies the time-evolving uncertainty of predictions from the deterministic model \eqref{eqn:ode_det}.
+We provide explicit analytical expressions for the limiting distribution, written in terms of the flow map of the deterministic system and \(\sigma\), thereby providing strong theoretical insight while nullifying the need to perform 
+expensive SDE simulations in approximating such a distribution.
+
+To express our results, we define the noise-scaled deviation
+\begin{equation}
+	z_t^{(\epsilon)}(x) \coloneqq \frac{y_t^{(\epsilon)} - F_0^t(x)}{\epsilon} \, , \quad z_0^{(\epsilon)}(x) = 0,
+	\label{eqn:z_def}
+\end{equation}
+where \(x \in \R^n\) is fixed and certain, and satisfies \(y_0^{(\epsilon)} = x\).
+We wish to understand the limiting behaviour of \(z_t^{(\epsilon)}(x)\) as \(\epsilon\) approaches zero.
+
+\begin{theorem}[All moments are bounded]\label{thm:main}
+Fix \(x \in \R^n\) and let \(z_t(x)\) be the solution to the linearised SDE 
+\begin{equation}
+\dif z_t(x) = \nabla u\left(F_0^t(x), t\right)z_t(x)\dif t + \sigma\left(F_0^t(x), t\right)\dif W_t, \quad z_0(x) = 0,
+\label{eqn:limit_sde}
+\end{equation}
+% \begin{equation}
+% 	z_t(x) \coloneqq \nabla F_0^t(x)\int_0^t{\left[\nabla F_0^{\tau}(x)\right]^{-1}\sigma\left(F_0^\tau(x), \tau\right)\dif W_\tau},
+% 	\label{eqn:z_ito_form}
+% \end{equation}
+where \(W_t\) is the \emph{same} Wiener process driving \eqref{eqn:sde_y}.
+Then for any \(r \geq 1\) and \(t \in [0,T]\), there exists a \( D_r(t) \in [0, \infty) \) independent of \(x\) such that for all \(\epsilon > 0\),
+	\begin{equation}
+		\avg{\norm{z_t^{(\epsilon)}(x) - z_t(x)}^r} \leq D_r(t)\, \epsilon^r,
+		\label{eqn:main_ineq}
+	\end{equation}
+ where \(\norm{\cdot}\) is the Euclidean norm.
+
+\end{theorem}
+\begin{proof}
+	See \Cref{app:main_thm_proof}.
+	Showing the result employs the Burkholder-Davis-Gundy inequality, Gr\"onwall's inequality, Taylor's theorem and the bounds placed on the SDE coefficients, to explicitly construct the bounding coefficient \(D_r(t)\).
+\end{proof}
+
+Taking the limit as \(\epsilon\) approaches 0 in \eqref{eqn:main_ineq} shows that \(z_t^{(\epsilon)}(x)\) converges in \(r\)th moment to \(z_t(x)\), which in turn implies convergence in probability and convergence in distribution (or weak convergence). 
+It is important to note that the stochastic differential equation \eqref{eqn:sde_y} and the linearised equation \eqref{eqn:limit_sde} must be defined with the \emph{same} Wiener process \(W_t\) for \Cref{thm:main} to hold as stated.
+However, by weakening the convergence we can think of \(z_t^{(\epsilon)}(x)\) as converging to a Gaussian distribution (the distribution of the linearised solution) with no reference to the driving Wiener process.
+
+\begin{theorem}[Explicit Gaussian limit]\label{thm:gauss_dist}
+	For any \(x \in \R^n\) and \(t \in [0,T]\), 
+	\[
+		z_t^{(\epsilon)}(x)  \stackrel{d}{\longrightarrow} \Gauss{0, \Sigma(x,t)} \quad \text{as} \quad \epsilon \to 0,
+	\]
+	where the covariance matrix \(\Sigma\) is given by
+	\begin{equation}
+		\Sigma(x,t) = \int_0^t{L\left(x, t, \tau\right)L\left(x, t, \tau\right)^{\T}\dif\tau},
+		\label{eqn:sigma_calc}
+	\end{equation}
+	with
+	\begin{equation}
+		L\left(x, t, \tau\right) \coloneqq \nabla F_0^t(x) \left[\nabla F_0^\tau(x)\right]^{-1}\sigma\left(F_0^\tau(x), \tau\right).
+		\label{eqn:sigma_L_def}
+	\end{equation}
+ Moreover, the covariance matrix \(\Sigma\) is the matrix solution to the ordinary differential equation
+\begin{equation}
+    \dod{\Sigma}{t} = \left[\nabla u\left(F_0^t(x), t\right)\right]\Sigma + \Sigma\left[\nabla u\left(F_0^t(x), t\right)\right]^{\T} + \sigma\left(F_0^t(x), t\right)\sigma\left(F_0^t(x), t\right)^{\T},
+    \label{eqn:sigma_ode}
+\end{equation}
+subject to \(\Sigma(x,0) = O\), the \(n \times n\) zero matrix.
+\end{theorem}
+\begin{proof}
+	See \Cref{app:gauss_dist_proof}.
+    The Gaussianity of the limiting process \(z_t(x)\), and therefore the limit in distribution of \(z_t^{(\epsilon)}(x)\), is first established, and then the explicit expression for the covariance matrix \(\Sigma\) is derived by employing It\^o's isometry and properties of the flow map.
+\end{proof}
+
+The covariance matrix \(\Sigma\) uniquely characterises the limiting Gaussian distribution in \Cref{thm:gauss_dist}, and captures the impact of both the deterministic dynamics of the model (through the flow map gradients) and multiplicative noise (by evaluating the diffusion matrix \(\sigma\) along the deterministic trajectory).
+Through \eqref{eqn:sigma_calc} and \eqref{eqn:sigma_L_def}, the Gaussian distribution can be computed entirely from flow map data and specification of \(\sigma\), without any reference to the governing vector field \(u\) in \eqref{eqn:ode_det}.
+Alternatively, if the velocity gradients \(\nabla u\) are available, then \(\Sigma\) can be computed as the solution to \eqref{eqn:sigma_ode}.
+Solving \eqref{eqn:ode_det} and \eqref{eqn:sigma_ode} jointly describes the scheme for computing the Gaussian approximation seen elsewhere, e.g. Algorithm 9.4 of \cite{SarkkaSolin_2019_AppliedStochasticDifferential} or Equations (1.2) and (1.3) of \cite{Sanz-AlonsoStuart_2017_GaussianApproximationsSmall}.
+Moreover, for a fixed time \(t \in [0,T]\), \Cref{thm:gauss_dist} justifies the approximation 
+\begin{equation}
+	y_t^{\left(\epsilon\right)} \stackrel{.}{\sim} \Gauss{F_0^t\left(x\right), \epsilon^2 \Sigma\left(x,t\right)},
+	\label{eqn:y_t_gauss}
+\end{equation}
+for small values of \(\epsilon\).
+
+The theoretical results in this section, and the computability of the limiting distribution will be verified with numerical simulation of an example in \Cref{sec:numerics}.
+This theory has many applications and extensions which are discussed in \Cref{sec:discussion}.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Extending stochastic sensitivity}\label{sec:theory_s2}
+
+The covariance matrix \(\Sigma\) provides a direct extension of the stochastic sensitivity tools first introduced by Balasuriya \cite{Balasuriya_2020_StochasticSensitivityComputable} for the fluid flow context.
+Here, the deterministic model \eqref{eqn:ode_det} is seen as a ``best-available'' model for the evolution of trajectories, and the driving vector field \(u\) is the Eulerian velocity of the fluid.
+Stochastic sensitivity ascribes a scalar value to each deterministic trajectory by computing the maximum variance of the scaled deviations, when projected onto rays emanating from the origin \cite{Balasuriya_2020_StochasticSensitivityComputable}.   
+The natural restating of this original definition of stochastic sensitivity \cite{Balasuriya_2020_StochasticSensitivityComputable} in the $ n $-dimensional setting is as follows:
+
+\begin{definition}[Stochastic sensitivity in \(\R^n\)]\label{def:ss_Rn}
+	The \emph{stochastic sensitivity} is a scalar field \(S^2: \R^n \times [0,T] \to \left[0, \infty\right)\) given by
+	\begin{equation*}
+		S^2(x,t) \coloneqq \lim_{\epsilon\downarrow 0}\sup\set{\var{p^{\T}z_t^{(\epsilon)}(x)} \,: \, p \in \R^n, \, \norm{p} = 1}.
+	\end{equation*}
+\end{definition}
+
+\Cref{def:ss_Rn} is in the spirit of principal components analysis \cite{Jolliffe_2002_PrincipalComponentAnalysis}, performing a dimension reduction by projecting onto the direction in which the variance is maximised, thus capturing the most uncertainty in the data with a scalar value. 
+
+The anisotropic uncertainty in two-dimensions \cite{Balasuriya_2020_StochasticSensitivityComputable} is the direction-dependent projection (prior to optimising over all directions in \Cref{def:ss_Rn}).
+Explicit theoretical expressions for both the stochastic sensitivity and the anisotropic sensitivity in two dimensions were obtained by Balasuriya \cite{Balasuriya_2020_StochasticSensitivityComputable}; these allowed for quantifying certainty in eventual trajectory locations without having to perform stochastic simulations. 
+We show here that our results in \(n\)-dimensions are a generalisation of the two-dimensional ones in \cite{Balasuriya_2020_StochasticSensitivityComputable}, which moreover establish Gaussianity as well as an explicit expression for the uncertainty measure.  
+A theoretically pleasing and computable expression for the stochastic sensitivity is obtainable:
+
+
+\begin{theorem}[Computation of \(S^2\)]\label{thm:s2_calculation}
+	For any \(x \in \R^n\) and \(t \in [0,T]\),
+	\begin{equation}
+		S^2(x,t) = \norm{\Sigma(x,t)},
+		\label{eqn:s2_calculation}
+	\end{equation}
+ where the covariance matrix $ \Sigma $ is defined in \eqref{eqn:sigma_calc} and \(\norm{\cdot}\) denotes here the spectral norm induced by the Euclidean norm.
+	Equivalently, \(S^2(x,t)\) is given by the maximum eigenvalue of \(\Sigma(x,t)\).
+\end{theorem}
+\begin{proof}
+	See \Cref{app:s2_calculation_proof}.
+	This result uses \Cref{thm:main} to establish the convergence of the covariance matrices, and then the properties of the spectral norm to establish \eqref{eqn:s2_calculation}.
+\end{proof}
+The stochastic sensitivity field can be calculated given any velocity data \(u\), and through the explicit expression \eqref{eqn:sigma_calc} for \(\Sigma\) can even be computed from only flow map data.
+Computation does not require knowledge of the noise scale \(\epsilon\), so the \(S^2\) field is intrinsic in capturing the impact of the model dynamics on uncertainty, and any specified non-uniform diffusivity.
+
+
+% The definitions of resolution- and noise-scaled stochastic sensitivity and robust sets with respect to stochastic sensitivity introduced by Balasuriya \cite{Balasuriya_2020_StochasticSensitivityComputable} can be easily extended using the new Definition \ref{def:ss_Rn}.
+It has already been shown that, in the fluid flow context, stochastic sensitivity can identify coherent regions in two-dimensions \cite{BadzaEtAl_2023_HowSensitiveAre, Balasuriya_2020_StochasticSensitivityComputable}.
+A simple approach is to define robust sets, which are those initial conditions for which the corresponding \(S^2\) value, i.e., the uncertainty in eventual location,  are below some specified threshold.
+This threshold can be defined precisely in terms of a spatial lengthscale of interest and the advective and diffusive characteristics of the flow, as Definition 2.9 of \cite{Balasuriya_2020_StochasticSensitivityComputable}.
+Such a definition extends to the \(n\)-dimensional case as presented here, moreover establishing an easily computable method for determining coherent sets by using the covariance matrix $ \Sigma $.
+
+Independent of the fluid mechanics context, \Cref{thm:s2_calculation} indicates that even for general systems, the matrix norm
+of $ \Sigma(x,t) $, i.e., the stochastic sensitivity $ S^2(x,t) $, can be used as {\em one} number which encapsulates the uncertainty of an initial state $ x $ after $ t $ time units. 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \input{numerics}
+\section{Numerical validation and applications}\label{sec:numerics}
+
+This section will validate the theory presented in \Cref{sec:theory}.
+Following the example in Chapter 5 of \cite{SamelsonWiggins_2006_LagrangianTransportGeophysical}, we consider an unsteady meandering jet in two dimensions, which may serve as an idealised model of geophysical Rossby waves.
+The velocity field for \(y \equiv \left(y_1, y_2\right)\) is given by \cite{SamelsonWiggins_2006_LagrangianTransportGeophysical}
+\begin{equation}
+	u\left(y, t\right) = \begin{bmatrix}
+		c - A\sin\left(Ky_1\right)\cos\left(y_2\right) + \oldepsilon_{\mathrm{mj}} l_1\sin\left(k_1\left(y_1 - c_1 t\right)\right)\cos\left(l_1 y_2\right) \\
+		AK\cos\left(Ky_1\right)\sin\left(y_2\right) + \oldepsilon_{\mathrm{mj}} k_1\cos\left(k_1\left(y_1 - c_1t\right)\right)\sin\left(l_1 y_2\right)
+	\end{bmatrix}.
+ \label{eqn:jet_ex}
+\end{equation}
+The velocity field describes a kinematic travelling wave with deterministic oscillatory perturbations in a co-moving frame.
+Here, \(A\) is the amplitude and \(c\) is the phase speed of the primary wave, and \(K\) is the wavenumber in the \(y_1\)-direction.
+The oscillatory perturbation has amplitude \(\oldepsilon_{\mathrm{mj}}\), phase speed \(c_1\) (in the co-moving frame), and wavenumbers \(k_1\) and \(l_1\) in the \(y_1\)- and \(y_2\)-directions respectively.
+Throughout, we take the parameter values \(c = 0.5\), \(A = 1\), \(K = 4\), \(l_1 = 2\), \(k_1 = 1\), \(c_1 = \pi\), and \(\oldepsilon_{\mathrm{mj}} = 0.3\).
+For these values, the flow consists of a meandering jet with vortex structures within the meanders, and a chaotic zone
+which influences the fluid transfer between the jet and the vortices. 
+All necessary flow map data is obtained by directly solving \eqref{eqn:ode_det} numerically, with the standard Euler scheme.
+The flow map gradients required for computing the covariance matrix with \eqref{eqn:sigma_calc} are calculated via a star-grid finite-difference approximation, using a spatial resolution of \(0.001\). 
+
+All simulations in this section were generated using the Julia programming language \cite{BezansonEtAl_2017_JuliaFreshApproach}, with implementations of the ordinary and stochastic differential equation solvers provided by the DifferentialEquations.jl package \cite{RackauckasNie_2017_DifferentialEquationsJlPerformant}.
+All figures were created using the Makie.jl package \cite{DanischKrumbiegel_2021_MakieJlFlexible}.
+The code is available as  \href{https://github.com/liamblake/explicit-gaussian-characterisation-uncertainty}{open source}\footnote{at \url{https://github.com/liamblake/explicit-gaussian-characterisation-uncertainty}.}.
+%\sab{I don't think you need to put these codes in the supplementary materials if they are available open-source.}
+
+
+\subsection{Validation of \Cref{thm:main}}
+This section will validate the bound in \Cref{thm:main} directly, and illustrate the convergence of the SDE solution towards the expected Gaussian distribution described in \Cref{thm:gauss_dist}.
+For each value of \(\epsilon\) considered, we use the Euler-Maruyama method \cite{KloedenPlaten_1992_NumericalSolutionStochastic} to generate \(N = 10000\) independent realisations of the solutions to \eqref{eqn:sde_y} and \eqref{eqn:limit_sde}.
+A step size of \(\delta t = 10^{-4}\) is used to ensure that numerical error does not dominate over the theoretical predictions.
+These solution samples are generated with the \emph{same} realisations of the Wiener process increments \(W_{t + \delta t} - W_t \sim \mathcal{N}\left(0, \delta t I_n\right)\).
+We consider the initial condition \(x = \left(0, 1\right)\) and the prediction of the model at time \(t = 1\).
+For each realisation of \(y_t^{(\epsilon)}\), a corresponding realisation of the scaled deviation \(z_t^{(\epsilon)}(x)\) is computed.
+In the following, let \(\hat{z}_1^{(\epsilon)},\hdots, \hat{z}_N^{(\epsilon)}\) and \(\hat{z}_1,\hdots, \hat{z}_N\) denote the \(N\) realisations of \(z_t^{\left(\epsilon\right)}(x)\) and \(z_t(x)\) respectively.
+
+\Cref{fig:y_hists} shows the resulting simulations of \(y_t^{(\epsilon)}\) for four different values of \(\epsilon\).
+The realisations are binned as a histogram and bin counts are normalised, to provide an empirical estimate of the probability density function of \(y_t^{(\epsilon)}\).
+Superimposed (in solid black) are the first, second and third standard-deviation contours of the probability density function of the Gaussian approximation \eqref{eqn:y_t_gauss}.
+The first three standard-deviation levels of the \(2\times 2\) sample covariance matrix of the realisations, are also overlaid (in dashed blue).
+% If the observations were distributed according to a bivariate Gaussian distribution with that corresponding covariance matrix, then approximately \(86.47\%\) of the data lies within the first two bounds, and \(98.89\%\) within all three \cite{WangEtAl_2015_ConfidenceAnalysisStandard}.
+As \(\epsilon\) decreases towards \(0\), the samples increasingly resemble a Gaussian distribution, and both the mean and covariance coincide with the corresponding limits.
+
+\begin{figure}[t]
+	\begin{center}
+        \includegraphics[width=\textwidth]{paper1_gaussian_limit/figures/y_histogram.pdf}       
+				% \td{Increase size/clarity of points at centre of contours}
+		\caption{Histograms of \(y_t^{(\epsilon)}\) from direct simulation of \eqref{eqn:sde_y}, for four different \(\epsilon\) values.
+		Overlaid in black are contours of the Gaussian limit \eqref{eqn:y_t_gauss}, which correspond to the first three standard deviation levels centred at the limiting mean \(F_0^t(x)\).
+        In dashed blue are corresponding contours computed from the sample covariance matrix of the realisations.
+        }
+		\label{fig:y_hists}
+	\end{center}
+\end{figure}
+
+To directly validate \Cref{thm:main} for \(r \geq 1\), define the error metric
+\[
+	\Gamma_z^{\left(r\right)}\!\left(\epsilon\right) \coloneqq \frac{1}{N}\sum_{i = 1}^{N}{\norm{\hat{z}_{i}^{(\epsilon)} - \hat{z}_i}^r},
+\]
+which is an estimator of the right-hand side of \eqref{eqn:main_ineq}.
+For \(r = 1,2,3,4\), \(\Gamma_z^{\left(r\right)}\!\left(\epsilon\right)\) is shown (in a logarithmic scale) for decreasing values of \(\epsilon\) in \Cref{fig:gamma_z_valid}.
+\Cref{thm:main} predicts that \(\log_{10}\left(\Gamma_z^{\left(r\right)}\left(\epsilon\right)\right)\) should decay linearly with a slope greater than \(r\) as \(\epsilon\) decreases to zero.
+The lines of best fit for each value of \(r\) in \Cref{fig:gamma_z_valid} show this behaviour, and are therefore consistent with \Cref{thm:main}.
+
+\begin{figure}[t]
+	\begin{center}
+        \includegraphics[width=\textwidth]{paper1_gaussian_limit/figures/z_diff.pdf}
+		\caption{Validation of \Cref{thm:main}, by plotting the sample \(r\)th raw moment distance (the error metric \(\Gamma_z^{(r)}(\epsilon)\)) between \(10000\) realisations of \(z_t^{(\epsilon)}(x)\) and \(z_t(x)\), for decreasing values of \(\epsilon\).
+        A line of best fit (in red) is placed on each, and the resulting slope indicated.}
+		\label{fig:gamma_z_valid}
+	\end{center}
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{The evolution of \(\Sigma(x,t)\) through time}
+Here we shall illustrate that the limiting covariance matrix \(\Sigma\) captures the time-evolution of model uncertainty.
+Consider the same meandering jet model in \eqref{eqn:jet_ex}, with the parameter values used in the previous subsection.
+We fix the noise scale parameter at \(\epsilon = 0.03\) and consider the evolution of the stochastic solution to \eqref{eqn:sde_y} and the limiting Gaussian distribution \eqref{eqn:y_t_gauss} for times \(t\) in the interval \([0,1]\).
+We also consider two different choices of the diffusion matrix \(\sigma\): the identity as before, and
+\begin{align}
+\label{eq:sigM}
+\sigma_M(x) \coloneqq \begin{bmatrix}
+       x_1 & 0.5 \\ 
+       x_1 & 0.5\left(x_1 + x_2\right)
+\end{bmatrix},
+\end{align}
+to include both multiplicative and non-diagonal noise which grow for larger values of the coordinates. 
+
+
+\begin{figure}[t]
+	\begin{center}
+        \includegraphics[width=\textwidth]{paper1_gaussian_limit/figures/through_time.pdf}
+				\caption{Histograms of \(y_t^{(0.03)}\) for (from left to right) \(t = 0.2, 0.4, 0.6, 0.8, 1.0\), with the time-evolution of the deterministic trajectory in grey and contours of the limiting covariance matrix \eqref{eqn:sigma_calc} for each time. The right figure uses the diffusion matrix $\sigma_M(x)$ as defined in \eqref{eq:sigM}.}
+        % (c,d) The time-evolution of \(S^2(x,t)\) and the operator norm of the sample covariance for stochastic simulations of \(y_t^{(0.3)}\) at each time.}
+        \label{fig:time_evol}
+  \end{center}
+\end{figure}
+
+\Cref{fig:time_evol} plots histograms of realisations of the solution to \eqref{eqn:sde_y} at several different times, evolving from the same initial condition \(x = \left(0, 1\right)\), and the time-evolution of the corresponding deterministic trajectory solving \eqref{eqn:ode_det}. 
+Overlaid on each histogram are the contours of the limiting Gaussian distributions, computed entirely from covariance matrix \eqref{eqn:sigma_calc}.
+Although each distribution is non-Gaussian, the evolution of the uncertainty distribution through time is captured by \(\Sigma\).
+For examples, features of the error distributions, such as stretching and rotation, are reflected in \(\Sigma\).
+This remains the case even when the noise is multiplicative with \(\sigma = \sigma_M\).
+The computation of \(\Sigma\) circumvents the need for expensive Monte-Carlo simulation to draw conclusions about such evolution of uncertainty.
+
+
+% \note{Removing \(S^2\) here - doesn't add much and saves space.}
+% To further illustrate that the time-evolution of uncertainty is captured by the limiting covariance, we also consider the stochastic sensitivity values.
+% As highlighted in \Cref{sec:theory_s2}, the operator norm of a covariance matrix provides a scalar measure of uncertainty, independent of the fluid flow context.
+% We compute the operator norm of the sample covariance matrix of the realisations, to provide a scalar estimate of the true uncertainty, and plot this against time alongside the limiting \(S^2(x,t)\) values in \Cref{fig:time_evol}(c,d).
+% The \(S^2(x,t)\) closely matches the corresponding sample values.
+
+% The limiting covariance matrix \(\Sigma\) and the \(S^2\) measure can therefore capture the time-evolution of model uncertainty, even though these uncertainty distributions are non-Gaussian, without resorting to stochastic simulation.
+% Even when the noise is multiplicative and non-diagonal, features such as stretching of the error distribution, and the direction of most uncertainty, are reflected in \(\Sigma\).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% \subsection{Stochastic sensitivity as a coherence measure}
+% We will now demonstrate the computability of the stochastic sensitivity measures,
+% not in detail as a tool for coherent structure extraction (other examples in 2D are provided by \cite{BadzaEtAl_2023_HowSensitiveAre,Balasuriya_2020_StochasticSensitivityComputable}) but to instead illustrate the operator norm computation in \eqref{eqn:s2_calculation}.
+% %\sab{While you say that you want to establish consistency, how do you do it?  It's not clear you've computed it using the filthy formulas from the original, for comparison.  Perhaps it's better to just say that you've compared them (after all, the expressions are identical), and that this section demonstrates computability of this coherence measure?}
+
+% \begin{figure}
+% 	\begin{center}
+% 		\includegraphics[width=\textwidth]{figures/s2_field_0.3.pdf}
+% 		\caption{(Left) The logarithm of the \(S^2\) field, for the meandering jet flow over the time interval \([0,1]\), computed directly from the limiting covariance matrix \(\Sigma\left(x,1\right)\).
+%  			The natural logarithm is taken to improve visibility of structures within the fields.
+%  			(Right) Robust sets (in blue) extracted from the stochastic sensitivity field using a threshold value of 10.}
+% 		\label{fig:s2_field}
+% 	\end{center}
+% \end{figure}
+
+% We again consider the meandering jet \eqref{eqn:jet_ex} take \(\sigma \equiv I\) and consider initial conditions in the spatial domain \(\Omega_0 \coloneqq \left[0, \pi\right] \times \left[0, \pi\right]\).
+% A grid of \(800 \times 800\) initial conditions is uniformly seeded in \(\Omega_0\).
+% For each initial condition \(x\), the covariance matrix \(\Sigma(x,1)\) is computed with \eqref{eqn:sigma_calc}, and the corresponding \(S^2\) value is calculated by taking the operator norm.
+% \Cref{fig:s2_field} shows the logarithm of the \(S^2\) field on \(\Omega_0\) from time \(0\) to \(t = 1\), 
+% In a bid to extract ``coherent'' regions, we extract subsets of \(\Omega_0\) using the \(S^2\) field, by taking a threshold of $ 10 $.
+% The \(S^2\) field is largest in the elongated gyre regions outside of the meandering jet, where the flow exhibits chaotic behaviour \cite{Pierrehumbert_1991_ChaoticMixingTracer} and we accordingly expect larger uncertainty due to the model dynamics.
+% As a region of small \(S^2\) value, the meandering jet emerges as a coherent structure, consisting of initial points whose eventual fate is significantly more certain than in other regions. 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \input{discussion}
+\section{Discussion}\label{sec:discussion}
+
+This paper has contributed a rigorous justification, in terms of error bounds and a small-noise limit, for an easily computable linearisation approximation to the solution of nonlinear stochastic differential equations, as seen across diverse places in the literature \cite[e.g.]{Jazwinski_2014_StochasticProcessesFiltering, Sanz-AlonsoStuart_2017_GaussianApproximationsSmall, SarkkaSolin_2019_AppliedStochasticDifferential}.
+The theory applies to fully non-autonomous SDEs with multiplicative noise. 
+This result extends the convergence bound on the Kullback-Leibler divergence by Sanz-Alonso and Stuart \cite{Sanz-AlonsoStuart_2017_GaussianApproximationsSmall} to an explicit bound on the convergence of all moments of the difference between the exact SDE solution and the approximation, and further establishes the exact Gaussian distribution in the small-noise limit. While it is known that convergence of the KL divergence leads to convergence of the moments \cite{LuEtAl_2017_GaussianApproximationsProbability}, this manuscript provides the exact rate of that convergence.
+Our bound is verified numerically by plotting the first four raw moments of the distance between the true noise-scaled solution and the linearised solution (see \Cref{fig:gamma_z_valid}). 
+The results, plotted across three orders of magnitude of the small noise parameter, match our theoretical prediction exactly. 
+
+In addition, we described a framework in which uncertainty in deterministic models can be ascribed without the need for expensive stochastic simulation, and purely from the deterministic solution dynamics.
+We illustrated how the Gaussian limit reflects the time-evolution of uncertainty (see \Cref{fig:time_evol}), even when the true uncertainty distributions are themselves non-Gaussian.
+
+A powerful advantage of this framework is that the diffusivity matrix \(\sigma\) is permitted to vary spatio-temporally, allowing for multiplicative noise.
+Multiplicative noise is often ignored in practice, due to difficulties in working with analytically (see, for instance, the prior lack of rigourous justification of linearisations when the noise is multiplicative) and generating numerical realisations efficiently (e.g. the review in \cite{MoraEtAl_2017_StableNumericalScheme}).
+It has also been shown that multiplicative noise on linear dynamics can model departures from Gaussianity observed in climate statistics \cite{SuraEtAl_2005_MultiplicativeNoiseNonGaussianity}, as opposed to nonlinear dynamics with only additive noise. 
+The spatio-temporal dependence of \(\sigma\) can also capture experimental and observational considerations that are otherwise ignored in the deterministic model, such as cloud cover when using satellite measurements or nonuniform uncertain across the field of view of a camera.
+% The multiplicative noise is captured by the Gaussian approximation by evaluating \(\sigma\) along the deterministic reference trajectory.
+% The Gaussian uncertainties capture both the model dynamics, and any multiplicative or spatiotemporal dependence in the uncertainty, through specification of \(\sigma\).
+We therefore present a highly flexible framework that can capture any prior knowledge of non-uniform uncertainty that arises from modelling or experimental considerations.
+
+This paper also supplied theoretical and computational extension to the ``stochastic sensitivity'' tools introduced by Balasuriya \cite{Balasuriya_2020_StochasticSensitivityComputable}.
+Stochastic sensitivity was hitherto derived as the variance of an unknown limiting distribution and could only be computed in two spatial dimensions: we established that stochastic sensitivity, in any number of dimensions, is computable as the operator norm of the covariance matrix of our limiting SDE. 
+We have also established that the limiting distribution in question is Gaussian, which may provide insight into properties of stochastic sensitivity as a means of uncertainty quantification in any model (not just in the fluids context) where an $ n $-dimensional state variable evolves according to a ``best available" model.
+
+The Gaussian approximation presented here arises as the leading order term in a power series expansion of the SDE solution in terms of the noise scale parameter \(\epsilon\) \cite{Blagoveshchenskii_1962_DiffusionProcessesDepending}.
+A further extension would be to explore the higher-order terms in such an expansion, which could lead to a practical framework for constructing higher-order characterisations and approximations of the stochastic solution.
+However, the higher-order terms are known to be individually non-Markovian, and satisfy non-linear SDEs for which the solution is not expected to be analytically available \cite{Blagoveshchenskii_1962_DiffusionProcessesDepending}.
+
+In this paper, we have assumed throughout that the initial condition \(x\), from which both the stochastic differential equation and the deterministic flow map evolves from, is \emph{certain} (i.e. not a random quantity).
+However, in practice there is uncertainty associated with the initial state which should also be accounted for.
+The bound in \Cref{thm:main} is independent of the initial condition, suggesting that the required extension of the theoretical result is straightforward.
+This extension will broaden our framework, allowing for uncertainties in \emph{both} the initial state and the time-evolution of the model to be characterised at once in a precise sense.
+
+Similarly, we assume that the reference deterministic model \eqref{eqn:ode_det} for the evolution of the state variable is ``correct'' and known exactly, in that in the absence of any noise (i.e. \(\varepsilon = 0\)), the SDE model \eqref{eqn:sde_y} reduces to the deterministic \eqref{eqn:ode_det}. 
+The Gaussian characterisation is computed from knowledge of either the driving vector field or the solution data itself, i.e. the flow map.
+However, these components of the deterministic model may not be known exactly, e.g. from solving \eqref{eqn:ode_det} numerically, interpolation error, etc.
+There is a need to extend the theory presented here to account for this case; to, for instance, establish a bound in the error between the SDE solution and the limiting Gaussian, as in \Cref{thm:main}, if the Gaussian distribution is constructed from an ``incorrect'' deterministic model.
+Both of these theoretical extensions, to uncertain initial conditions and incorrect deterministic dynamics, are currently being pursued.
+
+
+\subsection{Applications}
+
+Here, we briefly discuss some anticipated applications of this work across a wide range of fields, including climate and ocean modelling, data assimilation and Lagrangian coherent structures.
+
+This work fits in with recent interest in stochastic parameterisation as a means to account for unresolved subgrid effects in climate modelling \cite{BernerEtAl_2017_StochasticParameterizationNew,LeutbecherEtAl_2017_StochasticRepresentationsModel,Palmer_2019_StochasticWeatherClimate}. 
+In particular, the recent review \cite{LeutbecherEtAl_2017_StochasticRepresentationsModel} concludes, ``The aim of current and future developments in stochastic representations of model uncertainty is to develop schemes that are computationally highly efficient and contribute only moderately to the overall computational cost...''.
+This paper provides one method to convert a stochastic parameterisation (formulated as a SDE) to a computationally cheaper set of coupled ODEs for the mean and variance of an approximate Gaussian, together with a convergence proof and error estimates. 
+
+To ascribe uncertainties directly onto the deterministic model, we assume that the diffusivity matrix \(\sigma\) is specified \textit{a priori}, to capture any known multiplicative noise effects.
+There are methods for estimating \(\sigma\) directly from observed data, e.g. the Bayesian inference approach of \cite{YingEtAl_2019_BayesianInferenceOcean} or via statistical estimation as in \cite{CotterPavliotis_2009_EstimatingEddyDiffusivities}, which can be used in our framework.
+In particular, \cite{YingEtAl_2019_BayesianInferenceOcean} relies upon computationally expensive numerical approximations to compute the likelihood of each trajectory, whereas from this paper we have a potentially more efficient computation, using the analytically available Gaussian limit.
+Coupling these approaches with the approximation here could provide a complete and practical framework to characterise the uncertainty in the flow by efficiently estimating the (multiplicative) diffusion from observed trajectory data.
+
+Data assimilation is a framework for improving uncertainties in predictions by combining model forecasts with observational data, accounting for error in both, and uncertainty quantification refers to the broader goal of capturing the uncertainty inherent in prediction \cite{BudhirajaEtAl_2019_AssimilatingDataModels,Jazwinski_2014_StochasticProcessesFiltering,LawEtAl_2015_DataAssimilationMathematical,ReichCotter_2015_ProbabilisticForecastingBayesian}.
+The Gaussian limit here provides a characterisation of model uncertainty, and may therefore be useful in data assimilation and uncertainty quantification.
+The linearisation of the stochastic differential equation \eqref{eqn:sde_y} used to construct the Gaussian approximation has been employed in data assimilation, e.g. in the continuous time continuous state-space extended Kalman filter \cite[\S 9]{Jazwinski_2014_StochasticProcessesFiltering}. The convergence analysis of this paper could contribute a new term, estimating the error due to linearisation, to the \emph{forecast uncertainty} covariance matrix employed in these extended Kalman filters. 
+
+% There are several methods for computing the flow map gradient directly from observed tracer data, in the context of calculating finite-time Lyapunov exponents (FTLEs) \cite{Leung_2013_BackwardPhaseFlow, RabenEtAl_2013_ComputationFinitetimeLyapunov}.
+% Another question would be whether the techniques of estimating the flow map gradient in the LCS literature can be coupled with a data assimilation scheme, by using the characterisation of the Gaussian approximation in terms of solely the flow map gradients.
+
+
+% Speaking more generally, determining the structure of the model error 
+% More complications arise if this model error is state (e.g. position) dependent, which is expected in many contexts \cite{Bishop_2019_DataAssimilationStrategies}.
+% The work here presents a framework for computing a state-dependent model error covariance matrix entirely from the deterministic model dynamics.
+% \td{Are we implicitly extending EKF to state-dependent covariances?}
+
+% As an alternative, there are recent DA approaches that directly use coherent structures \cite{MacleanEtAl_2017_CoherentStructureApproach, Schlueter-KuckDabiri_2019_ModelParameterEstimation}, for which stochastic sensitivity could be applied to use coherent structures that reflect model certainty.
+
+Stochastic sensitivity provides a novel method for extracting Lagrangian coherent structures (LCSs) \cite{BalasuriyaEtAl_2018_GeneralizedLagrangianCoherent, HadjighasemEtAl_2017_CriticalComparisonLagrangian} from fluid flow, by considering regions with uncertainty (as measured by the stochastic sensitivity field) below a prescribed threshold. 
+Whereas the original formulation in \cite{Balasuriya_2020_StochasticSensitivityComputable} was restricted to two-dimensional flows, here we have an extension of the LCS extraction scheme to arbitrary dimensions. 
+
+% LCS extraction has recently been used as a means of dimension reduction in data assimilation schemes \cite{MacleanEtAl_2017_CoherentStructureApproach,MorzfeldEtAl_2018_FeaturebasedDataAssimilation,Schlueter-KuckDabiri_2019_ModelParameterEstimation}.
+% Through stochastic sensitivity, we have a method for extracting coherent regions that directly reflect model uncertainty, and so may be applicable in these DA schemes.
+
+Moreover, most traditional LCS measures are completely deterministic measures, not accounting for any uncertainty in the driving velocity field, and the sensitivity of these methods to such uncertainty has not been investigated in detail. 
+The robustness of several LCS methods to stochastic noise has recently been explored in \cite{BadzaEtAl_2023_HowSensitiveAre}, but via stochastic simulation and summary statistics. 
+In this paper we have presented a theoretical result for characterising Lagrangian trajectory uncertainty, which can be used to perform a purely theoretical analysis of such sensitivity in LCS computations.
+An initial study into the impact of uncertainty of one such method -- the finite-time Lyapunov exponent -- has already been performed using stochastic sensitivity \cite{Balasuriya_2020_UncertaintyFinitetimeLyapunov}, albeit in only two-dimensions and without knowledge that the limiting distribution is Gaussian.
+

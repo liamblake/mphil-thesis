@@ -25,10 +25,10 @@ For example, we say that a random variable \(A\) is equal to another random vari
 where \(u: \Omega \times[0,T] \to \R^n\) describes the velocity at a point in space and time.
 
 In the mathematical treatment of Lagrangian dynamics, and in particular Lagrangian coherent structures \citep{BalasuriyaEtAl_2018_GeneralizedLagrangianCoherent}, trajectories solving \eqref{eqn:det_ode} are summarised by the flow map.
-The flow map is an operator mapping 
+The flow map is an operator mapping
 
 The flow map can be defined formally as follows.
-\begin{defn}[Flow map]
+\begin{definition}[Flow map]
 	Suppose \(t_1, t_2 \in [0,T]\).
 	The \textbf{flow map} \(F_{t_1}^{t_2}: \R^n \to \R^n\) from time \(t_1\) to \(t_2\) associated with \eqref{eqn:det_ode} is the unique solution to
 	\begin{equation}
@@ -40,9 +40,16 @@ The flow map can be defined formally as follows.
 	\[
 		F_{t_1}^{t_2}(x) = x + \int_{t_1}^{t_2}{u\left(F_{t_1}^\tau(x), \tau\right)\dif\tau}.
 	\]
-\end{defn}
-The flow map satisfies the following properties
-
+\end{definition}
+The flow map satisfies the following properties, under ASSUMPTIONS? 
+For any \(r, s, t \in [0,T]\) and points \(x,w \in \R^n\),
+\begin{enumerate}
+	\item \(F_{s}^{t}\) is invertible with inverse
+		\[
+			\left[F_{s}^{t}\right]^{-1}\left(w\right) = F_{t}^{s}\left(w\right).
+		\]
+	\item \(F_s^{t}\left(F_{r}^{s}(x)\right) = F_{r}^{t}\left(x\right)\) 
+\end{enumerate}
 
 The gradient of the flow map satisfies a useful property; the equation of variations.
 \begin{theorem}
@@ -54,7 +61,7 @@ The gradient of the flow map satisfies a useful property; the equation of variat
 	\end{equation}
 \end{theorem}
 \begin{proof}
-	Taking the gradient on both sides of \eqref{eqn:flow_map_ode} and using the chain rule gives  
+	Taking the gradient on both sides of \eqref{eqn:flow_map_ode} and using the chain rule gives
 	\[
 		\nabla\left(\dpd{F_{t_1}^{t_2}(x)}{t}\right) = \nabla u\left(F_{t_1}^{t}(x), t\right) \nabla F_{t_1}^{t}(x).
 	\]
@@ -68,16 +75,16 @@ The gradient of the flow map satisfies a useful property; the equation of variat
 An important inequality
 
 \begin{theorem}[Gr\"onwall's inequality]\label{thm:gronwall}
-	Let \(\alpha, \beta, u: [a,b] \to \R\) be functions such that \(\beta\) and \(u\) are continuous and that the negative part of \(\alpha\) is integrable on every closed and bounded subset of \([a,b]\). 
+	Let \(\alpha, \beta, u: [a,b] \to \R\) be functions such that \(\beta\) and \(u\) are continuous and that the negative part of \(\alpha\) is integrable on every closed and bounded subset of \([a,b]\).
 	Then, if \(\beta\) is non-negative and for all \(t \in [a,b]\),
 	\[
 		u(t) \leq \alpha(t) + \int_a^t{\beta(\tau)u(\tau)\dif\tau}
 	\]
-	then 
+	then
 	\[
 		u(t) \leq \alpha(t) + \int_a^t{\alpha(\tau)\beta(\tau)\exp\left(\int_\tau^{t}{\beta(s)\dif s}\right)\dif\tau}.
 	\]
-	Additionally, if \(\alpha\) is non-decreasing, then 
+	Additionally, if \(\alpha\) is non-decreasing, then
 	\[
 		u(t) \leq \alpha(t) \exp\left(\int_a^t{\beta(\tau)\dif\tau}\right)
 	\]
@@ -87,15 +94,33 @@ An important inequality
 
 \section{Stochastic differential equations}
 
+For an introduction to stochastic differential equations, see \citet{Oksendal_2003_StochasticDifferentialEquations} or \citet{KallianpurSundar_2014_StochasticAnalysisDiffusion}.
 
+
+\begin{definition}[Canonical Wiener process]\label{def:wiener}
+
+\end{definition}
+
+
+The differential form of an \(n\)-dimensional It\^o stochastic differential equation is
 \begin{equation}
-	\dif y_t = u\left(y_t, t\right)\dif t + \sigma\left(y_t, t\right)\dif W_t.
+	\dif y_t = u\left(y_t, t\right)\dif t + \sigma\left(y_t, t\right)\dif W_t,
 	\label{eqn:gen_sde}
 \end{equation}
+where the solution \(y_t\) is a stochastic process taking values in \(\R^n\), \(u: \R^n \times \R \to \R^n\) is the drift and \(\sigma: \R^n \times \R \to \R^{n\times n}\) is the diffusivity.
+The driving process \(W_t\) is the canonical, \(n\)-dimensional Wiener process as defined in \Cref{def:wiener}.
+For a (possibly random) initial condition \(y_0\), the solution \(y_t\) to \eqref{eqn:gen_sde} satisfies
+\begin{equation}
+	y_t = y_0 + \int_0^t{u\left(y_\tau, \tau\right)\dif\tau} + \int_0^t{\sigma\left(y_\tau, \tau\right)\dif W_\tau}.
+	\label{eqn:gen_sde_int}
+\end{equation}
+In the most general case, the drift \(u\) and diffusivity \(\sigma\) are permitted to themselves be random functions \cite{KallianpurSundar_2014_StochasticAnalysisDiffusion}, but in this thesis we assumed that both are deterministic.
+
+As with deterministic differential equations, we are interested in knowing precisely when solutions to \eqref{eqn:gen_sde} exist, and whether these solutions are unique.
 
 A solution to the stochastic differential equation can be defined rigorously \cite{KallianpurSundar_2014_StochasticAnalysisDiffusion}.
-\begin{defn}
-	A stochastic process \(\set{y_t}_{t \in [0,T]}\) taking values in \(R^n\) is said to be a \textbf{strong solution} of \eqref{eqn:gen_sde} with initial condition \(y_0 = \xi\) if the following holds:
+\begin{definition}
+	A stochastic process \(\set{y_t}_{t \in [0,T]}\) taking values in \(R^n\) is said to be a \emph{strong solution} of \eqref{eqn:gen_sde} with initial condition \(y_0 = \xi\) if the following holds:
 	\begin{enumerate}
 		\item For each \(t\),
 		\item
@@ -104,19 +129,33 @@ A solution to the stochastic differential equation can be defined rigorously \ci
 		      \]
 
 		\item For each \(t \in [0,T]\),
-			\[
-				y_t = \xi + \int_0^t{u\left(y_\tau, \tau\right)\dif\tau} + \int_0^t{\sigma\left(y_\tau, \tau\right)\dif W_\tau} \quad \text{a.s.}
-			\]
+		      \[
+			      y_t = \xi + \int_0^t{u\left(y_\tau, \tau\right)\dif\tau} + \int_0^t{\sigma\left(y_\tau, \tau\right)\dif W_\tau} \quad \text{a.s.}
+		      \]
 	\end{enumerate}
-\end{defn}
+\end{definition}
 
+Solutions are known as \emph{strongly unique} if, for any two strong solutions \(x_t\) and \(y_t\) to \eqref{eqn:gen_sde} defined on the same measure space,
+\[
+	P\left(x_t = y_t, \quad \forall t \in \left[0,T\right]\right) = 1
+\]
+That is, \(x_t\) and \(y_t\) are equal almost surely.
 
-\begin{theorem}
-	
-
-
-
-	Then, \eqref{eqn:gen_sde} has a unique strong solution.
+We can now state the requirements for \eqref{eqn:gen_sde} to have unique solutions.
+\begin{theorem}[\citet{KallianpurSundar_2014_StochasticAnalysisDiffusion}]
+	Let \(u_i\) be the \(i\)th component of \(u\) and \(\sigma_{ij}\) the \((i,j)\)th component of \(\sigma\), for \(i,j = 1,\hdots,n\).
+	Suppose that for each \(i,j = 1,\hdots,n\),
+	\begin{romanate}
+		\item \(u_i\) is Borel-measurable, and
+		\item \(\sigma_{ij}\) is Borel-measurable.
+	\end{romanate}
+	Suppose further that for all \(t \in [0,T]\) and \(x,y \in \R^n\), there is a positive constant \(K\) independent of \(t\) and \(x, y\) such that
+	\begin{romanate}
+		\setcounter{enumi}{2}
+		\item \(\norm{u(x,t)}^2 + \norm{\sigma(x,t)}^2 \leq K\left(1 + \norm{x}^2\right)\) a.s.
+		\item \(\norm{u\left(x,t\right) - u\left(y,t\right)}^2 + \norm{\sigma\left(x,t\right) - \sigma\left(y,t\right)}^2 \leq K\norm{x - y}\) a.s.
+	\end{romanate}
+	Then, \eqref{eqn:gen_sde} has a strongly unique strong solution.
 \end{theorem}
 \begin{proof}
 	See Theorem 6.2.1 of \cite{KallianpurSundar_2014_StochasticAnalysisDiffusion}, for instance.
@@ -128,7 +167,7 @@ A solution to the stochastic differential equation can be defined rigorously \ci
 \subsection{Analytical tools for It\^o calculus}
 There are several tools available for the analytic treatment of It\^o integrals and solutions to stochastic differential equations, which we make use of throughout.
 The first is It\^o's Lemma (or the It\^o Formula), which is a change-of-variables formula in stochastic calculus and can be thought of as a generalisation of the chain rule from deterministic calculus.
-We state and use the multidimensional form of the Lemma for solutions to It\^o stochastic differential equations, although more general forms exist (e.g. see Theorem 5.4.1 of \cite{Bremaud_2020_ProbabilityTheoryStochastic}).
+We state and use the multidimensional form of the Lemma for solutions to It\^o stochastic differential equations, although more general forms exist (e.g. see Theorem 5.4.1 of \cite{KallianpurSundar_2014_StochasticAnalysisDiffusion}).
 \begin{theorem}[It\^o's Lemma]
 	Let \(X_t\) be the strong solution to the stochastic differential equation
 	\[
@@ -160,11 +199,11 @@ We state and use the multidimensional form of the Lemma for solutions to It\^o s
 
 
 \section{Aspects of stochastic parameterisation}
-When using deterministic systems to model real-world phenomena, there are many ways in which uncertainty can arise. 
-For instance, 
+When using deterministic systems to model real-world phenomena, there are many ways in which uncertainty can arise.
+For instance,
 
-Stochastic parameterisation is a 
-These unresolved subgrid effects are accounted for by introducing stochastic noise into the otherwise deterministic model. 
+Stochastic parameterisation is a
+These unresolved subgrid effects are accounted for by introducing stochastic noise into the otherwise deterministic model.
 
 \citet{BernerEtAl_2017_StochasticParameterizationNew}
 
@@ -229,7 +268,7 @@ The first result established by \cite{Balasuriya_2020_StochasticSensitivityCompu
 
 The variance of \(P_\epsilon\left(x,\theta\right)\) is used to assign a computable scalar measure of uncertainty to the trajectory.
 
-\begin{defn}[\cite{Balasuriya_2020_StochasticSensitivityComputable}]
+\begin{definition}[\cite{Balasuriya_2020_StochasticSensitivityComputable}]
 	\begin{alpharate}
 		\item The \textbf{anisotropic uncertainty} is a scalar field \(A: \R^2\times\left[-\pi/2, \pi/2\right) \to [0,\infty)\) defined by
 		\[
@@ -241,7 +280,7 @@ The variance of \(P_\epsilon\left(x,\theta\right)\) is used to assign a computab
 			S^2(x) \coloneqq \lim_{\epsilon\downarrow 0}\sup_{\theta}{\var{P_\epsilon(x,\theta)}}.
 		\]
 	\end{alpharate}
-\end{defn}
+\end{definition}
 
 By employing techniques from both deterministic and stochastic calculus (i.e. Gr\"onwall's inequality, the Burkholder-Davis-Gundy inequality, It\^o's Lemma), Balasuriya further established expressions for both the anisotropic uncertainty and the stochastic sensitivity that are computable given only the flow map and velocity data.
 
@@ -255,22 +294,22 @@ By employing techniques from both deterministic and stochastic calculus (i.e. Gr
 	\[
 		\Lambda\left(x,t,T\right) \coloneqq e^{\int_t^T{\left[\nabla \cdot u\right]\left(F_0^\xi(x), \xi\right)\dif\xi}}\sigma\left(F_0^t(x), t\right)^{\T}J \nabla_w F_T^t\left(w\right),
 	\]
-	with the gradients \(\nabla_w\) of the flow map taken with respect to the mapped position \(w\), and 
+	with the gradients \(\nabla_w\) of the flow map taken with respect to the mapped position \(w\), and
 	\[
 		J \coloneqq \begin{bmatrix}
-			0 & -1 \\ 
+			0 & -1 \\
 			1 & 0
 		\end{bmatrix}
 	\]
-	Additionally, stochastic sensitivity is computed as 
+	Additionally, stochastic sensitivity is computed as
 	\[
 		S^2(x) = P(x) + N(x),
 	\]
-	with 
+	with
 	\begin{align*}
-		L(x) & \coloneqq \frac12\sum_{i=1}^2\int_0^T\left[\Lambda_{i2}\left(x,t, T\right)^2 - \Lambda_{i1}\left(x,t,T\right)^2\right]\dif t \\ 
-		M(x) & \coloneqq \sum_{i=1}^2\int_0^T{\Lambda_{i1}\left(x,t,T\right)\Lambda_{i2}\left(x,t,T\right)\dif t}\\ 
-		N(x) & \coloneqq \sqrt{L^2(x) + M^2(x)} \\ 
+		L(x) & \coloneqq \frac12\sum_{i=1}^2\int_0^T\left[\Lambda_{i2}\left(x,t, T\right)^2 - \Lambda_{i1}\left(x,t,T\right)^2\right]\dif t \\
+		M(x) & \coloneqq \sum_{i=1}^2\int_0^T{\Lambda_{i1}\left(x,t,T\right)\Lambda_{i2}\left(x,t,T\right)\dif t}                           \\
+		N(x) & \coloneqq \sqrt{L^2(x) + M^2(x)}                                                                                             \\
 		P(x) & \coloneqq \abs{\frac12\sum_{i=1}^2\sum_{j=1}^2{\int_0^T{\Lambda_{ij}\left(x,t,T\right)^2\dif t}}},
 	\end{align*}
 	where \(\Lambda_{ij}\) is the \((i,j)\)-element of \(\Lambda\).
@@ -278,14 +317,14 @@ By employing techniques from both deterministic and stochastic calculus (i.e. Gr
 
 
 \subsection{Current applications \& shortcomings}
-Since stochastic sensitivity is only a recent development, it has only been applied in a limited number of places so far. 
+Since stochastic sensitivity is only a recent development, it has only been applied in a limited number of places so far.
 Here, we briefly review the literature in which the original formulation stochastic sensitivity by \cite{Balasuriya_2020_StochasticSensitivityComputable} has been applied.
 
 \begin{itemize}
 	\item \citet{Balasuriya_2020_UncertaintyFinitetimeLyapunov} uses stochastic sensitivity to compute an error bound for the finite-time Lyapunov computation.
 
 
-	\item \citet{FangEtAl_2020_DisentanglingResolutionPrecision} 
+	\item \citet{FangEtAl_2020_DisentanglingResolutionPrecision}
 
 
 	\item \citet{BadzaEtAl_2023_HowSensitiveAre} investigate the impact of velocity uncertainty on Lagrangian coherent structures (e.g. see the reviews by \citet{BalasuriyaEtAl_2018_GeneralizedLagrangianCoherent} and \citet{HadjighasemEtAl_2017_CriticalComparisonLagrangian}) extracted as robust sets with stochastic sensitivity.
