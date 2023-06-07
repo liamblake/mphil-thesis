@@ -3,21 +3,23 @@
 \chapter{Background}
 
 
-\section{Notation}
+% \section{Notation}
+
+% The set of \(n \times m\) matrices with real-valued entries is denoted as \(\R^{n\times m}\).
+
+% The norm symbol \(\norm{\cdot}\) without any additional qualifiers denotes the standard Euclidean norm for a vector, and the spectral (operator) norm induced by the Euclidean norm, i.e. for an \(n \times n\) matrix \(A\)
+% \[
+% 	\norm{A} = \sup\left\{\frac{\norm{Av}}{\norm{v}}\,\middle|\,v \in \R^n, \, \norm{v} \neq 0\right\}.
+% \]
 
 
-The norm symbol \(\norm{\cdot}\) without any additional qualifiers denotes the standard Euclidean norm for a vector, and the spectral (operator) norm induced by the Euclidean norm, i.e. for an \(n \times n\) matrix \(A\)
-\[
-	\norm{A} = \sup\left\{\frac{\norm{Av}}{\norm{v}}\,\middle|\,v \in \R^n, \, \norm{v} \neq 0\right\}.
-\]
-
-
-For example, we say that a random variable \(A\) is equal to another random variable \(B\) almost surely (a.s.) if \(P\left(A = B\right) = 1\).
+% For example, we say that a random variable \(A\) is equal to another random variable \(B\) almost surely (a.s.) if \(P\left(A = B\right) = 1\).
 
 
 
 
 \section{Results from dynamical systems}
+
 \begin{equation}
 	\dod{w_t}{t} = u\left(w_t, t\right), \qquad w_0 = x \in \Omega,
 	\label{eqn:det_ode}
@@ -72,7 +74,7 @@ The gradient of the flow map satisfies a useful property; the equation of variat
 % \subsection{Lagrangian coherent structures}
 % \td{Briefly discuss LCSs. Do not need to go into too much detail here. Mention whatever is relevant}
 
-An important inequality
+An important inequality for establishing bounds 
 
 \begin{theorem}[Gr\"onwall's inequality]\label{thm:gronwall}
 	Let \(\alpha, \beta, u: [a,b] \to \R\) be functions such that \(\beta\) and \(u\) are continuous and that the negative part of \(\alpha\) is integrable on every closed and bounded subset of \([a,b]\).
@@ -90,6 +92,18 @@ An important inequality
 	\]
 \end{theorem}
 
+% \section{Results from probability theory}
+
+
+
+% \subsection{The Dirac-delta distribution}
+
+
+% The Dirac-delta probability measure has the property that for any measurable function \(f: \R^n \to \R^n\), 
+% \[
+% 	\int_{\R^n}{f\dif \delta[x_0]} = f(x_0)
+% \]
+
 
 
 \section{Stochastic differential equations}
@@ -97,9 +111,18 @@ An important inequality
 For an introduction to stochastic differential equations, see \citet{Oksendal_2003_StochasticDifferentialEquations} or \citet{KallianpurSundar_2014_StochasticAnalysisDiffusion}.
 
 
-\begin{definition}[Canonical Wiener process]\label{def:wiener}
-
+\begin{definition}\label{def:wiener}
+	The (one-dimensional) \emph{canonical Wiener process} is a stochastic process \(W_t\) taking values in \(\R\) and satisfying the following properties:
+	\begin{romanate}
+	\item \(W_0 = 0\), 
+	\item for every \(s > 0\), the increments \(W_{s + t} - W_{s}\) for \(t \geq 0\) are independent of \(W_r\) for all \(r < s\),
+	\item \(W_{s + t} - W_t \isGauss{0, s}\) for all \(s,t > 0\), and 
+	\item \(W_t\) is continuous in \(t\) almost surely.
+	\end{romanate}
 \end{definition}
+Remarkably, these properties \emph{uniquely} define the Wiener process, with the property that for any \(t > 0\), \(W_t \sim \mathcal{N}\left(0, t\right)\), a Gaussian distribution with mean zero and variance \(t\).
+
+
 
 
 The differential form of an \(n\)-dimensional It\^o stochastic differential equation is
@@ -114,7 +137,9 @@ For a (possibly random) initial condition \(y_0\), the solution \(y_t\) to \eqre
 	y_t = y_0 + \int_0^t{u\left(y_\tau, \tau\right)\dif\tau} + \int_0^t{\sigma\left(y_\tau, \tau\right)\dif W_\tau}.
 	\label{eqn:gen_sde_int}
 \end{equation}
-In the most general case, the drift \(u\) and diffusivity \(\sigma\) are permitted to themselves be random functions \cite{KallianpurSundar_2014_StochasticAnalysisDiffusion}, but in this thesis we assumed that both are deterministic.
+In the most general case, the drift \(u\) and diffusivity \(\sigma\) are permitted to themselves be random functions \cite{KallianpurSundar_2014_StochasticAnalysisDiffusion}, but in this thesis we assume that both are deterministic.
+There is an alternative formulation of a stochastic differential equation, known as the Stratonovich interpretation, which defines the stochastic integral in \eqref{eqn:gen_sde_int} in a way that arises natural from physical considerations. 
+In this thesis, we only consider It\^o stochastic differential equations, but there is a conversion between the two interpretations that requires modifying the drift term \(u\) of the SDE. 
 
 As with deterministic differential equations, we are interested in knowing precisely when solutions to \eqref{eqn:gen_sde} exist, and whether these solutions are unique.
 
@@ -163,10 +188,22 @@ We can now state the requirements for \eqref{eqn:gen_sde} to have unique solutio
 
 
 
-
 \subsection{Analytical tools for It\^o calculus}
 There are several tools available for the analytic treatment of It\^o integrals and solutions to stochastic differential equations, which we make use of throughout.
-The first is It\^o's Lemma (or the It\^o Formula), which is a change-of-variables formula in stochastic calculus and can be thought of as a generalisation of the chain rule from deterministic calculus.
+The first is It\^o's isometry, which relates the expectation of an It\^o integral to that of a deterministic one and is useful for computing moments. 
+\begin{theorem}[It\^o's Isometry]\label{thm:ito_isom}
+	Let \(f: \Omega \times [0,T] \to \R\) be an It\^o integrable stochastic process. 
+	Then, for any \(t \in [0,T]\)
+	\[
+		\avg{\left(\int_0^t{f\left(\omega, \tau\right)\dif W_\tau}\right)^2} = \avg{\int_0^t{f\left(\omega, \tau\right)^2\dif\tau}}
+	\]
+\end{theorem}
+\begin{proof}
+	It\^o's isometry typically arises in the formal construction of the It\^o integral. 
+	See ?? for instance.
+\end{proof}
+
+Next, we have It\^o's Lemma (or the It\^o Formula), which is a change-of-variables formula in stochastic calculus and can be thought of as a generalisation of the chain rule from deterministic calculus.
 We state and use the multidimensional form of the Lemma for solutions to It\^o stochastic differential equations, although more general forms exist (e.g. see Theorem 5.4.1 of \cite{KallianpurSundar_2014_StochasticAnalysisDiffusion}).
 \begin{theorem}[It\^o's Lemma]
 	Let \(X_t\) be the strong solution to the stochastic differential equation
@@ -184,8 +221,7 @@ We state and use the multidimensional form of the Lemma for solutions to It\^o s
 
 \end{proof}
 
-
-
+Our third and final result is the Burkholder-Davis-Gundy inequality, which when applied to stochastic integrals provides bounds on the expected norm.
 \begin{theorem}[Burkholder-Davis-Gundy Inequality]
 	Let \(M_t\) be an It\^o-integrable stochastic process taking values in \(\R^n\).
 	Then, for any \(p > 0\) there exists constants \(c_p, C_p > 0\) independent of the stochastic process \(M_t\) such that
@@ -198,49 +234,173 @@ We state and use the multidimensional form of the Lemma for solutions to It\^o s
 \end{proof}
 
 
-\section{Aspects of stochastic parameterisation}
-When using deterministic systems to model real-world phenomena, there are many ways in which uncertainty can arise.
-For instance,
 
-Stochastic parameterisation is a
-These unresolved subgrid effects are accounted for by introducing stochastic noise into the otherwise deterministic model.
-
-\citet{BernerEtAl_2017_StochasticParameterizationNew}
-
-\citet{LeutbecherEtAl_2017_StochasticRepresentationsModel}
-
-\subsection{Additive versus multiplicative noise}
-
-When \(\sigma = \sigma(t)\) depends only on \(t\), then noise is considered \emph{additive}.
-If there is spatial dependence in \(\sigma\), i.e. \(\sigma = \sigma(x,t)\), then the noise considered \emph{multiplicative}.
+\subsection{The Fokker-Planck equation}
 
 
+The probability density function \(\rho: \R^n \times [0,T] \to [0,\infty)\) for the solution to \eqref{eqn:gen_sde} at time \(t \in [0,T]\) is the solution to the corresponding Fokker-Planck equation \cite{Risken_2012_FokkerPlanckEquationMethods}
+\begin{equation}
+	\dpd{\rho}{t} = \frac12\nabla\cdot\nabla\cdot\left(\rho\sigma\sigma^{\T}\right) - \nabla\cdot\left(\rho u\right)
+	\label{eqn:fp_eqn}
+\end{equation}	
+subject to some initial density \(\rho\left(x,0\right)\) given by the initial condition to \eqref{eqn:gen_sde}.
+For a fixed and deterministic initial condition \(y_0 = x\), the corresponding initial condition to \eqref{eqn:fp_eqn} is the Dirac-delta distribution centred at \(x\). 
 
-For instance, \citet{SuraEtAl_2005_MultiplicativeNoiseNonGaussianity} shows that the non-Gaussian statistics observed in atmospheric regimes can arise from linear models with multiplicative noise.
+For certain choices of the drift \(u\) and diffusivity \(\sigma\), \eqref{eqn:fp_eqn} reduces to several other well-known partial differential equations, including:
+\begin{itemize}
+	\item When \(\sigma \equiv D\), a scalar constant, then \eqref{eqn:fp_eqn} is the convection-diffusion equation with velocity field \(u\) and diffusivity \(D\).
+\end{itemize}
+\enlargethispage{3\baselineskip}
+\begin{tikzpicture}
+			\node (hold) at (0,0) {};
+			\node[rotate=31.41592653587932384626433832795028841971693993751058209749445923078164062862089986280534211706798407] (poop) at (15,0) {\tiny poop}; 
+		\end{tikzpicture}
+
+	\begin{itemize}	\item When \(\sigma \equiv 0\), i.e. there is no diffusion, then \eqref{eqn:fp_eqn} is the continuity equation with velocity field \(u\).
+\end{itemize}
+The connection between the Fokker-Planck equation and the SDE \eqref{eqn:gen_sde} means that the solutions to each of these PDEs can be equivalently thought of as the time-evolution of the probability density of an SDE. 
 
 
 
+% \section{Aspects of stochastic parameterisation}
+% When using deterministic systems to model real-world phenomena, there are many ways in which uncertainty can arise.
+% For instance,
 
-\section{Stochastic sensitivity}
+% Stochastic parameterisation is a
+% These unresolved subgrid effects are accounted for by introducing stochastic noise into the otherwise deterministic model.
+
+% \citet{BernerEtAl_2017_StochasticParameterizationNew}
+
+% \citet{LeutbecherEtAl_2017_StochasticRepresentationsModel}
+
+% \subsection{Additive versus multiplicative noise}
+
+% When \(\sigma = \sigma(t)\) depends only on \(t\), then noise is considered \emph{additive}.
+% If there is spatial dependence in \(\sigma\), i.e. \(\sigma = \sigma(x,t)\), then the noise considered \emph{multiplicative}.
+
+
+
+% For instance, \citet{SuraEtAl_2005_MultiplicativeNoiseNonGaussianity} shows that the non-Gaussian statistics observed in atmospheric regimes can arise from linear models with multiplicative noise.
+
+
+
+\subsection{Some explicitly solvable SDEs}
+In general, the solution to a stochastic differential equation cannot be expressed analytically, either as an explicit expression involving the Wiener process \(W_t\) or as a probability measure or density function. 
+At best, most solutions can be written in terms of an It\^o integral which can otherwise not be simplified.
+However, there are several simple examples for which a solution can be written, and even time-marginal probability density functions can be derived.
+Here, we list several examples which are used to validate theory and test algorithms throughout this thesis.
+
+
+\begin{example}[Ornstein-Uhlenbeck Process]
+
+\end{example}
+
+\begin{example}[Ben\^e's SDE]
+	The \(1\)-dimensional stochastic differential equation 
+	\begin{equation}
+		\sde{x_t}{\tanh\left(x_t\right)}{},
+		\label{eqn:bene_sde}
+	\end{equation}
+	is known as \emph{Ben\^e's stochastic differential equation} \cite{SarkkaSolin_2019_AppliedStochasticDifferential}.
+	The probability density function of a weak solution of \eqref{eqn:bene_sde} can be derived using an appropriate change of measure with Girsanov's theorem. 
+	A proof of this, and the derivation of a weak solution to \eqref{eqn:bene_sde} are provided in Section 7.3 of \cite{SarkkaSolin_2019_AppliedStochasticDifferential}.
+	The probability density function \(p: \R \times \left(0,\infty\right) \to \left[0,\infty\right)\) for the solution \(x_t\) at time \(t > 0\) is given by 
+	\begin{equation}\label{eqn:bene_sde_pdf}
+	p(x,t) = \frac{1}{\sqrt{2\pi t}}\frac{\cosh\left(x\right)}{\cosh\left(x_0\right)}\exp\left[-\frac{t}{2} - \frac{1}{2t}\left(x - x_0\right)^2\right],
+\end{equation}
+	where \(x_0 \in \R\) is a fixed initial condition.
+	This probability density function is plotted, for the initial condition \(x_0 = 1/2\) and various times, in \Cref{fig:bene_pdf}.
+	The resulting density is not symmetric and bimodal, with the two modes moving apart in the positive and negative \(x\)-directions respectively as \(t\) increases.
+	For fixed \(t\), the probability density function can be expressed as the mixture of two Gaussians with respective means \(x_0 + t\) and \(x_0 - t\), with details provided in \Cref{app:bene_calculations}.
+	This expression allows easy calculation of the mean and expectation of \(x_t\), as 
+	\[
+		\avg{x_t} = \frac{1}{2\cosh\left(x_0\right)}\exp\left(-\frac{t}{2}\right)\left(\left(x_0 + t\right)\exp\left[\frac{t}{2} +x_0\right] + (x_0 - t)\exp\left[\frac{t}{2} - x_0\right]\right).
+	\]
+	and 
+	\[
+		\var{x_t} = \mathbb{V}, \mathds{Z} \,  \mathbb{Z}, \R, \mathds{R}, \mathbb{C}, \mathbb{Q}, \mathbb{N}, \C, \Q, \N, \mathbf{R}, \bm{R}, \mathbf{N}, \bm{N}, \mathcal{R}, \mathfrak{R}, \mathds{1}
+	\]
+\end{example}
+\begin{tikzpicture}
+	\draw (0,0) -- (0,1) -- (0.1,1) -- (0.1,0) -- (0,0);
+	\draw (-0.1,0.9) -- (0.1,1);
+	\draw (-0.1,0) -- (0.3,-0.1);
+\end{tikzpicture} $= \{0 \to 1\}$ 
+% $$\left\{x \in \mathbb{R} \,\middle|\, x = \frac{1}{2}\right\} \left\{x \in \mathbb{R} \makebox[\widthof{\mid}]{\middle|} x = \frac{1}{2}\right\}$$
+
+First \makebox[\widthof{some long text}]{poop} is always the best. :)
+
+\newcommand{\plotbenepdf}[2]{
+\begin{tikzpicture}\begin{axis}[
+		ymin=0.0,
+		xmin=-10.0,
+		xmax=10.0,
+		axis lines=center,
+		axis on top=true,
+		domain=-10:10,
+		ylabel=$p$,
+		xlabel=$x$,
+		ytick=\empty,
+		yticklabels={},
+	]
+	\addplot [mark=none,draw=black,thick,samples=500] {cosh(\x)*exp(-#2/2-1/(2 * #2)*(\x-#1)^2)/((2 * pi * #2)^(1/2) * cosh(#1))};
+\end{axis}
+\end{tikzpicture}
+}
+
+\begin{figure}
+	\begin{center}
+\begin{subfigure}{0.49\textwidth}
+\plotbenepdf{1/2}{1}
+	\caption{\(t = 1\)}
+	\label{fig:bene_1}
+\end{subfigure}
+\begin{subfigure}{0.49\textwidth}
+\plotbenepdf{1/2}{2.5}
+	\caption{\(t = 2.5\)}
+	\label{fig:bene_2.5}
+\end{subfigure}
+\begin{subfigure}{0.49\textwidth}
+\plotbenepdf{1/2}{5}
+	\caption{\(t = 5\)}
+	\label{fig:bene_5}
+\end{subfigure}
+\begin{subfigure}{0.49\textwidth}
+\plotbenepdf{1/2}{7.5}
+	\caption{\(t = 7.5\)}
+	\label{fig:bene_7.5}
+\end{subfigure}
+	\end{center}
+	\caption{The probability density function \eqref{eqn:bene_sde_pdf} for the time-marginal solution of Ben\^e's SDE \eqref{eqn:bene_sde}, for the initial condition \(x_0 = 1/2\) at various times.
+	The density function consists of two distinct modes that move further apart as \(t\) increases.}
+	\label{fig:bene_pdf}
+\end{figure}
+
+
+%\section{Stochastic sensitivity}
+\section{Poop sensitivity}
+
+Following the nomenclature of fluid dynamics, given unsteady Eulerian velocity data \(u: \R^2 \times [0,T] \to \R^2\), the evolution of Lagrangian trajectories is governed by the ordinary differential equation 
+\[
+	\dod{x_t}{t} = u\left(x_t, t\right).
+\]
+Solutions can be summarised by the flow map \(F_{t_1}^{t_2}\), as in \Cref{def:flow_map}.
 In most practical situations, the Eulerian velocity data driving ocean and atmospheric models relies upon measurements of estimates obtained on a low resolution spatial discretisation.
-
-
-There are limited tools within the LCS context that explcitly characterise the impact of these uncertainties
-As such, there is recent interest in addressing this deficiency \citep{BalasuriyaGottwald_2018_EstimatingStableUnstablea, Balasuriya_2020_StochasticApproachesLagrangian}\lb{Probably need some non-Sanjeeva citations here}.
 \citet{Balasuriya_2020_StochasticSensitivityComputable} introduces stochastic sensitivity as a new tool for directly quantifying the impact of Eulerian uncertainty on Lagrangian trajectories.
 The evolution of Lagrangian trajectories is modelled as solution to a It\^o stochastic ordinary differential equation.
 
-\td{Deterministic}
-
-The SDE model is
+To directly account for these unresolved sources of uncertainty, the ``true'' Lagrangian trajectories evolve as solution to the stochastic differential equation
 \begin{equation}
 	\sde{y_t}{u\left(y_t, t\right)}{\epsilon\sigma\left(y_t, t\right)},
 	\label{eqn:ss_sde},
 \end{equation}
 where \(0 < \epsilon \ll 1\) is a parameter quantifying the scale of the noise, \(\sigma:	\R^2\times[0,T] \to \R^{2\times 2}\) is the \(2\times 2\) diffusion matrix, and \(W_t\) is the canonical two-dimensional Wiener process.
+In the original formulation \cite{Balasuriya_2020_StochasticSensitivityComputable}, \(\epsilon\) is a dimensionless parameter and \(\sigma\) is dimensional, but an alternative scaling technique relates \(\epsilon\) to spatial and velocity uncertainty scales in the data (see the follow-up work \cite{BadzaEtAl_2023_HowSensitiveAre,Balasuriya_2020_UncertaintyFinitetimeLyapunov,FangEtAl_2020_DisentanglingResolutionPrecision})
 Since \(\sigma\) can vary by both space and time, the noise is multiplicative.
+The diffusion matrix \(\sigma\) is specified \emph{a priori}, based on any knowledge of how uncertainty varies with space and time, e.g. from experimental considerations, observation error estimates.
+If no such prior information is known, then \(\sigma \equiv I\), the \(2 \times 2\) identity matrix is the default choice.
 
-To quantify uncertainty in a way that is independent of the noise scale \(\epsilon\), \cite{Balasuriya_2020_StochasticSensitivityComputable} defined the random variable \(z_\epsilon\left(x,t\right)\) on \(\R^2 \times [0,T]\) as
+To quantify uncertainty in a way that is independent of the noise scale \(\epsilon\), \citet{Balasuriya_2020_StochasticSensitivityComputable} defined the random variable \(z_\epsilon\left(x,t\right)\) on \(\R^2 \times [0,T]\) as
 \[
 	z_\epsilon\left(x,t\right) \coloneqq \frac{y_t - F_0^t(x)}{\epsilon}.
 \]
@@ -256,9 +416,24 @@ where \(\theta \in \left[-\pi/2, \pi/2\right)\) and
 		\sin{\theta}
 	\end{bmatrix}.
 \]
-The statistics of \(z_\epsilon\left(x,T\right)\) and \(P_\epsilon(x,\theta)\) are considered in the limit as \(\epsilon\downarrow 0\), which \td{something}.
+% \Cref{fig:sb_ss} is a pictorial representation of these quantities, with those associated with the deterministic equation \eqref{eqn:ode_det} in black and those with the stochastic equation \eqref{eqn:ss_sde} in blue.
 
-The first result established by \cite{Balasuriya_2020_StochasticSensitivityComputable} is that the expected location is deterministic, in the following sense.
+% \begin{figure}
+% 	\begin{center}
+% 		\includegraphics[width=\textwidth]{figures/sb_ss_diagram.png}
+% 		\td{Might not actually have permission to reproduce this figure - SIAM would own it, right? I can just recreate it anyways.}
+% 		\caption{.
+% 		This is Figure 2.1. of \cite{Balasuriya_2020_StochasticSensitivityComputable}.}
+% 		\label{fig:sb_ss}
+% 	\end{center}
+% \end{figure}
+
+
+The statistics of \(z_\epsilon\left(x,T\right)\) and \(P_\epsilon(x,\theta)\) are considered in the limit as \(\epsilon\downarrow 0\), which provides a characterisation of the uncertainty of the model \emph{independently} of the scale of the noise.
+\citet{Balasuriya_2020_StochasticSensitivityComputable} provided computable expressions for the mean and variance of \(P_\epsilon\left(x,\theta\right)\) in this limit of small noise, which we summarise here.
+For proofs of these results, see the appendices of \cite{Balasuriya_2020_StochasticSensitivityComputable}.
+
+The first result established by \citet{Balasuriya_2020_StochasticSensitivityComputable} is that the expected location is deterministic, in the following sense.
 \begin{theorem}[\cite{Balasuriya_2020_StochasticSensitivityComputable}]
 	For all \(x \in \R^2\),
 	\[
@@ -284,7 +459,7 @@ The variance of \(P_\epsilon\left(x,\theta\right)\) is used to assign a computab
 
 By employing techniques from both deterministic and stochastic calculus (i.e. Gr\"onwall's inequality, the Burkholder-Davis-Gundy inequality, It\^o's Lemma), Balasuriya further established expressions for both the anisotropic uncertainty and the stochastic sensitivity that are computable given only the flow map and velocity data.
 
-\begin{theorem}[\cite{Balasuriya_2020_StochasticSensitivityComputable}]
+\begin{theorem}[\cite{Balasuriya_2020_StochasticSensitivityComputable}]\label{thm:orig_s2_calculation}
 	For \(x \in \R^2\), set \(w \coloneqq F_0^t(x)\).
 	Then, for any \(\theta \in \left[-\pi/2, \pi/2\right)\),
 	\[
@@ -316,6 +491,12 @@ By employing techniques from both deterministic and stochastic calculus (i.e. Gr
 \end{theorem}
 
 
+
+
+
+
+
+
 \subsection{Current applications \& shortcomings}
 Since stochastic sensitivity is only a recent development, it has only been applied in a limited number of places so far.
 Here, we briefly review the literature in which the original formulation stochastic sensitivity by \cite{Balasuriya_2020_StochasticSensitivityComputable} has been applied.
@@ -324,23 +505,30 @@ Here, we briefly review the literature in which the original formulation stochas
 	\item \citet{Balasuriya_2020_UncertaintyFinitetimeLyapunov} uses stochastic sensitivity to compute an error bound for the finite-time Lyapunov computation.
 
 
-	\item \citet{FangEtAl_2020_DisentanglingResolutionPrecision}
+	\item \citet{FangEtAl_2020_DisentanglingResolutionPrecision} 
 
 
 	\item \citet{BadzaEtAl_2023_HowSensitiveAre} investigate the impact of velocity uncertainty on Lagrangian coherent structures (e.g. see the reviews by \citet{BalasuriyaEtAl_2018_GeneralizedLagrangianCoherent} and \citet{HadjighasemEtAl_2017_CriticalComparisonLagrangian}) extracted as robust sets with stochastic sensitivity.
+		The stochastic model \eqref{eqn:ss_sde} is used to generate realisations of Lagrangian trajectories subject to noise on the velocity field. 
+		By directly capturing such uncertainty as a means of coherent set \citet{BadzaEtAl_2023_HowSensitiveAre} showed that robust sets extracted with stochastic sensitivity do SOMETHING.
 
 \end{itemize}
-
-Although
-
+There are several limitations to the work as presented in \cite{Balasuriya_2020_StochasticSensitivityComputable},
 \begin{enumerate}
 	\item The tools are restricted to two-dimensional models, and the constructions using projections have no obvious extension to \(n\)-dimensions.
-	      Extending stochastic sensitivity to \(n\)-dimensions will enable application to a much broader class of models beyond the fluid flow context, including high-dimensional climate and ??? models.
+	      Extending stochastic sensitivity to \(n\)-dimensions will enable application to a much broader class of models beyond the fluid flow context, including high-dimensional climate models.
 
 	\item \citet{Balasuriya_2020_StochasticSensitivityComputable} only computes the expectation and variance of the projections \(P_\epsilon(x,\theta)\), which does not give us the distribution under the limit as \(\epsilon\) approaches 0.
 
-	\item The computational formula for the anisotropic uncertainty and stochastic sensitivity require knowledge of the divergence \(\nabla\cdot u\) of the velocity field.
+	\item The computational formula for the anisotropic uncertainty and stochastic sensitivity, as described in \Cref{thm:orig_s2_calculation}, require knowledge of the divergence \(\nabla\cdot u\) of the velocity field, and computation of four integrals.
 \end{enumerate}
 
+An alternative approach to uncertainty quantification in Lagrangian dynamics was recently introduced by \citet{BranickiUda_2023_PathBasedDivergenceRates}, extending results from their earlier work in \cite{BranickiUda_2021_LagrangianUncertaintyQuantification}. 
+However, the divergence approach does not provide any insight into the underlying probability distribution.
+Moreover, stochastic sensitivity 
+
+
+% \section{Gaussian mixture models}
+% In this section, we briefly discuss Gaussian mixture models (GMMs), as a means of approximating highly non-Gaussian distributions in a computationally and analytically convenient manner.
 
 

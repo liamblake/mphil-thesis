@@ -1,4 +1,12 @@
-\section{Introduction}
+\section{Abstract}\label{sec:paper1_abstract}
+Prediction via deterministic continuous-time models will always be subject to model error, for ex ample due to unexplainable phenomena, uncertainties in any data driving the model, or discretisation/resolution issues. 
+A standard method for uncertainty quantification in such instances is to introduce noise into the system, and use stochastic simulations to empirically obtain error distributions. 
+To supplement this computationally expensive approach, we develop an explicit and computable time-evolving uncertainty distribution for stochastic differential equations with small multiplicative noise. 
+For any initial condition, we rigorously establish convergence bounds for all moments of the deviation of the stochastic solution from its linearised counterpart. 
+This result extends previous work, that showed the convergence of the Kullback-Leibler divergence. We provide a characterisation of the Gaussian distribution that is the solution to the linearised equation, expressed explicitly in terms of solutions to a reference deterministic model.
+This characterisation provides a practical framework for quantifying uncertainty in deterministic differential equation models, with applications including oceanographic and atmospheric modelling, data assimilation and Lagrangian coherent structure extraction
+
+\section{Introduction}\label{sec:paper1_intro}
 Many phenomena across geophysical, biological and socio-economic applications can be modelled using a continuous-time dynamical system, i.e., an ordinary differential equation \cite[e.g.]{BrauerCastillo-Chavez_2012_MathematicalModelsPopulation,TelEtAl_2005_ChemicalBiologicalActivity,Wiggins_2005_DynamicalSystemsApproach}. 
 Given initial values of a multi-dimensional state variable, such equations can be solved numerically to predict the state at future times.
 The governing dynamics may be specified using existing phenomenological models, but in modern applications these are usually supplemented or driven by observed data.  
@@ -345,7 +353,7 @@ The first three standard-deviation levels of the \(2\times 2\) sample covariance
 % If the observations were distributed according to a bivariate Gaussian distribution with that corresponding covariance matrix, then approximately \(86.47\%\) of the data lies within the first two bounds, and \(98.89\%\) within all three \cite{WangEtAl_2015_ConfidenceAnalysisStandard}.
 As \(\epsilon\) decreases towards \(0\), the samples increasingly resemble a Gaussian distribution, and both the mean and covariance coincide with the corresponding limits.
 
-\begin{figure}[t]
+\begin{figure}[htbp]
 	\begin{center}
         \includegraphics[width=\textwidth]{paper1_gaussian_limit/figures/y_histogram.pdf}       
 				% \td{Increase size/clarity of points at centre of contours}
@@ -366,7 +374,7 @@ For \(r = 1,2,3,4\), \(\Gamma_z^{\left(r\right)}\!\left(\epsilon\right)\) is sho
 \Cref{thm:main} predicts that \(\log_{10}\left(\Gamma_z^{\left(r\right)}\left(\epsilon\right)\right)\) should decay linearly with a slope greater than \(r\) as \(\epsilon\) decreases to zero.
 The lines of best fit for each value of \(r\) in \Cref{fig:gamma_z_valid} show this behaviour, and are therefore consistent with \Cref{thm:main}.
 
-\begin{figure}[t]
+\begin{figure}[htbp]
 	\begin{center}
         \includegraphics[width=\textwidth]{paper1_gaussian_limit/figures/z_diff.pdf}
 		\caption{Validation of \Cref{thm:main}, by plotting the sample \(r\)th raw moment distance (the error metric \(\Gamma_z^{(r)}(\epsilon)\)) between \(10000\) realisations of \(z_t^{(\epsilon)}(x)\) and \(z_t(x)\), for decreasing values of \(\epsilon\).
@@ -393,7 +401,7 @@ We also consider two different choices of the diffusion matrix \(\sigma\): the i
 to include both multiplicative and non-diagonal noise which grow for larger values of the coordinates. 
 
 
-\begin{figure}[t]
+\begin{figure}[htbp]
 	\begin{center}
         \includegraphics[width=\textwidth]{paper1_gaussian_limit/figures/through_time.pdf}
 				\caption{Histograms of \(y_t^{(0.03)}\) for (from left to right) \(t = 0.2, 0.4, 0.6, 0.8, 1.0\), with the time-evolution of the deterministic trajectory in grey and contours of the limiting covariance matrix \eqref{eqn:sigma_calc} for each time. The right figure uses the diffusion matrix $\sigma_M(x)$ as defined in \eqref{eq:sigM}.}
@@ -447,7 +455,7 @@ The computation of \(\Sigma\) circumvents the need for expensive Monte-Carlo sim
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \input{discussion}
-\section{Discussion}\label{sec:discussion}
+\section{Discussion}\label{sec:paper1_appl}
 
 This paper has contributed a rigorous justification, in terms of error bounds and a small-noise limit, for an easily computable linearisation approximation to the solution of nonlinear stochastic differential equations, as seen across diverse places in the literature \cite[e.g.]{Jazwinski_2014_StochasticProcessesFiltering, Sanz-AlonsoStuart_2017_GaussianApproximationsSmall, SarkkaSolin_2019_AppliedStochasticDifferential}.
 The theory applies to fully non-autonomous SDEs with multiplicative noise. 

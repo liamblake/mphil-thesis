@@ -1,5 +1,5 @@
-\documentclass[12pt, a4paper, twoside]{book}
-\title{Computable characterisations of uncertainty in geophysical models}
+\documentclass[draft, 12pt, a4paper, twoside]{book}
+\title{Computable characterisations of stochastic uncertainty in dynamical systems}
 \author{Liam Blake}
 \date{\today}
 \def\degree{Master of Philosophy}
@@ -7,10 +7,18 @@
 
 
 % Any packages should go here
-\usepackage{graphicx,thesis} 
-\usepackage[numbers,square]{natbib}
+\usepackage{graphicx,thesis}
+\usepackage[numbers]{natbib}
 \usepackage[twoside,left=2cm,right=2cm,bindingoffset=1cm]{geometry}
 \usepackage{bibentry}
+
+% TikZ
+\usepackage{pgfplots}
+\usetikzlibrary{calc}
+
+% Subfigures 
+\usepackage{caption}
+\usepackage{subcaption}
 
 \begin{document}
 \frontmatter
@@ -34,10 +42,14 @@
 \include{chp01_introduction}
 \include{chp02_background}
 \include{chp03_the_gaussian_limit}
+\include{chp04_a_gaussian_mixture_model}
+\include{chp05_applications_in_oceanography}
+\include{chp06_future_outlook}
+% \include{chp06_jl_package}
 
 % Appendices
 \appendix
-% \include{appendix1/appendix} 
+\include{appendix/sde_solutions.tex} 
 
 \backmatter
 % Add the bibliography to the table of contents
@@ -48,4 +60,3 @@
 \bibliography{thesis}
 
 \end{document}
-
