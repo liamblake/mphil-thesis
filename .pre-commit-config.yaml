@@ -1,0 +1,19 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.3.0
+    hooks:
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+
+  # Replace any CRLF with LF, to maintain consistency
+  - repo: https://github.com/Lucas-C/pre-commit-hooks
+    rev: v1.1.13
+    hooks:
+      - id: remove-crlf
+
+  # Indent/formatting of LaTeX style files
+  - repo: https://github.com/cmhughes/latexindent.pl.git
+    rev: V3.21
+    hooks:
+      - id: latexindent
