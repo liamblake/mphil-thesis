@@ -4,7 +4,7 @@ Throughout, we use the norm symbol \(\norm{\cdot}\) to denote (i) for a vector, 
 The gradient symbol \(\nabla\) generically refers to derivatives with respect to the state variable.
 We write \(W_t = \left(W_t^{(1)}, \hdots, W_t^{(n)}\right)^{\T}\) as the components of the canonical \(n\)-dimensional Wiener process, where each \(W_t^{(i)}\) are mutually independent 1-dimensional Wiener processes.
 The flow map \(F_0^t: \R^n \to \R^n\) summarises solutions of the deterministic model \eqref{eqn:ode_det}, given by
-%as the unique solution to 
+%as the unique solution to
 %\begin{equation}
 %	\dpd{F_{0}^{t}(x)}{t} = u\left(F_{0}^{t}(x), t\right), \quad F_{0}^{0}\left(x\right) = x,
 %	\label{eqn:flow_map_ode}
@@ -15,7 +15,7 @@ The flow map \(F_0^t: \R^n \to \R^n\) summarises solutions of the deterministic 
 	\label{eqn:flow_map_int}
 \end{equation}
 for an initial condition \(x \in \R^n\).
-%By taking the gradient with respect to \(x\) of \eqref{eqn:flow_map_ode}, 
+%By taking the gradient with respect to \(x\) of \eqref{eqn:flow_map_ode},
 The spatial gradient (with respect to the initial condition) of the flow map solves the equation of variations associated with \eqref{eqn:ode_det}, i.e.
 \begin{equation}
 	\dpd{}{t}\nabla F_0^t(x) = \nabla u\left(F_0^t(x), t\right)\nabla F_0^t(x).
@@ -186,7 +186,7 @@ The next Lemma is a similar extension of \cite[Lem. 2.2]{Balasuriya_2020_Stochas
 	\end{align*}
 	We note that \(\avg{\norm{y_t^{(\epsilon)} - F_0^t(x)}^q} < \infty\) from \ref{hyp:u_bounds}, so by Tonelli's theorem (e.g. \cite[Thm. 2.3.9]{Bremaud_2020_ProbabilityTheoryStochastic}),
 	% \begin{align*}
-	% 	\avg{\norm{y_t^{(\epsilon)} - F_0^t(x)}^q} & \leq 2^{q-1}t^{q-1}\avg{\int_0^{t}{\left(\norm{u\left(y_\tau^{(\epsilon)}, \tau\right)} + \norm{u\left(F_0^{\tau}(x), \tau\right)}\right)^q\dif\tau}} \\ 
+	% 	\avg{\norm{y_t^{(\epsilon)} - F_0^t(x)}^q} & \leq 2^{q-1}t^{q-1}\avg{\int_0^{t}{\left(\norm{u\left(y_\tau^{(\epsilon)}, \tau\right)} + \norm{u\left(F_0^{\tau}(x), \tau\right)}\right)^q\dif\tau}} \\
 	%  & \qquad\qquad\qquad\qquad + 2^{q-1}\epsilon^q n^{3q/2}K_\sigma^q G_{q/2} t^{q/2} \\
 	% 	                                           & \leq 2^{q-1}t^{q-1}\avg{\int_0^{t}{2^qK_u^q\dif\tau}} + 2^{q-1}\epsilon^q n^{3q/2}K_\sigma^q G_{q/2} t^{q/2} \\
 	% 	% & \leq 2^{2q-1}T^{q}K_u^q + 2^{q-1}\epsilon^q n^{3q/2}K_\sigma^q G_{q/2}^T{q/2} \\
@@ -254,7 +254,7 @@ where
 \end{align*}
 Then, using \eqref{eqn:trinomial} and taking expectation,
 % \[
-% 	\norm{z_t^{(\epsilon)}(x) - z_t(x)}^r %\leq \left(\norm{A_\epsilon(t)} + \norm{B_\epsilon(t)} + \norm{C(t)}\right)^r 
+% 	\norm{z_t^{(\epsilon)}(x) - z_t(x)}^r %\leq \left(\norm{A_\epsilon(t)} + \norm{B_\epsilon(t)} + \norm{C(t)}\right)^r
 %  \leq 3^{r-1}\left(\norm{A(t)}^r + \norm{B(t)}^r + \norm{C(t)}^r\right)
 % \]
 % and so
@@ -356,7 +356,7 @@ Combining \eqref{eqn:A_ineq}, \eqref{eqn:B_ineq} and \eqref{eqn:C_ineq} into \eq
 \end{align*}
 Applying Gr\"{o}nwall's inequality, we have
 \begin{align*}
-	\avg{\norm{z_t^{(\epsilon)}(x) - z_t(x)}^r} % & \leq 3^{r-1}\left(\frac{t^{r-1}n^{r/2}\epsilon^{r}K_u^rH_{2r}(t)}{2^r}\right. \\ 
+	\avg{\norm{z_t^{(\epsilon)}(x) - z_t(x)}^r} % & \leq 3^{r-1}\left(\frac{t^{r-1}n^{r/2}\epsilon^{r}K_u^rH_{2r}(t)}{2^r}\right. \\
 	% & \qquad\qquad\qquad\qquad \left.+ n^{r}K_u^r \epsilon^r t^{r/2 - 1}H_{r}(t)G_r\right)\exp\left(\int_0^t{3^{r - 1}t^{r-1}K_u^r\dif\tau}\right) \\
 	 & = 3^{r-1}K_u^r\left(\frac{t^{r-1}n^{r/2}H_{2r}(t)}{2^r} + n^{r}G_{r/2}t^{r/2 - 1}H_{r}(t)\right)\exp\left(3^{r - 1}t^{r}K_u^r\right)\epsilon^r.
 	% & = 3^{r-1}K_u^r\Bigg(\frac{t^{r-1}n^{r/2}2^{2r-1} n^{3r}K_\sigma^{2r} G_{r} t^{r + 1}\exp\left(2^{2r-1} K_u^{2r} t^{2r}\right)}{2^r}                                                                                                                                                 \\
@@ -568,4 +568,3 @@ Taking the limit as \(\epsilon\) approaches zero and using \eqref{eqn:sigma_lim}
 	S^2(x,t) = \lim_{\epsilon\downarrow 0} S^2_{(\epsilon)}(x,t) = \lim_{\epsilon\downarrow 0}\norm{\var{z_t^{(\epsilon)}(x)}} = \norm{\Sigma(x,t)}.
 \]
 Since \(\Sigma(x,t)\) is symmetric and positive definite, the operator norm, and therefore \(S^2(x,t)\), is given by the largest eigenvalue of \(\Sigma(x,t)\).
-
