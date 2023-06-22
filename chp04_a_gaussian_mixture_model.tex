@@ -1,1 +1,120 @@
-\chapter{A Gaussian mixture model}
+\chapter{A Gaussian mixture model}\label{ch:gmm}
+
+
+First, we shall make some adjustments to the theory as presented in \Cref{ch:limit_paper}, by dropping the explicit \(\epsilon\) notation and extending the theory to allow for Gaussian initial conditions to our stochastic differential equation.
+
+
+\section{The deterministic model versus the stochastic model}
+
+In \Cref{ch:limit_paper}, we provided a rigorous justification that the Gaussian density described in \Cref{thm:gauss_dist} provides an approximation/characterisation of the solution to a stochastic differential equation, in the sense of a small-noise limit.
+The scale of the noise was explicitly parameterised with a non-zero value \(\epsilon\), and we considered the behaviour of solutions in the limit as \(\epsilon\) approaches zero.
+However, in practice there will be a prescribed value of \(\epsilon\), either chosen judiciously from context or informed by data.
+Henceforth, we shall drop the use of \(\epsilon\) and instead consider stochastic differential equations of the form
+\[
+	\sde{y_t}{u\left(y_t, t\right)}{\sigma\left(y_t, t\right)},
+\]
+where, strictly speaking, the noise scale parameter has been included in the diffusion term \(\sigma\).
+
+\begin{subequations}\label{eqn:gauss_de}
+	\begin{align}
+		\dod{F_s^t(x)}{t}                & = u\left(F_s^t(x), t\right), \quad F_s^s(x) = x \label{eqn:gauss_mean_de}                                                              \\
+		\dod{\Sigma_s^t(x; \Sigma_0)}{t} & = \begin{multlined}[t]
+			                                     \nabla u\left(F_s^t(x), t\right) \Sigma_s^t(x; \Sigma_0) + \Sigma_s^t(x; \Sigma_0)\left[\nabla u\left(F_s^t(x), t\right)\right]^{\T} \\
+			                                     + \sigma\left(F_s^t(x), t \right)\sigma\left(F_s^t(x), t\right)^{\T}, \quad \Sigma_s^s(x; \Sigma_0) = \Sigma_0,
+		                                     \end{multlined}
+		\label{eqn:gauss_cov_de}
+	\end{align}
+\end{subequations}
+
+
+
+It is also worth noting that the small noise limit can be equivalently thought of, at least heuristically, as a small time limit, using scaling properties of the Wiener process.
+\td{Show this or otherwise work it out. Just needs to be a heuristic or intuitive idea, rather than anything \emph{too} precise}
+
+
+
+\section{Motivation: The Gulf Stream}
+
+A key advantage of the Gaussian limit is the ease of computation; rather than having to generate a large number of realisations of the SDE solution to understand, either qualitatively or for the purposes of inference and estimation, the probability distribution of the solution, we can solve a smaller system of equations \eqref{eqn:sigma_ode} for the state and covariance simultaneously.
+
+We shall first motivate the importance of stochastic models
+
+
+
+
+\section{Propagating uncertain initial conditions}
+
+
+\section{Solving for the state and covariance}
+To compute the Gaussian limit along a deterministic trajectory, we can solve the system of equations \eqref{eqn:gauss_de}, providing that the Jacobian \(\nabla u\) of the vector field is available, or can be approximated appropriately.
+Since \(\Sigma_s^t\) represents a covariance matrix, it must remain symmetric and positive semi-definite when solving \eqref{eqn:gauss_de}.
+However, many standard numerical schemes do not take this into account, so a specialised scheme is required, as described below.
+
+Similar equations of the form \eqref{eqn:gauss_de} (although often without dependence on \emph{both} time and the state in the \(\sigma\) term) are solved numerically in other applications, notably when implementing the extended Kalman filter on stochastic differential equation models \citep{Jazwinski_2014_StochasticProcessesFiltering, KulikovaKulikov_2014_AdaptiveODESolvers}.
+\citet{KulikovaKulikov_2014_AdaptiveODESolvers} identify that that the two most significant sources of numerical error when solving \eqref{eqn:gauss_de} are a) the estimate of the covariance matrix \(\Sigma_s^t\) violates the requirement of positive semi-definiteness, and b) local error propagation in the state equation without an adaptive step size.
+The state equation \eqref{eqn:gauss_mean_de} is the only non-linear part of \eqref{eqn:gauss_de}, so
+
+
+\citet{Mazzoni_2008_ComputationalAspectsContinuous} proposes an efficient hybrid method for solving \eqref{eqn:gauss_de} which addresses both difficulties a) and b), and takes advantage of the availability of \(\nabla u\).
+This method, which we shall term the Mazzoni method, combines a Taylor-Heun approximation to solve \eqref{eqn:gauss_mean_de} for the state and a Gauss-Legendre step to solve \eqref{eqn:gauss_cov_de} for the covariance.
+
+
+
+Throughout, we use the Mazzoni method to solve \eqref{eqn:gauss_de}
+
+\begin{subequations}\label{eqn:mazzoni_update}
+	The Taylor-Heun formula for the update of the state is then
+	\begin{equation}
+		F_{s}^{t + \Delta t}(x) \approx F_s^{t}(x) + \left(I - \frac{\Delta t}{2}\nabla u\left(F_s^t(x), t\right)\right)^{-1}.
+		\label{eqn:mazzoni_state_update}
+	\end{equation}
+	The Gauss-Legendre update of the covariance is
+	\begin{equation}
+		\Sigma_{s}^{t + \delta t}\left(x; \Sigma_0\right) \approx M_\tau \Sigma_s^t\left(x; \Sigma_0\right) M_\tau^{\T} + \Delta t K_\tau \sigma\left(w_\tau,\, t + \frac{\Delta t}{2}\right)\sigma\left(w_\tau,\, t + \frac{\Delta t}{2}\right)^{\T} K_\tau^{\T},
+		\label{eqn:mazzoni_cov_update}
+	\end{equation}
+	where
+	\begin{align}%\label{eqn:mazzoni_cov_terms}
+		w_\tau & = \frac12\left(w_t + w_{t + \Delta t} - \frac{\Delta t^2}{4}\nabla u\left(w_t, \, t\right) u\left(w_t, \, t\right)\right) \\
+		K_\tau & = \left[I - \frac{\Delta t}{2}\nabla u\left(w_\tau,\, t + \frac{\Delta t}{2}\right)\right]^{-1}                           \\
+		M_\tau & = K_\tau \left[I + \frac{\Delta t}{2}\nabla u\left(w_\tau,\, t + \frac{\Delta t}{2}\right)\right].
+	\end{align}
+\end{subequations}
+
+
+
+
+\section{The GMM algorithm}
+
+
+
+
+
+
+\section{Analysis through exact SDE solutions}
+
+
+
+\subsection{A linear SDE}
+Consider an \(n\)-dimensional linear stochastic differential equation with additive noise;
+\begin{equation}
+	\sde{y_t}{A(t)y_t}{B(t)},
+	\label{eqn:linear_n_sde}
+\end{equation}
+where \(A: [0,T] \to \R^{n\times n}\) and \(B: [0,T] \to \R^{n \times m}\) are specified, deterministic matrix-valued functions that are sufficiently smooth and measurable to ensure the existence of solutions, and \(W_t\) is an \(m\)-dimensional Wiener process.
+
+
+
+The Gaussian limit described in \Cref{thm:gauss_dist}
+
+
+
+
+
+\subsection{Ben\^e's SDE}
+
+
+
+
+
+% \section{StochasticSensitivity.jl}

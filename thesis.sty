@@ -13,7 +13,8 @@
 	\else\discipline\fi\\
 	at The University of Adelaide\\
 	Faculty of Sciences, Engineering and Technology \\
-	School of Computer and Mathematical Sciences
+	Discipline of Mathematical Sciences
+	%School of Computer and Mathematical Sciences
 	\\\vfil
 	\includegraphics{UoA_logo_col_vert}
 }
@@ -22,6 +23,24 @@
 \pagestyle{headings}
 % but avoid all capitals
 \let\MakeUppercase\textsf
+
+
+\RequirePackage{graphicx}
+
+\RequirePackage[authoryear,sort,comma]{natbib}
+\setcitestyle{authoryear,aysep={}}
+
+\RequirePackage[twoside,left=2cm,right=2cm,bindingoffset=1cm]{geometry}
+\RequirePackage{bibentry}
+
+% TikZ
+\RequirePackage{pgfplots}
+\usetikzlibrary{calc}
+
+% Subfigures
+\RequirePackage{caption}
+\RequirePackage{subcaption}
+
 
 % Default to using \varepsilon
 \let\oldepsilon\epsilon
@@ -43,14 +62,11 @@
 % Hyperlinks are cool
 \RequirePackage{url}
 \RequirePackage{hyperref}
-\hypersetup{colorlinks,linkcolor=blue,citecolor=red,urlcolor=magenta,filecolor=magenta,breaklinks,dvips,bookmarks,bookmarksopen}
-\usepackage[capitalise,nameinlink,noabbrev]{cleveref}
+\hypersetup{colorlinks,linkcolor=red,citecolor=cyan,urlcolor=magenta,filecolor=magenta,breaklinks,dvips,bookmarks,bookmarksopen}
+\RequirePackage[capitalise,nameinlink,noabbrev]{cleveref}
 % Units
 \RequirePackage{siunitx}
 \RequirePackage{calc}
-
-% Pass the disable option to the todonotes package.
-\DeclareOption{notodo}{\PassOptionsToPackage{disable}{todonotes}}
 
 \ProcessOptions\relax
 
@@ -73,6 +89,14 @@
 \refcheckize{\cref}
 \refcheckize{\Cref}
 
+% Extra stuff when draft is on
+\RequirePackage{ifdraft}
+\ifdraft{
+	% Big line spacing
+	\linespread{1.5}
+}{}
+
+
 % Allow numbering of individuals lines in an align env
 \newcommand{\numberthis}{\addtocounter{equation}{1}\tag{\theequation}}
 
@@ -82,7 +106,6 @@
 \newcommand{\Z}{\mathbb{Z}}		% Integers
 \newcommand{\N}{\mathbb{N}}		% Natural numbers
 \newcommand{\Q}{\mathbb{Q}}		% Rational numbers
-% TODO: RMarkdown on Windows dislikes this
 \newcommand{\C}{\mathbb{C}}		% Complex numbers
 
 % Set with a condition
@@ -124,8 +147,6 @@
 
 \newcommand{\hessian}{\nabla\nabla}
 
-% Vector integrals
-% TODO as required
 
 % Differential form of an SDE
 % TODO: Include an optional parameter for the noise, defaulting to W_t
@@ -177,7 +198,7 @@
 % Todo notes, annotations, etc.
 % Thanks JM
 % TODO: Optional args seems to not be working
-\RequirePackage[colorinlistoftodos,prependcaption,textsize=scriptsize]{todonotes}
+\RequirePackage[obeyDraft,colorinlistoftodos,prependcaption,textsize=scriptsize]{todonotes}
 
 \newcommandx{\note}[2][1=]{
 	\todo[inline,linecolor=black,backgroundcolor=violet!5,bordercolor=violet,#1]{
@@ -206,35 +227,6 @@
 \newcommand{\gronwall}{Gr\"{o}nwall}
 \newcommand{\holder}{H\"{o}lder}
 \newcommand{\burkholder}{Burkh\"{o}lder}
-
-% Neat trick to access environment variables
-% From https://tex.stackexchange.com/a/62032
-\ExplSyntaxOn
-\NewDocumentCommand{\getenv}{om}
-{
-	\sys_get_shell:nnN { kpsewhich ~ --var-value ~ #2 } { } \l_tmpa_tl
-	\tl_trim_spaces:N \l_tmpa_tl
-	\IfNoValueTF { #1 }
-	{
-		\tl_use:N \l_tmpa_tl
-	}
-	{
-		\tl_set_eq:NN #1 \l_tmpa_tl
-	}
-}
-\ExplSyntaxOff
-
-% This is needed to use a .bib file outside of the same directory as the TeX file via a relative
-% path, when using an output directory (e.g. /build).
-% Include the bibliography as
-%		\bibliography{\mainabsdir/the/relative/path}
-% From https://tex.stackexchange.com/a/383143
-% BibTeX is fucking stupid and this is a stupid hack.
-\RequirePackage{currfile-abspath}
-\getmainfile
-\getabspath{\themainfile}
-\let\mainabsdir\theabsdir
-\let\mainabspath\theabspath
 
 % Statistics
 \RequirePackage{dsfont}
@@ -271,7 +263,7 @@
 \newcommand{\alsu}{\,\text{a.s.}}
 
 % Distributions
-\newcommand{\Dist}[2]{#1\left(#2\right)}
+\newcommand{\Dist}[2]{#1\!\left(#2\right)}
 
 % Without \sim
 \newcommand{\Gauss}[1]{\Dist{\mathcal{N}}{#1}}

@@ -5,20 +5,8 @@
 \def\degree{Master of Philosophy}
 \def\discipline{Applied Mathematics}
 
+\usepackage{thesis}
 
-% Any packages should go here
-\usepackage{graphicx,thesis}
-\usepackage[numbers]{natbib}
-\usepackage[twoside,left=2cm,right=2cm,bindingoffset=1cm]{geometry}
-\usepackage{bibentry}
-
-% TikZ
-\usepackage{pgfplots}
-\usetikzlibrary{calc}
-
-% Subfigures
-\usepackage{caption}
-\usepackage{subcaption}
 
 \begin{document}
 \frontmatter
@@ -41,22 +29,26 @@
 % Chapters
 \include{chp01_introduction}
 \include{chp02_background}
+\include{chp03_motivation}
 \include{chp03_the_gaussian_limit}
 \include{chp04_a_gaussian_mixture_model}
 \include{chp05_applications_in_oceanography}
 \include{chp06_future_outlook}
-% \include{chp06_jl_package}
 
 % Appendices
 \appendix
 \include{appendix/sde_solutions.tex}
+
+%
+\chapter{Extended appendices of ``Explicit Gaussian characterisation of model uncertainty in the limit of small noise''}
+\include{paper1_gaussian_limit/appendices}
 
 \backmatter
 % Add the bibliography to the table of contents
 \addcontentsline{toc}{chapter}{Bibliography}
 
 % What style to use and what file to use for the bibliography
-\bibliographystyle{abbrvnat}
+\bibliographystyle{plainnat}
 \bibliography{thesis}
 
 \end{document}

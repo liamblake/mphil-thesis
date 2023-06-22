@@ -1,0 +1,46 @@
+\chapter{The need for developments in uncertainty parameterisation}
+
+\section{Stochastic parameterisation}
+
+
+
+\subsection{In the atmosphere}
+
+The review by \citet{BernerEtAl_2017_StochasticParameterizationNew} summarises
+
+
+
+\subsection{In the ocean}
+
+
+
+The mixing effect that these eddies have on the surrounding flow can be modelled with spatiotemporally-varying diffusion \citehere, which via the Fokker-Planck equation can be equivalently formulated as a stochastic differential equation with multiplicative noise.
+The Lagrangian trajectories, incorporating these unresolved eddy effects, are then modelled as solutions to the stochastic differential equation.
+Equivalently, through the Fokker-Planck equation we can consider the evolution of a passive tracer undergoing advection due to the deterministic drift and diffusion from both any natural diffusivity and the unresolved processes.
+The probability density function that solves the Fokker-Planck equation can be instead thought of as a time-varying density (with the appropriate normalisation) of the tracer.
+For instance, the Fokker-Planck equation has been used to model the transport of \citehere.
+Hence, understanding the evolution of solutions to a stochastic differential equation is valuable in oceanography, as a means of quantifying both observational error and unresolved subgrid processes.
+
+
+There are several different methods for quantifying eddy diffusivity given either observed tracer data or a global ocean circulation model.
+
+The simplest notion of eddy diffusivity is a defined by
+
+
+
+
+
+
+A recent approach by \cite{YingEtAl_2019_BayesianInferenceOcean} uses Bayesian inference to estimate the eddy diffusivity tensor from observed Lagrangian tracer data, by numerically solving the Fokker-Planck equation to compute a likelihood function.
+
+
+\section{Limitations of stochastic simulation}
+
+
+However, the most significant drawback of bulk stochastic simulation is the computational load.
+
+
+In general, a large number of samples is required for convergent statistics and accurate inference, as discussed by \citet{Leutbecher_2019_EnsembleSizeHow}.
+
+
+The recent review by \citet{LeutbecherEtAl_2017_StochasticRepresentationsModel} highlights the need to develop computationally efficient schemes for quantifying stochasticity in weather and climate forecast models.

@@ -123,42 +123,42 @@ Consider a sequence of \(m\)-dimensional random vectors \(X_1, X_2,\dotsc\) and 
 We say that:
 \begin{itemize}
 	\item The sequence \(X_1, X_2, \dotsc\) converges \emph{in distribution} to \(X\) if
-	      \[
-		      \lim_{n\to\infty}F_n\left(x\right) = F(x),
-	      \]
-	      where \(F_n\) is the cumulative distribution function for \(X_n\) and \(F\) is the cumulative distribution function for \(X\), for every point \(x \in \R^m\) where \(F\) is continuous.
-	      If this is the case, we write
-	      \[
-		      X_n \xlongrightarrow[\text{distribution}]{} X, \quad \text{as } n \to \infty.
-	      \]
+		\[
+			\lim_{n\to\infty}F_n\left(x\right) = F(x),
+		\]
+		where \(F_n\) is the cumulative distribution function for \(X_n\) and \(F\) is the cumulative distribution function for \(X\), for every point \(x \in \R^m\) where \(F\) is continuous.
+		If this is the case, we write
+		\[
+			X_n \xlongrightarrow[\text{distribution}]{} X, \quad \text{as } n \to \infty.
+		\]
 
 
 	\item The sequence \(X_1, X_2, \dotsc\) converges \emph{in probability} to \(X\) if for every \(\delta > 0\)
-	      \[
-		      \lim_{n\to\infty}P\left(\norm{X_n - X} < \delta\right) = 0,
-	      \]
-	      in which case we write
-	      \[
-		      X_n \xlongrightarrow[\text{probability}]{} X, \quad \text{as } n \to \infty.
-	      \]
+		\[
+			\lim_{n\to\infty}P\left(\norm{X_n - X} < \delta\right) = 0,
+		\]
+		in which case we write
+		\[
+			X_n \xlongrightarrow[\text{probability}]{} X, \quad \text{as } n \to \infty.
+		\]
 
 	\item The sequence \(X_1, X_2, \dotsc\) converges \emph{almost surely} to \(X\) if
-	      \[
-		      P\left(\lim_{n \to \infty}X_n = X\right) = 1,
-	      \]
-	      in which case we write
-	      \[
-		      X_n \xlongrightarrow[\text{almost surely}]{} X, \quad \text{as } n \to \infty.
-	      \]
+		\[
+			P\left(\lim_{n \to \infty}X_n = X\right) = 1,
+		\]
+		in which case we write
+		\[
+			X_n \xlongrightarrow[\text{almost surely}]{} X, \quad \text{as } n \to \infty.
+		\]
 
 	\item For \(r > 0\), the sequence \(X_1, X_2, \dotsc\) converges \emph{in \(r\)th mean} to \(X\) if
-	      \[
-		      \lim_{n\to\infty}{\avg{\norm{X_n - X}^r}} = 0,
-	      \]
-	      in which case we write
-	      \[
-		      X_n \xlongrightarrow[r\text{th mean}]{} X, \quad \text{as } n \to \infty.
-	      \]
+		\[
+			\lim_{n\to\infty}{\avg{\norm{X_n - X}^r}} = 0,
+		\]
+		in which case we write
+		\[
+			X_n \xlongrightarrow[r\text{th mean}]{} X, \quad \text{as } n \to \infty.
+		\]
 \end{itemize}
 There are implications between each notion of convergence, with convergence almost surely being the strongest and convergence in distribution the weakest.
 These implications are summarised in \Cref{fig:rv_conv_impl}, and all these results are stated in proven in \citet{Bremaud_2020_ProbabilityTheoryStochastic}, for instance.
@@ -174,10 +174,10 @@ These implications are summarised in \Cref{fig:rv_conv_impl}, and all these resu
 			\node (rmom) [draw, below=of rm] {Convergence of \(r\)th moment};
 			\node (d) [draw, below=of p] {Convergence in distribution};
 			\path[->,thick] (as) edge  (p)
-			(p) edge  (d)
-			(qm) edge (rm)
-			(rm) edge (p)
-			(rm) edge (rmom);
+                     (p) edge  (d)
+										 (qm) edge (rm)
+										 (rm) edge (p)
+										 (rm) edge (rmom);
 		\end{tikzpicture}
 		\caption{The strength of each notion of convergence in probability.}
 		\label{fig:rv_conv_impl}
@@ -243,15 +243,15 @@ This construction of the It\^o integral is available in many textbooks on stocha
 The extension of the It\^o integral to vector- and matrix-valued functions is straightforward.
 Let \(g \colon [a,b] \to \R^{n \times m}\) be a function giving possibly random \(n \times m\) matrices (take \(m = 1\) to describe a vector-valued function).
 \begin{subequations}\label{eqn:mv_ito_defn}
-	Then, we define the It\^o integral of \(g\) with respect to the \(m\)-dimensional Wiener process \(W_t\) over the time interval \([a,b]\) as
+Then, we define the It\^o integral of \(g\) with respect to the \(m\)-dimensional Wiener process \(W_t\) over the time interval \([a,b]\) as
 	\begin{equation}\label{eqn:mv_ito_defn_1}
-		\int_a^b{g(t)\dif W_t} \coloneqq \left(\mathcal{I}_1, \dotsc, \mathcal{I}_n\right)^{\T},
-	\end{equation}
-	where
-	\begin{equation}\label{eqn:mv_ito_defn_2}
-		\mathcal{I}_{i} = \sum_{j=1}^m{\int_a^b{g_{ij}\left(t\right) \dif W_t^{(j)}}},
-	\end{equation}
-	for \(i = 1,\dotsc, n\) and where \(g_{ij}\) denotes the \((i,j)\)th element of \(g\).
+	\int_a^b{g(t)\dif W_t} \coloneqq \left(\mathcal{I}_1, \dotsc, \mathcal{I}_n\right)^{\T},
+\end{equation}
+where
+\begin{equation}\label{eqn:mv_ito_defn_2}
+	\mathcal{I}_{i} = \sum_{j=1}^m{\int_a^b{g_{ij}\left(t\right) \dif W_t^{(j)}}},
+\end{equation}
+for \(i = 1,\dotsc, n\) and where \(g_{ij}\) denotes the \((i,j)\)th element of \(g\).
 \end{subequations}
 
 \subsection{It\^o stochastic differential equations}
@@ -269,7 +269,7 @@ For a (possibly random) initial condition \(y_0\), the solution \(y_t\) to \eqre
 \end{equation}
 The terms of the differential form \eqref{eqn:gen_sde} are not all rigorously defined, and so the differential form is rather notation that is equivalent to \eqref{eqn:gen_sde_int}.
 In the most general case, the drift \(u\) and diffusivity \(\sigma\) are permitted to themselves be random functions\footnote{For more information, see for instance \citet{KallianpurSundar_2014_StochasticAnalysisDiffusion}.
-	The formal treatment of such stochastic differential equations remains an area of open research, such as establishing the conditions for existence and uniqueness of solutions \citehere, and EXAMPLE.}, but in this thesis we assume that both are deterministic.
+The formal treatment of such stochastic differential equations remains an area of open research, such as establishing the conditions for existence and uniqueness of solutions \citehere, and EXAMPLE.}, but in this thesis we assume that both are deterministic.
 
 
 
