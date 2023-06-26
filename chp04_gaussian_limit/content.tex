@@ -355,7 +355,7 @@ As \(\epsilon\) decreases towards \(0\), the samples increasingly resemble a Gau
 
 \begin{figure}[htbp]
 	\begin{center}
-		\includegraphics[width=\textwidth]{paper1_gaussian_limit/figures/y_histogram.pdf}
+		\includegraphics[width=\textwidth]{chp04_gaussian_limit/figures/y_histogram.pdf}
 		% \td{Increase size/clarity of points at centre of contours}
 		\caption{Histograms of \(y_t^{(\epsilon)}\) from direct simulation of \eqref{eqn:sde_y}, for four different \(\epsilon\) values.
 		Overlaid in black are contours of the Gaussian limit \eqref{eqn:y_t_gauss}, which correspond to the first three standard deviation levels centred at the limiting mean \(F_0^t(x)\).
@@ -376,7 +376,7 @@ The lines of best fit for each value of \(r\) in \Cref{fig:gamma_z_valid} show t
 
 \begin{figure}[htbp]
 	\begin{center}
-		\includegraphics[width=\textwidth]{paper1_gaussian_limit/figures/z_diff.pdf}
+		\includegraphics[width=\textwidth]{chp04_gaussian_limit/figures/z_diff.pdf}
 		\caption{Validation of \Cref{thm:main}, by plotting the sample \(r\)th raw moment distance (the error metric \(\Gamma_z^{(r)}(\epsilon)\)) between \(10000\) realisations of \(z_t^{(\epsilon)}(x)\) and \(z_t(x)\), for decreasing values of \(\epsilon\).
 		A line of best fit (in red) is placed on each, and the resulting slope indicated.}
 		\label{fig:gamma_z_valid}
@@ -403,7 +403,7 @@ to include both multiplicative and non-diagonal noise which grow for larger valu
 
 \begin{figure}[htbp]
 	\begin{center}
-		\includegraphics[width=\textwidth]{paper1_gaussian_limit/figures/through_time.pdf}
+		\includegraphics[width=\textwidth]{chp04_gaussian_limit/figures/through_time.pdf}
 		\caption{Histograms of \(y_t^{(0.03)}\) for (from left to right) \(t = 0.2, 0.4, 0.6, 0.8, 1.0\), with the time-evolution of the deterministic trajectory in grey and contours of the limiting covariance matrix \eqref{eqn:sigma_calc} for each time. The right figure uses the diffusion matrix $\sigma_M(x)$ as defined in \eqref{eq:sigM}.}
 		% (c,d) The time-evolution of \(S^2(x,t)\) and the operator norm of the sample covariance for stochastic simulations of \(y_t^{(0.3)}\) at each time.}
 		\label{fig:time_evol}

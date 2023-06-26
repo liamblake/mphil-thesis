@@ -1,9 +1,11 @@
 \documentclass[draft, 12pt, a4paper, twoside]{book}
+
 \title{Computable characterisations of stochastic uncertainty in dynamical systems}
 \author{Liam Blake}
 \date{\today}
 \def\degree{Master of Philosophy}
 \def\discipline{Applied Mathematics}
+
 
 \usepackage{thesis}
 
@@ -27,13 +29,13 @@
 \mainmatter
 
 % Chapters
-\include{chp01_introduction}
-\include{chp02_background}
-\include{chp03_motivation}
-\include{chp03_the_gaussian_limit}
-\include{chp04_a_gaussian_mixture_model}
-\include{chp05_applications_in_oceanography}
-\include{chp06_future_outlook}
+\include{chp01_introduction/introduction}
+\include{chp02_background/background}
+\include{chp03_motivation/motivation}
+\include{chp04_gaussian_limit/the_gaussian_limit}
+\include{chp05_gmm/gmm}
+\include{chp06_applications/applications}
+\include{chp07_outlook/future_outlook}
 
 % Appendices
 \appendix
@@ -41,7 +43,7 @@
 
 %
 \chapter{Extended appendices of ``Explicit Gaussian characterisation of model uncertainty in the limit of small noise''}
-\include{paper1_gaussian_limit/appendices}
+\include{ch04_gaussian_limit/appendices}
 
 \backmatter
 % Add the bibliography to the table of contents

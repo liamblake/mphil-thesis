@@ -4,51 +4,46 @@
 In this chapter, we establish background results from dynamical systems, probability theory, and stochastic calculus that are used in the theoretical work of this thesis.
 
 \section{Notation}
-First, we establish some notational conventions that are used throughout this thesis.
+First, we establish notational conventions that are used throughout this thesis.
 
 The set of \(n \times m\) matrices with real-valued entries is denoted as \(\R^{n\times m}\).
-
+In general, the \(i\)th component of a vector \(x\) is denoted by \(x_{i}\), except where there is already a subscript, in which case we write \(x_t^{(i)}\) to denote the \(i\)th component of \(x_t\), for instance.
 The norm symbol \(\norm{\cdot}\) without any additional qualifiers denotes the standard Euclidean norm for a vector, and the spectral (operator) norm induced by the Euclidean norm, i.e. for an \(n \times n\) matrix \(A\)
 \[
 	\norm{A} = \sup\left\{\frac{\norm{Av}}{\norm{v}}\,\middle|\,v \in \R^n, \, \norm{v} \neq 0\right\}.
 \]
 
 
-% For example, we say that a random variable \(A\) is equal to another random variable \(B\) almost surely (a.s.) if \(P\left(A = B\right) = 1\).
+For a random variable \(X\), we use \(\avg{X}\) to denote the expectation of \(X\) and \(\var{X}\) to denote the variance.
+For a \(n\)-dimensional vector-valued random variable \(Y\), \(\avg{Y}\) again denotes the (now vector-valued) expectation of \(Y\), and \(\var{Y}\) denotes the covariance matrix of \(Y\).
+That is, \(\var{Y}\) is the \(n\times\) matrix with \((i,j)\)th component
+\[
+	\left[\var{Y}\right]_{ij} = \avg{Y_iY_j} - \avg{Y_i}\avg{Y_j} = \begin{cases}
+		\var{Y_i},                         & \text{if } i = j, \\
+		\mathrm{Cov}\left(Y_i, Y_j\right), & \text{otherwise}.
+	\end{cases}
+\]
+
+When working with a stochastic process, such as the solution to a stochastic differential equation, .
 
 
 
-\section{Results from dynamical systems}
-
+\section{Dynamical systems and the flow map}
 We are interested in continuous time, continuous state-space dynamical systems which can be represented as a first-order ordinary differential equation
 \begin{equation}
 	\dod{w_t}{t} = u\left(w_t, t\right), \qquad w_0 = x \in \Omega,
 	\label{eqn:det_ode}
 \end{equation}
 where \(u: \Omega \times[0,T] \to \R^n\) describes the velocity at each state and time.
-Such systems are well-studied and used across a huge breadth of applications, including \citep{Wiggins_2005_DynamicalSystemsApproach} \citehere EXAMPLES.
+Such systems are well-studied and many deterministic models can be written in this form.
+For example, \citehere.
 Trajectories solving \eqref{eqn:det_ode} are summarised by the flow map, which is an operator mapping initial conditions to the corresponding later states, under the evolution of \eqref{eqn:det_ode}.
-\begin{definition}[Flow map]
-	Suppose \(s, t \in [0,T]\).
-	The \textbf{flow map} \(F_{s}^{t}: \R^n \to \R^n\) from time \(s\) to \(t\) associated with \eqref{eqn:det_ode} is the unique solution to
-	\begin{equation}
-		\dpd{F_{s}^{\tau}(x)}{\tau} = u\left(F_{s}^\tau(x), \tau\right), \qquad F_{s}^{s}(x) = x,
-		\label{eqn:flow_map_ode}
-	\end{equation}
-	solved up to time \(\tau = t\).
-	Equivalently,
-	\[
-		F_{s}^{t}(x) = x + \int_{s}^{t}{u\left(F_{s}^\tau(x), \tau\right)\dif\tau}.
-	\]
-\end{definition}
-
-\begin{figure}
-	\begin{center}
-		% \includegraphics[width=\textwidth]{}
-		\caption{A pictorial representation of the flow map \(F_s^t\).}
-		\label{fig:flow_map_diag}
-	\end{center}
-\end{figure}
+More formally, the flow map \(F_{s}^{t}: \R^n \to \R^n\) from time \(s\) to \(t\) associated with \eqref{eqn:det_ode} is the unique solution to
+\begin{equation}
+	\dpd{F_{s}^{\tau}(x)}{\tau} = u\left(F_{s}^\tau(x), \tau\right), \qquad F_{s}^{s}(x) = x,
+	\label{eqn:flow_map_ode}
+\end{equation}
+solved up to time \(\tau = t\).
 
 The flow map satisfies the following properties, under ASSUMPTIONS?
 For any \(r, s, t \in [0,T]\) and points \(x,w \in \R^n\),
@@ -115,50 +110,50 @@ An important inequality for establishing bounds
 % \end{definition}
 
 
-\section{Results from probability theory}
+\section{Notions of convergence}
 
-\subsection{Notions of convergence}
+
 There are several different notions of convergence for a sequence of random variables, which we briefly recall here.
 Consider a sequence of \(m\)-dimensional random vectors \(X_1, X_2,\dotsc\) and an \(m\)-dimensional random vector \(X\).
 We say that:
 \begin{itemize}
 	\item The sequence \(X_1, X_2, \dotsc\) converges \emph{in distribution} to \(X\) if
-		\[
-			\lim_{n\to\infty}F_n\left(x\right) = F(x),
-		\]
-		where \(F_n\) is the cumulative distribution function for \(X_n\) and \(F\) is the cumulative distribution function for \(X\), for every point \(x \in \R^m\) where \(F\) is continuous.
-		If this is the case, we write
-		\[
-			X_n \xlongrightarrow[\text{distribution}]{} X, \quad \text{as } n \to \infty.
-		\]
+	      \[
+		      \lim_{n\to\infty}F_n\left(x\right) = F(x),
+	      \]
+	      where \(F_n\) is the cumulative distribution function for \(X_n\) and \(F\) is the cumulative distribution function for \(X\), for every point \(x \in \R^m\) where \(F\) is continuous.
+	      If this is the case, we write
+	      \[
+		      X_n \xlongrightarrow[\text{distribution}]{} X, \quad \text{as } n \to \infty.
+	      \]
 
 
 	\item The sequence \(X_1, X_2, \dotsc\) converges \emph{in probability} to \(X\) if for every \(\delta > 0\)
-		\[
-			\lim_{n\to\infty}P\left(\norm{X_n - X} < \delta\right) = 0,
-		\]
-		in which case we write
-		\[
-			X_n \xlongrightarrow[\text{probability}]{} X, \quad \text{as } n \to \infty.
-		\]
+	      \[
+		      \lim_{n\to\infty}P\left(\norm{X_n - X} < \delta\right) = 0,
+	      \]
+	      in which case we write
+	      \[
+		      X_n \xlongrightarrow[\text{probability}]{} X, \quad \text{as } n \to \infty.
+	      \]
 
 	\item The sequence \(X_1, X_2, \dotsc\) converges \emph{almost surely} to \(X\) if
-		\[
-			P\left(\lim_{n \to \infty}X_n = X\right) = 1,
-		\]
-		in which case we write
-		\[
-			X_n \xlongrightarrow[\text{almost surely}]{} X, \quad \text{as } n \to \infty.
-		\]
+	      \[
+		      P\left(\lim_{n \to \infty}X_n = X\right) = 1,
+	      \]
+	      in which case we write
+	      \[
+		      X_n \xlongrightarrow[\text{almost surely}]{} X, \quad \text{as } n \to \infty.
+	      \]
 
 	\item For \(r > 0\), the sequence \(X_1, X_2, \dotsc\) converges \emph{in \(r\)th mean} to \(X\) if
-		\[
-			\lim_{n\to\infty}{\avg{\norm{X_n - X}^r}} = 0,
-		\]
-		in which case we write
-		\[
-			X_n \xlongrightarrow[r\text{th mean}]{} X, \quad \text{as } n \to \infty.
-		\]
+	      \[
+		      \lim_{n\to\infty}{\avg{\norm{X_n - X}^r}} = 0,
+	      \]
+	      in which case we write
+	      \[
+		      X_n \xlongrightarrow[r\text{th mean}]{} X, \quad \text{as } n \to \infty.
+	      \]
 \end{itemize}
 There are implications between each notion of convergence, with convergence almost surely being the strongest and convergence in distribution the weakest.
 These implications are summarised in \Cref{fig:rv_conv_impl}, and all these results are stated in proven in \citet{Bremaud_2020_ProbabilityTheoryStochastic}, for instance.
@@ -174,10 +169,10 @@ These implications are summarised in \Cref{fig:rv_conv_impl}, and all these resu
 			\node (rmom) [draw, below=of rm] {Convergence of \(r\)th moment};
 			\node (d) [draw, below=of p] {Convergence in distribution};
 			\path[->,thick] (as) edge  (p)
-                     (p) edge  (d)
-										 (qm) edge (rm)
-										 (rm) edge (p)
-										 (rm) edge (rmom);
+			(p) edge  (d)
+			(qm) edge (rm)
+			(rm) edge (p)
+			(rm) edge (rmom);
 		\end{tikzpicture}
 		\caption{The strength of each notion of convergence in probability.}
 		\label{fig:rv_conv_impl}
@@ -186,47 +181,42 @@ These implications are summarised in \Cref{fig:rv_conv_impl}, and all these resu
 
 
 
-\subsection{The Wiener process}
-\begin{definition}[Wiener process]\label{def:wiener}
-	The (one-dimensional) \emph{Wiener process} is a stochastic process \(B_t\) taking values in \(\R\) and satisfying the following properties:
-	\begin{romanate}
-		\item \(B_0 = 0\),
-		\item for every \(s > 0\), the increments \(W_{s + t} - W_{s}\) for \(t \geq 0\) are independent of \(W_r\) for all \(r < s\),
-		\item \(B_{s + t} - B_t \isGauss{0, s}\) for all \(s,t > 0\), and
-		\item \(B_t\) is continuous in \(t\) almost surely.
-	\end{romanate}
-	The \emph{\(n\)-dimensional Wiener process} is a stochastic process \(W_t\) taking values in \(R^n\) such that each component of \(W_t\) is a one-dimensional Wiener process and the components of \(W_t\) are mutually independent.
-\end{definition}
-Remarkably, these properties \emph{uniquely} define the Wiener process, with the additional result that for any \(t > 0\), \(B_t \sim \mathcal{N}\left(0, t\right)\), a Gaussian distribution with mean zero and variance \(t\).
-It follows that for the \(n\)-dimensional Wiener process \(W_t\), at any time \(t > 0\), \(W_t \sim \mathcal{N}\left(0, tI\right)\), an \(n\)-dimensional Gaussian distribution with mean zero and covariance matrix \(tI\).
-
-A Wiener process is a type of L\'evy process, which is a more general class of stochastic process satisfying only conditions (i), (ii), and (iii) in \Cref{def:wiener} \citep{Applebaum_2004_LevyProcessesStochastic}.
-
-\begin{figure}
-	\begin{center}
-		% \includegraphics[width=\textwidth]{}
-		\caption{Several realisations of (left) a one-dimensional Wiener process \(W_t\) evolving through time, and (right) a two-dimensional Wiener process \(\left(W_t^{(1)}, W_t^{(2)}\right)\).}
-		\label{fig:wiener_rels}
-	\end{center}
-\end{figure}
-
-
-\subsection{The Dirac-delta distribution}
-
-
-The Dirac-delta probability measure has the property that for any measurable function \(f: \R^n \to \R^n\),
-\[
-	\int_{\R^n}{f\dif \delta[x_0]} = f(x_0).
-\]
-
-
-
-
 \section{Stochastic differential equations}
 In practice, there is uncertainty associated with a differential equation, which may arise from a variety of sources including observational error, parameter uncertainty, interpolation error and due to unresolved effects in the model.
 Stochastic differential equations are an extension of ordinary differential equations that include stochastic terms, which can account for this uncertainty.
 
 For an introduction to stochastic differential equations, see \citet{Oksendal_2003_StochasticDifferentialEquations} or \citet{KallianpurSundar_2014_StochasticAnalysisDiffusion}.
+
+
+\subsection{The Wiener process}
+
+The Wiener process, or Brownian motion, is an example of a continuous-time stochastic process that is often used to model
+
+
+Defined formally, the (one-dimensional) \emph{Wiener process} is a stochastic process \(B_t\) taking values in \(\R\) and satisfying the following properties:
+\begin{romanate}
+	\item \(B_0 = 0\),
+	\item for every \(s > 0\), the increments \(B_{s + t} - B_{s}\) for \(t \geq 0\) are independent of \(B_r\) for all \(r < s\),
+	\item \(B_{s + t} - B_t \isGauss{0, s}\) for all \(s,t > 0\), and
+	\item \(B_t\) is continuous in \(t\) almost surely.
+\end{romanate}
+Remarkably, these properties \emph{uniquely} define the Wiener process, with the additional result that for any \(t > 0\), \(B_t \sim \mathcal{N}\left(0, t\right)\), a Gaussian distribution with mean zero and variance \(t\).
+The \emph{\(n\)-dimensional Wiener process} is a stochastic process \(W_t\) taking values in \(R^n\) such that each component of \(W_t\) is a one-dimensional Wiener process and the components of \(W_t\) are mutually independent.
+It follows that for the \(n\)-dimensional Wiener process \(W_t\), at any time \(t > 0\), \(W_t \sim \mathcal{N}\left(0, tI\right)\), an \(n\)-dimensional Gaussian distribution with mean zero and covariance matrix \(tI\).
+
+A Wiener process is a type of L\'evy process, which is a more general class of stochastic process satisfying only conditions (i), (ii), and (iii) in \Cref{def:wiener} \citep{Applebaum_2004_LevyProcessesStochastic}.
+
+\Cref{fig:wiener_rels} plots realisations of a one-dimensional and two-dimensional Wiener process.
+\td{Comment}
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[width=0.49\textwidth]{figures/wiener_realisations_1d.pdf}
+		\includegraphics[width=0.49\textwidth]{figures/wiener_realisations_2d.pdf}
+		\caption{(Left) Several realisations of a one-dimensional Wiener process \(W_t\) evolving through time, and (right) a realisation of two-dimensional Wiener process \(\left(W_t^{(1)}, W_t^{(2)}\right)\).}
+		\label{fig:wiener_rels}
+	\end{center}
+\end{figure}
 
 
 
@@ -243,15 +233,15 @@ This construction of the It\^o integral is available in many textbooks on stocha
 The extension of the It\^o integral to vector- and matrix-valued functions is straightforward.
 Let \(g \colon [a,b] \to \R^{n \times m}\) be a function giving possibly random \(n \times m\) matrices (take \(m = 1\) to describe a vector-valued function).
 \begin{subequations}\label{eqn:mv_ito_defn}
-Then, we define the It\^o integral of \(g\) with respect to the \(m\)-dimensional Wiener process \(W_t\) over the time interval \([a,b]\) as
+	Then, we define the It\^o integral of \(g\) with respect to the \(m\)-dimensional Wiener process \(W_t\) over the time interval \([a,b]\) as
 	\begin{equation}\label{eqn:mv_ito_defn_1}
-	\int_a^b{g(t)\dif W_t} \coloneqq \left(\mathcal{I}_1, \dotsc, \mathcal{I}_n\right)^{\T},
-\end{equation}
-where
-\begin{equation}\label{eqn:mv_ito_defn_2}
-	\mathcal{I}_{i} = \sum_{j=1}^m{\int_a^b{g_{ij}\left(t\right) \dif W_t^{(j)}}},
-\end{equation}
-for \(i = 1,\dotsc, n\) and where \(g_{ij}\) denotes the \((i,j)\)th element of \(g\).
+		\int_a^b{g(t)\dif W_t} \coloneqq \left(\mathcal{I}_1, \dotsc, \mathcal{I}_n\right)^{\T},
+	\end{equation}
+	where
+	\begin{equation}\label{eqn:mv_ito_defn_2}
+		\mathcal{I}_{i} = \sum_{j=1}^m{\int_a^b{g_{ij}\left(t\right) \dif W_t^{(j)}}},
+	\end{equation}
+	for \(i = 1,\dotsc, n\) and where \(g_{ij}\) denotes the \((i,j)\)th element of \(g\).
 \end{subequations}
 
 \subsection{It\^o stochastic differential equations}
@@ -269,7 +259,7 @@ For a (possibly random) initial condition \(y_0\), the solution \(y_t\) to \eqre
 \end{equation}
 The terms of the differential form \eqref{eqn:gen_sde} are not all rigorously defined, and so the differential form is rather notation that is equivalent to \eqref{eqn:gen_sde_int}.
 In the most general case, the drift \(u\) and diffusivity \(\sigma\) are permitted to themselves be random functions\footnote{For more information, see for instance \citet{KallianpurSundar_2014_StochasticAnalysisDiffusion}.
-The formal treatment of such stochastic differential equations remains an area of open research, such as establishing the conditions for existence and uniqueness of solutions \citehere, and EXAMPLE.}, but in this thesis we assume that both are deterministic.
+	The formal treatment of such stochastic differential equations remains an area of open research, such as establishing the conditions for existence and uniqueness of solutions \citehere, and EXAMPLE.}, but in this thesis we assume that both are deterministic.
 
 
 
@@ -439,7 +429,7 @@ The connection between the Fokker-Planck equation and the SDE \eqref{eqn:gen_sde
 
 
 
-\subsection{Some explicitly solvable SDEs}
+\subsection{Some explicitly solvable SDEs}\label{sec:back_sde_solutions}
 In general, the solution to a stochastic differential equation cannot be expressed analytically, either as an explicit expression involving the Wiener process \(W_t\) or as a probability measure or density function.
 At best, most solutions can be written in terms of an It\^o integral which can otherwise not be simplified.
 However, there are several simple examples for which a solution can be written, and even time-marginal probability density functions can be derived.

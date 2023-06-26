@@ -1,5 +1,5 @@
 % thesis.sty created by AJR Jan 2016
-% Do not change without consultation
+% Do not change without consultation - haha
 
 % add extra information to date so included on titlepage
 \let\my@date\@date
@@ -94,6 +94,11 @@
 \ifdraft{
 	% Big line spacing
 	\linespread{1.5}
+
+	% Line numbering
+	\RequirePackage{lineno}
+	\linenumbers
+
 }{}
 
 

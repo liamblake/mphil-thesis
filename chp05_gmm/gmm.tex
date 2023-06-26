@@ -1,5 +1,9 @@
 \chapter{A Gaussian mixture model}\label{ch:gmm}
 
+A key advantage of the Gaussian limit is the ease of computation; rather than having to generate a large number of realisations of the SDE solution to understand, either qualitatively or for the purposes of inference and estimation, the probability distribution of the solution, we can solve a smaller system of equations \eqref{eqn:sigma_ode} for the state and covariance simultaneously.
+
+However, systems of interest have non-linear dynamics and multiplicative noise is often necessary \citep[e.g.]{SuraEtAl_2005_MultiplicativeNoiseNonGaussianity, etc.}, so
+
 
 First, we shall make some adjustments to the theory as presented in \Cref{ch:limit_paper}, by dropping the explicit \(\epsilon\) notation and extending the theory to allow for Gaussian initial conditions to our stochastic differential equation.
 
@@ -14,31 +18,25 @@ Henceforth, we shall drop the use of \(\epsilon\) and instead consider stochasti
 	\sde{y_t}{u\left(y_t, t\right)}{\sigma\left(y_t, t\right)},
 \]
 where, strictly speaking, the noise scale parameter has been included in the diffusion term \(\sigma\).
-
+By multiplying \eqref{eqn:sigma_ode} through by \(\epsilon^2\), we can then consider the Gaussian approximation
+\begin{equation}\label{eqn:sde_gauss_approx_no_epsilon}
+	y_t \,\dot\sim\, \mathcal{N}\!\left(F_0^t(x), \Sigma_0^t(x)\right),
+\end{equation}
+where the state and covariance satisfy the joint system.
 \begin{subequations}\label{eqn:gauss_de}
 	\begin{align}
 		\dod{F_s^t(x)}{t}                & = u\left(F_s^t(x), t\right), \quad F_s^s(x) = x \label{eqn:gauss_mean_de}                                                              \\
 		\dod{\Sigma_s^t(x; \Sigma_0)}{t} & = \begin{multlined}[t]
 			                                     \nabla u\left(F_s^t(x), t\right) \Sigma_s^t(x; \Sigma_0) + \Sigma_s^t(x; \Sigma_0)\left[\nabla u\left(F_s^t(x), t\right)\right]^{\T} \\
-			                                     + \sigma\left(F_s^t(x), t \right)\sigma\left(F_s^t(x), t\right)^{\T}, \quad \Sigma_s^s(x; \Sigma_0) = \Sigma_0,
+			                                     + \sigma\left(F_s^t(x), t \right)\sigma\left(F_s^t(x), t\right)^{\T},
 		                                     \end{multlined}
 		\label{eqn:gauss_cov_de}
 	\end{align}
 \end{subequations}
-
-
+We use this approximation with the understanding that it is justified in the limit of small noise, i.e. as \(\sigma\) approaches the zero matrix.
 
 It is also worth noting that the small noise limit can be equivalently thought of, at least heuristically, as a small time limit, using scaling properties of the Wiener process.
 \td{Show this or otherwise work it out. Just needs to be a heuristic or intuitive idea, rather than anything \emph{too} precise}
-
-
-
-\section{Motivation: The Gulf Stream}
-
-A key advantage of the Gaussian limit is the ease of computation; rather than having to generate a large number of realisations of the SDE solution to understand, either qualitatively or for the purposes of inference and estimation, the probability distribution of the solution, we can solve a smaller system of equations \eqref{eqn:sigma_ode} for the state and covariance simultaneously.
-
-We shall first motivate the importance of stochastic models
-
 
 
 
@@ -86,13 +84,15 @@ Throughout, we use the Mazzoni method to solve \eqref{eqn:gauss_de}
 
 \section{The GMM algorithm}
 
-
-
+Now that we have extended the theory presented in \Cref{ch:limit_paper} and are equipped with an efficient numerical scheme for computing the Gaussian density, we are now finally ready to describe our proposed mixture model algorithm.
 
 
 
 \section{Analysis through exact SDE solutions}
 
+To examine the performance of the mixture model algorithm, in producing an approximate density solution to a stochastic differential equation, as to justify the choices of the heuristics involved, we shall consider three simple examples.
+These examples, two of which are in one-dimension, have weak solutions with probability density functions which can be derived analytically, and therefore provide us with a ``ground truth'' to compare to which is otherwise missing from the applications we are interested in.
+Our three examples were introduced and detailed in \Cref{sec:back_sde_solutions}.
 
 
 \subsection{A linear SDE}
@@ -103,9 +103,14 @@ Consider an \(n\)-dimensional linear stochastic differential equation with addit
 \end{equation}
 where \(A: [0,T] \to \R^{n\times n}\) and \(B: [0,T] \to \R^{n \times m}\) are specified, deterministic matrix-valued functions that are sufficiently smooth and measurable to ensure the existence of solutions, and \(W_t\) is an \(m\)-dimensional Wiener process.
 
-
-
-The Gaussian limit described in \Cref{thm:gauss_dist}
+At time \(t \in [0,T]\),
+\[
+	y_t \isGauss{\exp\left[\int_0^{t}{A(\tau)\dif \tau}\right]y_0, \, },
+\]\td{Calculate properly}
+where \(\exp\left[\cdot\right]\) here denotes the matrix exponential.
+For this SDE, the Gaussian approximation \eqref{eqn:sde_gauss_approx_no_epsilon} is therefore exact, in that it describes exactly the time-marginal distribution of the solution.
+In our mixture model framework, there is hence no need to place down any covariance-preserving points; for a fixed initial condition, a single Gaussian computed about the deterministic trajectory emanating from that point is sufficient.
+Hence, as a ``sanity check'' we would expect that our mixture model algorithm recognises that model is linear and the condition for placing covariance-preserving points is not reached.
 
 
 
@@ -113,6 +118,8 @@ The Gaussian limit described in \Cref{thm:gauss_dist}
 
 \subsection{Ben\^e's SDE}
 
+
+\subsection{Linear dynamics and multiplicative noise}
 
 
 

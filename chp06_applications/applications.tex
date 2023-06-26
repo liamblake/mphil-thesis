@@ -2,7 +2,7 @@
 
 
 
-\section{Oceanography}
+\section{Oceanography}\label{sec:appl_ocean}
 
 \subsection{Altimetry-derived velocity data}
 
@@ -23,40 +23,48 @@ where
 is the Coriolis parameter, \(g \approx 9.81\mathrm{\,m\,s}^{-1}\) is the standard acceleration due to gravity, and \(\Omega_\mathrm{r} \approx 7.2921 \times 10^{-5}\mathrm{\,radians\,s}^{-1}\) is the rotation rate of the Earth.
 
 
+\Cref{fig:na_snapshots} shows contours of the sea surface height at several different times within the interval and domain of interest.
+
+\begin{figure}
+	\begin{center}
+		% \includegraphics[width=\textwidth]{}
+		\caption{}
+		\label{fig:na_snapshots}
+	\end{center}
+\end{figure}
+
+
+
+
+
 To account for measurement error, we consider the evolution of the following stochastic model
 \begin{equation}
-	\sde{\begin{bmatrix}
+	\dif \begin{bmatrix}
 			x^{(\mathrm{lon})}_t \\ x^{(\mathrm{lat})}_t
-		\end{bmatrix}}{\begin{bmatrix} u\left(x^{(\mathrm{lon})}_t, x^{(\mathrm{lat})}_t, t\right) \\ v\left(x^{(\mathrm{lon})}_t, x^{(\mathrm{lat})}_t, t\right) \end{bmatrix}}{L_r\begin{bmatrix}
+		\end{bmatrix} = \begin{multlined}[t]
+			\begin{bmatrix} u\left(x^{(\mathrm{lon})}_t, x^{(\mathrm{lat})}_t, t\right) \\ v\left(x^{(\mathrm{lon})}_t, x^{(\mathrm{lat})}_t, t\right) \end{bmatrix}\dif t \\
+				+ L_r\begin{bmatrix}
 			\sqrt{u_{\mathrm{err}}\left(x^{(\mathrm{lon})}_t, x^{(\mathrm{lat})}_t, t\right)} & 0                                                                                 \\
 			0                                                                                 & \sqrt{v_{\mathrm{err}}\left(x^{(\mathrm{lon})}_t, x^{(\mathrm{lat})}_t, t\right)}
-		\end{bmatrix}},
+		\end{bmatrix} \dif W_t,
+\end{multlined}
 	\label{eqn:natl_sde}
 \end{equation}
 where \(t\) is the time in days from DATE, \(u\) and \(v\) are the interpolated zonal and meridional velocities (in \(\mathrm{\,degrees\,day}^{-1}\)), \(u_{\mathrm{err}}\) and \(v_{\mathrm{err}}\) are the respective interpolated error estimates (in \(\mathrm{\,degrees\,day}^{-1}\)), and \(L_r = 0.25 \mathrm{\,degrees}\) is the spatial resolution of the data.
 
 
 
-The derivatives of the deterministic velocity field in \eqref{eqn:natl_sde} are approximated via the finite-differences
+The derivatives of the deterministic velocity field in \eqref{eqn:natl_sde} are approximated via the centred finite-differences
 \begin{align*}
-	\dpd{u\left({x^{(\text{lon})}}, {x^{(\text{lat})}}, t\right)}{{x^{(\text{lon})}}} & \approx \frac{u\left(\right)}{2 L_r}
+	\dpd{u\left({x^{(\text{lon})}}, {x^{(\text{lat})}}, t\right)}{{x^{(\text{lon})}}} & \approx \frac{u\left(x^{(\text{lon})} + L_r, x^{(\text{lat})}, t\right) - u\left(x^{(\text{lon})} - L_r, x^{(\text{lat})}, t\right)}{2 L_r},
 \end{align*}
+and similar for the remaining derivatives.
 
 
-\subsection{The Gulf Stream}
+\subsection{The Gulf Stream}\label{sec:gulf_stream}
 
 
 \subsubsection{A motivating example}
-To illustrate the importance of stochastic methods, we consider the evolution of a single particle under \eqref{eqn:natl_sde} as an example.
-
-\begin{figure}
-	\begin{center}
-		\includegraphics[width=\textwidth]{figures/gulf_stream_motivation/det_traj.pdf}
-		\caption{The time evolution of the solution (obtained by numerically integrating the velocity data) to the deterministic system corresponding to \eqref{eqn:natl_sde}, from initial condition \(x_0 = \left(-60.5, 39\right)\) from 01/01/2021 (\(t = 0\)) to 08/01/2021 (\(t = 8\)).
-			Contours of the sea surface height at the final time \(t = 8\) are included in grey to indicate the position of the Gulf Stream and nearby eddies in the flow.}
-		\label{fig:na_motiv_det}
-	\end{center}
-\end{figure}
 
 
 

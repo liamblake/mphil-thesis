@@ -27,7 +27,7 @@ We can write
 \begin{align*}
 	p\left(x_t, t\right) & = \frac{1}{2\sqrt{2\pi t}} \frac{\exp\left[x\right] + \exp\left[-x\right]}{\cosh\left(x_0\right)}\exp\left[-\frac{t}{2}\right]\exp\left[-\frac{1}{2t}\left(x - x_0\right)^2\right] \\
 	                     & = \frac{1}{2\sqrt{2\pi t}} \frac{\exp\left[x\right] + \exp\left[-x\right]}{\cosh\left(x_0\right)}\exp\left[-\frac{t}{2}\right]\exp\left[-\frac{1}{2t}\left(x - x_0\right)^2\right] \\
-	                     & =
+											 & =
 \end{align*}
 
 The mean of the solution to \eqref{eqn:app_bene_sde} at time \(t\) is therefore
