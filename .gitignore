@@ -2,7 +2,7 @@
 build/
 
 
-*.bak0
+*.bak*
 
 ## Core latex/pdflatex auxiliary files:
 *.aux
