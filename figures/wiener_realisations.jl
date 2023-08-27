@@ -1,3 +1,8 @@
+    rcParams = PyPlot.PyDict(PyPlot.matplotlib."rcParams")
+    rcParams["text.usetex"] = true
+    rcParams["font.family"] = "serif"
+    rcParams["font.size"] = "12"
+
 
 using Random
 

@@ -1,4 +1,4 @@
-\documentclass[draft, 12pt, a4paper, twoside]{book}
+\documentclass[12pt, a4paper, twoside]{book}
 
 \title{Computable characterisations of stochastic uncertainty in dynamical systems}
 \author{Liam Blake}
@@ -31,19 +31,17 @@
 % Chapters
 \include{chp01_introduction/introduction}
 \include{chp02_background/background}
-\include{chp03_motivation/motivation}
-\include{chp04_gaussian_limit/the_gaussian_limit}
+\include{chp03_paper_theory/theory}
+\include{chp04_paper_numerics/numerics}
 \include{chp05_gmm/gmm}
 \include{chp06_applications/applications}
-\include{chp07_outlook/future_outlook}
+\include{chp07_outlook/outlook}
 
 % Appendices
 \appendix
-\include{appendix/sde_solutions.tex}
+\include{appendix/sde_theory.tex}
+% \include{appendix/sde_solutions.tex}
 
-%
-\chapter{Extended appendices of ``Explicit Gaussian characterisation of model uncertainty in the limit of small noise''}
-\include{ch04_gaussian_limit/appendices}
 
 \backmatter
 % Add the bibliography to the table of contents

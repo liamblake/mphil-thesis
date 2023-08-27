@@ -40,14 +40,14 @@ is the Coriolis parameter, \(g \approx 9.81\mathrm{\,m\,s}^{-1}\) is the standar
 To account for measurement error, we consider the evolution of the following stochastic model
 \begin{equation}
 	\dif \begin{bmatrix}
-			x^{(\mathrm{lon})}_t \\ x^{(\mathrm{lat})}_t
-		\end{bmatrix} = \begin{multlined}[t]
-			\begin{bmatrix} u\left(x^{(\mathrm{lon})}_t, x^{(\mathrm{lat})}_t, t\right) \\ v\left(x^{(\mathrm{lon})}_t, x^{(\mathrm{lat})}_t, t\right) \end{bmatrix}\dif t \\
-				+ L_r\begin{bmatrix}
+		x^{(\mathrm{lon})}_t \\ x^{(\mathrm{lat})}_t
+	\end{bmatrix} = \begin{multlined}[t]
+		\begin{bmatrix} u\left(x^{(\mathrm{lon})}_t, x^{(\mathrm{lat})}_t, t\right) \\ v\left(x^{(\mathrm{lon})}_t, x^{(\mathrm{lat})}_t, t\right) \end{bmatrix}\dif t \\
+		+ L_r\begin{bmatrix}
 			\sqrt{u_{\mathrm{err}}\left(x^{(\mathrm{lon})}_t, x^{(\mathrm{lat})}_t, t\right)} & 0                                                                                 \\
 			0                                                                                 & \sqrt{v_{\mathrm{err}}\left(x^{(\mathrm{lon})}_t, x^{(\mathrm{lat})}_t, t\right)}
 		\end{bmatrix} \dif W_t,
-\end{multlined}
+	\end{multlined}
 	\label{eqn:natl_sde}
 \end{equation}
 where \(t\) is the time in days from DATE, \(u\) and \(v\) are the interpolated zonal and meridional velocities (in \(\mathrm{\,degrees\,day}^{-1}\)), \(u_{\mathrm{err}}\) and \(v_{\mathrm{err}}\) are the respective interpolated error estimates (in \(\mathrm{\,degrees\,day}^{-1}\)), and \(L_r = 0.25 \mathrm{\,degrees}\) is the spatial resolution of the data.
@@ -64,19 +64,16 @@ and similar for the remaining derivatives.
 \subsection{The Gulf Stream}\label{sec:gulf_stream}
 
 
-\subsubsection{A motivating example}
-
-
 
 \begin{figure}
 	\begin{center}
 		\begin{subfigure}{0.8\textwidth}
-			\includegraphics[width=\textwidth]{figures/gulf_stream_motivation/single_gaussian.pdf}
+			% \includegraphics[width=\textwidth]{figures/gulf_stream_motivation/single_gaussian.pdf}
 			\caption{Each sample is represented by a single red marker.}
 			\label{fig:}
 		\end{subfigure}
 		\begin{subfigure}{0.8\textwidth}
-			\includegraphics[width=\textwidth]{figures/gulf_stream_motivation/single_gaussian.pdf}
+			% \includegraphics[width=\textwidth]{figures/gulf_stream_motivation/single_gaussian.pdf}
 			\caption{The samples are binned into a histogram, with contours of the Gaussian PDF overlaid.}
 			\label{fig:}
 		\end{subfigure}
@@ -84,6 +81,10 @@ and similar for the remaining derivatives.
 	\end{center}
 \end{figure}
 
+
+
+
+\subsection{Stochastic sensitivity}
 
 
 
