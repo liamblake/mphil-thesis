@@ -40,87 +40,183 @@ It is also worth noting that the small noise limit can be equivalently thought o
 
 
 
-\section{Propagating uncertain initial conditions}
 
-
-\section{Solving for the state and covariance}
-To compute the Gaussian limit along a deterministic trajectory, we can solve the system of equations \eqref{eqn:gauss_de}, providing that the Jacobian \(\nabla u\) of the vector field is available, or can be approximated appropriately.
-Since \(\Sigma_s^t\) represents a covariance matrix, it must remain symmetric and positive semi-definite when solving \eqref{eqn:gauss_de}.
-However, many standard numerical schemes do not take this into account, so a specialised scheme is required, as described below.
-
-Similar equations of the form \eqref{eqn:gauss_de} (although often without dependence on \emph{both} time and the state in the \(\sigma\) term) are solved numerically in other applications, notably when implementing the extended Kalman filter on stochastic differential equation models \citep{Jazwinski_2014_StochasticProcessesFiltering, KulikovaKulikov_2014_AdaptiveODESolvers}.
-\citet{KulikovaKulikov_2014_AdaptiveODESolvers} identify that that the two most significant sources of numerical error when solving \eqref{eqn:gauss_de} are a) the estimate of the covariance matrix \(\Sigma_s^t\) violates the requirement of positive semi-definiteness, and b) local error propagation in the state equation without an adaptive step size.
-The state equation \eqref{eqn:gauss_mean_de} is the only non-linear part of \eqref{eqn:gauss_de}, so
-
-
-\citet{Mazzoni_2008_ComputationalAspectsContinuous} proposes an efficient hybrid method for solving \eqref{eqn:gauss_de} which addresses both difficulties a) and b), and takes advantage of the availability of \(\nabla u\).
-This method, which we shall term the Mazzoni method, combines a Taylor-Heun approximation to solve \eqref{eqn:gauss_mean_de} for the state and a Gauss-Legendre step to solve \eqref{eqn:gauss_cov_de} for the covariance.
-
-
-
-Throughout, we use the Mazzoni method to solve \eqref{eqn:gauss_de}
-
-\begin{subequations}\label{eqn:mazzoni_update}
-	The Taylor-Heun formula for the update of the state is then
-	\begin{equation}
-		F_{s}^{t + \Delta t}(x) \approx F_s^{t}(x) + \left(I - \frac{\Delta t}{2}\nabla u\left(F_s^t(x), t\right)\right)^{-1}.
-		\label{eqn:mazzoni_state_update}
-	\end{equation}
-	The Gauss-Legendre update of the covariance is
-	\begin{equation}
-		\Sigma_{s}^{t + \delta t}\left(x; \Sigma_0\right) \approx M_\tau \Sigma_s^t\left(x; \Sigma_0\right) M_\tau^{\T} + \Delta t K_\tau \sigma\left(w_\tau,\, t + \frac{\Delta t}{2}\right)\sigma\left(w_\tau,\, t + \frac{\Delta t}{2}\right)^{\T} K_\tau^{\T},
-		\label{eqn:mazzoni_cov_update}
-	\end{equation}
-	where
-	\begin{align}%\label{eqn:mazzoni_cov_terms}
-		w_\tau & = \frac12\left(w_t + w_{t + \Delta t} - \frac{\Delta t^2}{4}\nabla u\left(w_t, \, t\right) u\left(w_t, \, t\right)\right) \\
-		K_\tau & = \left[I - \frac{\Delta t}{2}\nabla u\left(w_\tau,\, t + \frac{\Delta t}{2}\right)\right]^{-1}                           \\
-		M_\tau & = K_\tau \left[I + \frac{\Delta t}{2}\nabla u\left(w_\tau,\, t + \frac{\Delta t}{2}\right)\right].
-	\end{align}
-\end{subequations}
-
-
-
-
-\section{The GMM algorithm}
+\section{The GMM algorithm}\label{sec:gmm_alg}
 
 Now that we have extended the theory presented in \Cref{ch:limit_paper} and are equipped with an efficient numerical scheme for computing the Gaussian density, we are now finally ready to describe our proposed mixture model algorithm.
 
 
 
-\section{Analysis through exact SDE solutions}
+\begin{enumerate}
+	\item Initialise a Gaussian mixture model with \(N\) components, setting \(t^{(1)} = 0\), \(x^{(1)},\dotsc, x^{(N)}\) to be the component means, \(\Sigma^{(1)}, \dotsc, \Sigma^{(N)}\) to be the component covariance matrices, and \(w^{(1)}, \dotsc, w^{(N)}\) to be the component weights.
 
-To examine the performance of the mixture model algorithm, in producing an approximate density solution to a stochastic differential equation, as to justify the choices of the heuristics involved, we shall consider three simple examples.
-These examples, two of which are in one-dimension, have weak solutions with probability density functions which can be derived analytically, and therefore provide us with a ``ground truth'' to compare to which is otherwise missing from the applications we are interested in.
-Our three examples were introduced and detailed in \Cref{sec:back_sde_solutions}.
+	\item While \(t^{(i)} < T\) for any \(i = 1,\dotsc, N\), iterate the following;
 
+		\begin{enumerate}
+			\item Set \(j\) to be any \(i\) for which \(t^{(i)} < T\).
 
-\subsection{A linear SDE}
-Consider an \(n\)-dimensional linear stochastic differential equation with additive noise;
-\begin{equation}
-	\sde{y_t}{A(t)y_t}{B(t)},
-	\label{eqn:linear_n_sde}
-\end{equation}
-where \(A: [0,T] \to \R^{n\times n}\) and \(B: [0,T] \to \R^{n \times m}\) are specified, deterministic matrix-valued functions that are sufficiently smooth and measurable to ensure the existence of solutions, and \(W_t\) is an \(m\)-dimensional Wiener process.
+			\item Update \(x^{(j)}\) and \(\Sigma^{(j)}\) by solving the joint system \eqref{eqn:gauss_approx_des} with initial state \(x^{(j)}\) and covariance \(\Sigma^{(j)}\), terminating when a split condition is met or the final time \(T\) is reached.
+		Denote the time at which this solution terminates as \(t^{(i)}\).
 
-At time \(t \in [0,T]\),
+	\item If \(t = T\), then complete this branch of the algorithm and continue along another branch, if any are still incomplete.
+
+	\item Otherwise, if \(t < T\), construct \(2n\) sigma points \(x^{(N + 1)},\dotsc,x^{(N + 2n)}\), setting
+		\[
+			\Sigma^{(N + k)} = \alpha \Sigma^{(1)}, \quad \text{and} \quad w^{(N + k)} = \frac{w^{(1)}}{2n} \quad \text{for each } k = 1,\dotsc,2n
+		\]
+		and \(\Sigma^{(1)} = \alpha \Sigma^{(1)}\), \(w^{(1)} = w^{(1)} / 2n\), and \(N = N + 2n\).
+		\end{enumerate}
+
+	\item Construct the mixture model with density function
+		\[
+			G\left(x\right) = \frac{1}{\sum_{l=1}^{N}w^{(l)}}\sum_{i=1}^{N}{w^{(i)}\Gauss{x; \, x^{(i)}, \Sigma^{(i)}}}.
+		\]
+
+\end{enumerate}
+
+There are several options for initialising the mixture model, depending on the initial condition.
+For a fixed initial condition \(x_0\), we can take the degenerate mixture model with a single component and zero variance, i.e.
 \[
-	y_t \isGauss{\exp\left[\int_0^{t}{A(\tau)\dif \tau}\right]y_0, \, },
-\]\td{Calculate properly}
-where \(\exp\left[\cdot\right]\) here denotes the matrix exponential.
-For this SDE, the Gaussian approximation \eqref{eqn:sde_gauss_approx_no_epsilon} is therefore exact, in that it describes exactly the time-marginal distribution of the solution.
-In our mixture model framework, there is hence no need to place down any covariance-preserving points; for a fixed initial condition, a single Gaussian computed about the deterministic trajectory emanating from that point is sufficient.
-Hence, as a ``sanity check'' we would expect that our mixture model algorithm recognises that model is linear and the condition for placing covariance-preserving points is not reached.
+	N = 1, \quad x^{(1)} = x_0, \quad \Sigma^{(1)} = O, \quad w^{(1)} = 1.
+\]
+
+
+
+\Cref{fig:gmm_steps} provides a pictorial representation of the propagation and splitting of a single component in the mixture model.
+
+
+\begin{figure}
+	\begin{center}
+		\includestandalone[width=\textwidth]{chp05_gmm/gmm_steps}
+		\caption{The propagation and splitting of a component in the Gaussian mixture model.}
+		\label{fig:gmm_steps}
+	\end{center}
+\end{figure}
+
+
+\section{Error remains bounded}
+Our main result of \Cref{ch:linear_theory}, \Cref{thm:main}, establishes that the strong error in approximating the solution to a small-noise nonlinear stochastic differential equation with a linearisation is bounded by a scaling of the initial and ongoing uncertainty scales.
+In this section, we show that this result implies that if we propagate the components of a Gaussian mixture model with linearisations about the component means, as our mixture model algorithm employs, the error remains bounded in a similar fashion.
+
+Suppose that \eqref{eqn:scaled_sde} is subject to a Gaussian initial condition \(x \isGauss{\mu_0, \delta^2\Sigma_0}\), where \(\mu_0 \in \R^n\) and \(\Sigma_0 \in \R^{n\times n}\) are fixed and \(\delta > 0\) is a scaling parameter.
+We can linearise \eqref{eqn:scaled_sde} about the deterministic trajectory \(F_t^0\!\left(\mu_0\right)\) originating from the mean \(\mu_0\), as
+\begin{equation}
+	\dif l_t\!\left(\mu_0, \delta^2\Sigma_0\right) = \begin{multlined}[t]
+		\left[F_0^t\!\left(\mu_0\right) + \nabla u\!\left(F_0^t\!\left(\mu_0\right), t\right)\left(l_t\!\left(\mu_0, \delta^2 \Sigma_0\right) - F_0^t\!\left(\mu_0\right)\right)\right]\dif t \\
+		+ \epsilon\sigma\!\left(F_0^t\!\left(\mu_0\right), t\right)\dif W_t, \quad l\!\left(\mu_0, \delta^2\Sigma_0\right) = x.
+	\end{multlined}
+	\label{eqn:scaled_sde_linear}
+\end{equation}
+The solution to \eqref{eqn:scaled_sde_linear} at time \(t\) follows a Gaussian distribution with computable mean and covariance, specifically
+\[
+	l_t\!\left(\mu, \delta^2\Sigma_0\right) \isGauss{F_0^t\!\left(\mu_0\right), \, \delta^2 \nabla F_0^t\!\left(\mu_0\right) \Sigma_0 \left[\nabla F_0^t\!\left(\mu_0\right)\right]^{\T} + \epsilon^2\Sigma_0^t\!\left(\mu_0\right)},
+\]
+where
+\[
+	\Sigma_0^t\!\left(\mu_0\right) = \nabla F_0^t\!\left(\mu_0\right)\int_0^t{\left[\nabla F_0^\tau\!\left(\mu_0\right)\right]^{-1} \sigma\!\left(F_0^\tau\!\left(\mu_0\right), \tau\right)\sigma\!\left(F_0^\tau\!\left(\mu_0\right), \tau\right)^{\T}\left[\nabla F_0^\tau\!\left(\mu_0\right)\right]^{^{-\intercal}}\dif\tau}\left[\nabla F_0^t\!\left(\mu_0\right)\right]^{\T}.
+\]
+\Cref{thm:main} establishes that for any \(t \in [0,T]\), there exists constants \(A_1(t), A_2(t), A_3(t) \geq 0\) independent of \(\mu_0\) such that
+\begin{equation}\label{eqn:linear_error_bound}
+	\avg{\norm{y_t - l_t\!\left(\mu_0, \delta^2 \Sigma_0\right)}} \leq A_1(t)\epsilon^2 + A_2(t)\epsilon\delta + A_3(t)\delta^2.
+\end{equation}
+Note that we have dropped the notation indicating the dependence of the constants on the coefficient bounds for notational brevity.
+For completeness, however, we have
+\begin{align*}
+	A_1(t) & = \left(K_{\nabla\nabla u} + K_{\nabla\sigma}\right)D_1\!\left(1, t, K_{\nabla u}, K_\sigma\right) \\
+	A_2(t) & = K_{\nabla\nabla u} D_2\!\left(1, t, K_{\nabla u}\right) \\
+	A_3(t) & = K_{\nabla\sigma}D_3\!\left(1, t, K_{\nabla u}\right),
+\end{align*}
+using the notation of \Cref{thm:main}.
+Suppose at a time \(s \in [0,T]\), we have a mixture model with \(M\) Gaussian components
+\[
+	p_0\!\left(z\right) = \sum_{i=1}^{M}{\omega_i\Gauss{z;\, \mu_0^{(i)}, \delta^2\Sigma_0^{(i)}}}
+\]
+where \(\omega_1,\dotsc, \omega_M \geq 1\) are weights satisfying \(\sum_{i=1}^M{\omega_i} = 1\), \(\mu_0^{(1)}, \dots \mu_0^{(M)}\) are the component means and \(\Sigma_0^{(1)}, \dotsc, \Sigma_0^{(M)}\) are the component covariance matrices.
+Via linearisation approximations of the form \eqref{eqn:scaled_sde_linear}, we construct the mixture model at time \(t\)
+\[
+	p_t\!\left(z\right) = \sum_{i=1}^{M}{\omega_i\Gauss{z; \, F_0^t\!\left(\mu_0^{(i)}\right), \Pi^{(i)}}},
+\]
+where
+\[
+	\Pi^{(i)} = \delta^2 \nabla F_0^t\!\left(\mu_0\right) \Sigma_0^{(i)} \left[\nabla F_0^t\!\left(\mu_0\right)\right] + \epsilon^2 \Sigma_0^t\!\left(\mu_0\right).
+\]
+
+Let \(\Xi_0\) be a random variable distribution distributed according to \(p_0\), which we can write as
+\[
+	\Xi_0 = \sum_{i=1}^{M}{I_i \xi_0^{(i)}}
+\]
+where \(\xi_0^{(i)} \isGauss{\mu_0^{(i)}, \Sigma_0^{(i)}}\) independently for each \(i\), and \(\left(I_1, \dotsc, I_M\right)\) are a set of indicator variables with
+\[
+	P\!\left(I_i = 1,\, I_j = 0 \text{ for all } j \neq i\right) = \omega_i,
+\]
+for each \(i = 1,\hdots,M\), and zero probability otherwise.
+Similarly, let \(\Xi_t\) be a random variable distributed according the mixture model \(p_t\), which we construct from solutions to linearised SDEs of the form \eqref{eqn:scaled_sde_linear}, by writing
+\[
+	\Xi_t = \sum_{i=1}^{M}{I_i l_t\!\left(\mu_0^{(i)}, \delta^2\Sigma_0^{(i)}\right)},
+\]
+where each solution to \eqref{eqn:scaled_sde_linear} is independent of the others.
+Then, for any \(i\) we have the conditional distribution
+\[
+	\left. \Xi_t \, | \, \set{I_i = 1, \, I_j = 0 \text{ for all } j \neq i} \right. = l_{t}\left(\mu_0^{(i)}, \delta^2 \Sigma_0^{(i)}\right).
+\]
+
+The random variable \(\Xi_t\) represents our approximation of the state at time \(t\), after a single step of the mixture model algorithm.
+Via the law of total expectation, the error in approximating \(y_t\) with \(\Xi_t\) is
+\begin{align*}
+	\avg{\norm{y_t - \Xi_t}} & = \sum_{i=1}^{M}{\avg{\norm{y_t - \Xi_t}\,\middle|\, I_i = 1}}P\!\left(I_i = 1,\, I_j = 0 \text{ for all } j \neq i\right) \\
+		& = \sum_{i=1}^{M}{\omega_i\avg{\norm{y_t - l_{t}\left(\mu_0^{(i)}, \delta^2 \Sigma_0^{(i)}\right)}}} \\
+		& = \sum_{i=1}^{M}{\omega_i\left(A_1(t)\epsilon^2 + A_2(t) \epsilon \delta + A_3(t)\delta^2\right)} \\
+		& = A_1(t) \epsilon^2 + A_2(t)\epsilon\delta + A_3(t)\delta^2.
+\end{align*}
+In the mixture model algorithm described, the initialising uncertainty at each step scales with \(\epsilon\), specifically \(\delta = \epsilon\).
+Thus, the error in the algorithm remains bounded with order \(\epsilon^2\).
+
+
+\section{The splitting criterion}
+The mixture model described in \Cref{sec:gmm_alg} requires a choice of criterion for when to split a Gaussian component, for which there are several choices.
+A given Gaussian component should be split when the linearised SDE is no longer a reasonable approximation for the original SDE about the deterministic trajectory corresponding to the component.
+
+
+
+\citet{DeMarsEtAl_2013_EntropyBasedApproachUncertainty} propose an algorithm for propagating an initial uncertainty through a nonlinear model, by using a Gaussian mixture model and a similar splitting algorithm.
+... The sigma point method provides an \emph{exact} computation for the covariance matrix of a deterministic nonlinear transformation of a random variable.
 
 
 
 
 
-\subsection{Ben\^e's SDE}
+% \section{Analysis through exact SDE solutions}
+
+% To examine the performance of the mixture model algorithm, in producing an approximate density solution to a stochastic differential equation, as to justify the choices of the heuristics involved, we shall consider three simple examples.
+% These examples, two of which are in one-dimension, have weak solutions with probability density functions which can be derived analytically, and therefore provide us with a ``ground truth'' to compare to which is otherwise missing from the applications we are interested in.
+% Our three examples were introduced and detailed in \Cref{sec:back_sde_solutions}.
 
 
-\subsection{Linear dynamics and multiplicative noise}
+% \subsection{A linear SDE}
+% Consider an \(n\)-dimensional linear stochastic differential equation with additive noise;
+% \begin{equation}
+% 	\sde{y_t}{A(t)y_t}{B(t)},
+% 	\label{eqn:linear_n_sde}
+% \end{equation}
+% where \(A: [0,T] \to \R^{n\times n}\) and \(B: [0,T] \to \R^{n \times m}\) are specified, deterministic matrix-valued functions that are sufficiently smooth and measurable to ensure the existence of solutions, and \(W_t\) is an \(m\)-dimensional Wiener process.
 
+% At time \(t \in [0,T]\),
+% \[
+% 	y_t \isGauss{\exp\left[\int_0^{t}{A(\tau)\dif \tau}\right]y_0, \, },
+% \]\td{Calculate properly}
+% where \(\exp\left[\cdot\right]\) here denotes the matrix exponential.
+% For this SDE, the Gaussian approximation \eqref{eqn:sde_gauss_approx_no_epsilon} is therefore exact, in that it describes exactly the time-marginal distribution of the solution.
+% In our mixture model framework, there is hence no need to place down any covariance-preserving points; for a fixed initial condition, a single Gaussian computed about the deterministic trajectory emanating from that point is sufficient.
+% Hence, as a ``sanity check'' we would expect that our mixture model algorithm recognises that model is linear and the condition for placing covariance-preserving points is not reached.
+
+
+
+
+
+% \subsection{Ben\^e's SDE}
+
+
+% \subsection{Linear dynamics and multiplicative noise}
 
 
 

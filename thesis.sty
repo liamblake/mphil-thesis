@@ -27,8 +27,8 @@
 
 \RequirePackage{graphicx}
 
-\RequirePackage[authoryear,sort,comma]{natbib}
-\setcitestyle{authoryear,aysep={}}
+\RequirePackage[numbers,sort,comma]{natbib}
+% \setcitestyle{authoryear,aysep={}}
 
 \RequirePackage[twoside,left=2cm,right=2cm,bindingoffset=1cm]{geometry}
 \RequirePackage{bibentry}
@@ -64,6 +64,10 @@
 \RequirePackage{hyperref}
 \hypersetup{colorlinks,linkcolor=red,citecolor=cyan,urlcolor=magenta,filecolor=magenta,breaklinks,dvips,bookmarks,bookmarksopen}
 \RequirePackage[capitalise,nameinlink,noabbrev]{cleveref}
+\crefname{equation}{}{}
+
+\RequirePackage[mode=buildnew]{standalone}
+
 % Units
 \RequirePackage{siunitx}
 \RequirePackage{calc}
@@ -204,7 +208,7 @@
 % Todo notes, annotations, etc.
 % Thanks JM
 % TODO: Optional args seems to not be working
-\RequirePackage[obeyDraft,colorinlistoftodos,prependcaption,textsize=scriptsize]{todonotes}
+\RequirePackage[colorinlistoftodos,prependcaption,textsize=scriptsize]{todonotes}
 
 \newcommandx{\note}[2][1=]{
 	\todo[inline,linecolor=black,backgroundcolor=violet!5,bordercolor=violet,#1]{

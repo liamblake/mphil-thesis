@@ -1,10 +1,104 @@
-\chapter{Applications}
+\chapter{Applications}\label{ch:appls}
 
 
 
-\section{Oceanography}\label{sec:appl_ocean}
+In this chatper, we now apply the theoretical developments of \Cref{ch:linear_theory} and the mixture model algorithm described in \Cref{ch:gmm} to four different applications, using models constructed from observed data.
+We do not investigate any of these four applications in detail; rather, the aim is to demonstrate the applicability of the theory to a range of examples.
 
-\subsection{Altimetry-derived velocity data}
+
+
+\section{Numerical considerations}
+
+
+
+\subsection{Computing the Gaussian approximation}
+
+To compute the Gaussian limit along a deterministic trajectory, we can solve the system of equations \eqref{eqn:gauss_de}, providing that the Jacobian \(\nabla u\) of the vector field is available, or can be approximated appropriately.
+Since \(\Sigma_s^t\) represents a covariance matrix, it must remain symmetric and positive semi-definite when solving \eqref{eqn:gauss_de}.
+However, many standard numerical schemes do not take this into account, so a specialised scheme is required, as described below.
+
+Similar equations of the form \eqref{eqn:gauss_de} (although often without dependence on both time and the state in the \(\sigma\) term) are solved numerically in other applications, notably when implementing the extended Kalman filter on stochastic differential equation models \citep{Jazwinski_2014_StochasticProcessesFiltering, KulikovaKulikov_2014_AdaptiveODESolvers}.
+\citet{KulikovaKulikov_2014_AdaptiveODESolvers} identify that that the two most significant sources of numerical error when solving \eqref{eqn:gauss_de} are a) the estimate of the covariance matrix \(\Sigma_s^t\) violates the requirement of positive semi-definiteness, and b) local error propagation in the state equation without an adaptive step size.
+
+\citet{Mazzoni_2008_ComputationalAspectsContinuous} proposes an efficient hybrid method for solving \eqref{eqn:gauss_de} which addresses both difficulties a) and b), and takes advantage of the availability of \(\nabla u\).
+This method, which we shall term the Mazzoni method, combines a Taylor-Heun approximation to solve \eqref{eqn:gauss_mean_de} for the state and a Gauss-Legendre step to solve \eqref{eqn:gauss_cov_de} for the covariance.
+
+
+
+Throughout, we use the Mazzoni method to solve \eqref{eqn:gauss_de}
+
+\begin{subequations}\label{eqn:mazzoni_update}
+	The Taylor-Heun formula for the update of the state is then
+	\begin{equation}
+		F_{s}^{t + \Delta t}(x) \approx F_s^{t}(x) + \left(I - \frac{\Delta t}{2}\nabla u\left(F_s^t(x), t\right)\right)^{-1}.
+		\label{eqn:mazzoni_state_update}
+	\end{equation}
+	The Gauss-Legendre update of the covariance is
+	\begin{equation}
+		\Sigma_{s}^{t + \delta t}\left(x; \Sigma_0\right) \approx M_\tau \Sigma_s^t\left(x; \Sigma_0\right) M_\tau^{\T} + \Delta t K_\tau \sigma\left(w_\tau,\, t + \frac{\Delta t}{2}\right)\sigma\left(w_\tau,\, t + \frac{\Delta t}{2}\right)^{\T} K_\tau^{\T},
+		\label{eqn:mazzoni_cov_update}
+	\end{equation}
+	where
+	\begin{align}%\label{eqn:mazzoni_cov_terms}
+		w_\tau & = \frac12\left(w_t + w_{t + \Delta t} - \frac{\Delta t^2}{4}\nabla u\left(w_t, \, t\right) u\left(w_t, \, t\right)\right) \\
+		K_\tau & = \left[I - \frac{\Delta t}{2}\nabla u\left(w_\tau,\, t + \frac{\Delta t}{2}\right)\right]^{-1}                           \\
+		M_\tau & = K_\tau \left[I + \frac{\Delta t}{2}\nabla u\left(w_\tau,\, t + \frac{\Delta t}{2}\right)\right].
+	\end{align}
+\end{subequations}
+
+
+
+
+
+\subsection{Numerically solving the Fokker-Planck equation}
+
+The probability density function \(p\!\left(x,t\right)\) at any time of the solution to the SDE \eqref{eqn:sde}
+
+
+
+We solve the Fokker-Planck equation numerically using the method of lines \citep{}, which discretises the spatial variable to approximate the PDE solution with a system of ordinary differential equations.
+
+
+
+
+\section{The Wasserstein metric}
+To evaluate the performance of our mixture model and compare to other approaches (such as stochastic simulation), we require a measure that compares probability distributions.
+The Wasserstein distance (also known as the earth mover's distance) is one such metric between probability distributions.
+The Wasserstein \(p\)-distance, for \(p \geq 1\), is defined formally as follows.
+Let \(\mu\) and \(\nu\) denote two probability measures on \(\R^n\), each with finite \(p\)-moments.
+Then, the Wasserstein \(p\)-distance between \(\mu\) and \(\nu\) is
+\[
+	W_p\!\left(\mu, \nu\right) = \left(\inf_{\gamma \in \Gamma\!\left(\mu, \nu\right)}\mathds{E}_{(x,y) \in \gamma}\!\left[\norm{x - y}^p\right]\right)^{1/p},
+\]
+where \(\Gamma\!(\mu, \nu)\) is the set of all couplings of \(\mu\) and \(\nu)\).
+A coupling \(\gamma\) between \(\mu\) and \(\nu\) is a probability measure on \(\R^n \times \R^n\) such that the marginals are \(\mu\) and \(\nu\), i.e.
+\begin{align*}
+	\int_{\R^n}{\gamma(x,y)\dif y} & = \mu(x), \\
+	\int_{\R^n}{\gamma(x,y)\dif x} & = \nu(y).
+\end{align*}
+If \(\mu\) and \(\nu\) admit the respective probability density functions \(p, q \colon \R^n \to [0,\infty)\), then the Wasserstein distance can be written as
+\[
+	W_p\!\left(p, q\right) = \left(\inf_{\gamma \in \Gamma\!\left(p,q\right)}\int_{\R^n \times \R^n}{\norm{x - y}^p \gamma\!\left(x,y\right)\dif x\dif y}\right)^{1/p}.
+\]
+
+
+
+\begin{figure}
+	\begin{center}
+		% \includegraphics[width=\textwidth]{}
+		\caption{An example of a coupling between two probability density functions (plotted on each axes) on \(\R\).
+			A coupling is a joint distribution from which the two individual distributions are recovered from the marginals, and is not unique.
+			The Wasserstein distance is computed by taking an infimum across the set of all possible couplings.}
+		\label{fig:pdf_coupling}
+	\end{center}
+\end{figure}
+
+
+
+\section{Drifter in the Gulf Stream}\label{sec:appl_ocean}
+
+\subsection{Data overview}
+The dataset consists of
 
 Suppose we have the sea surface height (SSH) \(\eta = \eta\left(\lambda, \phi, t\right)\) at longitude \(\lambda\) and latitude \(\phi\) (both in radians), and at time \(t\).
 The SSH \(\eta\) is then proportional to the streamfunction for the surface flow, if we treat the surface flow as two-dimensional, where the constant of proportionality varies with latitude \citep{Park_2004_DeterminationSurfaceGeostrophic, DoglioniEtAl_2021_SeaSurfaceHeight}.
@@ -37,6 +131,18 @@ is the Coriolis parameter, \(g \approx 9.81\mathrm{\,m\,s}^{-1}\) is the standar
 
 
 
+\subsection{Construction of deterministic and stochastic models}
+
+
+\begin{equation}\label{eqn:natl_ode}
+	\dod{}{t}\begin{bmatrix}
+		x_t^{(\text{lon})} \\ x_t^{(\text{lat})}
+	\end{bmatrix} = \begin{bmatrix}
+		u\!\left(x^{(\mathrm{lon})}_t, x^{(\mathrm{lat})}_t, t\right) \\ v\!\left(x^{(\mathrm{lon})}_t, x^{(\mathrm{lat})}_t, t\right)
+	\end{bmatrix},
+\end{equation}
+
+
 To account for measurement error, we consider the evolution of the following stochastic model
 \begin{equation}
 	\dif \begin{bmatrix}
@@ -54,33 +160,105 @@ where \(t\) is the time in days from DATE, \(u\) and \(v\) are the interpolated 
 
 
 
-The derivatives of the deterministic velocity field in \eqref{eqn:natl_sde} are approximated via the centred finite-differences
+The derivatives \(\nabla u\) of the deterministic velocity field in \eqref{eqn:natl_sde} are approximated via the centred finite-differences,
 \begin{align*}
 	\dpd{u\left({x^{(\text{lon})}}, {x^{(\text{lat})}}, t\right)}{{x^{(\text{lon})}}} & \approx \frac{u\left(x^{(\text{lon})} + L_r, x^{(\text{lat})}, t\right) - u\left(x^{(\text{lon})} - L_r, x^{(\text{lat})}, t\right)}{2 L_r},
 \end{align*}
 and similar for the remaining derivatives.
 
 
-\subsection{The Gulf Stream}\label{sec:gulf_stream}
 
+We will now introduce an example of a differential equation model constructed from observed data, which we will use throughout this chaper, and explore further in \Cref{ch:appls}.
+In particular, the technical details of this example will be provided in \Cref{sec:appl_ocean}.
+The Gulf Stream is a warm water current that originates in the Gulf of Mexico and travels through the North Atlantic and plays a vital role in climate patterns in the North and Western hemispheres \citep{Palter_2015_RoleGulfStream}.
+The Gulf Stream is a well-studied region of the ocean, due to the climatic importance and the interesting dynamical behaviour exhibited by the flow \citep{LiuEtAl_2018_GulfStreamTransport,another?}.
+The stream itself consists of a rapidly-moving jet which varies dramatically with time.
+Small eddies of warm water are formed and shed from the stream \citep{KangCurchitser_2013_GulfStreamEddy}.
 
+Suppose we are interested in tracking the position of a drifter on the surface of the Gulf Stream.
+The only information we have available are measurements of the eastwards (zonal) and northwards (meridional) velocities at the surface, derived from altimetry (sea surface height) data.
+Such data is available from the European Commission`s Copernicus Marine Environment Monitoring Service.
+
+% For the purposes of this example, assume that the position of the drifter at the initial time is known exactly\footnote{In practice, of course, this will not be the case, but this will introduce even more uncertainty into our model, furthering reinforcing the purpose of this example.}.
+Assuming that the interpolated data provided an accurate model of the sea surface velocity, the position \(x_t\) of the drifter on the surface at time \(t\) is the solution to the ordinary differential equation
+\begin{equation}\label{eqn:na_motiv_ode}
+	\dod{x_t}{t} = u\left(x_t, t\right),
+\end{equation}
+subject to the known initial position \(x_0\), where \(u\) is the appropriately interpolated surface velocity data.
+To illustrate the time-varying dynamics of the Stream, \Cref{fig:na_motiv_flow} plots contours the sea-surface height, which correspond to the time-varying streamfunction of the flow, and therefore solutions to \cref{eqn:na_motiv_ode}, at various times.
+An important feature of the flow is that there are significantly different qualitative regimes; there is the rapidly moving stream itself, the eddies that are shed and slow moving, and isotropic regions in between where the current is comparatively slow.
 
 \begin{figure}
 	\begin{center}
-		\begin{subfigure}{0.8\textwidth}
-			% \includegraphics[width=\textwidth]{figures/gulf_stream_motivation/single_gaussian.pdf}
-			\caption{Each sample is represented by a single red marker.}
-			\label{fig:}
+		\begin{subfigure}{0.49\textwidth}
+			\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream_motivation/streamlines_0}
+			\caption{\(t = 0\) (midnight \DTMdisplaydate{2020}{01}{01}{})}
 		\end{subfigure}
-		\begin{subfigure}{0.8\textwidth}
-			% \includegraphics[width=\textwidth]{figures/gulf_stream_motivation/single_gaussian.pdf}
-			\caption{The samples are binned into a histogram, with contours of the Gaussian PDF overlaid.}
-			\label{fig:}
+		\begin{subfigure}{0.49\textwidth}
+			\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream_motivation/streamlines_1.pdf}
+			\caption{\(t = 1.4\) (midnight \DTMdisplaydate{2020}{01}{02}{})}
 		\end{subfigure}
-		\caption{Comparison of stochastic}
+		\begin{subfigure}{0.49\textwidth}
+			\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream_motivation/streamlines_2.pdf}
+			\caption{\(t = 2.8\) (midnight \DTMdisplaydate{2020}{01}{03}{})}
+		\end{subfigure}
+		\begin{subfigure}{0.49\textwidth}
+			\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream_motivation/streamlines_3.pdf}
+			\caption{\(t = 4.2\) (midnight \DTMdisplaydate{2020}{01}{04}{})}
+		\end{subfigure}
+		\begin{subfigure}{0.49\textwidth}
+			\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream_motivation/streamlines_4.pdf}
+			\caption{\(t =5.6\) (midnight \DTMdisplaydate{2020}{01}{05}{})}
+		\end{subfigure}
+		\begin{subfigure}{0.49\textwidth}
+			\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream_motivation/streamlines_5.pdf}
+			\caption{\(t = 7\) (midnight \DTMdisplaydate{2020}{01}{06}{})}
+		\end{subfigure}
+
+		\caption{The absolute surface current speed (coloured) and contours of the sea-surface height (streamlines of the flow, in white) of the Gulf Stream dataset, at various times over a week.
+			All times are in Greenwich Mean Time\td{check this!}.
+			The jet regime of the flow is varying, and the closed, circular contours correspond to eddies that are formed and shed from the Stream.}
+		\label{fig:na_motive_flow}
 	\end{center}
 \end{figure}
 
+We can easily solve \cref{eqn:na_motiv_ode} numerically to obtain a predicted position for our drifter on day \(t\).
+% We term \cref{eqn:na_motiv_ode} the \emph{deterministic model}, since given the data we have available, it serves as our best purely deterministic model for the position of the drifter.
+Suppose that our drifter begins within the stream itself, at \(x_0 = \left(-60.5, 39\right)^{\T}\), \Cref{fig:na_motiv_det} plots the resulting trajectory (in white) obtained by solving \cref{eqn:na_motiv_ode} numerically, over the span of 7 days starting from midnight \DTMdisplaydate{2020}{01}{01}{}.
+Based on this model, we expect that the drifter will follow the Stream, which can inform efforts to locate the drifter.
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream_motivation/det_traj.pdf}
+		\caption{The time evolution of the solution (obtained by numerically integrating the velocity data) to the deterministic system corresponding to \cref{eqn:natl_sde}, from initial condition \(x_0 = \left(-60.5, 39\right)^{\T}\) from 01/01/2021 (\(t = 0\)) to 08/01/2021 (\(t = 8\)).
+			Contours of the sea surface height at the final time \(t = 8\) are included in grey to indicate the position of the Gulf Stream and nearby eddies in the flow.}
+		\label{fig:na_motiv_det}
+	\end{center}
+\end{figure}
+
+To improve our predictions of the future position of the drifter, we should attempt to account for this uncertainty in our model \cref{eqn:na_motiv_ode}.
+The altimetry-derived data also includes measures of error in each component of the velocity at each spatiotemporal gridpoint, so we can use these measurements to model the ongoing observational error in \(u\).
+We can extend \cref{eqn:na_motiv_ode} as a stochastic differential equation, where the unresolved uncertainty is parameterised as a white-noise process scaled by measurement error.
+Specifically, we formulate the drifter position as \cref{eqn:natl_sde} in \Cref{sec:gulf_stream}, which is explained in more detail in that section.
+For our purposes here, \cref{eqn:natl_sde} is a stochastic differential equation analogy of \cref{eqn:natl_sde} that we can solve numerically to obtain approximate solution samples.
+
+\Cref{fig:na_motiv_rels} shows us the result of numerically solving a stochastic differential equation formulation (specifically ) of the Lagrangian trajectory model.
+This is a ``more correct'' model than the deterministic counterpart, in the sense that it is attempting to account for the unknowable measurement error and unresolved subgrid effects.
+Each realisation here could correspond to our drifter, and we see a far different picture than the deterministic model alone provided.
+Qualitatively, rather than following the Stream itself, a proportion of particles are caught in one of two eddies which have formed and broken off from the Stream.
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream_motivation/num_rels.pdf}
+		\caption{The same visualisation of the deterministic behaviour of the Gulf Stream example as \Cref{fig:na_motive_det}, but with the final positions of 10000 numerical realisations of a stochastic model, each indicated by a red point.}
+		\label{fig:na_motiv_rels}
+	\end{center}
+\end{figure}
+
+Although deterministic models are often easier to work with analytically and far more efficient to solve numerically, these models are limited.
+By explicitly accounting for uncertainty with a stochastic, we can expand the scope of our model and provide more realistic and useful predictions, at the cost of a more complicated model.
+This idea of introducing stochastic components into a deterministic model to account for unresolved and unknown aspects has been used extensively in recent times across scientific applications, notably atmospheric, climate, and oceanographic modelling.
+We provide an overview of this so-called stochastic parameterisation in the next section, and highlight how the work of this thesis fits in with the needs of that field.
 
 
 
@@ -88,7 +266,29 @@ and similar for the remaining derivatives.
 
 
 
-\subsection{The Southern Ocean}
+
+\subsection{The mixture model}
+
+
+
+\begin{table}
+	\begin{center}
+		\begin{tabular}{|c|c|c|c|}
+			\hline
+			Algorithm & No. evaluations of \(u\) & No. evaluations of \(\sigma\) & Wasserstein distance \\ \hline
+		\end{tabular}
+	\end{center}
+	\caption{Performance metrics for variations of the Gaussian mixture model, applied to the Gulf Stream dataset and compared against benchmarks.}
+	\label{tab:}
+\end{table}
+
+
+\Cref{tab:}
+
+
+
+
+\section{The Stratified 3D Southern Ocean}
 
 \section{Atmospheric regimes}
 
@@ -105,3 +305,229 @@ However, the observed data itself displays non-Gaussianity, so the introduction 
 
 
 \section{Epidemiology}
+
+
+\subsection{A very brief overview of population processes}
+
+
+
+\begin{enumerate}
+	\item Initialise \(X = X_0\), the initial state of the process.
+	      If the initial state is uncertain, sample \(X\) from the initial state distribution.
+
+	\item Sample the time \(\tau\) to the next event as
+	      \[
+		      \tau \isExp{\sum_{\substack{l \in \R^n \\ l \neq 0,\, y + l \in \mathcal{S}}}{q\!\left(X, X + l\right)}},
+	      \]
+	      and set \(t = t + \tau\).
+
+	\item If \(t > T\), terminate.
+	      Otherwise, sample the next state from the set of possible transitions \(\setc{l \in \R^n}{l \neq 0,\, y + l \in \mathcal{S}}\), where the probability of transitioning from \(X\) to \(X + l\) is given by
+	      \[
+		      \frac{q\!\left(X, X + l\right)}{\sum_{\substack{k \in \R^n \\ k \neq 0,\, y + k \in \mathcal{S}}}{q\!\left(X, X + k\right)}}.
+	      \]
+	      Set \(X\) to this state.
+
+	\item Repeat Steps 2 and 3 until the sample path is terminated.
+
+\end{enumerate}
+The result is a single sample \(X\) of the population process at time \(T\).
+The sum is taken across all the possible transitions from the current state.
+Note that typically most of these rates are zero, so the sum does not need to be taken over the entire state space.
+
+\subsection{Large population diffusion limits}
+
+A population process is \emph{density dependent} (in the sense of \citet{Kurtz_1970_SolutionsOrdinaryDifferential}) if there is a parameter \(N\) such that
+\begin{equation}
+	q\!\left(n, n+l\right) = Nf\!\left(\frac{n}{N}, l\right),
+	\label{eqn:ctmc_dens_dep}
+\end{equation}
+where \(f\) is a suitable function and \(n, n+l \in \mathcal{S}\).
+Typically, \(N\) is related to the size of the system and \(n / N\) is a population density.
+The condition in \cref{eqn:ctmc_dens_dep} states that the transition rates of the process \(X_t\) depends on \(X_t\) itself only through the density \(X_t / N\).
+
+Let \(Y_t^{(N)}\) describe the \(n\)-dimensional density process, i.e. with \(i\)th element \(X_t^{(i)} / N\).
+Theorem 3.1 of \citet{Kurtz_1970_SolutionsOrdinaryDifferential} establishes that in the large population limit \(N \to \infty\), the density process \(Y_t^{(N)}\) converges in probability to a deterministic trajectory \(Y_t^{(\infty)}\) solving the ODE
+\begin{equation}
+	\dod{Y_t^{(\infty)}}{t} = Q\!\left(Y_t^{(\infty)}\right), \quad Y_0^{(\infty)} = X_0 / N,
+	\label{eqn:ctmc_dens_dep_ode}
+\end{equation}
+where
+\[
+	Q\!\left(y\right) = \sum_{\substack{l \in \R^n \\ l \neq 0,\, y + l \in \mathcal{S}}}{l f\!\left(y, l\right)}.
+\]
+For large \(N\), the density process has small variation and is ``close'' to the deterministic solution to \eqref{eqn:ctmc_dens_dep_ode}.
+This result is analogous to that for small noise SDEs; the solution to a stochastic differential equation formally converges to that of a deterministic system (involving only the drift term) in the limit of small noise, which is a result established by large deviations principles \citep[e.g]{FreidlinWentzell_1998_RandomPerturbationsDynamical}.
+
+\citet{Kurtz_1971_LimitTheoremsSequences} then established a stronger result, showing that the variation of the density process about this deterministic limit is captured by an It\^o diffusion.
+Define the scaled process
+\[
+	Z_t^{(N)} = \sqrt{N}\left(Y_t^{(N)} - Y_{t}^{(\infty)}\right),
+\]
+then Theorem 3.5 of \citet{Kurtz_1971_LimitTheoremsSequences} proves that \(Z_t^{(N)}\) converges in distribution (weakly) to an It\^o diffusion \(Z_t^{(\infty)}\) solving
+\begin{equation}
+	\dif Z_t^{(\infty)} = \nabla Q\!\left(Y_t^{(\infty)}\right) Z_t^{(\infty)}\dif t + G\!\left(Y_t^{(\infty)}\right)\dif W_t, \quad Z_0^{(\infty)} = 0,
+	\label{eqn:ctmc_dens_dep_sde}
+\end{equation}
+where \(W_t\) is an \(n\)-dimensional Wiener process and the \(n \times n\) diffusion matrix \(G\) is such that
+\begin{equation}
+	\left[G\!\left(y\right)G\!\left(y\right)^{\T}\right]_{ij} = \sum_{\substack{l \in \R^n \\ l \neq 0,\, y + l \in \mathcal{S}}}{l_i l_j f\!\left(y,l\right)}
+	\label{eqn:ctmc_dens_dep_sde_diff_cond}
+\end{equation}
+Any choice of diffusion matrix \(G\) such that \eqref{eqn:ctmc_dens_dep_sde_diff_cond} is satisfied will result in a statistically identical diffusion process \(Z_0^{(\infty)}\).
+
+The limiting SDE \eqref{eqn:ctmc_dens_dep_sde} is equivalent to the unscaled SDE
+\begin{equation}
+	\dif L_t^{(N)} = \left[Q\!\left(Y_t^{(\infty)}\right) + \frac{1}{\sqrt{N}} \nabla Q\!\left(Y_t^{(\infty)}\right)\left(L_t^{(N)} - Y_t^{(\infty)}\right)\right]\dif t + \frac{1}{\sqrt{N}}G\!\left(Y_t^{(\infty)}\right)\dif W_t,
+	\label{eqn:ctmc_sde_lin_lim}
+\end{equation}
+which is a linearisation of the nonlinear SDE
+\begin{equation}
+	\dif \hat{Y}^{(N)}_t = Q\!\left(\hat{Y}^{(N)}_t\right)\dif t + \frac{1}{\sqrt{N}}G\!\left(\hat{Y}_t^{(N)}\right)\dif W_t
+	\label{eqn:ctmc_sde_lim_nonlin}
+\end{equation}
+about the deterministic limit \(Y_t^{(\infty)}\).
+There is intuition behind the choices of drift and diffusion in \cref{eqn:ctmc_sde_lim_nonlin}.
+For sufficiently large \(N\), the drift term \(Q\) captures the average (macroscopic) behaviour of the density process.
+The diffusion term captures the microscopic behaviour resulting from individual transition events, and the uncertainty in this is parameterised with the Wiener process \(W_t\).
+
+
+
+
+\td{Explain how this is analogous to the proceeding work}
+However, a key difference is that in the SDE linearisation procedure, we start from a continuous state-space process and arrive at a continuous state-space process in the limit.
+Whereas, in the CTMC diffusion limit, the converging process is on a \emph{discrete} state-space and the limit is on a continuous one.
+
+
+
+
+Thus, we expect that the mixture model algorithm we have described may find a place in moderate-population compartmental models, where the population is large enough to be ``reasonably'' approximated by the continuum and SDE equations, but small enough to exhibit non-Gaussian behaviour.
+Regardless, our error bound derived in \Cref{ch:linear_theory} still has a place in this literature.
+
+
+
+\subsection{Example 1: the SIR model}
+Assume a fixed population of \(N\) individuals, each classified into one of three compartments: susceptible (\(S\)) and infected (\(I\)), and recovered/removed (\(R\)).
+At any time, the number of removed individuals can be computed as \(R = N - S - I\), so we only need to specify a two-dimensional model for the number of susceptible and infected individuals.
+Such a process can model the spread of a disease in a homogeneously mixing population in which susceptible individuals become infected upon contact with infected individuals, and once infected individuals recover they are no longer infectious or susceptible to reinfection.
+The state space is then
+\[
+	\mathcal{S} = \setc{\left(s,i\right)}{s,i \in \set{0,1,\dotsc,N}, \, s + i \leq N},
+\]
+where the number of recovered individuals at any time is \(N - S - I\).
+The events and the corresponding transition probabilities are described in \Cref{fig:sir_transition}.
+
+\usetikzlibrary{automata,positioning,arrows}
+\tikzset{->, node distance = 2cm}
+\begin{figure}
+	\begin{center}
+		\begin{tabular}{|c|c|c|c|}
+			\hline
+			Transition & \multicolumn{2}{c|}{Event} & Rate \(\lambda_i\)                                                    \\ \hline
+			1          & Infection                  & \(\left(S, I\right) \to \left(S-1, I + 1\right)\) & \(\beta S I / N\) \\ \hline
+			2          & Recovery                   & \(\left(S,I\right) \to \left(S, I - 1\right)\)    & \(\gamma I\)      \\ \hline
+		\end{tabular} \\
+		\begin{tikzpicture}
+			\node[state] (S) {\(S\)};
+			\node[state, right of = S] (I) {\(I\)};
+			\node[state, right of = I] (R) {\(R\)};
+			\draw (S) edge[above] node{(1)} (I)
+			(I) edge[above] node{(2)} (R);
+		\end{tikzpicture}
+		\caption{Transition probabilities of the SIR compartmental model.}
+		\label{fig:sir_transition}
+	\end{center}
+\end{figure}
+The population process is density dependent, with
+\[
+	f\left((s,i), l\right) = \begin{cases}
+		\beta s i, & \text{if } l = \left(-1, 1\right), \\
+		\gamma i,  & \text{if } l = \left(0,-1\right)   \\
+		0,         & \text{otherwise}.
+	\end{cases}
+\]
+Let \(X_t^{(N)} = \left(S_t / N, I_t / N\right)\) denote the proportion of susceptible and infected individuals and at time \(t\).
+The corresponding deterministic differential equation approximation is
+\[
+	\dod{X_t^{(\infty)}}{t} = \begin{bmatrix}
+		-\beta X_t^{(\infty,1)} X_t^{(\infty, 2)} \\
+		\beta X_t^{(\infty,1)} X_t^{(\infty, 2)} -\gamma X_t^{(\infty, 2)}
+	\end{bmatrix},
+\]
+where \(X_t^{(\infty)} \equiv \left(X_t^{(\infty, 1)}, X_t^{(\infty, 2)}\right)^{\T}\).
+Consider the scaling
+\[
+	Z_t^{(N)} = \sqrt{N}\left(X_t^{(N)} - X_t^{(\infty)}\right),
+\]
+then \citet{Kurtz_1971_LimitTheoremsSequences} establish that in the limit \(N \to \infty\), the scaled process \(Z_t^{(N)}\) will converge in distribution to the It\^o diffusion \(Z_t^{(\infty)}\) solving
+\begin{equation}
+	\dif Z_t^{(\infty)} = \begin{bmatrix}
+		-\beta X_t^{(\infty, 2)} & -\beta X_t^{(\infty, 1)}         \\
+		\beta X_t^{(\infty, 2)}  & \beta X_t^{(\infty, 1)} - \gamma
+	\end{bmatrix} Z_t^{(\infty)}\dif t + g\!\left(X_t^{(\infty)}\right)\dif W_t
+	\label{eqn:sir_diff_limit}
+\end{equation}
+where the diffusion matrix \(G\) satisfies
+\[
+	g\!\left(X_t^{(\infty)}\right)g\!\left(X_t^{(\infty)}\right)^{\T} = \begin{bmatrix}
+		\beta X_t^{(\infty, 1)} X_t^{(\infty, 2)}  & -\beta X_t^{(\infty, 1)} X_t^{(\infty, 2)}                              \\
+		-\beta X_t^{(\infty, 1)} X_t^{(\infty, 2)} & \beta X_t^{(\infty, 1)} X_t^{(\infty, 2)} + \gamma X_{t}^{(\infty, 2)}.
+	\end{bmatrix}
+\]
+Any choice of \(g\) satisfying this property will result in a statistically identical diffusion process, so we take
+\[
+	g\!\left(X_t^{(\infty)}\right) = \begin{bmatrix}
+		\sqrt{\beta X_t^{(\infty, 1)} X_t^{(\infty, 2)}}  & 0                               \\
+		-\sqrt{\beta X_t^{(\infty, 1)} X_t^{(\infty, 2)}} & \sqrt{\gamma X_t^{(\infty, 2)}}
+	\end{bmatrix}.
+\]
+The stochastic differential equation \cref{eqn:sir_diff_limit} is a linear in the same form as the linearisation \eqref{eqn:linear_sde} considered in \Cref{ch:linear_theory}, and so is solved by the Gaussian process
+\[
+	Z_t^{(\infty)} \isGauss{0,\, \Sigma_0^t\!\left(X_0^{(\infty)}\right)},
+\]
+where \(\Sigma_0^t\!\left(X_0^{(\infty)}\right)\) is the symmetric positive-definite solution to the matrix differential equation
+\[
+	\dod{\Sigma_0^t\!\left(X_0^{(\infty)}\right)}{t} = \begin{multlined}[t]
+		\begin{bmatrix}
+			-\beta X_t^{(\infty, 2)} & -\beta X_t^{(\infty, 1)}         \\
+			\beta X_t^{(\infty, 2)}  & \beta X_t^{(\infty, 1)} - \gamma
+		\end{bmatrix}\Sigma_0^t\!\left(X_0^{(\infty)}\right) \\
+		+ \Sigma_0^t\!\left(X_0^{(\infty)}\right)\begin{bmatrix}
+			-\beta X_t^{(\infty, 2)} & \beta X_t^{(\infty, 1)}          \\
+			-\beta X_t^{(\infty, 2)} & \beta X_t^{(\infty, 1)} - \gamma
+		\end{bmatrix} \\
+		+ \begin{bmatrix}
+			\beta X_t^{(\infty, 1)} X_t^{(\infty, 2)}  & -\beta X_t^{(\infty, 1)} X_t^{(\infty, 2)}                              \\
+			-\beta X_t^{(\infty, 1)} X_t^{(\infty, 2)} & \beta X_t^{(\infty, 1)} X_t^{(\infty, 2)} + \gamma X_{t}^{(\infty, 2)}.
+		\end{bmatrix}.
+	\end{multlined}
+\]
+
+For the purposes of this demonstrative example, take the rate of infection to be \(\beta = 1.2\) and the rate of recovery to be \(\gamma = 0.8\).
+These values correspond to a reproductive number of \(R_0 = 1.5\), meaning that in the early stage of the population process, a single infected individual results in an average of 1.5 new infections.
+
+We first show that stochastic simulations of the density process for the SIR model converge to the Gaussian process solving \cref{eqn:sir_diff_limit}, in a similar manner to how we validated our convergence results for stochastic differential equations in \Cref{ch:linear_numerics}.
+For several different population sizes, we generate \(10000\) Monte-Carlo realisations of the CTMC SIR process.
+
+
+\begin{figure}
+	\begin{center}
+		\begin{subfigure}{0.49\textwidth}
+			\includegraphics[width=\textwidth]{chp06_applications/figures/sir/sir_pairwise_100}
+			\caption{\(N = 100\)}
+		\end{subfigure}
+		\begin{subfigure}{0.49\textwidth}
+			\includegraphics[width=\textwidth]{chp06_applications/figures/sir/sir_pairwise_1000}
+			\caption{\(N = 1000\)}
+		\end{subfigure}
+		\begin{subfigure}{0.49\textwidth}
+			\includegraphics[width=\textwidth]{chp06_applications/figures/sir/sir_pairwise_10000}
+			\caption{\(N = 10000\)}
+		\end{subfigure}\begin{subfigure}{0.49\textwidth}
+			\includegraphics[width=\textwidth]{chp06_applications/figures/sir/sir_pairwise_100000}
+			\caption{\(N = 100000\)}
+		\end{subfigure}
+		\caption{Histograms of Monte-Carlo simulations of the density process for the SIR model (with marginal plots on each axis), and the probability density function of the corresponding solution to the diffusion limit \cref{eqn:sir_diff_limit} plotted in red.}
+		\label{fig:}
+	\end{center}
+\end{figure}

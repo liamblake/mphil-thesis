@@ -1,0 +1,51 @@
+\documentclass[crop,tikz]{standalone}
+
+\usetikzlibrary{calc}
+
+\begin{document}
+	\begin{tikzpicture}
+		% STEP 1: PROPAGATE
+		% Trajectory
+		\draw (0,0) .. controls (2,2) and (4,-3) .. (6,0);
+
+		% Initial position
+		\fill[black] (0,0) circle[radius=0.5pt] node[anchor = east] {\(x\)};
+
+		% Mapped position
+		\fill[black] (6,0) circle[radius=0.5pt] node[anchor = west] {\(F_0^t\!\left(x\right)\)};
+
+		% Covariance ellipse
+		\draw[dashed, rotate around = {30: (6,0)}, red] (6,0) ellipse (30pt and 70pt);
+		% \draw[dashed, rotate around = {30: (8,0)}, red] (8,0) ellipse (20pt and 50pt);
+		% \draw[dashed, rotate around = {30: (8,0)}, red] (8,0) ellipse (10pt and 30pt);
+		\node[red] at ($(6,0)+(75:30pt and 70pt)$) {\(\Sigma_0^t\!\left(x\right)\)};
+
+		% STEP 2: Splitting
+		% Trajectory
+		\draw (0,-5) .. controls (2,-3) and (4,-8) .. (6,-5);
+
+		% Initial position
+		\fill[black] (0,-5) circle[radius=0.5pt] node[anchor = east] {\(x\)};
+
+		% Mapped position
+		\fill[blue] (6,-5) circle[radius=1pt];
+
+		% Covariance ellipse
+		\draw[dashed, rotate around = {30: (6,-5)}, red] (6,-5) ellipse (30pt and 70pt);
+
+		% Additional sigma points
+		\fill[blue, rotate around = {30: (6,-5)}] ($(6, -5)+(0:30pt and 70pt)$) circle[radius=1pt];
+		\fill[blue, rotate around = {30: (6,-5)}] ($(6, -5)+(90:30pt and 70pt)$) circle[radius=1pt];
+		\fill[blue, rotate around = {30: (6,-5)}] ($(6, -5)+(180:30pt and 70pt)$) circle[radius=1pt];
+		\fill[blue, rotate around = {30: (6,-5)}] ($(6, -5)+(270:30pt and 70pt)$) circle[radius=1pt];
+
+		% Covariances for each sigma point
+		\draw[dashed, rotate around = {30: (6,-5)}, blue] (6, -5) ellipse (12pt and 28pt);
+		\draw[dashed, rotate around = {30: (6,-5)}, blue] ($(6, -5)+(0:30pt and 70pt)$) ellipse (12pt and 28pt);
+		\draw[dashed, rotate around = {30: (6,-5)}, blue] ($(6, -5)+(90:30pt and 70pt)$) ellipse (12pt and 28pt);
+		\draw[dashed, rotate around = {30: (6,-5)}, blue] ($(6, -5)+(180:30pt and 70pt)$) ellipse (12pt and 28pt);
+		\draw[dashed, rotate around = {30: (6,-5)}, blue] ($(6, -5)+(270:30pt and 70pt)$) ellipse (12pt and 28pt);
+
+
+	\end{tikzpicture}
+\end{document}

@@ -1,0 +1,132 @@
+
+\subsection{Some explicitly solvable SDEs}\label{sec:back_sde_solutions}
+In general, the solution to a stochastic differential equation cannot be expressed analytically, either as an explicit expression involving the Wiener process \(W_t\) or as a probability measure or density function.
+At best, most solutions can be written in terms of an It\^o integral which can otherwise not be simplified.
+However, there are several simple examples for which a solution can be written, and even time-marginal probability density functions can be derived.
+Here, we list several examples which are used to validate theory and test algorithms throughout this thesis.
+
+\begin{example}[Homogenous and linear SDE]
+	Consider an \(n\)-dimensional stochastic differential equation
+	\begin{equation}
+		\sde{x_t}{A(t)x_t}{B(t)},
+		\label{eqn:linear_sde}
+	\end{equation}
+	where \(A\colon [0,T] \to \R^{n\times n}\) is an matrix-valued function where each element is differentiable, and \(B\colon [0,T] \to \R^{n\times m}\) is a matrix-valued function, and \(W_t\) is an \(m\)-dimensional Wiener process.
+	The weak solution to \cref{eqn:linear_sde} is a Gaussian process, given at time \(t\) by
+	\[
+		x_t \isGauss{\Phi(t) x_0, \, \Phi\left(t\right)\left[\int_0^t{\Phi\left(\tau\right)^{-1}B\left(t\right)B\left(t\right)^{\T}\left(\Phi\left(\tau\right)^{-1}\right)^{\T}}\right]\Phi(t)^{\T}},
+	\]
+	where \(\Phi\) is the fundamental matrix solution to the corresponding homogeneous equation
+	\[
+		\dod{\Phi(t)}{t} = A(t)\Phi(t).
+	\]
+	The details of this result are provided in \Cref{app:linear_sde_sols}.
+	When the coefficients \(A\) and \(B\) are constant functions, then the solution to \cref{eqn:linear_sde} is also known as an Ornstein-Uhlenbeck process.
+
+\end{example}
+
+\begin{example}[Ben\^e's SDE]\label{ex:bene_sde}
+	The \(1\)-dimensional stochastic differential equation
+	\begin{equation}
+		\sde{x_t}{\tanh\left(x_t\right)}{},
+		\label{eqn:bene_sde}
+	\end{equation}
+	is known as \emph{Ben\^e's stochastic differential equation} \citep{SarkkaSolin_2019_AppliedStochasticDifferential}.
+	The probability density function of a weak solution of \cref{eqn:bene_sde} can be derived using an appropriate change of measure with Girsanov's theorem.
+	A proof of this, and the derivation of a weak solution to \cref{eqn:bene_sde} are provided in Section 7.3 of \citet{SarkkaSolin_2019_AppliedStochasticDifferential}.
+	The probability density function \(p: \R \times \left(0,\infty\right) \to \left[0,\infty\right)\) for the solution \(x_t\) at time \(t > 0\) is given by
+	\begin{equation}\label{eqn:bene_sde_pdf}
+		p(x,t) = \frac{1}{\sqrt{2\pi t}}\frac{\cosh\left(x\right)}{\cosh\left(x_0\right)}\exp\left[-\frac{t}{2} - \frac{1}{2t}\left(x - x_0\right)^2\right],
+	\end{equation}
+	where \(x_0 \in \R\) is a fixed initial condition.
+	For fixed \(t\), the probability density function can be expressed as the mixture of two Gaussian densities with variance \(t\) and respective means \(x_0 + t\) and \(x_0 - t\), i.e.
+	\[
+		p(x,t) = \frac{1}{2\cosh\left(x_0\right)}\left[\exp\left(x_0\right)\mathcal{N}\!\left(x; x_0 + t, t\right) + \exp\left(-x_0\right)\mathcal{N}\!\left(x; x_0 - t, t\right)\right],
+	\]
+	with details provided in \Cref{app:bene_calculations}.
+	This probability density function is plotted, for the initial condition \(x_0 = 1/2\) and various times, in \Cref{fig:bene_pdf}.
+	The resulting density is not symmetric and bimodal, with the two modes moving apart in the positive and negative \(x\)-directions respectively as \(t\) increases.
+	% This expression allows easy calculation of the mean and expectation of \(x_t\), as
+	% \[
+	% 	\avg{x_t} = \frac{x_0\cosh\left(x_0\right) + t\sinh\left(x_0\right)}{\cosh\left(x_0\right)},
+	% \]
+	% and
+	% \[
+	% 	\var{x_t} =
+	% \]
+\end{example}
+
+
+\newcommand{\plotbenepdf}[2]{
+	\begin{tikzpicture}\begin{axis}[
+				ymin=0.0,
+				xmin=-10.0,
+				xmax=10.0,
+				axis lines=center,
+				axis on top=true,
+				domain=-10:10,
+				ylabel=$p$,
+				xlabel=$x$,
+				ytick=\empty,
+				yticklabels={},
+			]
+			\addplot [mark=none,draw=black,thick,samples=500] {cosh(\x)*exp(-#2/2-1/(2 * #2)*(\x-#1)^2)/((2 * pi * #2)^(1/2) * cosh(#1))};
+		\end{axis}
+	\end{tikzpicture}
+}
+
+\begin{figure}
+	\begin{center}
+		\begin{subfigure}{0.49\textwidth}
+			\plotbenepdf{1/2}{1}
+			\caption{\(t = 1\)}
+			\label{fig:bene_1}
+		\end{subfigure}
+		\begin{subfigure}{0.49\textwidth}
+			\plotbenepdf{1/2}{2.5}
+			\caption{\(t = 2.5\)}
+			\label{fig:bene_2.5}
+		\end{subfigure}
+		\begin{subfigure}{0.49\textwidth}
+			\plotbenepdf{1/2}{5}
+			\caption{\(t = 5\)}
+			\label{fig:bene_5}
+		\end{subfigure}
+		\begin{subfigure}{0.49\textwidth}
+			\plotbenepdf{1/2}{7.5}
+			\caption{\(t = 7.5\)}
+			\label{fig:bene_7.5}
+		\end{subfigure}
+	\end{center}
+	\caption{The probability density function \cref{eqn:bene_sde_pdf} for the time-marginal solution of Ben\^e's SDE \cref{eqn:bene_sde}, for the initial condition \(x_0 = 1/2\) at various times.
+		The density function consists of two distinct modes that move further apart as \(t\) increases.}
+	\label{fig:bene_pdf}
+\end{figure}
+
+
+
+\subsection{The Stratonovich integral and Stratonovich SDEs}
+The Stratonovich integral is an alternative definition of a stochastic integral \citehere, which is arises naturally from physically considerations \citep{}.
+The Stratonovich integral can be written as the limit in \(2\)nd mean
+\[
+	\sum_{t_i, t_{i+1} \in \mathcal{P}_N}{\frac{f\left(t_{i+1}\right) - f\left(t_i\right)}{2}\left(W_{t_{i+1}} - W_{t_i}\right)} \xlongrightarrow[2\text{nd mean}]{} \int_a^{b}{f(t)\circ\dif W_t}, \quad \text{as } N \to \infty
+\]
+where \(\mathcal{P}_N\) is again a partition of \([a,b]\) and the \(\circ \dif W_t\) notation is used to distinguish the Stratonovich intepretation of the integral.
+The Stratonovich integral is extended to vector-valued functions and a multivariable Wiener process in the same fashion as \eqref{eqn:mv_ito_defn}.
+We can then write a Stratonovich stochastic differential equation
+\begin{equation}
+	\dif x_t = u\left(x_t, t\right)\dif t + \sigma\left(x_t, t\right)\circ \dif W_t
+	\label{eqn:strat_sde}
+\end{equation}
+in completely the same way as an It\^o SDE.
+In this thesis, we only consider It\^o stochastic differential equations in our theoretical developments, but there is a conversion between the two interpretations that requires modifying the drift term \(u\) of the SDE.
+The Stratonovich SDE \eqref{eqn:strat_sde} is equivalent to the It\^o SDE \citehere
+\begin{equation}
+	\dif x_t = \left[u\left(x_t, t\right) + c\left(x_t, t\right)\right]\dif t + \sigma\left(x_t, t\right)\dif W_t,
+	\label{eqn:strat_ito_conv}
+\end{equation}
+where \(c\left(x_t, t\right) = \left(c_1\left(x_t, t\right), \dotsc, c_n\left(x_t, t\right)\right)^T\) with
+\[
+	c_i\left(x_t, t\right) \coloneqq \mathrm{tr}\left(\left[\nabla\sigma_{i\cdot}\left(x_t, t\right)\right]^{\T}\sigma\left(x_t, t\right)\right),
+\]
+where \(\nabla \sigma_{i\cdot}\) denotes the Jacobian derivative of the \(i\)th row of \(\sigma\).
