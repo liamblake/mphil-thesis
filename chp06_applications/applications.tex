@@ -11,42 +11,6 @@ We do not investigate any of these four applications in detail; rather, the aim 
 
 
 
-\subsection{Computing the Gaussian approximation}
-
-To compute the Gaussian limit along a deterministic trajectory, we can solve the system of equations \eqref{eqn:gauss_de}, providing that the Jacobian \(\nabla u\) of the vector field is available, or can be approximated appropriately.
-Since \(\Sigma_s^t\) represents a covariance matrix, it must remain symmetric and positive semi-definite when solving \eqref{eqn:gauss_de}.
-However, many standard numerical schemes do not take this into account, so a specialised scheme is required, as described below.
-
-Similar equations of the form \eqref{eqn:gauss_de} (although often without dependence on both time and the state in the \(\sigma\) term) are solved numerically in other applications, notably when implementing the extended Kalman filter on stochastic differential equation models \citep{Jazwinski_2014_StochasticProcessesFiltering, KulikovaKulikov_2014_AdaptiveODESolvers}.
-\citet{KulikovaKulikov_2014_AdaptiveODESolvers} identify that that the two most significant sources of numerical error when solving \eqref{eqn:gauss_de} are a) the estimate of the covariance matrix \(\Sigma_s^t\) violates the requirement of positive semi-definiteness, and b) local error propagation in the state equation without an adaptive step size.
-
-\citet{Mazzoni_2008_ComputationalAspectsContinuous} proposes an efficient hybrid method for solving \eqref{eqn:gauss_de} which addresses both difficulties a) and b), and takes advantage of the availability of \(\nabla u\).
-This method, which we shall term the Mazzoni method, combines a Taylor-Heun approximation to solve \eqref{eqn:gauss_mean_de} for the state and a Gauss-Legendre step to solve \eqref{eqn:gauss_cov_de} for the covariance.
-
-
-
-Throughout, we use the Mazzoni method to solve \eqref{eqn:gauss_de}
-
-\begin{subequations}\label{eqn:mazzoni_update}
-	The Taylor-Heun formula for the update of the state is then
-	\begin{equation}
-		F_{s}^{t + \Delta t}(x) \approx F_s^{t}(x) + \left(I - \frac{\Delta t}{2}\nabla u\left(F_s^t(x), t\right)\right)^{-1}.
-		\label{eqn:mazzoni_state_update}
-	\end{equation}
-	The Gauss-Legendre update of the covariance is
-	\begin{equation}
-		\Sigma_{s}^{t + \delta t}\left(x; \Sigma_0\right) \approx M_\tau \Sigma_s^t\left(x; \Sigma_0\right) M_\tau^{\T} + \Delta t K_\tau \sigma\left(w_\tau,\, t + \frac{\Delta t}{2}\right)\sigma\left(w_\tau,\, t + \frac{\Delta t}{2}\right)^{\T} K_\tau^{\T},
-		\label{eqn:mazzoni_cov_update}
-	\end{equation}
-	where
-	\begin{align}%\label{eqn:mazzoni_cov_terms}
-		w_\tau & = \frac12\left(w_t + w_{t + \Delta t} - \frac{\Delta t^2}{4}\nabla u\left(w_t, \, t\right) u\left(w_t, \, t\right)\right) \\
-		K_\tau & = \left[I - \frac{\Delta t}{2}\nabla u\left(w_\tau,\, t + \frac{\Delta t}{2}\right)\right]^{-1}                           \\
-		M_\tau & = K_\tau \left[I + \frac{\Delta t}{2}\nabla u\left(w_\tau,\, t + \frac{\Delta t}{2}\right)\right].
-	\end{align}
-\end{subequations}
-
-
 
 
 
@@ -507,27 +471,53 @@ For the purposes of this demonstrative example, take the rate of infection to be
 These values correspond to a reproductive number of \(R_0 = 1.5\), meaning that in the early stage of the population process, a single infected individual results in an average of 1.5 new infections.
 
 We first show that stochastic simulations of the density process for the SIR model converge to the Gaussian process solving \cref{eqn:sir_diff_limit}, in a similar manner to how we validated our convergence results for stochastic differential equations in \Cref{ch:linear_numerics}.
-For several different population sizes, we generate \(10000\) Monte-Carlo realisations of the CTMC SIR process.
+For several different population sizes, we generate \(100000\) Monte-Carlo realisations of the CTMC SIR process at time \(t = 5\) and plot histograms of the corresponding density processes in \Cref{fig:sir_gauss_rels}.
+Each population process is initialised with 10\% of the \(M\) individuals infected and the remaining 90\% susceptible.
+\td{Fix alignments in histograms.}
 
 
 \begin{figure}
 	\begin{center}
 		\begin{subfigure}{0.49\textwidth}
+			\includegraphics[width=\textwidth]{chp06_applications/figures/sir/sir_pairwise_50}
+			\caption{\(M = 50\)}
+			\label{fig:sir_gauss_rels_1}
+		\end{subfigure}
+		\begin{subfigure}{0.49\textwidth}
 			\includegraphics[width=\textwidth]{chp06_applications/figures/sir/sir_pairwise_100}
-			\caption{\(N = 100\)}
+			\caption{\(M = 100\)}
+			\label{fig:sir_gauss_rels_2}
 		\end{subfigure}
 		\begin{subfigure}{0.49\textwidth}
 			\includegraphics[width=\textwidth]{chp06_applications/figures/sir/sir_pairwise_1000}
-			\caption{\(N = 1000\)}
-		\end{subfigure}
-		\begin{subfigure}{0.49\textwidth}
-			\includegraphics[width=\textwidth]{chp06_applications/figures/sir/sir_pairwise_10000}
-			\caption{\(N = 10000\)}
+			\caption{\(M = 1000\)}
+			\label{fig:sir_gauss_rels_3}
 		\end{subfigure}\begin{subfigure}{0.49\textwidth}
-			\includegraphics[width=\textwidth]{chp06_applications/figures/sir/sir_pairwise_100000}
-			\caption{\(N = 100000\)}
+			\includegraphics[width=\textwidth]{chp06_applications/figures/sir/sir_pairwise_10000}
+			\caption{\(M = 10000\)}
+			\label{fig:sir_gauss_rels_4}
 		\end{subfigure}
-		\caption{Histograms of Monte-Carlo simulations of the density process for the SIR model (with marginal plots on each axis), and the probability density function of the corresponding solution to the diffusion limit \cref{eqn:sir_diff_limit} plotted in red.}
-		\label{fig:}
+		\caption{Histograms of Monte-Carlo simulations of the density process for the SIR model (with marginal plots on each axis), and the probability density function of the corresponding solution to the diffusion limit \cref{eqn:sir_diff_limit} plotted in red.
+			Each sample path is initialised with 10\% of the population infected (i.e. \(x_0 = \left(0.1, 0.9\right)^{\T}\)).}
+		\label{fig:sir_gauss_rels}
 	\end{center}
 \end{figure}
+
+
+However, \Cref{fig:sir_gauss_rels} also highlights the limitations of using Gaussian approximations for certain types of stochastic processes.
+An \(n\)-dimensional Gaussian random variable has support on the entirety of \(\R^n\); that is, for any non-empty subset of \(\R^n\), there is a non-zero probability of the variable taking a value in that set.
+However, in many situations we can enforce (often from physical considerations) boundary conditions on the state variable.
+
+In the SIR model, the \(I = 0\) and \(S = 0\) boundaries are \emph{absorbing}, in the sense that once the stochastic process reaches those states, it remains there indefinitely with probability \(1\).
+
+We also saw another example of boundaries in the Gulf Stream example in \Cref{sec:appl_ocean}; the dataset only contained velocity
+Boundary issues were avoided by ensuring that the evolution of the deterministic trajectory was sufficiently far from the boundaries and the scale of uncertainty small enough so that the probability of a stochastic trajectory nearing the boundary is negligible.
+
+An absorbing boundary can be accounted for by setting both the drift and diffusivity in the stochastic differential equation to zero on the boundary.
+However, such adjustments will often violate the requirements of differentiability
+
+An introduction to the formal treatment of stochastic differential equations with reflecting boundaries is provided by \citet{Pilipenko_2014_IntroductionStochasticDifferential}.
+
+
+
+\subsection{Example 2: }

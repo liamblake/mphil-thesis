@@ -1,0 +1,42 @@
+
+\documentclass[crop,tikz]{standalone}
+
+\usetikzlibrary{shapes.geometric, arrows, positioning}
+
+\begin{document}
+\begin{tikzpicture}[node distance=70pt]
+	\tikzstyle{arrow} = [->,>=stealth]
+
+	\node (s) [rectangle, rounded corners, draw=black, align=center] {Start \\ Given \(s, t, x, \Sigma_0\) \\ Choose \(\delta t_{\mathrm{min}}, \beta, e\)};
+
+	\node (a) [rectangle, below of=s, draw=black, align=center] {Set \(\delta t = \delta t_{\mathrm{min}}\) \\ Set \(k = 0\)};
+	\node (b) [rectangle, below of=a, draw=black, align=center] {Set \(t_{k+1} = t_k + \delta t\) \\ Compute \(w_{t_{k+1}}\) with \eqref{eqn:mazzino_state_update} and \(\mathcal{E}\) \\ Set \(\delta t_{\mathrm{new}} = \max\left\{\delta t_{\mathrm{min}}, \beta \delta t \sqrt{\frac{e}{\hat{e}^{k+1}}}\right\}\)};
+
+	\node (d) [diamond, below of=b, draw=black, align=center, yshift=-10pt] {\(\hat{e}_{k+1} \leq e\) or \\ \(\delta t \leq \delta t_{\mathrm{min}}\)?};
+	\node (c) [rectangle, left of=d, draw=black, align=center, xshift=-75pt] {Set \(\delta_t = \delta_{\mathrm{new}}\)};
+
+	\node (e) [rectangle, below of=d, draw=black, align=center, yshift=-10pt] {Compute \(A_\kappa, \Omega_{\kappa}, \Sigma_{k+1}\) \\ Set \(k = k + 1\)};
+
+	\node (f) [diamond, below of=e, draw=black, align=center] {\(t_k = T\)?};
+
+	\node (g) [rectangle, rounded corners, left of=f, draw=black, align = center, xshift = -30pt] {Stop};
+	\node (h) [rectangle, right of=f, draw=black, align = center, xshift = 75pt] {\(\delta t = \min\left\{\delta t_{\mathrm{new}}, T - t_k\right\}\)};
+
+	\draw [arrow] (s) -- (a);
+
+	\draw [arrow] (a) -- (b);
+	\draw [arrow] (b) -- (d);
+
+	\draw [arrow] (d) -- node[anchor=south] {no} (c);
+	\draw [arrow] (d) -- node[anchor=east] {yes} (e);
+
+	\draw [arrow] (c) |- (b);
+
+	\draw [arrow] (e) -- (f);
+
+	\draw [arrow] (f) -- node[anchor=south] {yes} (g);
+	\draw [arrow] (f) -- node[anchor=south] {no} (h);
+
+	\draw [arrow] (h) |- (b);
+\end{tikzpicture}
+\end{document}

@@ -39,8 +39,6 @@ It is also worth noting that the small noise limit can be equivalently thought o
 \td{Show this or otherwise work it out. Just needs to be a heuristic or intuitive idea, rather than anything \emph{too} precise}
 
 
-
-
 \section{The GMM algorithm}\label{sec:gmm_alg}
 
 Now that we have extended the theory presented in \Cref{ch:limit_paper} and are equipped with an efficient numerical scheme for computing the Gaussian density, we are now finally ready to describe our proposed mixture model algorithm.
@@ -52,25 +50,25 @@ Now that we have extended the theory presented in \Cref{ch:limit_paper} and are 
 
 	\item While \(t^{(i)} < T\) for any \(i = 1,\dotsc, N\), iterate the following;
 
-		\begin{enumerate}
-			\item Set \(j\) to be any \(i\) for which \(t^{(i)} < T\).
+	      \begin{enumerate}
+		      \item Set \(j\) to be any \(i\) for which \(t^{(i)} < T\).
 
-			\item Update \(x^{(j)}\) and \(\Sigma^{(j)}\) by solving the joint system \eqref{eqn:gauss_approx_des} with initial state \(x^{(j)}\) and covariance \(\Sigma^{(j)}\), terminating when a split condition is met or the final time \(T\) is reached.
-		Denote the time at which this solution terminates as \(t^{(i)}\).
+		      \item Update \(x^{(j)}\) and \(\Sigma^{(j)}\) by solving the joint system \eqref{eqn:gauss_approx_des} with initial state \(x^{(j)}\) and covariance \(\Sigma^{(j)}\), terminating when a split condition is met or the final time \(T\) is reached.
+		            Denote the time at which this solution terminates as \(t^{(i)}\).
 
-	\item If \(t = T\), then complete this branch of the algorithm and continue along another branch, if any are still incomplete.
+		      \item If \(t = T\), then complete this branch of the algorithm and continue along another branch, if any are still incomplete.
 
-	\item Otherwise, if \(t < T\), construct \(2n\) sigma points \(x^{(N + 1)},\dotsc,x^{(N + 2n)}\), setting
-		\[
-			\Sigma^{(N + k)} = \alpha \Sigma^{(1)}, \quad \text{and} \quad w^{(N + k)} = \frac{w^{(1)}}{2n} \quad \text{for each } k = 1,\dotsc,2n
-		\]
-		and \(\Sigma^{(1)} = \alpha \Sigma^{(1)}\), \(w^{(1)} = w^{(1)} / 2n\), and \(N = N + 2n\).
-		\end{enumerate}
+		      \item Otherwise, if \(t < T\), construct \(2n\) sigma points \(x^{(N + 1)},\dotsc,x^{(N + 2n)}\), setting
+		            \[
+			            \Sigma^{(N + k)} = \alpha \Sigma^{(1)}, \quad \text{and} \quad w^{(N + k)} = \frac{w^{(1)}}{2n} \quad \text{for each } k = 1,\dotsc,2n
+		            \]
+		            and \(\Sigma^{(1)} = \alpha \Sigma^{(1)}\), \(w^{(1)} = w^{(1)} / 2n\), and \(N = N + 2n\).
+	      \end{enumerate}
 
 	\item Construct the mixture model with density function
-		\[
-			G\left(x\right) = \frac{1}{\sum_{l=1}^{N}w^{(l)}}\sum_{i=1}^{N}{w^{(i)}\Gauss{x; \, x^{(i)}, \Sigma^{(i)}}}.
-		\]
+	      \[
+		      G\left(x\right) = \frac{1}{\sum_{l=1}^{N}w^{(l)}}\sum_{i=1}^{N}{w^{(i)}\Gauss{x; \, x^{(i)}, \Sigma^{(i)}}}.
+	      \]
 
 \end{enumerate}
 
@@ -123,7 +121,7 @@ Note that we have dropped the notation indicating the dependence of the constant
 For completeness, however, we have
 \begin{align*}
 	A_1(t) & = \left(K_{\nabla\nabla u} + K_{\nabla\sigma}\right)D_1\!\left(1, t, K_{\nabla u}, K_\sigma\right) \\
-	A_2(t) & = K_{\nabla\nabla u} D_2\!\left(1, t, K_{\nabla u}\right) \\
+	A_2(t) & = K_{\nabla\nabla u} D_2\!\left(1, t, K_{\nabla u}\right)                                          \\
 	A_3(t) & = K_{\nabla\sigma}D_3\!\left(1, t, K_{\nabla u}\right),
 \end{align*}
 using the notation of \Cref{thm:main}.
@@ -164,9 +162,9 @@ The random variable \(\Xi_t\) represents our approximation of the state at time 
 Via the law of total expectation, the error in approximating \(y_t\) with \(\Xi_t\) is
 \begin{align*}
 	\avg{\norm{y_t - \Xi_t}} & = \sum_{i=1}^{M}{\avg{\norm{y_t - \Xi_t}\,\middle|\, I_i = 1}}P\!\left(I_i = 1,\, I_j = 0 \text{ for all } j \neq i\right) \\
-		& = \sum_{i=1}^{M}{\omega_i\avg{\norm{y_t - l_{t}\left(\mu_0^{(i)}, \delta^2 \Sigma_0^{(i)}\right)}}} \\
-		& = \sum_{i=1}^{M}{\omega_i\left(A_1(t)\epsilon^2 + A_2(t) \epsilon \delta + A_3(t)\delta^2\right)} \\
-		& = A_1(t) \epsilon^2 + A_2(t)\epsilon\delta + A_3(t)\delta^2.
+	                         & = \sum_{i=1}^{M}{\omega_i\avg{\norm{y_t - l_{t}\left(\mu_0^{(i)}, \delta^2 \Sigma_0^{(i)}\right)}}}                        \\
+	                         & = \sum_{i=1}^{M}{\omega_i\left(A_1(t)\epsilon^2 + A_2(t) \epsilon \delta + A_3(t)\delta^2\right)}                          \\
+	                         & = A_1(t) \epsilon^2 + A_2(t)\epsilon\delta + A_3(t)\delta^2.
 \end{align*}
 In the mixture model algorithm described, the initialising uncertainty at each step scales with \(\epsilon\), specifically \(\delta = \epsilon\).
 Thus, the error in the algorithm remains bounded with order \(\epsilon^2\).
@@ -182,6 +180,120 @@ A given Gaussian component should be split when the linearised SDE is no longer 
 ... The sigma point method provides an \emph{exact} computation for the covariance matrix of a deterministic nonlinear transformation of a random variable.
 
 
+
+\section{Computing the linearised solution distribution}\label{sec:mazzoni}
+For a Gaussian or fixed initial condition, \Cref{sec:theory_gauss,sec:theory_fixed} respectively established that the solution to the linearised stochastic differential equation is a Gaussian process that is characterised entirely by its mean and covariance matrix.
+The computation of this mean and covariance from the model specification is described by \Cref{cor:limit_moments}.
+To efficiently compute the propagation of a Gaussian uncertainty through the linearised model, as required by our mixture model algorithm, the following system can be solved jointly:
+\td{Ensure notation is consistent!}
+\begin{subequations}\label{eqn:gauss_de}
+	\begin{align}
+		\dod{F_s^t(x)}{t}                & = u\left(F_s^t(x), t\right), \quad F_s^s(x) = x \label{eqn:gauss_mean_de}                                                              \\
+		\dod{\Sigma_s^t(x; \Sigma_0)}{t} & = \begin{multlined}[t]
+			                                     \nabla u\left(F_s^t(x), t\right) \Sigma_s^t(x; \Sigma_0) + \Sigma_s^t(x; \Sigma_0)\left[\nabla u\left(F_s^t(x), t\right)\right]^{\T} \\
+			                                     + \sigma\left(F_s^t(x), t \right)\sigma\left(F_s^t(x), t\right)^{\T}, \quad \Sigma_s^s\!\left(x; \Sigma_0\right) = \Sigma_0
+		                                     \end{multlined} \label{eqn:gauss_cov_de}
+	\end{align}
+\end{subequations}
+where \(x\) here denotes the mean of the initial Gaussian component, and \(\Sigma_0\) the covariance matrix.
+Providing that the Jacobian \(\nabla u\) of the vector field is available or can be approximated appropriately, we can propagate each component of the mixture model by solving \eqref{eqn:gauss_de}.
+An important consideration is that \(\Sigma_s^t\) represents a covariance matrix and must remain symmetric and positive semi-definite when solving \eqref{eqn:gauss_de}.
+However, many standard numerical ODE schemes do not take this into account, so a specialised scheme is required.
+Similar equations of the form \eqref{eqn:gauss_de} (although often without dependence on both time and the state in the \(\sigma\) term) are solved numerically in other applications, notably when implementing the extended Kalman filter \citep{Jazwinski_2014_StochasticProcessesFiltering, KulikovaKulikov_2014_AdaptiveODESolvers}.
+\citet{KulikovaKulikov_2014_AdaptiveODESolvers} identify that that the two most significant sources of numerical error when solving \eqref{eqn:gauss_de} are a) the estimate of the covariance matrix \(\Sigma_s^t\) violating the requirement of positive semi-definiteness, and b) local error propagation in the state equation without an adaptive step size.
+Moreover, a computationally efficient algorithm is critical to ensure that our approximate methods have an advantage over bulk Monte-Carlo simulation.
+
+\citet{Mazzoni_2008_ComputationalAspectsContinuous} proposes an efficient hybrid method for solving \eqref{eqn:gauss_de} which addresses both difficulties a) and b), and takes advantage of the availability of \(\nabla u\).
+This method, which we shall term the Mazzoni method, combines a Taylor-Heun approximation to solve \eqref{eqn:gauss_mean_de} for the state and a Gauss-Legendre step to solve \eqref{eqn:gauss_cov_de} for the covariance.
+With a step size of \(\delta t\), integration for both the state variable and the covariance matrix are convergent with order \(\mathcal{O}\!\left(\delta t^2\right)\).
+Moreover, \citet{Mazzoni_2008_ComputationalAspectsContinuous} shows through numerical simulations that the algorithm is computationally efficient when compared to alternatives with moderate precision.
+We therefore employ the Mazzoni method for all subsequent implementations of the linearisation procedure, in computing stochastic sensitivity and Gaussian mixture models.
+
+The Mazzoni algorithm is summarised as follows.
+Further details on the motivation behind and derivation of these equations is available in the original paper \citep{Mazzoni_2008_ComputationalAspectsContinuous}.
+For notational brevity, set \(w_t \equiv F_s^t\!\left(x\right)\) and \(\Pi_t \equiv \Sigma_s^t\!\left(x; \Sigma_0\right)\).
+The Taylor-Heun formula for the update of the state over the interval \([t, t + \delta t]\) is then
+\begin{subequations}\label{eqn:mazzoni_update}
+	\begin{equation}
+		w_{t + \delta t} \approx w_t + \left(I - \frac{\delta t}{2}\nabla u\left(w_t, t\right)\right)^{-1}.
+		\label{eqn:mazzoni_state_update}
+	\end{equation}
+	The Gauss-Legendre update of the covariance is
+	\begin{equation}
+		\Pi_{t + \delta t} \approx M_\tau \Pi_t M_\tau^{\T} + \delta t K_\tau \sigma\left(w_\tau,\, t + \frac{\delta t}{2}\right)\sigma\left(w_\tau,\, t + \frac{\delta t}{2}\right)^{\T} K_\tau^{\T},
+		\label{eqn:mazzoni_cov_update}
+	\end{equation}
+	where
+	\begin{align}
+		w_\tau & = \frac12\left(w_t + w_{t + \delta t} - \frac{\delta t^2}{4}\nabla u\left(w_t, \, t\right) u\left(w_t, \, t\right)\right) \label{eqn:mazzoni_cov_terms1} \\
+		K_\tau & = \left[I - \frac{\delta t}{2}\nabla u\left(w_\tau,\, t + \frac{\delta t}{2}\right)\right]^{-1}                                                          \\
+		M_\tau & = K_\tau \left[I + \frac{\delta t}{2}\nabla u\left(w_\tau,\, t + \frac{\delta t}{2}\right)\right] \label{eqn:mazzoni_cov_terms3}.
+	\end{align}
+	\citet{Mazzoni_2008_ComputationalAspectsContinuous} also provides the option of an adaptive time step to fix the numerical precision while ensuring an computationally efficient algorithm.
+	The step size is adjusted by monitoring the error in the estimation of the state variable, aiming to maintain a specified tolerance level \(e > 0\).
+	Given the error vector \(\mathcal{E}\) for each component of the state approximation, the maximum total-relative error is
+	\begin{equation}\label{eqn:mazzoni_e}
+		\hat{e} = \max_{i = 1,\dots,n}\frac{\abs{\mathcal{E}_i}}{\abs{w_{t + \delta t}^{(i)}} + 1}
+	\end{equation}
+	where \(\mathcal{E}_i\) and \(w_{t + \delta t}^{(i)}\) denote the respective \(i\)th elements of \(\mathcal{E}\) and \(w_{t + \delta t}\), which is used to measure error in the numerical estimate.
+	The resulting adjustment factor for the time step is
+	\begin{equation}\label{eqn:mazzoni_step}
+		\delta t_{\mathrm{new}} = \beta \delta t \sqrt{\frac{e}{\hat{e}}}.
+	\end{equation}
+	The factor \(\beta\) is a control parameter inserted to avoid frequent recalculations of the step size, and is specified prior.
+	\citet{Mazzoni_2008_ComputationalAspectsContinuous} suggests setting \(\beta = 0.8\).
+	By again taking advantage of the availability of the Jacobian \(\nabla u\), the error vector is approximated as
+	\begin{equation}\label{eqn:mazzoni_err}
+		\mathcal{E} \approx \frac{\delta t^2}{2}\left[\frac{1}{3\delta t}\left(\nabla u\!\left(w_{t + \delta t}, t + \delta t\right) - \nabla u\!\left(w_t, t\right)\right) - \frac{1}{6}\nabla u\!\left(w_t, t\right)^2\right] u\!\left(w_t, t\right).
+	\end{equation}
+\end{subequations}
+The set of equations \cref{eqn:mazzoni_update} describe the Mazzoni algorithm, and in \Cref{fig:mazzoni_alg} we summarise the full algorithm, as we have implemented it with adaptive step size.
+
+\begin{figure}
+	\begin{center}
+		\usetikzlibrary{shapes.geometric, arrows, positioning}
+
+		\begin{tikzpicture}[node distance=70pt]
+			\tikzstyle{arrow} = [->,>=stealth]
+
+			\node (s) [rectangle, rounded corners, draw=black, align=center] {\textbf{Start} \\ Given \(s, t, x, \Sigma_0\) \\ Choose \(\delta t_{\mathrm{min}}, \beta, e\)};
+
+			\node (a) [rectangle, below of=s, draw=black, align=center] {Set \(\delta t = \delta t_{\mathrm{min}}\) \\ Set \(k = 0\)};
+			\node (b) [rectangle, below of=a, draw=black, align=center] {Set \(t_{k+1} = t_k + \delta t\) \\ Compute \(w_{t_{k+1}}\) with \cref{eqn:mazzoni_state_update} \\
+				Compute \(e\) with \cref{eqn:mazzoni_e} \\ Set \(\delta t_{\mathrm{new}} = \max\left\{\delta t_{\mathrm{min}}, \beta \delta t \sqrt{\frac{e}{\hat{e}}}\right\}\)};
+
+			\node (d) [diamond, below of=b, draw=black, align=center, yshift=-40pt] {\(\hat{e} \leq e\) or \\ \(\delta t \leq \delta t_{\mathrm{min}}\)?};
+			\node (c) [rectangle, left of=d, draw=black, align=center, xshift=-75pt] {Set \(\delta_t = \delta_{\mathrm{new}}\)};
+
+			\node (e) [rectangle, below of=d, draw=black, align=center, yshift=-20pt] {Compute \(\Pi_{t_{k+1}}\) with \crefrange{eqn:mazzoni_cov_terms1}{eqn:mazzoni_cov_terms3} \\ Set \(k = k + 1\)};
+
+			\node (f) [diamond, below of=e, draw=black, align=center] {\(t_k = T\)?};
+
+			\node (g) [rectangle, rounded corners, left of=f, draw=black, align = center, xshift = -30pt] {\textbf{Stop}};
+			\node (h) [rectangle, right of=f, draw=black, align = center, xshift = 75pt] {\(\delta t = \min\left\{\delta t_{\mathrm{new}}, T - t_k\right\}\)};
+
+			\draw [arrow] (s) -- (a);
+
+			\draw [arrow] (a) -- (b);
+			\draw [arrow] (b) -- (d);
+
+			\draw [arrow] (d) -- node[anchor=south] {no} (c);
+			\draw [arrow] (d) -- node[anchor=east] {yes} (e);
+
+			\draw [arrow] (c) |- (b);
+
+			\draw [arrow] (e) -- (f);
+
+			\draw [arrow] (f) -- node[anchor=south] {yes} (g);
+			\draw [arrow] (f) -- node[anchor=south] {no} (h);
+
+			\draw [arrow] (h) |- (b);
+		\end{tikzpicture}
+		\caption{A flowchart of the Mazzoni algorithm with adaptive time stepping.
+			Recreated from Figure 2 of \citet{Mazzoni_2008_ComputationalAspectsContinuous}.}
+		\label{fig:mazzoni_alg}
+	\end{center}
+\end{figure}
 
 
 
