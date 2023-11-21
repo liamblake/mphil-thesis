@@ -396,48 +396,68 @@ Such a definition extends to the \(n\)-dimensional case as presented here, moreo
 \subsection{Connecting \(S^2\) to the finite-time Lyapunov exponent}\label{sec:ftle_s2_connection}
 We briefly consider the implications of our results on uncertain initial conditions from \Cref{sec:theory} on stochastic sensitivity, which suggest a connection between this measure and the finite-time Lyapunov exponent.
 The finite-time Lyapunov exponent (FTLE) was introduced in \Cref{sec:bkg_lcs} and is a commonly used tool for measuring the local stretching in a dynamical system.
-The FTLE is a purely deterministic measure, computed from the flow map \(F_0^t\) as
+
+% To show that the computation of the finite-time Lyapunov exponent is, in some sense, analogous to the definition and calculation of stochastic sensitivity outlined in \Cref{def:ss_Rn} and \Cref{thm:s2_compute}, we provide an alternative derivation of the FTLE.
+% Consider a V
+In a particular direction \(w\) from \(x_0\), the stretching is measured as
 \[
-	\mathrm{FTLE}_0^t\!\left(x_0\right) = \frac{1}{\abs{t}}\ln\!\left(\norm{\nabla F_0^t\!\left(x_0\right)}\right).
+	s\!\left(x_0,w\right) = \frac{\norm{F_0^t\!\left(x_0 + w\right) - F_0^t\!\left(x_0\right)}}{\norm{x_0}} \approx \frac{\norm{F_0^t\!\left(x_0\right)w}}{\norm{w}}
 \]
-By quantifying the stretching between two nearby trajectories, the FTLE can be seen as a measure of the impact of small perturbations in the initial position on the future behaviour of the dynamical system.
-In contrast, stochastic sensitivity measures the impact of \emph{ongoing} uncertainty resulting from both the deterministic dynamics of the model and ongoing stochastic perturbations (from the diffusion term \(\sigma\!\left(y_t, t\right)\dif W_t\)).
-
-However, we postulate that the FTLE and stochastic sensitivity can be related directly to each other, by considering stochastic sensitivity with the addition of uncertainty in the initial state.
-The original formulation of stochastic sensitivity \citep{Balasuriya_2020_StochasticSensitivityComputable} and our extension in \Cref{sec:theory_s2} do not account for any uncertainty about the initial point \(x_0\), but the theory in \Cref{sec:theory} enables us to.
-The following is one such approach to relating the two measures, but may not be the ideal approach; establishing these connections in more details is a matter for future work.
-Let \(0 < \rho \ll 1\) be a small scalar parameter that quantifies the scale of uncertainty in the (otherwise fixed) initial position \(x_0\).
-The uncertain initial condition is \(x\), and suppose that \(\avg{x} = x_0\) and \(\var{x} = \rho^2 I\), so that
+assuming the perturbation is small.
+The FTLE is then computed by finding the direction in which the stretching is maximised, leading to the operator norm computation
 \[
-	\delta_2^2 = \avg{\norm{x - x_0}^2} = \rho^2,
+	\sup_{w \in \R^n, \, w \neq 0} s\!\left(x, w\right) = \norm{\nabla F_0^t\!\left(x_0\right)} = \sqrt{\norm{\left[\nabla F_0^t\!\left(x_0\right)\right]^{\T}\nabla F_0^t\!\left(x_0\right)}}.
 \]
-With this choice of mean and variance for the initial condition, we are considering a small, isotropic perturbation to the initial condition \(x_0\); with the theory in \Cref{sec:theory}, we are able to quantify the infinitesimal impact of this uncertainty.
-We can then extend \Cref{def:ss_Rn} to
-\begin{equation}\label{eqn:s2_init}
-	\tilde{S}\!\left(x_0, t\right) = \lim_{\rho \downarrow 0}\lim_{\epsilon\downarrow 0}\sup\set{\frac{1}{\epsilon\rho}
-	\var{p^{\T}\left(y_t^{(\epsilon)} - F_0^t\!\left(x_0\right)\right)} \, : \, p \in \R^n, \, \norm{p} = 1},
-\end{equation}
-where the SDE solution \(y_t^{(\epsilon)}\) is subject to the initial condition \(y_0^{(\epsilon)} = 0\).
-In \cref{eqn:s2_init}, we have extended the original \Cref{def:ss_Rn} to include a scaling and zero-limit of the initial uncertainty \(\rho\) that matches the treatment of the ongoing uncertainty scale \(\epsilon\).
-
-Following the same steps as in the proof of \Cref{thm:s2_calculation} (in \Cref{app:s2_calculation_proof}), we have that
+The stochastic sensitivity definition in \Cref{def:ss_Rn} is analogous to this formation of the FTLE.
+We consider a small stochastic perturbation (the solution to the SDE \cref{eqn:sde_y}) to a deterministic model (the corresponding deterministic system \cref{eqn:det_ode}).
+The size of the perturbation is parameterised by \(\epsilon\), and the notion that this perturbation is ``small'' is formalised by considering the limit as \(\epsilon\) approaches zero.
+Since we are now dealing with stochastic quantities, we take the direction in which the \emph{variance} of the mapped perturbation is maximised.
+\Cref{thm:s2_calculation} further establishes that stochastic sensitivity can be computed by taking the operator norm of the covariance matrix of the linearised SDE \emph{with a fixed initial condition}.
+That is, stochastic sensitivity is the operator norm of
 \[
-	\lim_{\rho \downarrow 0}\lim_{\epsilon \downarrow 0}{\var{\frac{1}{\epsilon\rho}y_t^{(\epsilon)}}} = \lim_{\rho \downarrow 0}\lim_{\epsilon \downarrow 0}{\frac{1}{\epsilon^2\rho^2}\var{l_t^{(\epsilon)}}} = ,
+	\frac{1}{\epsilon^2}\var{l_t^{(\epsilon)}} = \Sigma_0^t\!\left(x_0\right).
 \]
-enabling us to compute \(\tilde{S}\!\left(x_0, t\right)\) as
-
-
-Consider an uncertain initial condition \(x\) with expectation \(\avg{x} = x_0\) and variance \(\var{x} = I\).
+This matrix captures (up to leading order in \(\epsilon\)) the impact of ongoing uncertainty
+However, the theory of \Cref{sec:theory} allows for uncertain initial conditions, so suppose that we instead consider the perturbation SDE \cref{eqn:sde_y} initial condition \(x\) with expectation \(\avg{x} = x_0\) and variance \(\var{x} = \epsilon^2 I\).
 If there was no ongoing uncertainty (\(\sigma \equiv O\)), then any uncertainty in the system arises purely from the initial condition \(x\).
 Then from \cref{eqn:pi_expl_eqn}, the variance of the small noise linearisation is then
 \[
-	\var{l_t^{(\epsilon)}} = \nabla F_0^t\!\left(x_0\right)\left[\nabla F_0^t\!\left(x_0\right)\right]^{\T},
+	\frac{1}{\epsilon^2}\var{l_t^{(\epsilon)}} = \nabla F_0^t\!\left(x_0\right)\left[\nabla F_0^t\!\left(x_0\right)\right]^{\T},
 \]
-which is the left Cauchy-Green tensor of the deterministic system \cref{eqn:ode_det}.
+resulting only from the first term in \cref{eqn:pi_expl_eqn}.
+Thus,
+\[
+	\tilde{S}^2\!\left(x_0, t\right) = \norm{\nabla F_0^t\!\left(x_0\right)\left[\nabla F_0^t\!\left(x_0\right)\right]^{\T}} = \sup_{w \in \R^n, \, w \neq 0}{s\!\left(x_0, \delta\right)^2}
+\]
 By maximising the projection of this variance over all directions, as in \cref{eqn:s2_calculation} to compute stochastic sensitivity, we perform exactly the computation to determine the maximal stretching rate in the computation of the finite-time Lyapunov exponent.
 The finite-time Lyapunov exponent (FTLE) quantifies the sensitivity of a dynamical system to initial conditions \citep{ShaddenEtAl_2005_DefinitionPropertiesLagrangian}, and can be equivalently considered a measure of the impact of an uncertain initial condition on the \emph{deterministic} evolution of trajectories.
 There has been recent interest in extending the FTLE for systems with ongoing uncertainty \citep{Balasuriya_2020_UncertaintyFinitetimeLyapunov,YouLeung_2021_ComputingFiniteTime,GuoEtAl_2016_FiniteTimeLyapunovExponents}, but no established approach as of yet.
 A framework that computes stochastic sensitivity with uncertain initial conditions can be seen as such an extension of the FTLE, in the sense that the measure would characterise the sensitivity of a dynamical system to \emph{both} initial conditions and ongoing uncertainty.
+Formalising this connection (e.g. by considering the appropriate limits) is a matter for future work.
+
+% However, we postulate that the FTLE and stochastic sensitivity can be related directly to each other, by considering stochastic sensitivity with the addition of uncertainty in the initial state.
+% The original formulation of stochastic sensitivity \citep{Balasuriya_2020_StochasticSensitivityComputable} and our extension in \Cref{sec:theory_s2} do not account for any uncertainty about the initial point \(x_0\), but the theory in \Cref{sec:theory} enables us to.
+% The following is one such approach to relating the two measures, but may not be the ideal approach; establishing these connections in more details is a matter for future work.
+% Let \(0 < \rho \ll 1\) be a small scalar parameter that quantifies the scale of uncertainty in the (otherwise fixed) initial position \(x_0\).
+% The uncertain initial condition is \(x\), and suppose that \(\avg{x} = x_0\) and \(\var{x} = \rho^2 I\), so that
+% \[
+% 	\delta_2^2 = \avg{\norm{x - x_0}^2} = \rho^2,
+% \]
+% With this choice of mean and variance for the initial condition, we are considering a small, isotropic perturbation to the initial condition \(x_0\); with the theory in \Cref{sec:theory}, we are able to quantify the infinitesimal impact of this uncertainty.
+% We can then extend \Cref{def:ss_Rn} to
+% \begin{equation}\label{eqn:s2_init}
+% 	\tilde{S}\!\left(x_0, t\right) = \lim_{\rho \downarrow 0}\lim_{\epsilon\downarrow 0}\sup\set{\frac{1}{\epsilon\rho}
+% 	\var{p^{\T}\left(y_t^{(\epsilon)} - F_0^t\!\left(x_0\right)\right)} \, : \, p \in \R^n, \, \norm{p} = 1},
+% \end{equation}
+% where the SDE solution \(y_t^{(\epsilon)}\) is subject to the initial condition \(y_0^{(\epsilon)} = 0\).
+% In \cref{eqn:s2_init}, we have extended the original \Cref{def:ss_Rn} to include a scaling and zero-limit of the initial uncertainty \(\rho\) that matches the treatment of the ongoing uncertainty scale \(\epsilon\).
+
+% Following the same steps as in the proof of \Cref{thm:s2_calculation} (in \Cref{app:s2_calculation_proof}), we have that
+% \[
+% 	\lim_{\rho \downarrow 0}\lim_{\epsilon \downarrow 0}{\var{\frac{1}{\epsilon\rho}y_t^{(\epsilon)}}} = \lim_{\rho \downarrow 0}\lim_{\epsilon \downarrow 0}{\frac{1}{\epsilon^2\rho^2}\var{l_t^{(\epsilon)}}} = ,
+% \]
+% enabling us to compute \(\tilde{S}\!\left(x_0, t\right)\) as
+
 
 
 
@@ -630,9 +650,9 @@ and since each component of \(R\) is bounded as in \cref{eqn:rem_ineq}, using \c
 \]
 Taking the norm and expectation then gives
 \begin{align*}
-	\avg{\norm{A(t)}^r} & = \avg{\norm{\int_0^t{R\!\left(y_t^{(\epsilon)}, \tau\right)\dif\tau}}^r}                                                                                                                     \\
-	                    & \leq t^{r-1}\avg{\int_0^t{\norm{R\!\left(y_\tau^{(\epsilon)}, \tau\right)}^r\dif\tau}}                                                                                                        \\
-	                    & \leq \frac{t^{r-1}n^{r/2}K_{\nabla\nabla u}^r}{2^r}\avg{\int_0^t{\norm{y_\tau^{(\epsilon)} - F_0^\tau\!\left(x_0\right)}^{2r}\dif\tau}}                                                       \\
+	\avg{\norm{A(t)}^r} & = \avg{\norm{\int_0^t{R\!\left(y_t^{(\epsilon)}, \tau\right)\dif\tau}}^r}                                                                                                                      \\
+	                    & \leq t^{r-1}\avg{\int_0^t{\norm{R\!\left(y_\tau^{(\epsilon)}, \tau\right)}^r\dif\tau}}                                                                                                         \\
+	                    & \leq \frac{t^{r-1}n^{r/2}K_{\nabla\nabla u}^r}{2^r}\avg{\int_0^t{\norm{y_\tau^{(\epsilon)} - F_0^\tau\!\left(x_0\right)}^{2r}\dif\tau}}                                                        \\
 	                    & \leq \begin{multlined}[t]
 		                           \frac{t^{r-1} n^{r/2} K^r_{\nabla\nabla u}H_1\!\left(2r,t, K_{\nabla u}, K_{\sigma}\right)}{2^r}\epsilon^{2r} \\
 		                           + \frac{t^{r-1} n^{r/2} K_{\nabla\nabla u}^r H_2\!\left(2r,t, K_{\nabla u}\right)}{2^{r}}\delta_{2r}^{2r},
@@ -746,7 +766,7 @@ Thus,
 		        \frac{1}{\epsilon}\left(x - x_0\right) + \frac{1}{\epsilon}\int_0^t\left(-\left[\nabla F_0^\tau\!\left(x_0\right)\right]^{-1} \nabla u\!\left(F_0^\tau\!\left(x_0\right), \tau\right)\left(l_\tau^{(\epsilon)} - F_0^\tau\!\left(x_0\right) \right)\right. \\
 		        \left. + \left[\nabla F_0^\tau\!\left(x_0\right)\right]^{-1}\nabla u\!\left(F_0^\tau\!\left(x_0\right), \tau\right) \left(l_\tau^{(\epsilon)} - F_0^\tau\!\left(x_0\right)\right) \right)\dif\tau \\
 		        + \int_0^t{\left[\nabla F_0^\tau\!\left(x_0\right)\right]^{-1}\sigma\!\left(F_0^\tau\!\left(x_0\right), \tau\right)\dif W_\tau}
-	        \end{multlined}              \\
+	        \end{multlined}               \\
 	    & = \frac{1}{\epsilon}\left(x - x_0\right) + \int_0^t{\left[\nabla F_0^\tau\!\left(x_0\right)\right]^{-1}\sigma\!\left(F_0^\tau\!\left(x_0\right), \tau\right)\dif W_\tau},
 \end{align*}
 where we reach the second line by using the equation of variations \cref{eqn:eqn_of_vars} satisfied by \(\nabla F_0^\tau\!\left(x_0\right)\).
@@ -807,7 +827,7 @@ Let \(L_{ij}\) denote the \((i,j)\)th element of \(L\), then the \((i,j)\)th ele
 	 & = \begin{multlined}[t]
 		     \sum_{k=1}^{m}\avg{\left(\int_0^t{L_{ik}\!\left(x_0, \tau\right)\dif W_{\tau}^{(k)}}\right)\!\left(\int_0^t{L_{jk}\!\left(x_0, \tau\right)\dif W_{\tau}^{(k)}}\right)} \\
 		     \!\!+ \sum_{k=1}^{m}\sum_{\substack{l=1 \\ l \neq k}}^m\avg{\left(\int_0^t{L_{ik}\!\left(x_0, \tau\right)\dif W_{\tau}^{(k)}}\right)}\!\avg{\left(\int_0^t{L_{jl}\!\left(x_0, \tau\right)\dif W_{\tau}^{(l)}}\right)}
-	     \end{multlined}                                                                  \\
+	     \end{multlined}                                                               \\
 	 & = \sum_{k=1}^m{\int_0^t{L_{ik}\!\left(x_0, \tau\right)L_{jk}\!\left(x_0, \tau\right)\dif\tau}},
 \end{align*}
 where the second equality  the fact that \(W_t^{(k)}\) is independent of \(W_t^{(l)}\) for \(k \neq l\) and the third equality uses It\^o's isometry \citep{KallianpurSundar_2014_StochasticAnalysisDiffusion}.

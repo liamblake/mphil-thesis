@@ -21,9 +21,8 @@
 
 % Have useful default headings
 \pagestyle{headings}
-% but avoid all capitals
-\let\MakeUppercase\textsf
-
+% % but avoid all capitals
+\let\MakeUppercase%\textsf
 
 \RequirePackage{graphicx}
 
@@ -54,7 +53,7 @@
 \RequirePackage{mathtools}
 \RequirePackage{bm}
 \RequirePackage{commath}
-\RequirePackage{enumitem}
+\RequirePackage[inline]{enumitem}
 % For more powerful command argument parsing
 \RequirePackage{xparse, xargs}
 % For more \mathbb support
@@ -67,6 +66,8 @@
 \crefname{equation}{}{}
 
 \RequirePackage[mode=buildnew]{standalone}
+
+\RequirePackage{multirow}
 
 % Units
 \RequirePackage{siunitx}
@@ -226,9 +227,6 @@
 	}
 }
 
-% Lazy todo
-\newcommand{\tds}{\td{something}}
-
 % Placeholder for a citation
 \newcommand{\citehere}{{\color{blue}{[citation needed]}}\wlog{Warning: Citation needed on input line \the\inputlineno} }
 
@@ -253,11 +251,11 @@
 % Statistical operators
 \newcommand{\var}[1]{\mathds{V}\!\left[#1\right]}
 \newcommand{\avg}[1]{\mathds{E}\!\left[#1\right]}
-\newcommand{\cov}[1]{\operatorname{cov} \left(#1\right)}
-\newcommand{\sd}[1]{\operatorname{sd} \left(#1\right)}
-\newcommand{\cor}[1]{\operatorname{cor} \left(#1\right)}
-\newcommand{\mse}[2]{\operatorname{MSE}_{\,#1} \left(#2\right)}
-\newcommand{\bias}[2]{b_{\,#1}\left(#2\right)}
+\newcommand{\cov}[1]{\operatorname{cov}\!\left(#1\right)}
+\newcommand{\sd}[1]{\operatorname{sd}\!\left(#1\right)}
+\newcommand{\cor}[1]{\operatorname{cor}\!\left(#1\right)}
+\newcommand{\mse}[2]{\operatorname{MSE}_{\,#1}\!\left(#2\right)}
+\newcommand{\bias}[2]{b_{\,#1}\!\left(#2\right)}
 
 % Likelihood theory
 \newcommand{\loglik}[2]{\ell\left(#1\,;\,#2\right)}
@@ -343,6 +341,9 @@
 \newtheorem{result}{Result}[section]
 \newtheorem{hypo}{Hypothesis}[section]
 \newtheorem{remark}{Remark}[section]
+
+% Slightly weird bug - if not explicitly defined then cleveref is using \MakeUppercase, but this results in a linebreak before the link.
+\Crefname{hypo}{Hypothesis}{}
 
 % Proof environment, ended with box
 \newenvironment{proof}{%

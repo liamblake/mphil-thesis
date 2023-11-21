@@ -1,1 +1,51 @@
 \chapter{Discretisation of the 2D Fokker-Planck equation}
+
+
+Consider the Fokker-Planck equation in 2D:
+$$
+	\frac{\partial p}{\partial t} = -\nabla\cdot\left(pu\right) + \frac{1}{2}\nabla \cdot \nabla \cdot\left(pD\right).
+$$
+where $D(x_1, x_2, t) = \sigma\sigma^T$ is the symmetric diffusion tensor. Written out fully,
+$$
+	\frac{\partial p}{\partial t} = \begin{multlined}[t]
+		- \frac{\partial p}{\partial x_1} u_1 - \frac{\partial p}{\partial x_2} u_2 - p\frac{\partial u}{\partial x_1} - p\frac{\partial u}{\partial x_2} + \frac12 \frac{\partial^2 p}{\partial x_1^2}D_{11} \\
+		+ \frac12\frac{\partial^2p}{\partial x_2^2}D_{22} + \frac{\partial^2 p}{\partial x_1 \partial x_2}D_{12} + \frac{\partial p}{\partial x_1}\frac{\partial D_{11}}{\partial x_1} + \frac{\partial p}{\partial x_1}\frac{\partial D_{12}}{\partial x_2} + \frac{\partial p}{\partial x_2}\frac{\partial D_{21}}{\partial x_1} \\
+		+ \frac{\partial p}{\partial x_2}\frac{\partial D_{22}}{\partial x_2} + \frac12p\frac{\partial^2 D_{11}}{\partial x^2} + p\frac{\partial^2 D_{12}}{\partial x_{1}\partial x_2} + \frac12 p\frac{\partial^2 D_{22}}{\partial x_2^2}.
+	\end{multlined}
+$$
+If $D$ is additionally diagonal, then we have
+$$
+	\frac{\partial p}{\partial t} = \begin{multlined}[t]
+		- \frac{\partial p}{\partial x_1} u_1 - \frac{\partial p}{\partial x_2} u_2 - p\frac{\partial u}{\partial x_1} - p\frac{\partial u}{\partial x_2} + \frac12 \frac{\partial^2 p}{\partial x_1^2}D_{11} \\
+		+ \frac12\frac{\partial^2p}{\partial x_2^2}D_{22} + \frac{\partial p}{\partial x_1}\frac{\partial D_{11}}{\partial x_1}
+		+ \frac{\partial p}{\partial x_2}\frac{\partial D_{22}}{\partial x_2} + \frac12p\frac{\partial^2 D_{11}}{\partial x^2} + \frac12 p\frac{\partial^2 D_{22}}{\partial x_2^2}.
+	\end{multlined}
+$$
+We will use the method of lines to find a numerical solution to this equation, by discretising the spatial variables $x_1$ and $x_2$ and keeping time $t$ continuous. We will assume that $u$, $D$ and the appropriate derivatives are available without explicit discretisation.
+Discretise space equidistantly as $\left(x_1^{(i)}, x_2^{(j)}\right)$, for $i = 1,...,N$ and $j = 1,...,M$ with respective step sizes $\delta_x$ and $\delta_y$. The discretised solution is then $p_{i,j}(t) \coloneqq p(x_i, x_j, t)$. The derivatives of $p$ are approximated as
+$$
+	\begin{aligned}
+		\frac{\partial p_{i,j}(t)}{\partial x_1} & \approx \frac{p_{i+1, j}(t) - p_{i-1,j}(t)}{2\delta_x}                \\
+		\frac{\partial p_{i,j}(t)}{\partial x_2} & \approx \frac{p_{i,j+1}(t) - p_{i,j-1}(t)}{2\delta_y}                 \\
+		\frac{\partial^2 p_{i,j}(t)}{x_1^2}      & \approx \frac{p_{i+1,j}(t) - 2p_{i,j}(t) + p_{i-1,j}(t)}{\delta_x^2}  \\
+		\frac{\partial^2 p_{i,j}(t)}{x_2^2}      & \approx \frac{p_{i,j+1}(t) - 2p_{i,j}(t) + p_{i,j-1}(t)}{\delta_y^2}.
+	\end{aligned}
+$$
+The discretised Fokker-Planck equation is then
+\begin{align*}
+	\frac{\partial p_{i,j}(t)}{\partial t} & = \begin{multlined}[t]
+		                                           - \frac{p_{i+1, j}(t) - p_{i-1,j}(t)}{2\delta_x} u_1(x^{(i)}, t) - \frac{p_{i,j+1}(t) - p_{i,j-1}(t)}{2\delta_y} u_2(x^{(i)}, t) \\  - p_{i,j}(t)\frac{\partial u_1}{\partial x_1}(x^{(i)},t) - p_{i,j}(t)\frac{\partial u_2}{\partial x_2}(x^{(i)}, t) \\
+		                                           + \frac{p_{i+1,j}(t) - 2p_{i,j}(t) + p_{i-1,j}(t)}{2\delta_x^2}D_{11}\left(x^{(i)}, t\right)
+		                                           + \frac{p_{i,j+1}(t) - 2p_{i,j}(t) + p_{i,j-1}(t)}{2\delta_y^2}D_{22}\left(x^{(i)}, t\right) \\
+		                                           + \frac{p_{i+1, j}(t) - p_{i-1,j}(t)}{2\delta_x}\frac{\partial D_{11}}{\partial x_1}\left(x^{(i)}, t\right)
+		                                           + \frac{p_{i,j+1}(t) - p_{i,j-1}(t)}{2\delta_y}\frac{\partial D_{22}}{\partial x_2} \\
+		                                           + \frac12p_{i,j}(t)\frac{\partial^2 D_{11}}{\partial x^2} + \frac12p_{i,j}(t)\frac{\partial^2 D_{22}}{\partial x_2^2}.
+	                                           \end{multlined}                                                                                                           \\
+	                                       & = \begin{multlined}[t]\left[-\frac{\partial u_1}{\partial x_1}(x^{(i)},t) - \frac{\partial u_2}{\partial x_2}(x^{(i)},t) - \frac{1}{\delta_x^2}D_{11}\left(x^{(i)}, t\right) - \frac{1}{\delta_y^2}D_{22}\left(x^{(i)}, t\right) + \frac{1}{2}\frac{\partial^2 D_{11}}{\partial x^2} + \frac12\frac{\partial^2 D_{22}}{\partial x_2^2} \right]p_{i,j}(t) \\
+		                                           + \left[-\frac{1}{2\delta_x}u_1\left(x^{(i)}, t\right) + \frac{1}{2\delta_x^2}D_{11}\left(x^{(i)}, t\right) + \frac{1}{2\delta_x}\frac{\partial D_{11}}{\partial x_1}\left(x^{(i)}, t\right)\right]p_{i+1,j}(y) \\
+		                                           + \left[\frac{1}{2\delta_x}u_1\left(x^{(i)}, t\right) + \frac{1}{2\delta_x^2}D_{11}\left(x^{(i)}, t\right) - \frac{1}{2\delta_x}\frac{\partial D_{11}}{\partial x_1}\left(x^{(i)}, t\right)\right]p_{i-1,j}(y) \\
+		                                           + \left[-\frac{1}{2\delta_y}u_2\left(x^{(i)}, t\right) + \frac{1}{2\delta_y^2}D_{22}\left(x^{(i)}, t\right) + \frac{1}{2\delta_y}\frac{\partial D_{22}}{\partial x_2}\left(x^{(i)}, t\right)\right]p_{i,j+1}(y) \\
+		                                           + \left[\frac{1}{2\delta_y}u_2\left(x^{(i)}, t\right) + \frac{1}{2\delta_y^2}D_{22}\left(x^{(i)}, t\right) - \frac{1}{2\delta_y}\frac{\partial D_{22}}{\partial x_2}\left(x^{(i)}, t\right)\right]p_{i,j-1}(y) \\
+	                                           \end{multlined}
+\end{align*}
+This is a coupled system of $MN$ *linear* ordinary differential equations.
