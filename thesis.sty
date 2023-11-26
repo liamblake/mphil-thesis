@@ -60,8 +60,8 @@
 \RequirePackage{bbm}
 % Hyperlinks are cool
 \RequirePackage{url}
-\RequirePackage{hyperref}
-\hypersetup{colorlinks,linkcolor=red,citecolor=cyan,urlcolor=magenta,filecolor=magenta,breaklinks,dvips,bookmarks,bookmarksopen}
+\RequirePackage{xcolor}
+\RequirePackage[colorlinks,linkcolor=magenta,citecolor=cyan,urlcolor=red,filecolor=red,breaklinks,bookmarks,bookmarksopen]{hyperref}
 \RequirePackage[capitalise,nameinlink,noabbrev]{cleveref}
 \crefname{equation}{}{}
 
@@ -99,7 +99,7 @@
 \RequirePackage{ifdraft}
 \ifdraft{
 	% Big line spacing
-	\linespread{1.5}
+	% \linespread{1.5}
 
 	% Line numbering
 	\RequirePackage{lineno}
