@@ -1,20 +1,25 @@
 %!TEX root = ../thesis.tex
 
-\chapter{Theoretical Background}
-In this chapter, we first motivate the need for stochastic models with a simple example predicting the path of a drifter in the Gulf Stream.o
+\chapter{Theoretical Background}\label{ch:background}
+In this chapter, we provide the theoretical background required for this thesis, most notably introducing the flow map of a deterministic system and building up to It\^o stochastic differential equations as a means of incorporating uncertainty into these models.
+Further details, including some of the technical results and tools employed later, and provided in \Cref{app:theory}.
+The chapter is concluded by summarising stochastic sensitivity \citep{Balasuriya_2020_StochasticSensitivityComputable}, which provided initial tools for characterising uncertainty in a computationally efficient manner and is the primary motivation for this work.
 
-Throughout, we will use an example of tracking a drifter in the Gulf Stream to illustrate the concepts introduced.
-We will return to this example in more detail, including applying our later developments, in \Cref{ch:appls}.
+% In this chapter, we first motivate the need for stochastic models with a simple example predicting the path of a drifter in the Gulf Stream.o
 
-We then briefly review the current literature on stochastic parameterisation, which is the introduction of stochastic terms into otherwise deterministic models, in the context of atmospheric modelling, oceanography and climate forecasting.
-Finally, we highlight the limitations of bulk stochastic simulation as a means of working with complicated stochastic models, both in terms of computational costs and accuracy.
-This suggests the need, across a variety of applications, for developing computationally efficient methods for approximating prediction distributions of such stochastic models, which this thesis aims to address.
+% Throughout, we will use an example of tracking a drifter in the Gulf Stream to illustrate the concepts introduced.
+% We will return to this example in more detail, including applying our later developments, in \Cref{ch:appls}.
+
+% We then briefly review the current literature on stochastic parameterisation, which is the introduction of stochastic terms into otherwise deterministic models, in the context of atmospheric modelling, oceanography and climate forecasting.
+% Finally, we highlight the limitations of bulk stochastic simulation as a means of working with complicated stochastic models, both in terms of computational costs and accuracy.
+% This suggests the need, across a variety of applications, for developing computationally efficient methods for approximating prediction distributions of such stochastic models, which this thesis aims to address.
 
 
-\section{notation}
+\section{Notation}
 We start this chapter by introducing the mathematical notation that will be used throughout this thesis.
 The set of \(n \times m\) matrices with real-valued entries is denoted as \(\R^{n\times m}\).
-In general, the \(i\)th component of a vector \(x\) is denoted by \(x_{i}\), except where there is already a subscript, in which case we write \(x_t^{(i)}\) to denote the \(i\)th component of \(x_t\), for instance.
+% In general, the \(i\)th component of a vector \(x\) is denoted by \(x_{i}\), except where there is already a subscript, in which case we write \(x_t^{(i)}\) to denote the \(i\)th component of \(x_t\), for instance.
+% For a matrix \(A\), \(\left[A\right]_{\cdot i}\) typically refers to the \(i\)th column, and \(\left[A\right]_{i\cdot}\) the \(i\) the row of \(A\).
 The norm symbol \(\norm{\cdot}\) without any additional qualifiers denotes the standard Euclidean norm for a vector, and the spectral (operator) norm induced by the Euclidean norm, i.e. for an \(n \times n\) matrix \(A\)
 \[
 	\norm{A} = \sup\left\{\frac{\norm{Av}}{\norm{v}}\,\middle|\,v \in \R^n, \, \norm{v} \neq 0\right\}.
@@ -107,14 +112,17 @@ These implications are summarised in \Cref{fig:rv_conv_impl}.
 
 
 \section{The flow map}
-The continuous time evolution of many different phenomena can be modelled with a system of first order differential equations of the form
+Ordinary differential equations are used to model many different phenomena across a range of fields and applications.
+Specifically, the continuous time evolution of a multi-dimenesional state variable is governed by a system of first order differential equations of the form
 \begin{equation}\label{eqn:det_ode}
 	\dod{w_t}{t} = u\!\left(w_t, t\right),
 \end{equation}
-where \(w_t \in \R^n\) is the time-evolving state variable of interest, and \(u \colon \R^n \times [0,T] \to \R^n\) is the vector field.
+where \(w_t \in \R^n\) is the time-evolving variable of interest and \(u\) is the vector field specified at each relevant state and time \(t\).
 The vector field \(u\) may be derived from a specified model, or may be driven or supplemented by observed data.
+Since data has a finite-time limitation, we typically consider the evolution of \cref{eqn:det_ode} over a finite time interval \([0,T]\).
+In this thesis, we restrict ourselves to the finite time setting.
 We can solve \cref{eqn:ode_det} analytically, or, as is often required in practice, numerically to generate time evolving trajectories, which can inform future predictions or be used to reconstruct past behaviour.
-The solutions to the differential equations of the form \cref{eqn:det_ode} define a continuous-time dynamical system.
+% The solutions to the differential equations of the form \cref{eqn:det_ode} define a continuous-time dynamical system.
 The flow map of \cref{eqn:det_ode} provides a convenient way of summarising and working with the trajectories that solve \cref{eqn:det_ode}.
 Formally, the flow map \(F_{s}^{t}: \R^n \to \R^n\) from time \(s\) to \(t\) associated with \cref{eqn:det_ode} is the unique solution to
 \begin{equation}
@@ -155,7 +163,7 @@ That is, we extend our deterministic model to a stochastic one, where the soluti
 There are several approaches to establishing such a framework, the most general of which is a random dynamical system \citep{Arnold_1998_RandomDynamicalSystems,NeckelRupp_2013_RandomDifferentialEquations}.
 However, when working in a continuous-time and continuous-state modelling scenario, a natural extension of an ordinary differential equation to account for this uncertainty is a stochastic differential equation (SDE).
 For a formal introduction to stochastic differential equations, see \citet{Oksendal_2003_StochasticDifferentialEquations} or \citet{KallianpurSundar_2014_StochasticAnalysisDiffusion}, for instance.
-The following motivation of stochastic differential equations follows a similar one available in \citet{Oksendal_2003_StochasticDifferentialEquations}.
+There are several different ways to construct stochastic differential equations from deterministic dynamics; the following motivation of stochastic differential equations loosely follows a similar one available in \citet{Oksendal_2003_StochasticDifferentialEquations}, but other formulations of SDEs are available, e.g. from a, or using rough path theory \citep{FrizVictoir_2010_MultidimensionalStochasticProcesses}.
 
 Suppose that we have a deterministic ordinary differential equation, i.e. \cref{eqn:ode_det}, and aim to account for uncertainty in the vector field \(u\).
 In lieu of any additional understanding of this uncertainty, we model it as a stochastic noise.
@@ -164,18 +172,23 @@ Ideally, we would parameterise the uncertainty with some continuous-time stochas
 	\dod{y_t}{t} = u\left(x_t, t\right) + \xi_t\!\left(x_t\right).
 \]
 The noise process \(\xi_t\) can depend on the state, since we may expect that the magnitude and structure of the uncertainty varies with both the state and time.
-
-
+In most modelling situations, we expect that the noise process \(\xi_t\) should have the properties:
+\begin{enumerate}
+	\item For any two distinct times \(s \neq t\), the random variables \(\xi_s\) and \(\xi_t\) are independent.
+	\item The process is stationary, that is the joint distribution of \(W_{t_1 + t}, \dotsc, W_{t_k + t}\) does not depend on \(t\).
+	\item For all \(t\), \(\avg{\xi_t} = 0\).
+\end{enumerate}
 Additionally, since we are modelling with a continuum, the noise process \(\xi_t\) should be (with probability \(1\)) continuous in time.
-However, such a noise process \(\xi_t\) does not exist \citep{Oksendal_2003_StochasticDifferentialEquations}, in that there is no continuous process with properties 1 to 4, so we need an alternative formulation of the integral.
+However, such a noise process \(\xi_t\) does not exist \citep{Oksendal_2003_StochasticDifferentialEquations}, in that there is no  continuous process with properties 1 to 3, so we need an alternative formulation of the integral.
 This leads to the It\^o integral, and It\^o stochastic differential equations, which we introduce in \Cref{sec:bkg_ito} and \Cref{sec:bkg_sde} respectively.
 
 
 
 \subsection{The Wiener process}
-The Wiener process, or Brownian motion, is an example of a continuous-time stochastic process that is often used to model \td{something}
-In the absence of any additional knowledge about the nature of the noise (such as skew)
-Defined formally, the (one-dimensional) \emph{Wiener process} is a stochastic process \(B_t\) taking values in \(\R\) and satisfying the following properties:
+
+
+In the absence of any additional knowledge about the nature of the noise (such as skew), the canonical Wiener process is the standard choice.
+Defined formally, the (one-dimensional) canonical \emph{Wiener process} is a stochastic process \(B_t\) taking values in \(\R\) and satisfying the following properties:
 \begin{romanate}
 	\item \(B_0 = 0\),
 	\item for every \(s > 0\), the increments \(B_{s + t} - B_{s}\) for \(t \geq 0\) are independent of \(B_r\) for all \(r < s\),
@@ -185,11 +198,7 @@ Defined formally, the (one-dimensional) \emph{Wiener process} is a stochastic pr
 Remarkably, these properties \emph{uniquely} define the Wiener process, with the additional result that for any \(t > 0\), \(B_t \sim \mathcal{N}\left(0, t\right)\), a Gaussian distribution with mean zero and variance \(t\).
 The \emph{\(n\)-dimensional Wiener process} is a stochastic process \(W_t\) taking values in \(R^n\) such that each component of \(W_t\) is a one-dimensional Wiener process and the components of \(W_t\) are mutually independent.
 It follows that for the \(n\)-dimensional Wiener process \(W_t\), at any time \(t > 0\), \(W_t \sim \mathcal{N}\left(0, tI\right)\), an \(n\)-dimensional Gaussian distribution with mean zero and covariance matrix \(tI\).
-
-% A Wiener process is a type of L\'evy process, which is a more general class of stochastic process satisfying only conditions (i), (ii), and (iii) above \citep{Applebaum_2004_LevyProcessesStochastic}.
-
 \Cref{fig:wiener_rels} plots realisations of a one-dimensional and two-dimensional Wiener process.
-Realisations of a Wiener process are a random walk,
 
 \begin{figure}
 	\begin{center}
@@ -202,8 +211,8 @@ Realisations of a Wiener process are a random walk,
 
 
 \subsection{The It\^o integral}\label{sec:bkg_ito}
-\td{Some sort of motivation or introduction}
-
+The non-differentiability of the Wiener process means that standard deterministic calculus is not sufficient to introduce continuous-time uncertainty into a differential equation.
+Instead, this lead to an entirely new definition of the integral by \citet{Ito_1944_StochasticIntegral,Ito_1946_StochasticIntegralEquation} that enabled integration with respect to a broad class of stochastic processes.
 For our purposes, we can think of an It\^o integral as being defined as the limit in probability of a sequence of sums, i.e. for a scalar but possibly random-valued function \(f\colon [a,b] \to \R\),
 \begin{equation}\label{eqn:ito_int_limit_defn}
 	\sum_{\left[t_i, t_{i+1}\right] \in \mathcal{P}_N}{f\left(t_{i}\right)\left(W_{t_{i+1}} - W_{t_i}\right)} \xlongrightarrow[\text{probability}]{} \int_a^b{f(t)\dif W_t}, \quad \text{as } N \to \infty
@@ -227,7 +236,7 @@ Let \(g \colon [a,b] \to \R^{n \times m}\) be a function giving possibly random 
 
 
 \subsection{It\^o stochastic differential equations}\label{sec:bkg_sde}
-
+Equipped with the It\^o integral as a formal definition of an integral with respect to a stochastic process, we can now extend the notion of an ordinary differential equation to include stochasticity.
 The differential form of an \(n\)-dimensional It\^o stochastic differential equation is
 \begin{equation}
 	\dif y_t = u\!\left(y_t, t\right)\dif t + \sigma\!\left(y_t, t\right)\dif W_t,
@@ -249,50 +258,55 @@ The nature of the noise is characterised by the diffusion matrix \(\sigma\).
 When \(\sigma\) does not depend on the solution \(y_t\), the noise is termed \emph{additive}, whereas if \(\sigma\) does depend on the solution, then the noise is \emph{multiplicative}.
 SDEs with additive noise are typically easier to solve and analyse than those with multiplicative noise, but multiplicative noise is often required in practice to capture uncertainty that varies with state.
 
-\begin{figure}
-	\begin{center}
-		\includegraphics[width=\textwidth]{figures/ou_solution.pdf}
-		\caption{Sample paths of the solution to the stochastic differential equation \(\dif x_t = \sin\!\left(x_t\right)\dif t + \dif W_t\), from the initial condition \(x_0 = 1\) and over the time interval \((0,\pi)\).
-			The solution to the corresponding deterministic system is in black with the same initial condition is in black.}
-		\label{fig:sde_sol_sample}
-	\end{center}
-\end{figure}
+There are many analytic tools available for working with stochastic differential equations, such as It\^o's Lemma, an analogy of the chain rule.
+The results that are used in this thesis (most notably the proofs presented in \Cref{ch:linear_theory}) are summarised in \Cref{app:ito_tools}.
 
-As an example, in \Cref{fig:sde_sol_sample} we show 10 stochastic samples of the solution to the SDE \(\dif x_t = \sin\!\left(x_t\right)\dif t + \dif W_t\).
-The corresponding deterministic system
+% \begin{figure}
+% 	\begin{center}
+% 		\includegraphics[width=\textwidth]{figures/ou_solution.pdf}
+% 		\caption{Sample paths of the solution to the stochastic differential equation \(\dif x_t = \sin\!\left(x_t\right)\dif t + \dif W_t\), from the initial condition \(x_0 = 1\) and over the time interval \((0,\pi)\).
+% 			The solution to the corresponding deterministic system is in black with the same initial condition is in black.}
+% 		\label{fig:sde_sol_sample}
+% 	\end{center}
+% \end{figure}
 
-Two trajectories (the blue and orange) deviate from the behaviour of the deterministic system.
+% As an example, in \Cref{fig:sde_sol_sample} we show 10 stochastic samples of the solution to the SDE \(\dif x_t = \sin\!\left(x_t\right)\dif t + \dif W_t\).
+% The corresponding deterministic system
+% Two trajectories (the blue and orange) deviate from the behaviour of the deterministic system.
 
 
 
-Stochastic differential equations also arise as the limit of deterministic slow-fast systems, where the average behaviour of the `fast' dynamics can be shown to converge to the solution of a stochastic differential equation \citep[e.g.]{WongZakai_1965_ConvergenceOrdinaryIntegrals,MelbourneStuart_2011_NoteDiffusionLimits,GottwaldMelbourne_2013_HomogenizationDeterministicMaps}\lb{Maybe some better citations out there.}.
-A review of this theory is provided by \citet{GivonEtAl_2004_ExtractingMacroscopicDynamics}.
-This is particular relevant in climate and physics applications, where \citep{FranzkeEtAl_2015_StochasticClimateTheory}.
-This leads to stochastic parameterisation \citep{BernerEtAl_2017_StochasticParameterizationNew,Palmer_2019_StochasticWeatherClimate}, which we review in more detail in \Cref{sec:stoch_param}.
+% Stochastic differential equations also arise as the limit of deterministic slow-fast systems, where the average behaviour of the `fast' dynamics can be shown to converge to the solution of a stochastic differential equation \citep[e.g.]{WongZakai_1965_ConvergenceOrdinaryIntegrals,MelbourneStuart_2011_NoteDiffusionLimits,GottwaldMelbourne_2013_HomogenizationDeterministicMaps}\lb{Maybe some better citations out there.}.
+% A review of this theory is provided by \citet{GivonEtAl_2004_ExtractingMacroscopicDynamics}.
+% This is particular relevant in climate and physics applications, where \citep{FranzkeEtAl_2015_StochasticClimateTheory}.
+% This leads to stochastic parameterisation \citep{BernerEtAl_2017_StochasticParameterizationNew,Palmer_2019_StochasticWeatherClimate}, which we review in more detail in \Cref{sec:stoch_param}.
 
+The noise driving stochastic differential equations need not be a Wiener process, and can be instead replaced by any semi-martingale, which are a general class of stochastic processes.
+However, we primarily use the Wiener process throughout this thesis due to the aforementioned properties that make it appropriate for modelling scenarios and the ubiquitous use of it across literature and applications.
+We do briefly discuss the possibility of extending some of our work to L\'evy processes, a  more general class of stochastic processes, in \Cref{sec:disc_levy}.
 
 
 
 \subsection{Numerical schemes for approximating SDEs}
 In general, solving a stochastic differential equation analytically is not possible, and so as with ordinary differential equations we instead look to use numerical schemes to approximate solutions.
 However, the solution to a stochastic differential equation is itself a random variable, so a single sample path is not sufficient.
-Instead, a numerical SDE scheme produces approximate \emph{realisations} of the solution.
-The Euler-Maruyama (EM) method is analogous to the Euler method for ODEs, and considered by many to be the simplest method for numerically solving SDEs \citep{KloedenPlaten_1992_NumericalSolutionStochastic}.
-The update step of the EM scheme, with step size \(\Delta t\), is
+Instead, a numerical SDE scheme involves random sampling (typically of the driving noise process) and produces approximate \emph{realisations} of the solution.
+With a large number of these Monte-Carlo realisations, one can estimate statistical properties and approximate the distribution of the solution.
+The stochastic sampling approach is the gold-standard in many applications, most notably climate and weather modelling \citep{Collins_2007_EnsemblesProbabilitiesNew},  where complicated stochastic models cannot be used analytically.
+
+The simplest scheme for numerically solving SDEs is the Euler-Maruyama (EM) method, which is analogous to the Euler method for ODEs \citep{KloedenPlaten_1992_NumericalSolutionStochastic}.
+The update step of the EM scheme, with step size \(\delta t\), is
 \begin{equation}
-	\hat{x}_{t + \Delta t} = \hat{x}_{t} + \Delta t u\left(\hat{x}_t, t\right) + \Delta t \sigma\left(\hat{x}_t, t\right) Z_t,
+	\hat{x}_{t + \delta t} = \hat{x}_{t} + \Delta t u\!\left(\hat{x}_t, t\right) + \delta t \sigma\!\left(\hat{x}_t, t\right) Z_t,
 	\label{eqn:em_step}
 \end{equation}
 where \(Z_t\) is sampled from the standard Gaussian \(\Gauss{0,I}\), and the scheme is initialised as \(\hat{x}_0 = x_0\).
-The Euler-Maruyama scheme has strong order 0.5, meaning that
-\[
-	\avg{\norm{x_t - \hat{x}_{t}\left(\Delta t\right)}} = \mathcal{O}\left(\Delta t^{0.5}\right),
-\]
-where \(\hat{x}_t\left(\Delta t\right)\) is the Euler-Maruyama estimate at time \(t\) using step size \(\Delta t\).
-
-
-There are many other schemes for generating approximate samples of a stochastic differential equation, of varying weak and strong orders.
-For instance, extensions of Runge-Kutta-type schemes \citep{Roberts_2012_ModifyImprovedEuler,Rossler_2010_RungeKuttaMethodsStrong}.
+% The Euler-Maruyama scheme has strong order 0.5, meaning that
+% \[
+% 	\avg{\norm{x_t - \hat{x}_{t}\left(\Delta t\right)}} = \mathcal{O}\left(\Delta t^{0.5}\right),
+% \]
+% where \(\hat{x}_t\left(\Delta t\right)\) is the Euler-Maruyama estimate at time \(t\) using step size \(\Delta t\).
+There are many other schemes for generating approximate samples of a stochastic differential equation, of varying precision and computational efficiency, many of which are given in \citet{KloedenPlaten_1992_NumericalSolutionStochastic}.
 
 
 
@@ -300,12 +314,14 @@ For instance, extensions of Runge-Kutta-type schemes \citep{Roberts_2012_ModifyI
 
 
 \subsection{The Fokker-Planck equation}\label{sec:fp_eqn}
+The Fokker-Planck (FP) equation is a partial differential equation that describes the time evolution of the probability density function of the solution to a stochastic differential equation.
 The probability density function \(\rho: \R^n \times [0,T] \to [0,\infty)\) for the solution to \cref{eqn:gen_sde} at time \(t \in [0,T]\) is the solution to the corresponding Fokker-Planck equation \citep{Risken_2012_FokkerPlanckEquationMethods}
 \begin{equation}
 	\dpd{\rho}{t} = \frac12\nabla\cdot\nabla\cdot\left(\rho\sigma\sigma^{\T}\right) - \nabla\cdot\left(\rho u\right)
 	\label{eqn:fp_eqn}
 \end{equation}
 subject to some initial density \(\rho\left(x,0\right)\) given by the initial condition to \cref{eqn:gen_sde}.
+For a fixed and deterministic initial condition \(y_0 = x\), the corresponding initial condition to \cref{eqn:fp_eqn} is the Dirac-delta distribution centred at \(x\).
 To ensure that the solution is a valid probability density function on \(\R^n\), for any \(t \in [0,T]\), \(\rho\) must satisfy
 \begin{subequations}\label{eqn:fp_valid_pdf}
 	\begin{align}
@@ -313,48 +329,9 @@ To ensure that the solution is a valid probability density function on \(\R^n\),
 		\lim_{x \to \infty}\rho\left(x,t\right) = 0. \label{eqn:fp_valid_pdf_limit}
 	\end{align}
 \end{subequations}
-For a fixed and deterministic initial condition \(y_0 = x\), the corresponding initial condition to \cref{eqn:fp_eqn} is the Dirac-delta distribution centred at \(x\).
-
-
-\subsubsection{Relationship to the classical advection-diffusion equation}
-The advection-diffusion equation describes the time-evolution of a passive and inert scalar quantity, such as temperature, salinity
-
-\citep{Visser_2008_LagrangianModellingPlankton}
-
-Let \(c \colon \Omega_0 \times [0,T] \to [0, \infty)\) denote the concentration of a passive and inert scalar quantity, then the classical advection-diffusion equation is
-\begin{equation}\label{eqn:advec_diff}
-	\dpd{c}{t} = - \nabla\cdot \left(v\!\left(x,t\right)c\!\left(x,t\right)\right) + \nabla\cdot\left(K\!\left(x,t\right)\nabla c\!\left(x,t\right)\right), \quad c\!\left(x,0\right) = c_0\!\left(x\right),
-\end{equation}
-where \(v\) denotes the flow velocity dictating the advection (displacement) of the tracer, and \(K\) is a matrix describing the diffusion (dispersion) of \(c\).
-
-
-
-
-If we set \(u\!\left(x,t\right) = v\!\left(x,t\right) + \nabla \cdot K\!\left(x,t\right)\) and \(\sigma\!\left(x,t\right)\sigma\!\left(x,t\right) = K\!\left(x,t\right)\), then the Fokker-Planck equation \cref{eqn:fp_eqn} is equivalent to the advection-diffusion equation \cref{eqn:advec_diff}.
-Thus, the evolution of the tracer concentration under \cref{eqn:advec_diff} can be equivalently considered as the probability density function of solutions to the stochastic differential equation
-\begin{equation}\label{eqn:ad_sde}
-	\dif x_t = \left[u\!\left(x_t, t\right) + \nabla \cdot K\!\left(x_t, t\right)\right]\dif t + \kappa\!\left(x_t, t\right)\dif W_t, \quad x_t \sim \hat{c}_0,
-\end{equation}
-where \(\kappa\) is any matrix-valued function satisfying \(K \equiv \kappa\kappa^{\T}\), and
-\[
-	\hat{c}_0\!\left(x\right) = \frac{c_0\!\left(x\right)}{\int_{\Omega_0}c_0\!\left(z\right)\dif z},
-\]
-is the initial density of \cref{eqn:advec_diff} normalised to describe a probability density function.
-Assuming that the total concentration tracer is conserved, that is
-\[
-	\int_{\Omega_t}{c\!\left(z,t\right)\dif z} = \int_{\Omega_0}{c_0\!\left(z\right)\dif t}
-\]
-for all \(t \in [0,T]\), then we can recover \(c\) from the probability density function \(\rho\) corresponding to \cref{eqn:ad_sde} as
-\[
-	c\!\left(x,t\right) = \rho\!\left(x,t\right)\int_{\Omega_0}{c_0\!\left(z\right)\dif t}.
-\]
-An implication of this connection is that the theory and computations for stochastic differential equations developed throughout this thesis can be applied to \emph{any} scalar field that is modelled with an advection-diffusion type equation.
-
-
-
-\subsubsection{Practical difficulties}
-
-However, there are several practical difficulties with solving the Fokker-Planck equation:
+Solving the Fokker-Planck equation provides an alternative method for finding the solution to a stochastic differential equation; rather than dealing with stochastic quantities, we instead seek solutions to the
+However, the Fokker-Planck equation cannot be solved analytically except for simple cases and there are several practical difficulties in attempting to solve it numerically.
+These difficulties include:
 \begin{itemize}
 	\item \textbf{Dimensionality:} In high-dimensional systems, solving the Fokker-Planck equation numerically is computationally prohibitative, requiring a small spatial discretisation to be accurate.
 	\item \textbf{Boundary conditions:} The Fokker-Planck equation is often defined on an unbounded domain with the zero-limit constraint \cref{eqn:fp_valid_pdf_limit}, which presents computational difficulties.
@@ -362,28 +339,63 @@ However, there are several practical difficulties with solving the Fokker-Planck
 \end{itemize}
 It is generally accepted that these difficulties mean that the computational cost of solving the Fokker-Planck equation is too high in \(3\)- or higher dimensions \citep{ZhaiEtAl_2022_DeepLearningMethod,Li_2019_DatadrivenMethodSteady,AllawalaMarston_2016_StatisticsStochasticallyForced}.
 
+\td{Perhaps comment on how the FP equation arises in other settings, and is a generalisation of the advection-diffusion equation and similar. Hence learning stuff about the solution to the SDE also tells us about the FP equation.}
+
+% \subsubsection{Relationship to the classical advection-diffusion equation}
+% The advection-diffusion equation describes the time-evolution of a passive and inert scalar quantity, such as temperature, salinity
+
+% \citep{Visser_2008_LagrangianModellingPlankton}
+
+% Let \(c \colon \Omega_0 \times [0,T] \to [0, \infty)\) denote the concentration of a passive and inert scalar quantity, then the classical advection-diffusion equation is
+% \begin{equation}\label{eqn:advec_diff}
+% 	\dpd{c}{t} = - \nabla\cdot \left(v\!\left(x,t\right)c\!\left(x,t\right)\right) + \nabla\cdot\left(K\!\left(x,t\right)\nabla c\!\left(x,t\right)\right), \quad c\!\left(x,0\right) = c_0\!\left(x\right),
+% \end{equation}
+% where \(v\) denotes the flow velocity dictating the advection (displacement) of the tracer, and \(K\) is a matrix describing the diffusion (dispersion) of \(c\).
 
 
-\subsubsection{Green's function method}
-The Fokker-Planck equation is linear, so we can apply a technique known as Green's function method (for an example of this approach on a linear SDE, see Section 3.2 of \citet{Risken_2012_FokkerPlanckEquationMethods}) in order to understand the behaviour of solutions with non-fixed initial conditions.
-Let \(\mathcal{P}_t\set{\rho_0}\) denote the solution operator of \cref{eqn:fp_eqn} with initial density \(\rho_0\colon \R^n \to \R^n\).
-Then, since \cref{eqn:fp_eqn} is a linear equation, \(\mathcal{P}_t\) is a linear operator.
-Now, let \(x_0 \in \R^n\) be an arbitrary fixed point, and consider the fundamental solution, or Green's function,
-\[
-	G_t\left(x; x_0\right) \coloneqq \mathcal{P}_t\set{\delta_{x_0}}\!\left(x\right).
-\]
-That is, \(G_t\left(x; x_0\right)\) is the solution to the Fokker-Planck equation with the Dirac-delta initial condition \(\delta_{x_0}(x) = \delta\left(x - x_0\right)\), which is equivalent to the SDE \cref{eqn:gen_sde} with the deterministic and fixed initial condition \(y_0 = x_0\).
-The Green's function \(G_t\) is equivalently the transition probability function of the SDE solution \(x_t\) as a stochastic process.
-Now, using the sampling property of the Dirac-delta function, for a general initial density \(\rho_0\colon \R^n \to \R^n\),
-\[
-	\rho_0(x_0) = \int_{\R^n}{\rho_0\left(x\right)\delta_{x_0}\left(x\right)\dif x}.
-\]
-Since \(\mathcal{P}_t\) is linear,
-\begin{equation}
-	\mathcal{P}_t\set{\rho_0}\!\left(x_0\right) = \int_{\R^n}{\rho_0\!\left(x\right)\mathcal{P}_t\set{\delta_{x_0}}\!\left(x\right)\dif x} = \int_{\R^n}{\rho_0\!\left(x\right) G_t\!\left(x; x_0\right)\dif x}.
-	\label{eqn:fp_greens_trick}
-\end{equation}
-An implication of \cref{eqn:fp_greens_trick} is that for a given stochastic differential equation, we only need to understand the behaviour of solutions subject to a fixed (albeit arbitrary) initial condition.
+
+
+% If we set \(u\!\left(x,t\right) = v\!\left(x,t\right) + \nabla \cdot K\!\left(x,t\right)\) and \(\sigma\!\left(x,t\right)\sigma\!\left(x,t\right) = K\!\left(x,t\right)\), then the Fokker-Planck equation \cref{eqn:fp_eqn} is equivalent to the advection-diffusion equation \cref{eqn:advec_diff}.
+% Thus, the evolution of the tracer concentration under \cref{eqn:advec_diff} can be equivalently considered as the probability density function of solutions to the stochastic differential equation
+% \begin{equation}\label{eqn:ad_sde}
+% 	\dif x_t = \left[u\!\left(x_t, t\right) + \nabla \cdot K\!\left(x_t, t\right)\right]\dif t + \kappa\!\left(x_t, t\right)\dif W_t, \quad x_t \sim \hat{c}_0,
+% \end{equation}
+% where \(\kappa\) is any matrix-valued function satisfying \(K \equiv \kappa\kappa^{\T}\), and
+% \[
+% 	\hat{c}_0\!\left(x\right) = \frac{c_0\!\left(x\right)}{\int_{\Omega_0}c_0\!\left(z\right)\dif z},
+% \]
+% is the initial density of \cref{eqn:advec_diff} normalised to describe a probability density function.
+% Assuming that the total concentration tracer is conserved, that is
+% \[
+% 	\int_{\Omega_t}{c\!\left(z,t\right)\dif z} = \int_{\Omega_0}{c_0\!\left(z\right)\dif t}
+% \]
+% for all \(t \in [0,T]\), then we can recover \(c\) from the probability density function \(\rho\) corresponding to \cref{eqn:ad_sde} as
+% \[
+% 	c\!\left(x,t\right) = \rho\!\left(x,t\right)\int_{\Omega_0}{c_0\!\left(z\right)\dif t}.
+% \]
+% An implication of this connection is that the theory and computations for stochastic differential equations developed throughout this thesis can be applied to \emph{any} scalar field that is modelled with an advection-diffusion type equation.
+
+
+% \subsubsection{Green's function method}
+% The Fokker-Planck equation is linear, so we can apply a technique known as Green's function method (for an example of this approach on a linear SDE, see Section 3.2 of \citet{Risken_2012_FokkerPlanckEquationMethods}) in order to understand the behaviour of solutions with non-fixed initial conditions.
+% Let \(\mathcal{P}_t\set{\rho_0}\) denote the solution operator of \cref{eqn:fp_eqn} with initial density \(\rho_0\colon \R^n \to \R^n\).
+% Then, since \cref{eqn:fp_eqn} is a linear equation, \(\mathcal{P}_t\) is a linear operator.
+% Now, let \(x_0 \in \R^n\) be an arbitrary fixed point, and consider the fundamental solution, or Green's function,
+% \[
+% 	G_t\left(x; x_0\right) \coloneqq \mathcal{P}_t\set{\delta_{x_0}}\!\left(x\right).
+% \]
+% That is, \(G_t\left(x; x_0\right)\) is the solution to the Fokker-Planck equation with the Dirac-delta initial condition \(\delta_{x_0}(x) = \delta\left(x - x_0\right)\), which is equivalent to the SDE \cref{eqn:gen_sde} with the deterministic and fixed initial condition \(y_0 = x_0\).
+% The Green's function \(G_t\) is equivalently the transition probability function of the SDE solution \(x_t\) as a stochastic process.
+% Now, using the sampling property of the Dirac-delta function, for a general initial density \(\rho_0\colon \R^n \to \R^n\),
+% \[
+% 	\rho_0(x_0) = \int_{\R^n}{\rho_0\left(x\right)\delta_{x_0}\left(x\right)\dif x}.
+% \]
+% Since \(\mathcal{P}_t\) is linear,
+% \begin{equation}
+% 	\mathcal{P}_t\set{\rho_0}\!\left(x_0\right) = \int_{\R^n}{\rho_0\!\left(x\right)\mathcal{P}_t\set{\delta_{x_0}}\!\left(x\right)\dif x} = \int_{\R^n}{\rho_0\!\left(x\right) G_t\!\left(x; x_0\right)\dif x}.
+% 	\label{eqn:fp_greens_trick}
+% \end{equation}
+% An implication of \cref{eqn:fp_greens_trick} is that for a given stochastic differential equation, we only need to understand the behaviour of solutions subject to a fixed (albeit arbitrary) initial condition.
 
 
 \section{Lagrangian coherent structures}\label{sec:bkg_lcs}
@@ -584,7 +596,6 @@ By employing techniques from both deterministic and stochastic calculus (i.e. Gr
 	\end{align*}
 	where \(\Lambda_{ij}\) is the \((i,j)\)-element of \(\Lambda\).
 \end{theorem}
-
 
 
 

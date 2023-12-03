@@ -7,14 +7,7 @@ We do not investigate any of these four applications in detail; rather, the aim 
 
 
 
-\section{Numerical considerations}
-
-
-
-
-
-
-\subsection{Numerically solving the Fokker-Planck equation}
+\section{Numerically solving the Fokker-Planck equation}
 
 The probability density function \(p\!\left(x,t\right)\) at any time of the solution to the SDE \cref{eqn:sde}
 
@@ -35,14 +28,20 @@ For two discrete distributions \(\hat{P}\) and \(\hat{Q}\) defined on the same s
 \begin{equation}\label{eqn:hell_disc}
 	D_H\!\left(\hat{P}, \hat{Q}\right) = \sqrt{\frac12 \sum_{i=l}^{K}\left(\sqrt{p_i} - \sqrt{q_i}\right)^2}
 \end{equation}
-We will use the Hellinger distance to compare three estimates of the solution to a stochastic differential equations: numerical samples from a numerical solver, analytic probability density functions from the linearised approximation and Gaussian mixture model algorithm, and a spatially discretised solution to the Fokker-Planck equation.
-
-The state space is divided into \(K\) non-overlapping bins \(b_1, b_2, \dotsc, b_K \subset \R^n\)
-Given \(N\) samples, the empirical probability corresponding to a bin is the (normalised) number of samples that fall within that bin.
-With two empirical PDFs constructed over the same set of bins, we can then compute the Hellinger distance using the discrete formulation \cref{eqn:hell_disc}
-
 The Hellinger distance is symmetric and defines a metric on the space of probability distributions.
-
+We will use the Hellinger distance to compare three estimates of the solution to a stochastic differential equations: numerical samples from a numerical solver, analytic probability density functions from the linearised approximation and Gaussian mixture model algorithm, and a spatially discretised solution to the Fokker-Planck equation.
+This presents an ambiguity in whether to use the continuous or discrete definition of the Hellinger distance.
+We choose to use the discrete definition, by discretising the continuous probability denisity and computing an empirical probability mass function from the samples.
+The state space is divided into \(K\) non-overlapping bins \(b_1, b_2, \dotsc, b_K \subset \R^n\).
+Given \(N\) samples, the empirical probability corresponding to a bin is the proportion of samples that fall within that bin.
+For a continuous random variable \(X\) with probability density function \(p_c\), the probability of \(X\) falling inside a bin \(b_i\) is given by
+\[
+	P\!\left(X \in b_i\right) = \int_{b_i}{p_c(x)\dif x}.
+\]
+For multivariate Gaussian and Gaussian mixture model densities, this integral cannot be evaluated exactly, so instead we use a Monte-Carlo estimate.
+We generate a large number of samples from the density, and compute the proportion of samples that fall in each bin.
+With two empirical PMFs constructed over the same set of bins, we can then compute the Hellinger distance between the two using the discrete formulation \cref{eqn:hell_disc}.
+This is a \emph{n\"aive} approach to estimating the Hellinger distance and there are alternative methods available (e.g. the empirical estimate recently proposed by \citet{DingMullhaupt_2023_EmpiricalSquaredHellinger}), but these methods only work in 1-dimension, whereas we will be dealing with 2- and 5-dimensional samples and probability density functions in this chapter.\lb{Gotta rewrite this sentence man, and check that the dimensionality really is an issue.}
 
 
 % \subsection{The Wasserstein metric}
@@ -124,6 +123,7 @@ We use the World Geodesic System 84, which gives the values \citep{Capderou_2014
 \Cref{fig:na_motive_flow} provides snapshots of the absolute geostrophic speed and contours of the sea-surface height, at times chosen to exhibit the formation and separation of an eddy from the main stream.
 The sea-surface height contours correspond to the instantaneous streamfunction of the flow.
 Although the Eulerian snapshots of the velocity data provide some indication of this behaviour, it is important to note that this data is often not sufficient to fully understand the dynamics; the movement of solving (Lagrangian) trajectories provide insight into the time-evolving behaviour of the system.
+\td{The figure caption is a lie; what behaviour is being shown? Why this time span? May need to go for even longer to see anything interesting :(.}
 
 \begin{figure}
 	\begin{center}
@@ -132,19 +132,19 @@ Although the Eulerian snapshots of the velocity data provide some indication of 
 			\caption{\(t = 0\) (midnight \DTMdisplaydate{2020}{01}{01}{})}
 		\end{subfigure}
 		\begin{subfigure}{0.49\textwidth}
-			\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/streamlines_2}
-			\caption{\(t = 2.8\) (midnight \DTMdisplaydate{2020}{01}{03}{})}
+			\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/streamlines_5}
+			\caption{\(t = 2.8\) (midnight \DTMdisplaydate{2020}{01}{6}{})}
 		\end{subfigure}
 		\begin{subfigure}{0.49\textwidth}
-			\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/streamlines_4}
-			\caption{\(t = 4.2\) (midnight \DTMdisplaydate{2020}{01}{04}{})}
+			\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/streamlines_10}
+			\caption{\(t = 4.2\) (midnight \DTMdisplaydate{2020}{01}{11}{})}
 		\end{subfigure}
 		\begin{subfigure}{0.49\textwidth}
-			\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/streamlines_6}
-			\caption{\(t =5.6\) (midnight \DTMdisplaydate{2020}{01}{05}{})}
+			\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/streamlines_15}
+			\caption{\(t =5.6\) (midnight \DTMdisplaydate{2020}{01}{16}{})}
 		\end{subfigure}
 		\caption{The absolute surface current speed (coloured) and contours of the sea-surface height (streamlines of the flow, in grey) of the Gulf Stream dataset, at various times chosen to demonstrate the formation and separation of an eddy from the stream.
-			The white region indicates missing data, due to the presence of land.
+			The black region indicates missing data, due to the presence of land.
 			All times are in Greenwich Mean Time.}
 		\label{fig:na_motive_flow}
 	\end{center}
@@ -155,7 +155,7 @@ Although the Eulerian snapshots of the velocity data provide some indication of 
 
 The velocity data is Eulerian and unsteady (varying with time), so to predict the position of a drifter we must solve for a Lagrangian trajectory.
 This requires interpolating the velocity data, for which we use a linear interpolate.
-Let \(x_t \equiv \left(x_t^{(\mathrm{lon})}, x_t^{(\mathrm{lat})}\right)^{\T}\) denote the longitudinal and latitudinal position of the drifter \(t\) days after midnight \DTMdisplaydate{2020}{01}{01}.
+Let \(x_t \equiv \left(x_t^{(\mathrm{lon})}, x_t^{(\mathrm{lat})}\right)^{\T}\) denote the longitudinal and latitudinal position of the drifter \(t\) days after midnight \DTMdisplaydate{2020}{01}{01}{-1}.
 The deterministic model for \(x_t\), constructed purely from the interpolated velocity data, is
 \begin{equation}\label{eqn:natl_ode}
 	\dod{}{t}\begin{bmatrix}
@@ -168,7 +168,7 @@ where \(u\) and \(v\) are the interpolated zonal and meridional velocities respe
 In this context, we may think of \cref{eqn:natl_ode} as our ``best available'' deterministic model for the time-evolution of the drifter position; if the data (and the subsequent interpolation) were exactly correct, then \cref{eqn:natl_ode} would provide accurate predictions.
 However, this is certainly not the case and there are many sources of uncertainty not accounted for by using \cref{eqn:natl_ode} alone.
 
-The dataset additionally includes estimates for the mapping error (an estimate of variance) in the zonal and meridional velocity measurements, and in particular provides an indication of measurement error; typically the error is smaller in regions directly under satellite tracks.
+The dataset additionally includes estimates for the mapping error (an estimate of standard deviation) in the zonal and meridional velocity measurements, and in particular provides an indication of measurement error; typically the error is smaller in regions directly under satellite tracks.
 To account for measurement error, we use the following stochastic model
 \begin{equation}
 	\dif \begin{bmatrix}
@@ -182,7 +182,7 @@ To account for measurement error, we use the following stochastic model
 	\end{multlined}
 	\label{eqn:natl_sde}
 \end{equation}
-where \(u_{\mathrm{err}}\) and \(v_{\mathrm{err}}\) are the interpolated error estimates for the zonal and meridional velocities (converted to \unit{\degree\per\square\day} using the same transformation as was done on the velocity data)\td{I may have messed this conversion up slightly - the error is a variance measure, so the units should be squared.}, and \(L_r = 0.25 \mathrm{\,degrees}\) is the spatial resolution of the data.
+where \(u_{\mathrm{err}}\) and \(v_{\mathrm{err}}\) are the interpolated error estimates for the zonal and meridional velocities (converted to \unit{\degree\per\square\day} using the same transformation as was done on the velocity data), and \(L_r = 0.25 \mathrm{\,degrees}\) is the spatial resolution of the data.
 
 
 
@@ -254,103 +254,124 @@ where \(u_{\mathrm{err}}\) and \(v_{\mathrm{err}}\) are the interpolated error e
 
 \subsection{Exploring a single trajectory}
 In this example, we shall consider a fixed initial condition.
-Suppose that at midnight \DTMdisplaydate{2021}{01}{01}, the drifter is located within the stream  at longitude \(60.5^\circ\) west and \(39^\circ\) north.
+Suppose that at midnight \DTMdisplaydate{2021}{01}{01}{-1}, the drifter is located within the stream  at longitude \(60.5^\circ\) west and \(39^\circ\) north.
 We accordingly consider the evolution of the models \cref{eqn:natl_ode} and \cref{eqn:natl_sde} with the initial condition \(x_0 = (-60.5, 39)^{\T}\).
+By solving the deterministic model \cref{eqn:natl_ode} numerically, we predict the position of the drifter after \(t = 7\) days (at midnight \DTMdisplaydate{2021}{01}{08}{-1}) and show the time-evolution of the solution trajectory in \Cref{fig:natl_det_traj}.
+The drifter is transported by the jet stream.
+This is the prediction of the deterministic model \cref{eqn:natl_ode}, but when accountinf for uncertainty with the stochastic model \cref{eqn:natl_sde}, we get a more complicated picture.
+\Cref{fig:natl_stoch_rels} shows the result of \(N = 1000\) numerical realisations (obtained via Euler-Maruyama integration with a step size of ) of the stochastic model \cref{eqn:natl_sde}, starting from the fixed initial condition \(x_0\) and evolved over the same week-long time frame.
+Each red point corresponds to a single realisation at midnight \DTMdisplaydate{2021}{01}{08}{-1}; although a large number of the realisations have been transported along the stream, many break off from the stream in eddies, resulting in several clusters.
+This example highlights the importance of stochastic models; the deterministic model suggests that the drifter will follow the Stream itself, but the dynamic behaviour of the flow means that any stochasticity can result in vastly different positions.
 
 \begin{figure}
 	\begin{center}
-		\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/det_traj.pdf}
-		\caption{The solution to \cref{eqn:natl_ode} with initial condition \((-60.5, 39)^{\T}\) from midnight \DTMdisplaydate{2021}{01}{01} to midnight \DTMdisplaydate{2021}{01}{08}, corresponding to a drifter on the surface of the Gulf Stream.
-			Contours of the sea surface height at the final time are included in grey, which correspond to contours of the streamfunction at that time.}
-		\label{fig:natl_det_traj}
+		\begin{subfigure}[t]{0.49\textwidth}
+			\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/det_traj.pdf}
+			\caption{The solution to the deterministic model \cref{eqn:natl_ode}.}
+			\label{fig:natl_det_traj}
+		\end{subfigure}
+		\begin{subfigure}[t]{0.49\textwidth}
+			\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/traj_stoch_rels}
+			\caption{Numerical realisations of the solution to the stochastic model \cref{eqn:natl_sde}.}
+			\label{fig:natl_stoch_rels}
+		\end{subfigure}
+		\caption{Solutions to the deterministic model \cref{eqn:natl_ode} in (a) and stochastic model \cref{eqn:natl_sde} in (b) for fixed initial condition \((-60.5, 39)^{\T}\) from midnight \DTMdisplaydate{2021}{01}{01}{-1} to midnight \DTMdisplaydate{2021}{01}{08}{-1}, corresponding to a drifter on the surface of the Gulf Stream.
+			The deterministic prediction at the final time is indicated in blue in both figures, with the time evolution of the deterministic trajectory in black in (a).
+			In (b), each red point corresponds to one of 2500 realisations of the stochastic solution at midnight \DTMdisplaydate{2021}{01}{08}{-1}.
+			Contours of the sea surface height at the final time are included in grey, which correspond to contours of the streamfunction at that time.
+			The regions of land for which there is no data is indicated in black.}
 	\end{center}
 \end{figure}
 
-By solving the deterministic model \cref{eqn:natl_ode} numerically, we predict the position of the drifter after \(t = 7\) days (at midnight \DTMdisplaydate{2021}{01}{08}) and show the time-evolution of the solution trajectory in \Cref{fig:natl_det_traj}.
-The drifter is transported by the stream.
-
-
-
-
-
-
-% \begin{figure}
-% 	\begin{center}
-% 		\begin{subfigure}{\textwidth}
-% 		\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/traj_stoch_rels.pdf}
-% 			\caption{The final position of \(N = 10000\) samples of the stochastic solution.}
-% 		\end{subfigure}
-
-% 	\begin{subfigure}{\textwidth}
-% 		\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/traj_stoch_joint_gauss.pdf}
-% 		\caption{}
-% 		\end{subfigure}
-
-% 		\caption{Samples of the solution to the stochastic model \cref{eqn:natl_sde} with initial condition \((-60.5, 39)^{\T}\) from DATE to DATE, corresponding to a drifter on the surface of the Gulf Stream.
-% 		Contours of the sea surface height at the final time are included in grey, which correspond to contours of the streamfunction at that time.}
-% 		\label{fig:natl_stoch_rels}
-% 	\end{center}
-% \end{figure}
-
-
-
-
-
 \begin{figure}
 	\begin{center}
-		\begin{subfigure}{\textwidth}
-			\includegraphics[width=0.49\textwidth]{chp06_applications/figures/gulf_stream/traj_stoch_em_1.pdf}
-			\caption{\(t = 1\) (midnight \DTMdisplaydate{2021}{02}{01}))}
+		\begin{subfigure}{0.49\textwidth}
+			\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/traj_stoch_em_1.0}
+			\caption{\(t = 1\) (midnight \DTMdisplaydate{2021}{02}{01}{-1}))}
 		\end{subfigure}
-
-		\begin{subfigure}{\textwidth}
-			\includegraphics[width=0.49\textwidth]{chp06_applications/figures/gulf_stream/traj_stoch_em_4.pdf}
-			\caption{\(t = 4\) (midnight \DTMdisplaydate{2021}{05}{01}))}
+		\begin{subfigure}{0.49\textwidth}
+			\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/traj_stoch_em_2.0}
+			\caption{\(t = 2\) (midnight \DTMdisplaydate{2021}{05}{01}{-1}))}
 		\end{subfigure}
-
-		\begin{subfigure}{\textwidth}
-			\includegraphics[width=0.49\textwidth]{chp06_applications/figures/gulf_stream/traj_stoch_em_7.pdf}
-			\caption{\(t = 7\) (midnight \DTMdisplaydate{2021}{08}{01}))}
+		\begin{subfigure}{0.49\textwidth}
+			\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/traj_stoch_em_3.0}
+			\caption{\(t = 3\) (midnight \DTMdisplaydate{2021}{08}{01}{-1}))}
+			\label{fig:natl_em_3}
 		\end{subfigure}
-		% \includegraphics[width=\textwidth]{}
+		\begin{subfigure}{0.49\textwidth}
+			\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/traj_stoch_em_4.0}
+			\caption{\(t = 4\) (midnight \DTMdisplaydate{2021}{08}{01}{-1}))}
+		\end{subfigure}
+		\begin{subfigure}{0.49\textwidth}
+			\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/traj_stoch_em_5.0}
+			\caption{\(t = 5\) (midnight \DTMdisplaydate{2021}{08}{01}{-1}))}
+		\end{subfigure}
+		\begin{subfigure}{0.49\textwidth}
+			\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/traj_stoch_em_6.0}
+			\caption{\(t = 6\) (midnight \DTMdisplaydate{2021}{08}{01}{-1}))}
+		\end{subfigure}
 		\caption{}
-		\label{fig:}
+		\label{fig:natl_em}
 	\end{center}
 \end{figure}
 
+We now move onto a more precise analysis of the time-evolution probability distribution of this solution to the stochastic model \cref{eqn:natl_sde}, and apply the tools we have developed in \Cref{ch:linear_theory,ch:gmm}.
+\Cref{fig:natl_em} shows histograms of \(N = 10000\) Euler-Maruyama samples at various times between \DTMdisplaydate{2021}{01}{01}{-1} and \DTMdisplaydate{2021}{01}{08}{-1}.
+The marginal distributions in the longitudinal and latitudinal directions are shown on each axis.
+Overlaid in red are the Gaussian solution to the linearisation of \cref{eqn:natl_sde}, computed by numerically solving the ODE \cref{eqn:pi_ode} for the covariance matrix.
+The deterministic trajectory and covariance matrix are computed simultaneously using the Mazzoni method outlined in \Cref{sec:mazzoni}.
+This computation requires the gradient of the velocity field, which we approximate with a centered finite difference.
+In \Cref{fig:natl_em}, on each joint histogram we have plotted contours of the bivariate Gaussian, and on each marginal we have plotted the probability density function of the Gaussian solution corresponding to that component.
+\td{Interpret the plots. Nothing too crazy to say. Need to make sure they are actually correct, however. \(t = 1\) not looking great.}
+After a single day (\(t = 1\)), the numerical realisations match the Gaussian
+The distribution is clearly non-Gaussian, due to both the nonlinearity of the flow and the multiplicative noise introduced by the measurement errors.
 
 
-% \begin{table}
-% 	\begin{tabular}{|c|c|c|c|c|}
-% 		\hline
-% 		\multirow{2}{*}{Time}      & \multirow{2}{*}{Algorithm pair} & \multicolumn{3}{c|}{Metric}                                           \\ \cline{3-5}
-% 		                           &                                 & Strong error                & Hellinger distance & Wasserstein metric \\ \hline
-% 		\multirow{3}{*}{\(t = 1\)} & Gaussian \& EM                  &                             &                    &                    \\ \cline{2-5}
-% 		                           & Gaussian \& FP                  &                             &                    &                    \\ \cline{2-5}
-% 		                           & EM \& FP                        &                             &                    &                    \\ \hline
-% 	\end{tabular}
-% 	\caption{Performance metrics for the Gaussian approximation against Euler-Maruyama samples and a number solution of the Fokker-Planck equation, for the Gulf Stream trajectory.}
-% 	\label{tab:natl_gauss_perform}
-% \end{table}
 
+\td{Surely a shorter timespan is more appropriate? Why am I making this difficult for myself!?}
 
 
 \begin{figure}
 	\begin{center}
-		\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/traj_stoch_hell_dist.pdf}
-		\caption{The Hellinger distance between \(N = 10000\) Euler-Maruyama samples of \cref{eqn:natl_sde} and the Gaussian process solution to the linearisation, \(t\) days after midnight \DTMdisplaydate{2021}{01}{01}.}
-		\label{fig:}
+		% \begin{subfigure}[t]{0.49\textwidth}
+		\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/traj_stoch_hell_dist_0.25}
+		\caption{The estimated Hellinger distance between \(N = 10000\) Euler-Maruyama samples of \cref{eqn:natl_sde} and the Gaussian process solution to the linearisation, \(t\) days after midnight \DTMdisplaydate{2021}{01}{01}{-1}.}
+		\label{fig:natl_hell}
+		% \end{subfigure}
+		% \begin{subfigure}[t]{0.49\textwidth}
+		% \includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/traj_stoch_S2}
+		% 	\caption{Stochastic sensitivity \(S^2\).}
+		% \end{subfigure}
+		% \begin{subfigure}[t]{0.49\textwidth}
+		% \includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/traj_stoch_s2min}
+		% 	\caption{The minimum eigenvalue of the linearisation covariance matrix.}
+		% \end{subfigure}
+		% \begin{subfigure}[t]{0.49\textwidth}
+		% \includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/traj_stoch_ratio}
+		% 	\caption{The ratio of eigenvalues of the linearisation covariance matrix.}
+		% \end{subfigure}
+		% \caption{ \(t\) days after midnight \DTMdisplaydate{2021}{01}{01}{-1}.}
+		% \label{fig:natl_metrics}
 	\end{center}
 \end{figure}
 
+To evaluate the Gaussian approximation over
+\Cref{fig:natl_hell} plots the Hellinger distance between the Gaussian approximation and Euler-Maruyama samples solving \eqref{eqn:natl_sde}, using a bin size corresponding to the .
+In \Cref{app:supp_hell_natl}, we provide additional figures showing the same computation, but for varying bin sizes, to verify that the Hellinger distance computation is reasonably robust to changes in this size.
+\td{Actually get this plots in there.}
+As expected, the distance increases over time, as the numerical solution to \eqref{eqn:natl_sde} quickly becomes non-Gaussian.
+However, there are two times where the Gaussian approximation \emph{improves}: at \(t \approx 3.3\) and \(t \approx 6\).
 
 
+
+\td{Conclude by answering `so what?`. Why would we want such approximations in the first place? How is this any better? We just have a shit approximation of a highly non-Gaussian distribution.}
 
 
 \subsection{Stochastic sensitivity}
 
 
-\Cref{fig:na_s2} plots the stochastic sensitivity field
+\Cref{fig:na_s2} plots the stochastic sensitivity field for a grid of initial conditions at the \(0.25^\circ \times 0.25^\circ\) resolution of the velocity data.
+That is, each initial condition corresponds to a point at which the surface velocity data was available.
 
 
 
@@ -361,6 +382,7 @@ The drifter is transported by the stream.
 		\begin{subfigure}[t]{0.49\textwidth}
 			\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/S2_field_grid}
 			\caption{The stochastic sensitivity \(S^2\).}
+			\label{fig:na_S2}
 		\end{subfigure}
 		\begin{subfigure}[t]{0.49\textwidth}
 			\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/s2min_field_grid}
@@ -381,7 +403,7 @@ The drifter is transported by the stream.
 		% \end{subfigure}
 		\caption{Fields computed from the linearisation covariance matrix on a grid of initial conditions (at the \(0.25^\circ \times 0.25^\circ\) resolution of the velocity data).
 			Note that values near the boundaries of the data and the land are not trustworthy, as the Gaussian approximations do not account for these boundaries.}
-		\label{fig:na_s2}
+		\label{fig:na_stoch_fields}
 	\end{center}
 \end{figure}
 
@@ -414,7 +436,27 @@ The drifter is transported by the stream.
 \end{figure}
 
 
+At higher resolutions, conclusions from the deterministic model alone cannot be trusted completely; between the gridpoints the velocity data has been interpolated.
+Although the stochastic model also uses this interpolated data, the fact that the model accounts for
+
+
+The diffusion matrix in the stochastic model can vary with both state and time (as is the case here), so the impact of
+
+
+
 \subsection{The mixture model}
+To conclude this example, we will explore several different implementations of the mixture model algorithm described in \Cref{ch:gmm} to predict the distribution of stochastic solutions about the single trajectory in the previous example.
+Again, our aim is to not investigate the algorithm and model in detail, but to rather demonstrate the potential of this algorithm in efficiently approximating the stochastic solution, and therefore as a tool for improving predictions.
+
+As discussed in \Cref{ch:gmm}, we expect that the mixture model approach will work best in moderate noise models and over reasonably short timeframes.
+We take the same fixed initial condition \(x_0 = \left(-60.5, 39\right)^{\T}\) but instead consider the position of the drifter at \(t = 3\), so at midnight \DTMdisplaydate{2021}{01}{04}{-1}.
+The distribution of numerical samples at this time is given in \Cref{fig:natl_em_3}; the aim here is to use the mixture model algorithm to approximate this non-Gaussian distribution with a small number of Gaussian components, each constructed as solutions to the linearised SDE.
+
+
+\td{Explore in some detail here...}
+
+
+
 
 
 
@@ -454,11 +496,22 @@ However, we can approximate the expressions using a finite difference for the li
 \section{Epidemiology}
 
 
+
+Stochastic differential equations emerge from these discrete models in the limit of an infinite population size.
+Analogous to the behaviour of nonlinear stochastic differential equations in small noise limits (as established by \citet{FreidlinWentzell_1998_RandomPerturbationsDynamical} and our work in \Cref{ch:linear_theory}), the density process converges to the solution to a system of ordinary differential equations (known as the \emph{fluid limit} in some literature).
+Moreover, the stochastic variation of the process about this deterministic limit converges to the solution to a linear stochastic differential equation (known as the \emph{diffusion limit}).
+We summarise these results in \Cref{sec:epi_limits}.
+
+
+
+
 \subsection{A very brief overview of population processes}
-
-
 A common model for population process are continuous-time Markov chains (CTMCs)
+Here, we provide only a brief overview of population processes; for a more detailed intorduction, see \citehere.
 
+The population process is described by the transition function \(q\colon \mathcal{S}\times\mathcal{S} \to [0,\infty)\), where \(q(x,y)\) describes the rate at which
+
+A single sample \(X\) from the population process at time \(T\) can be simulated with the following procedure \citep{Gillespie_1977_ExactStochasticSimulation}:
 \begin{enumerate}
 	\item Initialise \(X = X_0\), the initial state of the process.
 	      If the initial state is uncertain, sample \(X\) from the initial state distribution.
@@ -483,8 +536,8 @@ The result is a single sample \(X\) of the population process at time \(T\).
 The sum is taken across all the possible transitions from the current state.
 Note that typically most of these rates are zero, so the sum does not need to be taken over the entire state space.
 
-\subsection{Large population diffusion limits}
-
+\subsection{Large population diffusion limits}\label{sec:epi_limits}
+In the limit of large population sizes, a deterministic ordinary differential equation and linear stochastic differential equation arise from certain population processes, despite these processes being discrete.
 A population process is \emph{density dependent} (in the sense of \citet{Kurtz_1970_SolutionsOrdinaryDifferential}) if there is a parameter \(N\) such that
 \begin{equation}
 	q\!\left(n, n+l\right) = Nf\!\left(\frac{n}{N}, l\right),
@@ -737,8 +790,11 @@ Next, we will compute the stochastic sensitivity field on the set of (physically
 
 
 
-\subsection{Example 2: Household influenza model}\label{sec:epi_5d}
+\subsection{Example 2: Ebola model with 6 compartments}\label{sec:epi_5d}
+For our final example, we take a 6-compartment population process model that was used by \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola} to analyse outbreaks of Ebola in the Democratic Republic of Congo in 1995 and in Uganda in 2000.
 
+
+For a fixed population size, this model is 5-dimensional.
 
 \begin{figure}
 	\begin{center}
@@ -777,6 +833,7 @@ Next, we will compute the stochastic sensitivity field on the set of (physically
 \end{figure}
 
 
+Let \(X_t^{(N)} = \left(S_t / N, I_t / N, E_t / N, H_t / N, D_t / N\right)^{\T}\) denote the proportion of individuals in each compartment at time \(t\).
 The population process is also density dependent, with
 \[
 	f\!\left(\left(s, e, i, h, d\right), l\right) = \begin{cases}
@@ -801,3 +858,43 @@ The deterministic differential equation is
 		\gamma_{dh}\delta_2 X_t^{(\infty, 4)} + \delta_1\left(1 - \theta_1\right)\gamma_d X_t^{(\infty, 3)} - \gamma_f X_t^{(\infty, 5)}
 	\end{bmatrix}.
 \]
+
+
+
+
+\DeclareSIUnit\week{week}
+\begin{table}
+	\begin{center}
+		\begin{tabular}{|c|c|c|}
+			\hline
+			Parameter             & Value                       & Source                                                                            \\ \hline
+			Population size \(N\) & 200000                                                                                                          \\
+			Initial cases \(I_0\) & 3                                                                                                               \\
+			\(\alpha\)            & \(1 / 7\) \unit{\per\day}                                                                                       \\
+			\(\gamma_h\)          & \(1 / 9.6\) \unit{\per\day}                                                                                     \\
+			\(\gamma_i\)          & \(1 / 10\) \unit{\per\day}                                                                                      \\
+			\(\gamma_f\)          & \(1 / 2\) \unit{\per\day}                                                                                       \\
+			\(\theta_1\)          & \(0.67\)                                                                                                        \\
+			\(\delta_1\)          & \(0.8\)                                                                                                         \\
+			\(\delta_2\)          & \(0.8\)                                                                                                         \\
+			\(\beta_I\)           & \(0.588\) \unit{\per\week}  & \multirow{3}{*}{Estimated by \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola}} \\
+			\(\beta_H\)           & \(0.794\) \unit{\per\week}  &                                                                                   \\
+			\(\beta_F\)           & \(7.653\) \unit{\per\week}  &                                                                                   \\
+			\hline
+		\end{tabular}
+	\end{center}
+	\caption{Parameter values for the Ebola model, estimated from the 1995 outbreak in the Democratic Republic of Congo.}
+	\label{tab:ebola_param_vals}
+\end{table}
+
+
+
+
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[width=\textwidth]{chp06_applications/figures/seihfr/seihfr_s2.pdf}
+		\caption{}
+		\label{fig:}
+	\end{center}
+\end{figure}

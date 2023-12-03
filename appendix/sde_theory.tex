@@ -1,4 +1,4 @@
-\chapter{Additional theoretical background}
+\chapter{Additional theoretical background}\label{app:theory}
 This appendix states several theoretical results from deterministic dynamical systems and stochastic calculus which are used throughout this thesis, and in particular the proofs presented in \Cref{sec:paper_proofs}.
 These results are included for completeness, so we do not include proofs and instead refer the reader to other sources.
 
@@ -36,7 +36,7 @@ An important result for establishing bounds on a function given an integral ineq
 \end{proof}
 
 
-\section{Analytical tools for It\^o calculus}
+\section{Analytical tools for It\^o calculus}\label{app:ito_tools}
 There are several tools available for the analytic treatment of It\^o integrals and solutions to stochastic differential equations, which we make particular use of in the proofs presented in \Cref{ch:linear_theory}.
 The first is It\^o's isometry, which relates the expectation of an It\^o integral to that of a deterministic one and is useful for computing moments.
 \begin{theorem}[It\^o's Isometry]\label{thm:ito_isom}
@@ -155,110 +155,110 @@ We can now state the requirements for the existence of unique strong solutions t
 % For instance, \citet{SuraEtAl_2005_MultiplicativeNoiseNonGaussianity} shows that the non-Gaussian statistics observed in atmospheric regimes can arise from linear models with multiplicative noise.
 
 
-\section{Stochastic sensitivity}
+% \section{Stochastic sensitivity}
 
-The statistics of \(z_\epsilon\left(x,T\right)\) and \(P_\epsilon(x,\theta)\) are considered in the limit as \(\epsilon\downarrow 0\), which provides a characterisation of the uncertainty of the model \emph{independently} of the scale of the noise.
-\citet{Balasuriya_2020_StochasticSensitivityComputable} provided computable expressions for the mean and variance of \(P_\epsilon\left(x,\theta\right)\) in this limit of small noise, which we summarise here.
-For proofs of these results, see the appendices of \citet{Balasuriya_2020_StochasticSensitivityComputable}.
+% The statistics of \(z_\epsilon\left(x,T\right)\) and \(P_\epsilon(x,\theta)\) are considered in the limit as \(\epsilon\downarrow 0\), which provides a characterisation of the uncertainty of the model \emph{independently} of the scale of the noise.
+% \citet{Balasuriya_2020_StochasticSensitivityComputable} provided computable expressions for the mean and variance of \(P_\epsilon\left(x,\theta\right)\) in this limit of small noise, which we summarise here.
+% For proofs of these results, see the appendices of \citet{Balasuriya_2020_StochasticSensitivityComputable}.
 
-The first result established by \citet{Balasuriya_2020_StochasticSensitivityComputable} is that the expected location is deterministic, in the following sense.
-\begin{theorem}[\citealt{Balasuriya_2020_StochasticSensitivityComputable}]
-	For all \(x \in \R^2\),
-	\[
-		\lim_{\epsilon\downarrow 0}\avg{z_\epsilon(x,T)} = 0.
-	\]
-\end{theorem}
+% The first result established by \citet{Balasuriya_2020_StochasticSensitivityComputable} is that the expected location is deterministic, in the following sense.
+% \begin{theorem}[\citealt{Balasuriya_2020_StochasticSensitivityComputable}]
+% 	For all \(x \in \R^2\),
+% 	\[
+% 		\lim_{\epsilon\downarrow 0}\avg{z_\epsilon(x,T)} = 0.
+% 	\]
+% \end{theorem}
 
-The variance of \(P_\epsilon\left(x,\theta\right)\) is used to assign a computable scalar measure of uncertainty to the trajectory.
+% The variance of \(P_\epsilon\left(x,\theta\right)\) is used to assign a computable scalar measure of uncertainty to the trajectory.
 
-\begin{definition}[\citealt{Balasuriya_2020_StochasticSensitivityComputable}]
-	\begin{alpharate}
-		\item The \textbf{anisotropic uncertainty} is a scalar field \(A: \R^2\times\left[-\pi/2, \pi/2\right) \to [0,\infty)\) defined by
-		\[
-			A(x,\theta) \coloneqq \sqrt{\lim_{\epsilon\downarrow 0}\var{P_\epsilon(x,\theta)}}.
-		\]
+% \begin{definition}[\citealt{Balasuriya_2020_StochasticSensitivityComputable}]
+% 	\begin{alpharate}
+% 		\item The \textbf{anisotropic uncertainty} is a scalar field \(A: \R^2\times\left[-\pi/2, \pi/2\right) \to [0,\infty)\) defined by
+% 		\[
+% 			A(x,\theta) \coloneqq \sqrt{\lim_{\epsilon\downarrow 0}\var{P_\epsilon(x,\theta)}}.
+% 		\]
 
-		\item The \textbf{stochastic sensitivity} is a scalar field \(S: \R^2 \to [0,\infty)\) defined by
-		\[
-			S^2(x) \coloneqq \lim_{\epsilon\downarrow 0}\sup_{\theta}{\var{P_\epsilon(x,\theta)}}.
-		\]
-	\end{alpharate}
-\end{definition}
+% 		\item The \textbf{stochastic sensitivity} is a scalar field \(S: \R^2 \to [0,\infty)\) defined by
+% 		\[
+% 			S^2(x) \coloneqq \lim_{\epsilon\downarrow 0}\sup_{\theta}{\var{P_\epsilon(x,\theta)}}.
+% 		\]
+% 	\end{alpharate}
+% \end{definition}
 
-By employing techniques from both deterministic and stochastic calculus (i.e. Gr\"onwall's inequality, the Burkholder-Davis-Gundy inequality, It\^o's Lemma), Balasuriya further established expressions for both the anisotropic uncertainty and the stochastic sensitivity that are computable given only the flow map and velocity data.
+% By employing techniques from both deterministic and stochastic calculus (i.e. Gr\"onwall's inequality, the Burkholder-Davis-Gundy inequality, It\^o's Lemma), Balasuriya further established expressions for both the anisotropic uncertainty and the stochastic sensitivity that are computable given only the flow map and velocity data.
 
-\begin{theorem}[\citealt{Balasuriya_2020_StochasticSensitivityComputable}]\label{thm:orig_s2_calculation}
-	For \(x \in \R^2\), set \(w \coloneqq F_0^t(x)\).
-	Then, for any \(\theta \in \left[-\pi/2, \pi/2\right)\),
-	\[
-		A(x,\theta) = \left(\int_0^T{\norm{\Lambda\left(x, t, T\right)J\hat{n}(\theta)}\dif t}\right)^{1/2},
-	\]
-	where
-	\[
-		\Lambda\left(x,t,T\right) \coloneqq e^{\int_t^T{\left[\nabla \cdot u\right]\left(F_0^\xi(x), \xi\right)\dif\xi}}\sigma\left(F_0^t(x), t\right)^{\T}J \nabla_w F_T^t\left(w\right),
-	\]
-	with the gradients \(\nabla_w\) of the flow map taken with respect to the mapped position \(w\), and
-	\[
-		J \coloneqq \begin{bmatrix}
-			0 & -1 \\
-			1 & 0
-		\end{bmatrix}
-	\]
-	Additionally, stochastic sensitivity is computed as
-	\[
-		S^2(x) = P(x) + N(x),
-	\]
-	with
-	\begin{align*}
-		L(x) & \coloneqq \frac12\sum_{i=1}^2\int_0^T\left[\Lambda_{i2}\left(x,t, T\right)^2 - \Lambda_{i1}\left(x,t,T\right)^2\right]\dif t \\
-		M(x) & \coloneqq \sum_{i=1}^2\int_0^T{\Lambda_{i1}\left(x,t,T\right)\Lambda_{i2}\left(x,t,T\right)\dif t}                           \\
-		N(x) & \coloneqq \sqrt{L^2(x) + M^2(x)}                                                                                             \\
-		P(x) & \coloneqq \abs{\frac12\sum_{i=1}^2\sum_{j=1}^2{\int_0^T{\Lambda_{ij}\left(x,t,T\right)^2\dif t}}},
-	\end{align*}
-	where \(\Lambda_{ij}\) is the \((i,j)\)-element of \(\Lambda\).
-\end{theorem}
-
-
-
-Accordingly, \citet{Balasuriya_2020_StochasticSensitivityComputable} defines the \emph{resolution-scaled stochastic sensitivity} as
-\begin{equation}
-	S_r\left(x\right) \coloneqq \ln\left(\frac{\sqrt{S^2(x)}}{L_r}\right),
-	\label{eqn:Sr_defn}
-\end{equation}
-where \(L_r\) is a specified spatial resolution lengthscale.
-The \emph{noise-scaled stochastic sensitivity} is defined as
-\begin{equation}
-	S_n\left(x\right) \coloneqq \epsilon\sqrt{S^2(x)}.
-	\label{eqn:Sn_defn}
-\end{equation}
-
-
-% \begin{figure}
-% 	\begin{center}
-% 		\begin{subfigure}{0.8\textwidth}
-% 			\includegraphics[width=\textwidth]{chp02_background/figures/res_scaled_stoch_sens_high_res.pdf}
-% 			\caption{The resolution-scaled stochastic sensitivity field, plotted on a \(1/16\) degree resolution grid of initial conditions.}
-% 			\label{fig:s2_na_ex_field}
-% 		\end{subfigure}
-% 		\begin{subfigure}{0.8\textwidth}
-% 			\includegraphics[width=\textwidth]{chp02_background/figures/robust_3.0_high_res.pdf}
-% 			\caption{Robust sets (in purple) extracted from the stochastic sensitivity field in (a), using a lengthscale threshold of \(6\) degrees}
-% 			\label{fig:s2_na_ex_sets}
-% 		\end{subfigure}
-% 		\caption{}
-% 		\label{fig:fig:s2_na_ex}
-% 	\end{center}
-% \end{figure}
+% \begin{theorem}[\citealt{Balasuriya_2020_StochasticSensitivityComputable}]\label{thm:orig_s2_calculation}
+% 	For \(x \in \R^2\), set \(w \coloneqq F_0^t(x)\).
+% 	Then, for any \(\theta \in \left[-\pi/2, \pi/2\right)\),
+% 	\[
+% 		A(x,\theta) = \left(\int_0^T{\norm{\Lambda\left(x, t, T\right)J\hat{n}(\theta)}\dif t}\right)^{1/2},
+% 	\]
+% 	where
+% 	\[
+% 		\Lambda\left(x,t,T\right) \coloneqq e^{\int_t^T{\left[\nabla \cdot u\right]\left(F_0^\xi(x), \xi\right)\dif\xi}}\sigma\left(F_0^t(x), t\right)^{\T}J \nabla_w F_T^t\left(w\right),
+% 	\]
+% 	with the gradients \(\nabla_w\) of the flow map taken with respect to the mapped position \(w\), and
+% 	\[
+% 		J \coloneqq \begin{bmatrix}
+% 			0 & -1 \\
+% 			1 & 0
+% 		\end{bmatrix}
+% 	\]
+% 	Additionally, stochastic sensitivity is computed as
+% 	\[
+% 		S^2(x) = P(x) + N(x),
+% 	\]
+% 	with
+% 	\begin{align*}
+% 		L(x) & \coloneqq \frac12\sum_{i=1}^2\int_0^T\left[\Lambda_{i2}\left(x,t, T\right)^2 - \Lambda_{i1}\left(x,t,T\right)^2\right]\dif t \\
+% 		M(x) & \coloneqq \sum_{i=1}^2\int_0^T{\Lambda_{i1}\left(x,t,T\right)\Lambda_{i2}\left(x,t,T\right)\dif t}                           \\
+% 		N(x) & \coloneqq \sqrt{L^2(x) + M^2(x)}                                                                                             \\
+% 		P(x) & \coloneqq \abs{\frac12\sum_{i=1}^2\sum_{j=1}^2{\int_0^T{\Lambda_{ij}\left(x,t,T\right)^2\dif t}}},
+% 	\end{align*}
+% 	where \(\Lambda_{ij}\) is the \((i,j)\)-element of \(\Lambda\).
+% \end{theorem}
 
 
 
-% Stochastic sensitivity has also provided a novel approach to extracting Lagrangian coherent structures, which are regions of a fluid that remain ``coherent'' as the flow evolves over time \citep{BalasuriyaEtAl_2018_GeneralizedLagrangianCoherent,AllshousePeacock_2015_LagrangianBasedMethods,HadjighasemEtAl_2017_CriticalComparisonLagrangian}.
+% Accordingly, \citet{Balasuriya_2020_StochasticSensitivityComputable} defines the \emph{resolution-scaled stochastic sensitivity} as
+% \begin{equation}
+% 	S_r\left(x\right) \coloneqq \ln\left(\frac{\sqrt{S^2(x)}}{L_r}\right),
+% 	\label{eqn:Sr_defn}
+% \end{equation}
+% where \(L_r\) is a specified spatial resolution lengthscale.
+% The \emph{noise-scaled stochastic sensitivity} is defined as
+% \begin{equation}
+% 	S_n\left(x\right) \coloneqq \epsilon\sqrt{S^2(x)}.
+% 	\label{eqn:Sn_defn}
+% \end{equation}
 
-% \Cref{fig:s2_na_ex_field} plots the resolution-scaled stochastic sensitivity field for a region of the North Atlantic ocean, including the Gulf Stream, as an illustrative example of how stochastic sensitivity is able to capture structures within a given flow.
 
-% % \begin{definition}[\citealt{Balasuriya_2020_StochasticSensitivityComputable}] \label{def:ss_res_scaled}
-% % 	Given a spatial resolution \(L_r\), the \emph{resolution-scaled stochastic sensitivity} is defined on \(\Omega\)
-% % 	\[
-% % 		S_r(x) \coloneqq \ln\left(\frac{\sqrt{S^2(x)}}{L_r}\right).
-% % 	\]
-% % \end{definition}
+% % \begin{figure}
+% % 	\begin{center}
+% % 		\begin{subfigure}{0.8\textwidth}
+% % 			\includegraphics[width=\textwidth]{chp02_background/figures/res_scaled_stoch_sens_high_res.pdf}
+% % 			\caption{The resolution-scaled stochastic sensitivity field, plotted on a \(1/16\) degree resolution grid of initial conditions.}
+% % 			\label{fig:s2_na_ex_field}
+% % 		\end{subfigure}
+% % 		\begin{subfigure}{0.8\textwidth}
+% % 			\includegraphics[width=\textwidth]{chp02_background/figures/robust_3.0_high_res.pdf}
+% % 			\caption{Robust sets (in purple) extracted from the stochastic sensitivity field in (a), using a lengthscale threshold of \(6\) degrees}
+% % 			\label{fig:s2_na_ex_sets}
+% % 		\end{subfigure}
+% % 		\caption{}
+% % 		\label{fig:fig:s2_na_ex}
+% % 	\end{center}
+% % \end{figure}
+
+
+
+% % Stochastic sensitivity has also provided a novel approach to extracting Lagrangian coherent structures, which are regions of a fluid that remain ``coherent'' as the flow evolves over time \citep{BalasuriyaEtAl_2018_GeneralizedLagrangianCoherent,AllshousePeacock_2015_LagrangianBasedMethods,HadjighasemEtAl_2017_CriticalComparisonLagrangian}.
+
+% % \Cref{fig:s2_na_ex_field} plots the resolution-scaled stochastic sensitivity field for a region of the North Atlantic ocean, including the Gulf Stream, as an illustrative example of how stochastic sensitivity is able to capture structures within a given flow.
+
+% % % \begin{definition}[\citealt{Balasuriya_2020_StochasticSensitivityComputable}] \label{def:ss_res_scaled}
+% % % 	Given a spatial resolution \(L_r\), the \emph{resolution-scaled stochastic sensitivity} is defined on \(\Omega\)
+% % % 	\[
+% % % 		S_r(x) \coloneqq \ln\left(\frac{\sqrt{S^2(x)}}{L_r}\right).
+% % % 	\]
+% % % \end{definition}
