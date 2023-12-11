@@ -5,11 +5,51 @@ When the initial condition is fixed or Gaussian, the resulting linearisation sol
 A Gaussian approximation has further advantages, leading to its use across many different applications \citep{KaszasHaller_2020_UniversalUpperEstimate,ArchambeauEtAl_2007_GaussianProcessApproximations,Jazwinski_2014_StochasticProcessesFiltering,SarkkaSolin_2019_AppliedStochasticDifferential,Sanz-AlonsoStuart_2017_GaussianApproximationsSmall}.
 For example, even in inference requiring Monte-Carlo simulations, a Gaussian distribution with a specified mean and covariance is faster to sample from than generating numerical solutions of the nonlinear SDE.
 
-However, this approximation is only `reasonable' in the limit of small initial and ongoing uncertainty, which we quantified exactly with the bound in \Cref{thm:main}, and demonstrated heuristically with examples in \Cref{fig:sine_hists,fig:1d_mult_hists,fig:y_hists}.
+Recall that we are interested in approximating the solution at a time \(t\) to the nonlinear stochastic differential equation
+\begin{equation}
+	\dif y_t = u\!\left(y_t, t\right)\dif t + \epsilon\sigma\!\left(y_t, t\right)\dif W_t,
+	\label{eqn:sde_y_gmm}
+\end{equation}
+subject to some random initial condition \(y_s = x\), by using solutions of the corresponding deterministic system
+\begin{equation}
+	\dod{F_s^t\!\left(x_0\right)}{t} = u\!\left(F_s^t\!\left(x\right), t\right), \quad F_s^s\!\left(x\right) = x.
+	\label{eqn:det_ode_gmm}
+\end{equation}
+The behaviour of the solution \cref{eqn:sde_y_gmm} over the time interval \((s,t)\) for small \(\epsilon\) can be approximated by the linearised SDE
+\begin{equation}
+	\dif l_t = \left(u\!\left(F_s^t\!\left(x\right), t\right) + \nabla u\!\left(F_s^t\!\left(x\right), t\right)\left[l_t - F_s^t\!\left(x\right)\right]\right)\dif t + \epsilon\sigma\!\left(F_s^t\!\left(x\right), t\right)\dif W_t,
+	\label{eqn:sde_linear_gmm}
+\end{equation}
+subject to the initial condition \(l_s = x\).
+The theory in \Cref{ch:linear_theory} considered the evolution of \cref{eqn:sde_y_gmm} over a time interval \((0,t)\) and subject to some initial condition at time \(0\).
+However, by using a simple time shift our theory can be applied to any finite time interval \((s,t)\), where the solution is specified at time \(s\) instead of \(0\), without loss of generality.
+Note that we have now also dropped the dependence of \(\epsilon\) in the notation \(y_t\) and \(l_t\), as \(\epsilon\) is now treated as a fixed value specified as part of the model.
+Suppose that the initial condition \(x\) follows a Gaussian distribution with mean \(x_0\) and a specified covariance matrix \(\Sigma_s\).
+If the initial condition is fixed as \(x_s\), then we set \(\Sigma_s = O\), the \(n \times n\) zero matrix, so that the initial distribution is a Dirac delta.
+We will focus our attention on this case for the remainder of this thesis, having already provided a general framework in \Cref{ch:linear_theory} for other initial conditions.
+By taking the mean \(x_s\) as the initial condition to \cref{eqn:det_ode_gmm}, we ensure that the initial uncertainty (measured by the \(L_r\)-norm as in \Cref{ch:linear_theory}) scales with the trace of \(\Sigma_s\).
+The solution to \cref{eqn:sde_linear_gmm} is then a Gaussian process characterised by the mean \(F_s^t\!\left(x_0\right)\) and covariance matrix \(\var{l_t}\), for which explicit expressions for are given in \Cref{cor:limit_moments}.
+For notational brevity, set \(w_t \equiv F_s^t\!\left(x_s\right)\) and \(\Pi_t \equiv \var{l_t}\).
+When the Jacobian \(\nabla u\) of the vector field \(u\) is available, or can approximated appropriately, the moments of the Gaussian solution can be obtained by the system of ordinary differential equations
+\begin{subequations}\label{eqn:gauss_de}
+	\begin{align}
+		\dod{w_t}{t}   & = u\!\left(w_t, t\right), \quad w_s = x_0 \label{eqn:gauss_mean_de}                                                                                                           \\
+		\dod{\Pi_t}{t} & = \begin{multlined}[t]
+			                   \nabla u\!\left(w_t, t\right) \Pi_t + \Pi_t\left[\nabla u\left(w_t, t\right)\right]^{\T} + \sigma\left(w_t, t \right)\sigma\left(w_t, t\right)^{\T}, \quad \Pi_s = \Sigma_s.
+		                   \end{multlined}
+		\label{eqn:gauss_cov_de}
+	\end{align}
+\end{subequations}
+In practice, \cref{eqn:gauss_de} must be solved numerically, but can be more computationally efficient than the alternative of generating many realisations of \cref{eqn:sde_y_gmm}.
+Thus, we can efficiently compute a Gaussian approximation \(\Gauss{w_t, \Sigma_t}\) to the solution to the nonlinear SDE \cref{eqn:sde_y_gmm} at time \(t\) by solving \cref{eqn:gauss_de} only.
+The \citet{Mazzoni_2008_ComputationalAspectsContinuous} method, outlined in \Cref{sec:mazzoni}, provides a computationally efficient algorithm for solving \Cref{eqn:gauss_de} jointly.
+
+Although computationally appealing, this Gaussian approximation is only `reasonable' in the limit of small initial and ongoing uncertainty, which we quantified exactly with the bound in \Cref{thm:main}, and demonstrated heuristically with examples in \Cref{fig:sine_hists,fig:1d_mult_hists,fig:y_hists}.
 In practice, the scale of the noise is an inherent part of a model and there is no guarantee that it is sufficiently small for Gaussian approximations to be reasonable.
 When the noise scale is larger, we see non-Gaussianity emerge---the numerical solutions in \Cref{fig:sine_hists,fig:1d_mult_hists,fig:y_hists} exhibit skewness, bi-modality, and other departures from Gaussianity.
 Although the Gaussian approximation can still provide qualitative insight into the behaviour of these solutions (see stochastic sensitivity, for instance), to produce a reasonable approximation we need a method that can capture these departures from Gaussianity.
 
+\section{An example: Ben\^e's SDE}
 \begin{figure}
 	\centering
 	\includegraphics[width=0.9\textwidth]{chp05_gmm/figures/bene_final_gauss_5.0.pdf}
@@ -28,10 +68,15 @@ In this example we are implicitly taking \(\epsilon = 1\), which is a larger noi
 However, this example is purely demonstrative to highlight a limitation of Gaussian approximations and show the potential of the algorithm we are about to propose; later examples will involve a smaller noise scale.
 The deterministic system corresponding to \cref{eqn:bene_sde} is
 \begin{equation}
-	\dod{F_0^t\!\left(x_0\right)}{t} = \tanh\!\left(F_0^t\!\left(x_0\right)\right),
+	\dod{F_s^t\!\left(x\right)}{t} = \tanh\!\left(F_s^t\!\left(x\right)\right), \quad F_s^s\!\left(x\right) = x,
 	\label{eqn:bene_ode}
 \end{equation}
 which includes an unstable fixed point at \(0\).
+The solution to \cref{eqn:bene_ode} over the time interval \((s,t)\) is
+\begin{equation}
+	F_s^t\!\left(x\right) = \arcsinh\!\left(e^{t-s}\sinh\!\left(x\right)\right).
+	\label{eqn:bene_ode_sol}
+\end{equation}
 We consider the solution to \cref{eqn:bene_sde} subject to the fixed initial condition \(x_0 = 1/2\) and at time \(t = 5\).
 The probability density function of the weak solution to \cref{eqn:bene_sde} can be derived using an appropriate change of measure with Girsanov's theorem (see Section 7.3 of \citet{SarkkaSolin_2019_AppliedStochasticDifferential}.
 The probability density function for the solution \(x_t\) at time \(t = 5\) is given by
@@ -42,7 +87,12 @@ and is plotted in black in \Cref{fig:bene_gauss}.
 The density is not symmetric with two distinct modes that result from the unstable fixed point of \cref{eqn:bene_ode} at \(x = 0\).
 Many stochastic trajectories are driven away from zero, resulting in the predominant mode centred at \(x = 5.5\).
 However, when the stochastic perturbations force a trajectory through the fixed point and into negative values, they are pushed further in the negative direction, leading to the second mode at \(x = -4.5\).
-Nonetheless, we can linearise \cref{eqn:bene_sde} about the deterministic trajectory \(F_0^t\!\left(1/2\right)\) solving \cref{eqn:bene_ode} to obtain a Gaussian approximation, which we also plot the density of in dashed red in \Cref{fig:bene_gauss}.
+Nonetheless, we can linearise \cref{eqn:bene_sde} about the deterministic trajectory \(F_0^t\!\left(1/2\right)\) solving \cref{eqn:bene_ode} to obtain a Gaussian approximation.
+Since the deterministic flow map is available analytically in \cref{eqn:bene_ode_sol}, we can determine the variance \(\var{l_t}\) of the solution to the linearised SDE exactly by solving the ODE
+\[
+	\dod{\var{l_t}}{t} =
+\]
+We plot the density of the resulting Gaussian approximation in dashed red in \Cref{fig:bene_gauss}.
 The Gaussian approximation cannot capture the bimodality of the true solution, and so only a single mode is captured.
 This is a significant limitation of using a single linearisation approximation, which cannot possibly capture any multimodality.
 % However, to compensate for the additional negative mode, the mean of the Gaussian approximation is less than that of the positive mode, and the variance is larger.\lb{Again, need to be more precise here. Have a look at the conditional probabilities and compare - the deterministic trajectory would have no idea about the fixed point. Otherwise could omit this sentence - keep it simple, the main point is the bimodality}
@@ -112,7 +162,7 @@ The algorithm itself is provided in \Cref{sec:gmm_alg}.
 		\draw[domain=0:#1, smooth, variable=\x, dashed] plot ({\x}, {#8 * \TikZGauss{\x}{#4}{#5}});
 		% Mixture model
 		\draw[domain=0:#1, smooth, variable=\x, very thick] plot ({\x}, {#8 * #6 * \TikZGauss{\x}{#2}{#3} + #8 * #7 * \TikZGauss{\x}{#4}{#5}});
-		\draw[thick] (0,0)--(#1,0); % node[right]{\(x\)};
+		\draw[thick] (0,0)--(#1,0);
 	\end{tikzpicture}
 }
 
@@ -129,19 +179,20 @@ The algorithm itself is provided in \Cref{sec:gmm_alg}.
 		\caption{Bimodality}
 	\end{subfigure}
 	\caption{The probability density functions of two Gaussian mixture models in 1-dimension both using two equally weighted components.
-		The individual components (dashed) are combined to produce the non-Gaussian mixture density (solid) which can exhibit skewness and bimodality.}
+		When individual components (dashed) are combined to produce non-Gaussian mixture densities (solid), they can exhibit both (a) skewness and (b) bimodality.}
 	\label{fig:mixture_model}
 \end{figure}
 
 In general, a Gaussian mixture model with \(K\) components is a probability density function of the form
 \[
-	p(z) = \sum_{k=1}^{K}{\omega_i \Gauss{z;\, \mu^{(i)}, \Sigma^{(i)}}},
+	p(z) = \sum_{k=1}^{K}{\omega_k \Gauss{z;\, \mu^{(k)}, \Sigma^{(k)}}},
 \]
-which consists of \(K\) Gaussian components \(\Gauss{\mu^{(i)}, \Sigma^{(i)}}\) with respective weights \(\omega_1, \dotsc, \omega_K \geq 0\) satisfying \(\sum_{k=1}^{K}\omega_k = 1\).
+which consists of \(K\) Gaussian components \(\Gauss{\mu^{(k)}, \Sigma^{(k)}}\) with respective weights \(\omega_1, \dotsc, \omega_K \geq 0\) satisfying \(\sum_{k=1}^{K}\omega_k = 1\).
 With sufficient components, a Gaussian mixture model can recreate any probability distribution in \(\R^n\) while having many of the properties that make Gaussian distributions appealing in practice \citep{McLachlanEtAl_2019_FiniteMixtureModels}.
-\Cref{fig:mixture_model} shows three examples of Gaussian mixture models in 1-dimension, where departures from Gaussianity such as multimodality and skewness can be captured with an appropriate combination of components.
+\Cref{fig:mixture_model} shows two examples of Gaussian mixture models in 1-dimension, where departures from Gaussianity such as multimodality and skewness can be captured with an appropriate combination of components.
 
 
+\td{Show more of the computations}
 % \begin{figure}
 % 	\begin{center}
 % 		\begin{tikzpicture}
@@ -162,158 +213,18 @@ With sufficient components, a Gaussian mixture model can recreate any probabilit
 % A key observation of \Cref{sec:theory_gauss} is that the solution to the linearised SDE is Gaussian when the initial condition is Gaussian.
 % Through a mixture model, we can capture this non-Gaussianity (leading to a better approximation) while still taking advantage of the computationally efficiency of the Gaussian approximation.
 
-\section{Mazzoni's method}\label{sec:mazzoni}
-\td{May need to reconsider ordering of sections here - this could go after describing the mixture model.}
-Prior to outlining our mixture model algorithm, we will first detail a computationally efficient method for computing the Gaussian solution to a linearised SDE.
-We are interested in approximating the solution at a time \(t\) to the nonlinear stochastic differential equation
-\begin{equation}
-	\dif y_t = u\!\left(y_t, t\right)\dif t + \epsilon\sigma\!\left(y_t, t\right)\dif W_t,
-	\label{eqn:sde_y_gmm}
-\end{equation}
-subject to some random initial condition \(y_s = x\), by using solutions of the corresponding deterministic system
-\begin{equation}
-	\dod{F_s^t\!\left(x_0\right)}{t} = u\!\left(F_s^t\!\left(x\right), t\right), \quad F_s^s\!\left(x\right) = x.
-	\label{eqn:det_ode_gmm}
-\end{equation}
-The behaviour of the solution \cref{eqn:sde_y_gmm} over the time interval \((s,t)\) for small \(\epsilon\) can be approximated by the linearised SDE
-\begin{equation}
-	\dif l_t = \left(u\!\left(F_s^t\!\left(x\right), t\right) + \nabla u\!\left(F_s^t\!\left(x\right), t\right)\left[l_t - F_s^t\!\left(x\right)\right]\right)\dif t + \epsilon\sigma\!\left(F_s^t\!\left(x\right), t\right)\dif W_t,
-	\label{eqn:sde_linear_gmm}
-\end{equation}
-subject to the initial condition \(l_s = x\).
-The theory in \Cref{ch:linear_theory} considered the evolution of \cref{eqn:sde_y_gmm} over a time interval \((0,t)\) and subject to some initial condition at time \(0\).
-However, by using a simple time shift our theory can be applied to any finite time interval \((s,t)\), where the solution is specified at time \(s\) instead of \(0\), without loss of generality.
-Note that we have now also dropped the dependence of \(\epsilon\) in the notation \(y_t\) and \(l_t\), as \(\epsilon\) is now treated as a fixed value specified as part of the model.
-Suppose that the initial condition \(x\) follows a Gaussian distribution with mean \(x_0\) and a specified covariance matrix \(\Sigma_s\).
-If the initial condition is fixed as \(x_s\), then we set \(\Sigma_s = O\), the \(n \times n\) zero matrix, so that the initial distribution is a Dirac delta.
-We will focus our attention on this case for the remainder of this thesis, having already provided a general framework in \Cref{ch:linear_theory} for other initial conditions.
-By taking the mean \(x_s\) as the initial condition to \cref{eqn:det_ode_gmm}, we ensure that the initial uncertainty (measured by the \(L_r\)-norm as in \Cref{ch:linear_theory}) scales with the trace of \(\Sigma_s\).
-The solution to \cref{eqn:sde_linear_gmm} is then a Gaussian process characterised by the mean \(F_s^t\!\left(x_0\right)\) and covariance matrix \(\var{l_t}\), for which explicit expressions for are given in \Cref{cor:limit_moments}.
-For notational brevity, set \(w_t \equiv F_s^t\!\left(x_s\right)\) and \(\Pi_t \equiv \var{l_t}\).
-When the Jacobian \(\nabla u\) of the vector field \(u\) is available, or can approximated appropriately, the moments of the Gaussian solution can be obtained by the system of ordinary differential equations
-\begin{subequations}\label{eqn:gauss_de}
-	\begin{align}
-		\dod{w_t}{t}   & = u\!\left(w_t, t\right), \quad w_s = x_0 \label{eqn:gauss_mean_de}                                                                                                           \\
-		\dod{\Pi_t}{t} & = \begin{multlined}[t]
-			                   \nabla u\!\left(w_t, t\right) \Pi_t + \Pi_t\left[\nabla u\left(w_t, t\right)\right]^{\T} + \sigma\left(w_t, t \right)\sigma\left(w_t, t\right)^{\T}, \quad \Pi_s = \Sigma_s.
-		                   \end{multlined}
-		\label{eqn:gauss_cov_de}
-	\end{align}
-\end{subequations}
-In practice, \cref{eqn:gauss_de} must be solved numerically, but can be more computationally efficient than the alternative of generating many realisations of \cref{eqn:sde_y_gmm}.
-Thus, we can efficiently compute a Gaussian approximation \(\Gauss{w_t, \Sigma_t}\) to the solution to the nonlinear SDE \cref{eqn:sde_y_gmm} at time \(t\) by solving \cref{eqn:gauss_de} only.
-
-An important consideration  when solving \cref{eqn:gauss_de} numerically is that \(\Pi_t\) represents a covariance matrix and must remain symmetric and positive semi-definite.
-However, many standard numerical ODE schemes do not take this into account, so a specialised scheme is required.
-Similar equations of the form \cref{eqn:gauss_de} (although often without explicit dependence on both time and the state in the \(\sigma\) term) are solved numerically in other applications, notably when implementing the extended Kalman filter \citep{Jazwinski_2014_StochasticProcessesFiltering, KulikovaKulikov_2014_AdaptiveODESolvers}.
-\citet{KulikovaKulikov_2014_AdaptiveODESolvers} identify that that the two most significant sources of numerical error when solving \cref{eqn:gauss_de} are a) the estimate of the covariance matrix \(\Sigma_s^t\) violating the requirement of positive semi-definiteness, and b) local error propagation in the state equation.
-Moreover, a computationally efficient algorithm is critical to ensure that our approximate methods have an advantage over bulk Monte-Carlo simulation.
-
-\citet{Mazzoni_2008_ComputationalAspectsContinuous} proposes an efficient hybrid method for solving \cref{eqn:gauss_de} which addresses both difficulties a) and b) and takes advantage of the availability of \(\nabla u\).
-This method, which we shall term the Mazzoni method, combines a Taylor-Heun approximation for \cref{eqn:gauss_mean_de} and a Gauss-Legendre step for \cref{eqn:gauss_cov_de}.
-With a step size of \(\delta t\), integration for both the state variable and the covariance matrix are convergent with order \(\mathcal{O}\!\left(\delta t^2\right)\).
-Moreover, \citet{Mazzoni_2008_ComputationalAspectsContinuous} shows through numerical simulations that the algorithm is computationally efficient when compared to alternatives with moderate precision.
-We therefore employ the Mazzoni method for all subsequent computations of the linearisation solution.
-
-The Mazzoni algorithm is summarised in the following.
-Further details on the derivation of these equations is available in the original article \citep{Mazzoni_2008_ComputationalAspectsContinuous}.
-The Taylor-Heun formula for the update of the state over the interval \([t, t + \delta t]\) is
-\begin{subequations}\label{eqn:mazzoni_update}
-	\begin{equation}
-		w_{t + \delta t} \approx w_t + \left(I - \frac{\delta t}{2}\nabla u\left(w_t, t\right)\right)^{-1}.
-		\label{eqn:mazzoni_state_update}
-	\end{equation}
-	The Gauss-Legendre update of the covariance matrix is
-	\begin{equation}
-		\Pi_{t + \delta t} \approx M_\tau \Pi_t M_\tau^{\T} + \delta t K_\tau \sigma\left(w_\tau,\, t + \frac{\delta t}{2}\right)\sigma\left(w_\tau,\, t + \frac{\delta t}{2}\right)^{\T} K_\tau^{\T},
-		\label{eqn:mazzoni_cov_update}
-	\end{equation}
-	where
-	\begin{align}
-		w_\tau & = \frac12\left(w_t + w_{t + \delta t} - \frac{\delta t^2}{4}\nabla u\left(w_t, \, t\right) u\left(w_t, \, t\right)\right) \label{eqn:mazzoni_cov_terms1} \\
-		K_\tau & = \left[I - \frac{\delta t}{2}\nabla u\left(w_\tau,\, t + \frac{\delta t}{2}\right)\right]^{-1}                                                          \\
-		M_\tau & = K_\tau \left[I + \frac{\delta t}{2}\nabla u\left(w_\tau,\, t + \frac{\delta t}{2}\right)\right] \label{eqn:mazzoni_cov_terms3}.
-	\end{align}
-	The vector \(w_\tau\) serves as an interpolation between \(w_t\) and \(w_{t + \delta t}\) for the state at time \(t + \delta t / 2\), which is used to provide a more accurate approximation of the covariance matrix.
-	\citet{Mazzoni_2008_ComputationalAspectsContinuous} also provides the option of an adaptive time step to fix the numerical precision while ensuring a computationally efficient algorithm.
-	The step size is adjusted by monitoring the error in the estimation of the state variable, aiming to maintain a specified tolerance level \(\gamma > 0\).
-	Given the error vector \(\mathcal{E}\) for each component of the state approximation, the maximum total-relative error is
-	\begin{equation}\label{eqn:mazzoni_e}
-		\hat{\gamma} = \max_{i = 1,\dots,n}\frac{\abs{\mathcal{E}^{(i)}}}{\abs{w_{t + \delta t}^{(i)}} + 1}
-	\end{equation}
-	where \(\mathcal{E}^{(i)}\) and \(w_{t + \delta t}^{(i)}\) denote the respective \(i\)th elements of \(\mathcal{E}\) and \(w_{t + \delta t}\).
-	The resulting adjustment factor for the time step is
-	\begin{equation}\label{eqn:mazzoni_step}
-		\delta t_{\mathrm{new}} = \beta \delta t \sqrt{\frac{\gamma}{\hat{\gamma}}}.
-	\end{equation}
-	The factor \(\beta\) is a control parameter inserted to avoid frequent recalculations of the step size, and is specified prior.
-	\citet{Mazzoni_2008_ComputationalAspectsContinuous} suggests setting \(\beta = 0.8\).
-	By again taking advantage of the availability of the Jacobian \(\nabla u\), the error vector is approximated as
-	\begin{equation}\label{eqn:mazzoni_err}
-		\mathcal{E} \approx \frac{\delta t^2}{2}\left[\frac{1}{3\delta t}\left(\nabla u\!\left(w_{t + \delta t}, t + \delta t\right) - \nabla u\!\left(w_t, t\right)\right) - \frac{1}{6}\nabla u\!\left(w_t, t\right)^2\right] u\!\left(w_t, t\right).
-	\end{equation}
-\end{subequations}
-The set of equations \cref{eqn:mazzoni_update} describe the Mazzoni algorithm, and in \Cref{fig:mazzoni_alg} we summarise the full algorithm with an adaptive step size.
-
-\begin{figure}
-	\begin{center}
-		\usetikzlibrary{shapes.geometric, arrows, positioning}
-
-		\begin{tikzpicture}[node distance=70pt]
-			\tikzstyle{arrow} = [->,>=stealth]
-
-			\node (s) [rectangle, rounded corners, draw=black, align=center] {\textbf{Start} \\ Given \(s, T, x_s, \Sigma_s\) \\ Choose \(\delta t_{\mathrm{min}}, \beta, \gamma\)};
-
-			\node (a) [rectangle, below of=s, draw=black, align=center, yshift=-10pt] {Set \(t_0 = s\) \\ Set \(w_{t_0} = x_s\) \\ Set \(\Pi_{t_0} = \Sigma_s\) Set \(\delta t = \delta t_{\mathrm{min}}\) \\ Set \(k = 0\)};
-			\node (b) [rectangle, below of=a, draw=black, align=center, yshift=-20pt] {Set \(t_{k+1} = t_k + \delta t\) \\ Compute \(w_{t_{k+1}}\) with \cref{eqn:mazzoni_state_update} \\
-				Compute \(e\) with \cref{eqn:mazzoni_e} \\ Set \(\delta t_{\mathrm{new}} = \max\left\{\delta t_{\mathrm{min}}, \beta \delta t \sqrt{\frac{\gamma}{\hat{\gamma}}}\right\}\)};
-
-			\node (d) [diamond, below of=b, draw=black, align=center, yshift=-40pt] {\(\hat{\gamma} \leq \gamma\) or \\ \(\delta t \leq \delta t_{\mathrm{min}}\)?};
-			\node (c) [rectangle, left of=d, draw=black, align=center, xshift=-75pt] {Set \(\delta_t = \delta_{\mathrm{new}}\)};
-
-			\node (e) [rectangle, below of=d, draw=black, align=center, yshift=-20pt] {Compute \(\Pi_{t_{k+1}}\) with \crefrange{eqn:mazzoni_cov_terms1}{eqn:mazzoni_cov_terms3} \\ Set \(k = k + 1\)};
-
-			\node (f) [diamond, below of=e, draw=black, align=center] {\(t_k = T\)?};
-
-			\node (g) [rectangle, rounded corners, left of=f, draw=black, align = center, xshift = -30pt] {\textbf{Stop}};
-			\node (h) [rectangle, right of=f, draw=black, align = center, xshift = 75pt] {\(\delta t = \min\left\{\delta t_{\mathrm{new}}, T - t_k\right\}\)};
-
-			\draw [arrow] (s) -- (a);
-
-			\draw [arrow] (a) -- (b);
-			\draw [arrow] (b) -- (d);
-
-			\draw [arrow] (d) -- node[anchor=south] {no} (c);
-			\draw [arrow] (d) -- node[anchor=east] {yes} (e);
-
-			\draw [arrow] (c) |- (b);
-
-			\draw [arrow] (e) -- (f);
-
-			\draw [arrow] (f) -- node[anchor=south] {yes} (g);
-			\draw [arrow] (f) -- node[anchor=south] {no} (h);
-
-			\draw [arrow] (h) |- (b);
-		\end{tikzpicture}
-		\caption{A flowchart of the Mazzoni algorithm with adaptive time stepping.
-			Recreated from Figure 2 of \citet{Mazzoni_2008_ComputationalAspectsContinuous}.}
-		\label{fig:mazzoni_alg}
-	\end{center}
-\end{figure}
-
-
 
 
 
 \section{The GMM algorithm}\label{sec:gmm_alg}
 Let us now return to the original aim of this chapter: to approximate the SDE solution with a Gaussian mixture model while taking advantage of the computationally efficiency of the Gaussian linearisation approximation.
-Given a Gaussian component at a time \(s\), we can `propagate` the component forward to a later time \(t\) by solving \Cref{eqn:gauss_de} initialised with the component mean and covariance matrix.
+Given a Gaussian component at a time \(s\), we can `propagate' the component forward to a later time \(t\) by solving \Cref{eqn:gauss_de} initialised with the component mean and covariance matrix.
 That is, we are updating the mean and covariance of the Gaussian component by approximating the solution to the original SDE \cref{eqn:sde_y_gmm} over \((s,t)\) with a linearisation about the deterministic trajectory initialised from the component mean.
 Given a mixture model with multiple Gaussian components, we can propagate each component separately to update the full model through time in a computationally efficient manner.
 
 Our proposed method is ad-hoc and based on a simple intuition: the Gaussian solution provides a reasonable approximation for the local behaviour of the true SDE solution over a short timeframe, but once this is no longer the case, we can capture departures from Gaussianity by introducing more components into the mixture model.
 We expect heuristically that as the number of components increase, the full mixture model should provide a closer approximation of the SDE solution density, provided that the components are appropriately placed.
-However, our goal is to provide a numerically efficient algorithm, so we wish to minimise the number of components and use the Gaussian approximation where ever possible.
+However, our goal is to provide a numerically efficient algorithm, so we wish to minimise the number of components and use the Gaussian approximation whereever possible.
 We therefore propose propagating Gaussian components forward through the linearisation model until are no longer reasonable approximations of the local solution behaviour.
 Then, we replace violating component with several smaller judiciously chosen components and propagate each new component individually.
 We term this the \emph{splitting} step, where a Gaussian component is split into several smaller ones.
@@ -333,8 +244,9 @@ This leads to the following condition on how a component is split: the splitting
 	\label{eqn:cov_split_points}
 \end{equation}
 This ensures that the mean and covariance of the original Gaussian is preserved within the (sample) mean and covariance of the new points themselves.
+\td{Weighting - allows for much more fun}
 Note that at least \(K = n + 1\) points are necessary for \cref{eqn:cov_split_points} to be satisfied.
-The selection of splitting points are similar to the notion of `sigma points`, employed in the unscented transform to encode an initial mean and covariance \citep{Uhlmann_1995_DynamicMapBuilding,JulierEtAl_2000_NewMethodNonlinear}.
+The selection of splitting points are similar to the notion of `sigma points', employed in the unscented transform to encode an initial mean and covariance \citep{Uhlmann_1995_DynamicMapBuilding,JulierEtAl_2000_NewMethodNonlinear}.
 Any such sigma points satisfy \cref{eqn:cov_split_points}---Table I by \citet{MenegazEtAl_2015_SystematizationUnscentedKalman} provides a list of sigma points used across other literature (and reviewed in the context of Kalman filtering)---and therefore can be used in our algorithm.
 % However, we note a key difference between our proposed algorithm and the unscented transform; the unscented transform provides an \emph{exact} estimate of.
 The canonical set of sigma points originally proposed by \citet{Uhlmann_1995_DynamicMapBuilding}, which we use to apply the GMM algorithm in \Cref{ch:appls}, are
@@ -498,8 +410,70 @@ If the initial condition is Gaussian, this can be used as a single component mix
 \end{figure}
 
 
+
+\begin{figure}
+	\centering
+	\usetikzlibrary{fit}
+		\begin{tikzpicture}[node distance=70pt]
+			\tikzstyle{arrow} = [->,>=stealth]
+
+			\node (s) [rectangle, rounded corners, draw=black, align=center] {\textbf{Start} \\ Given \(x_0, T\) };
+
+			\node (a) [rectangle, below of=s, draw=black, align=center, yshift=-10pt] {Set \(K = 1\) \\ Set \(t^{(1)} = 0\) \\ Set \(x^{(1)} = x_0\) \\ Set \(\Sigma^{(1)} = O\) \\ Set \(w^{(1)} = 1\)};
+
+			\node (b) [diamond, below of=a, draw=black, align=center, yshift=-70pt] {Any \(i\) for \\ which \(t^{(i)} < T\)?};
+
+			\node (c) [rectangle, below of=b, draw=black, align=center, yshift=-70pt] {\textbf{Propagate} \\ Update \(x^{(i)}, \Sigma^{(i)}\) by solving \\ \cref{eqn:gauss_de} from time \(t^{(i)}\) until \\ time \(T\) \textbf{or} the splitting \\ criterion is reached. \\
+			Update \(t^{(i)}\) to the propagated time};
+
+			\node (d) [diamond, right of=c, draw=black, align=center, xshift = 90pt] {\(t^{(i)} = T\)?};
+
+			\node (e) [rectangle, right of=b, below of = d, draw=black, align=center, yshift = -80pt] {\textbf{Split} \\ Use the splitting method to \\ construct \(x^{(K + 1)}, \dotsc, x^{(K+S)}\) \\ and the covariances \(\Sigma^{(K + 1)}, \dotsc, \Sigma^{(K + S)}\) \\ such that \cref{eqn:cov_split_points} is satisfied. \\
+			Set \(w^{(K + 1)} = \dotsb = w^{(K + s)} = w^{(i)} / (S + 1)\) \\ and \(w^{(i)} = w^{(i)} / (S + 1)\) \\
+			Set \(t^{(K + 1)} = \dotsb = t^{(K + S)} = t^{(i)}\) \\
+			Set \(K = K + S\)};
+
+			\node (f) [rectangle, rounded corners, left of=b, draw=black, align = center, xshift = -70pt] {\textbf{Stop}};
+
+			\draw [arrow] (s) -- (a);
+			\draw [arrow] (a) -- (b);
+
+			\draw [arrow] (b) -- node[anchor=east] {yes} (c);
+			\draw [arrow] (b) -- node[anchor=south] {no} (f);
+
+			\draw [arrow] (c) -- (d);
+			\draw [arrow] (d) |- node[anchor=east, yshift=-50pt] {yes} (b);
+
+			\draw [arrow] (d) -- node[anchor=east] {no} (e);
+			\draw (e) |- (b);
+
+			% Outline!
+			\node[inner sep=10pt, draw=red,fit = (b) (c) (d) (e), rounded corners] (fit) {};
+
+			% \draw [arrow] (s) -- (a);
+
+			% \draw [arrow] (a) -- (b);
+			% \draw [arrow] (b) -- (d);
+
+			% \draw [arrow] (d) -- node[anchor=south] {no} (c);
+			% \draw [arrow] (d) -- node[anchor=east] {yes} (e);
+
+			% \draw [arrow] (c) |- (b);
+
+			% \draw [arrow] (e) -- (f);
+
+			% \draw [arrow] (f) -- node[anchor=south] {yes} (g);
+			% \draw [arrow] (f) -- node[anchor=south] {no} (h);
+
+			% \draw [arrow] (h) |- (b);
+		\end{tikzpicture}
+	\caption{An algorithm flow chart of one particular implementation of the Gaussian mixture model with a certain initial condition.
+	The main propagation-splitting loop is contained within the outlined area.}
+	\label{fig:}
+\end{figure}
+
 As a simple example, we apply the algorithm to Ben\^e's SDE \cref{eqn:bene_sde}, subject again to the initial condition \(x_0 = 1/2\) and considered at the final time of \(t = 5\).
-Recall from earlier that the true solution has a bimodal density, which the Gaussian distribution resulting from a single linearisation is unable to capture.
+Recall from \cref{eqn:bene_sde_pdf} and \Cref{fig:bene_gauss} that the true solution has a bimodal density, which the Gaussian distribution resulting from a single linearisation is unable to capture.
 We implement the Gaussian mixture model with a single split, manually chosen to be at time \(t = 0.8\), with the resulting mixture density shown in \Cref{fig:bene_gmm}.
 The algorithm is initialised with \(x^{(1)} = 1/2\), \(\Sigma^{(1)} = 0\) and \(w^{(1)}\).
 After propagating the initial condition by solving \cref{eqn:gauss_de} to the splitting time \(t = 0.8\), we use the canonical sigma points (\cref{eqn:uhlman_sigma}) to replace the Gaussian density with three points \(x^{(1)}, x^{(2)}, x^{(3)}\), preserving the mean and covariance.
@@ -555,7 +529,7 @@ Some possibilities include:
 	 There may be a trade-off between the number of samples and the desired computationally efficiency.
 
 	\item A diagnostic based purely on the deterministic model will be computationally efficient, not requiring any stochastic simulation.
-		Stochastic sensitivity is a scalar value that is computed directly from the covariance matrix of the Gaussian approximation, and quantifies the magnitude and direction of maximum uncertainty.
+		Stochastic sensitivity (introduced by \citet{Balasuriya_2020_StochasticSensitivityComputable} and extended in \Cref{sec:theory_s2}) is a scalar value that is computed directly from the covariance matrix of the Gaussian approximation, and quantifies the magnitude and direction of maximum uncertainty.
 		In highly nonlinear systems, stochastic sensitivity may provide a measure for evaluating non-Gaussianity.
 		This can be computed from each Gaussian component with minimal additional computational cost, by simply taking the operator norm of the component covariance matrix.
 		However, in regions of linearity and non-multiplicative noise, the solution to the SDE can be Gaussian, but stochastic sensitivity, being the magnitude of the noise, can increase.

@@ -34,7 +34,8 @@
 
 % TikZ
 \RequirePackage{pgfplots}
-\usetikzlibrary{calc}
+\usetikzlibrary{calc, shapes.geometric, arrows, positioning}
+
 
 % Subfigures
 \RequirePackage{caption}
@@ -98,8 +99,8 @@
 % Extra stuff when draft is on
 \RequirePackage{ifdraft}
 \ifdraft{
-	% Big line spacing
-	\linespread{1.5}
+	% % Big line spacing
+	% \linespread{1.5}
 
 	% Line numbering
 	\RequirePackage{lineno}
@@ -180,7 +181,7 @@
 \DeclareMathOperator{\argmin}{argmin}
 
 % Transpose operator with \T
-\newcommand{\T}{^{\intercal}}
+\newcommand{\T}{^{\!\top}}
 
 % Trace operator
 \newcommand{\tr}[1]{\mathrm{tr}\left[#1\right]}
@@ -353,3 +354,11 @@
 }
 
 \RequirePackage{float}
+
+\makeatletter
+\newenvironment{scriptaligned}[1][c]
+{\,\hbox\bgroup
+	\fontsize{\sf@size}{\dimexpr\sf@size pt+1pt}\selectfont
+	$\!\aligned[#1]}
+{\endaligned$\egroup}
+\makeatother

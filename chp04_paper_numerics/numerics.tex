@@ -3,7 +3,110 @@
 \chapter{Characterising SDE linearisations: the numerics}\label{ch:linear_numerics}
 In this chapter, we provide numerical validation of the results in \Cref{ch:linear_theory} on example stochastic differential equations.
 A majority of the context this chapter again appears in the submitted article \citep{BlakeEtAl_2023_ConvergenceStochasticDifferential}.
-\Cref{sec:comput_s2} provides an initial and heuristic comparison between the stochastic sensitivity and finite-time Lyapunov fields, which does not appear in the submitted article.
+The overview in \Cref{sec:mazzoni} of an algorithm for efficiently solving the mean-covariance equations for the linearisation approximation does not appear in the submitted article.
+\Cref{sec:comput_s2} provides an initial and heuristic comparison between the stochastic sensitivity and finite-time Lyapunov fields, which also does not appear in the submitted article.
+
+\section{Mazzoni's method}\label{sec:mazzoni}
+\td{Update equation references! Relate to stuff in the paper, not the later chapter!!}
+An important consideration  when solving \cref{eqn:gauss_de} numerically is that \(\Pi_t\) represents a covariance matrix and must remain symmetric and positive semi-definite.
+However, many standard numerical ODE schemes do not take this into account, so a specialised scheme is required.
+Similar equations of the form \cref{eqn:gauss_de} (although often without explicit dependence on both time and the state in the \(\sigma\) term) are solved numerically in other applications, notably when implementing the extended Kalman filter \citep{Jazwinski_2014_StochasticProcessesFiltering, KulikovaKulikov_2014_AdaptiveODESolvers}.
+\citet{KulikovaKulikov_2014_AdaptiveODESolvers} identify that that the two most significant sources of numerical error when solving \cref{eqn:gauss_de} are a) the estimate of the covariance matrix \(\Sigma_s^t\) violating the requirement of positive semi-definiteness, and b) local error propagation in the state equation.
+Moreover, a computationally efficient algorithm is critical to ensure that our approximate methods have an advantage over bulk Monte-Carlo simulation.
+
+\citet{Mazzoni_2008_ComputationalAspectsContinuous} proposes an efficient hybrid method for solving \cref{eqn:gauss_de} which addresses both difficulties a) and b) and takes advantage of the availability of \(\nabla u\).
+This method, which we shall term the Mazzoni method, combines a Taylor-Heun approximation for \cref{eqn:gauss_mean_de} and a Gauss-Legendre step for \cref{eqn:gauss_cov_de}.
+With a step size of \(\delta t\), integration for both the state variable and the covariance matrix are convergent with order \(\mathcal{O}\!\left(\delta t^2\right)\).
+Moreover, \citet{Mazzoni_2008_ComputationalAspectsContinuous} shows through numerical simulations that the algorithm is computationally efficient when compared to alternatives with moderate precision.
+We therefore employ the Mazzoni method for all subsequent computations of the linearisation solution.
+
+The Mazzoni algorithm is summarised in the following.
+Further details on the derivation of these equations is available in the original article \citep{Mazzoni_2008_ComputationalAspectsContinuous}.
+The Taylor-Heun formula for the update of the state over the interval \([t, t + \delta t]\) is
+\begin{subequations}\label{eqn:mazzoni_update}
+	\begin{equation}
+		w_{t + \delta t} \approx w_t + \left(I - \frac{\delta t}{2}\nabla u\left(w_t, t\right)\right)^{-1}.
+		\label{eqn:mazzoni_state_update}
+	\end{equation}
+	The Gauss-Legendre update of the covariance matrix is
+	\begin{equation}
+		\Pi_{t + \delta t} \approx M_\tau \Pi_t M_\tau^{\T} + \delta t K_\tau \sigma\left(w_\tau,\, t + \frac{\delta t}{2}\right)\sigma\left(w_\tau,\, t + \frac{\delta t}{2}\right)^{\T} K_\tau^{\T},
+		\label{eqn:mazzoni_cov_update}
+	\end{equation}
+	where
+	\begin{align}
+		w_\tau & = \frac12\left(w_t + w_{t + \delta t} - \frac{\delta t^2}{4}\nabla u\left(w_t, \, t\right) u\left(w_t, \, t\right)\right) \label{eqn:mazzoni_cov_terms1} \\
+		K_\tau & = \left[I - \frac{\delta t}{2}\nabla u\left(w_\tau,\, t + \frac{\delta t}{2}\right)\right]^{-1}                                                          \\
+		M_\tau & = K_\tau \left[I + \frac{\delta t}{2}\nabla u\left(w_\tau,\, t + \frac{\delta t}{2}\right)\right] \label{eqn:mazzoni_cov_terms3}.
+	\end{align}
+	The vector \(w_\tau\) serves as an interpolation between \(w_t\) and \(w_{t + \delta t}\) for the state at time \(t + \delta t / 2\), which is used to provide a more accurate approximation of the covariance matrix.
+	\citet{Mazzoni_2008_ComputationalAspectsContinuous} also provides the option of an adaptive time step to fix the numerical precision while ensuring a computationally efficient algorithm.
+	The step size is adjusted by monitoring the error in the estimation of the state variable, aiming to maintain a specified tolerance level \(\gamma > 0\).
+	Given the error vector \(\mathcal{E}\) for each component of the state approximation, the maximum total-relative error is
+	\begin{equation}\label{eqn:mazzoni_e}
+		\hat{\gamma} = \max_{i = 1,\dots,n}\frac{\abs{\mathcal{E}^{(i)}}}{\abs{w_{t + \delta t}^{(i)}} + 1}
+	\end{equation}
+	where \(\mathcal{E}^{(i)}\) and \(w_{t + \delta t}^{(i)}\) denote the respective \(i\)th elements of \(\mathcal{E}\) and \(w_{t + \delta t}\).
+	The resulting adjustment factor for the time step is
+	\begin{equation}\label{eqn:mazzoni_step}
+		\delta t_{\mathrm{new}} = \beta \delta t \sqrt{\frac{\gamma}{\hat{\gamma}}}.
+	\end{equation}
+	The factor \(\beta\) is a control parameter inserted to avoid frequent recalculations of the step size, and is specified prior.
+	\citet{Mazzoni_2008_ComputationalAspectsContinuous} suggests setting \(\beta = 0.8\).
+	By again taking advantage of the availability of the Jacobian \(\nabla u\), the error vector is approximated as
+	\begin{equation}\label{eqn:mazzoni_err}
+		\mathcal{E} \approx \frac{\delta t^2}{2}\left[\frac{1}{3\delta t}\left(\nabla u\!\left(w_{t + \delta t}, t + \delta t\right) - \nabla u\!\left(w_t, t\right)\right) - \frac{1}{6}\nabla u\!\left(w_t, t\right)^2\right] u\!\left(w_t, t\right).
+	\end{equation}
+\end{subequations}
+The set of equations \cref{eqn:mazzoni_update} describe the Mazzoni algorithm, and in \Cref{fig:mazzoni_alg} we summarise the full algorithm with an adaptive step size.
+
+\begin{figure}
+	\begin{center}
+
+		\begin{tikzpicture}[node distance=70pt]
+			\tikzstyle{arrow} = [->,>=stealth]
+
+			\node (s) [rectangle, rounded corners, draw=black, align=center] {\textbf{Start} \\ Given \(s, T, x_s, \Sigma_s\) \\ Choose \(\delta t_{\mathrm{min}}, \beta, \gamma\)};
+
+			\node (a) [rectangle, below of=s, draw=black, align=center, yshift=-10pt] {Set \(t_0 = s\) \\ Set \(w_{t_0} = x_s\) \\ Set \(\Pi_{t_0} = \Sigma_s\) Set \(\delta t = \delta t_{\mathrm{min}}\) \\ Set \(k = 0\)};
+			\node (b) [rectangle, below of=a, draw=black, align=center, yshift=-20pt] {Set \(t_{k+1} = t_k + \delta t\) \\ Compute \(w_{t_{k+1}}\) with \cref{eqn:mazzoni_state_update} \\
+				Compute \(e\) with \cref{eqn:mazzoni_e} \\ Set \(\delta t_{\mathrm{new}} = \max\left\{\delta t_{\mathrm{min}}, \beta \delta t \sqrt{\frac{\gamma}{\hat{\gamma}}}\right\}\)};
+
+			\node (d) [diamond, below of=b, draw=black, align=center, yshift=-40pt] {\(\hat{\gamma} \leq \gamma\) or \\ \(\delta t \leq \delta t_{\mathrm{min}}\)?};
+			\node (c) [rectangle, left of=d, draw=black, align=center, xshift=-75pt] {Set \(\delta_t = \delta_{\mathrm{new}}\)};
+
+			\node (e) [rectangle, below of=d, draw=black, align=center, yshift=-20pt] {Compute \(\Pi_{t_{k+1}}\) with \crefrange{eqn:mazzoni_cov_terms1}{eqn:mazzoni_cov_terms3} \\ Set \(k = k + 1\)};
+
+			\node (f) [diamond, below of=e, draw=black, align=center] {\(t_k = T\)?};
+
+			\node (g) [rectangle, rounded corners, left of=f, draw=black, align = center, xshift = -30pt] {\textbf{Stop}};
+			\node (h) [rectangle, right of=f, draw=black, align = center, xshift = 75pt] {\(\delta t = \min\left\{\delta t_{\mathrm{new}}, T - t_k\right\}\)};
+
+			\draw [arrow] (s) -- (a);
+
+			\draw [arrow] (a) -- (b);
+			\draw [arrow] (b) -- (d);
+
+			\draw [arrow] (d) -- node[anchor=south] {no} (c);
+			\draw [arrow] (d) -- node[anchor=east] {yes} (e);
+
+			\draw [arrow] (c) |- (b);
+
+			\draw [arrow] (e) -- (f);
+
+			\draw [arrow] (f) -- node[anchor=south] {yes} (g);
+			\draw [arrow] (f) -- node[anchor=south] {no} (h);
+
+			\draw [arrow] (h) |- (b);
+		\end{tikzpicture}
+		\caption{A flowchart of the Mazzoni algorithm with adaptive time stepping.
+			Recreated from Figure 2 of \citet{Mazzoni_2008_ComputationalAspectsContinuous}.}
+		\label{fig:mazzoni_alg}
+	\end{center}
+\end{figure}
+
+
+
 
 \section{Numerical validation \& examples}\label{sec:numerics}
 This section will validate the theory presented in \Cref{sec:theory,sec:theory_s2}, by considering three example SDEs each leading to a different form of the strong error bound \cref{eqn:main_ineq}.
@@ -318,6 +421,7 @@ Subsets of the spatial domain corresponding to coherent structures can be extrac
 Here, we demonstrate the extraction of coherent structures.
 
 
+\td{Use cyan for robust sets, to be consistent with later results.}
 \begin{figure}
 	\begin{center}
 		\begin{subfigure}{0.49\textwidth}
@@ -341,12 +445,12 @@ Here, we demonstrate the extraction of coherent structures.
 			\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/rossby/ftle_0.3.pdf}
 			\caption{\(\oldepsilon_{\mathrm{mj}} = 0.3\)}
 		\end{subfigure}
-\begin{subfigure}{0.49\textwidth}
+		\begin{subfigure}{0.49\textwidth}
 			\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/rossby/ftle_1.0.pdf}
 			\caption{\(\oldepsilon_{\mathrm{mj}} = 1.0\)}
 		\end{subfigure}
 		\caption{The finite-time Lyapunov exponent field of the meandering jet flow \cref{eqn:jet_ex} over the time \([0,1]\), for two different values of \(\oldepsilon_{\mathrm{mj}}\).
-		These fields should be compared with the corresponding stochastic sensitivity fields in \Cref{fig:ex_jet_s2_field}.}
+			These fields should be compared with the corresponding stochastic sensitivity fields in \Cref{fig:ex_jet_s2_field}.}
 	\end{center}
 	\label{fig:ex_jet_ftle}
 \end{figure}
@@ -366,7 +470,7 @@ Following the example of \citet{BalasuriyaGottwald_2018_EstimatingStableUnstable
 To introduce multiplicative noise, we take the diffusivity
 \[
 	\sigma\!\left(y,t\right) = \begin{bmatrix}
-		1 & 0 \\
+		1       & 0                                       \\
 		y_2 - 1 & 3\sin\!\left(2\pi y_1\right)e^{-0.8y_1}
 	\end{bmatrix},
 \]
