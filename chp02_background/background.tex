@@ -250,7 +250,7 @@ The differential form of an \(n\)-dimensional It\^o stochastic differential equa
 	\dif y_t = u\!\left(y_t, t\right)\dif t + \sigma\!\left(y_t, t\right)\dif W_t,
 	\label{eqn:gen_sde}
 \end{equation}
-where the solution \(y_t\) is a stochastic process taking values in \(\R^n\), \(u\colon \R^n \times \R \to \R^n\) is the drift and \(\sigma\colon \R^n \times \R \to \R^{n\times m}\) is the diffusivity.
+where the solution \(y_t\) is a stochastic process taking values in \(\R^n\), \(u\colon \R^n \times \R \to \R^n\) is the drift and \(\sigma\colon \R^n \times \R \to \R^{n\times m}\) is the diffusivity matrix.
 The driving process \(W_t\) is the \(m\)-dimensional Wiener process.
 The notation in \cref{eqn:gen_sde} is not rigorously defined (the solution \(y_t\) is not differentiable in general, for example), but rather taken as equivalent to the integral form
 \begin{equation}
@@ -258,9 +258,12 @@ The notation in \cref{eqn:gen_sde} is not rigorously defined (the solution \(y_t
 	\label{eqn:gen_sde_int}
 \end{equation}
 where \(y_0\) is the possibly random initial condition.
+There is a heuristic interpretation of \cref{eqn:gen_sde}: over a small time interval \(\left(t, t + \delta t\right)\), the value of \(y_t\) changes by a Gaussian increment with expected value \(u\!\left(y_t, t\right)\delta t\) and variance \(\sigma\!\left(y_t, t\right)\sigma\!\left(y_t, t\right)^{\T}\).
+The product \(\sigma\sigma^{\T}\) can therefore be informally seen as the variance of the noise term.
 In the most general case, the drift \(u\) and diffusivity \(\sigma\) are permitted to themselves be random function%s\footnote{For more information, see for instance \citet{KallianpurSundar_2014_StochasticAnalysisDiffusion}.
 % The formal treatment of such stochastic differential equations remains an area of open research, such as establishing the conditions for existence and uniqueness of solutions \citehere, and EXAMPLE.}
 , but in this thesis we assume that both are deterministic.
+The solution \(y_t\) to \cref{eqn:gen_sde} is also known as a (It\^o) \emph{diffusion} process.
 
 The nature of the noise is characterised by the diffusion matrix \(\sigma\).
 When \(\sigma\) does not depend on the solution \(y_t\), the noise is termed \emph{additive}, whereas if \(\sigma\) does depend on the solution, then the noise is \emph{multiplicative}.
@@ -321,33 +324,33 @@ There are many other schemes for generating approximate samples of a stochastic 
 
 
 
-\subsection{The Fokker-Planck equation}\label{sec:fp_eqn}
-The Fokker-Planck (FP) equation is a partial differential equation that describes the time evolution of the probability density function of the solution to a stochastic differential equation.
-The probability density function \(\rho: \R^n \times [0,T] \to [0,\infty)\) for the solution to \cref{eqn:gen_sde} at time \(t \in [0,T]\) is the solution to the corresponding Fokker-Planck equation \citep{Risken_2012_FokkerPlanckEquationMethods}
-\begin{equation}
-	\dpd{\rho}{t} = \frac12\nabla\cdot\nabla\cdot\left(\rho\sigma\sigma^{\T}\right) - \nabla\cdot\left(\rho u\right)
-	\label{eqn:fp_eqn}
-\end{equation}
-subject to some initial density \(\rho\left(x,0\right)\) given by the initial condition to \cref{eqn:gen_sde}.
-For a fixed and deterministic initial condition \(y_0 = x\), the corresponding initial condition to \cref{eqn:fp_eqn} is the Dirac-delta distribution centred at \(x\).
-To ensure that the solution is a valid probability density function on \(\R^n\), for any \(t \in [0,T]\), \(\rho\) must satisfy
-\begin{subequations}\label{eqn:fp_valid_pdf}
-	\begin{align}
-		\int_{\R^n}{\rho\left(x, t\right)\dif x} = 1, \label{eqn:fp_valid_pdf_norm} \\
-		\lim_{x \to \infty}\rho\left(x,t\right) = 0. \label{eqn:fp_valid_pdf_limit}
-	\end{align}
-\end{subequations}
-Solving the Fokker-Planck equation provides an alternative method for finding the solution to a stochastic differential equation; rather than dealing with stochastic quantities, we instead seek solutions to the
-However, the Fokker-Planck equation cannot be solved analytically except for simple cases and there are several practical difficulties in attempting to solve it numerically.
-These difficulties include:
-\begin{itemize}
-	\item \textbf{Dimensionality:} In high-dimensional systems, solving the Fokker-Planck equation numerically is computationally prohibitative, requiring a small spatial discretisation to be accurate.
-	\item \textbf{Boundary conditions:} The Fokker-Planck equation is often defined on an unbounded domain with the zero-limit constraint \cref{eqn:fp_valid_pdf_limit}, which presents computational difficulties.
-	\item \textbf{Normality constraints:} The Fokker-Planck equation must be solved with the additional normality condition \cref{eqn:fp_valid_pdf_norm}, which enforces an additional constraint on any numerical solution.
-\end{itemize}
-It is generally accepted that these difficulties mean that the computational cost of solving the Fokker-Planck equation is too high in \(3\)- or higher dimensions \citep{ZhaiEtAl_2022_DeepLearningMethod,Li_2019_DatadrivenMethodSteady,AllawalaMarston_2016_StatisticsStochasticallyForced}.
+% \subsection{The Fokker-Planck equation}\label{sec:fp_eqn}
+% The Fokker-Planck (FP) equation is a partial differential equation that describes the time evolution of the probability density function of the solution to a stochastic differential equation.
+% The probability density function \(\rho: \R^n \times [0,T] \to [0,\infty)\) for the solution to \cref{eqn:gen_sde} at time \(t \in [0,T]\) is the solution to the corresponding Fokker-Planck equation \citep{Risken_2012_FokkerPlanckEquationMethods}
+% \begin{equation}
+% 	\dpd{\rho}{t} = \frac12\nabla\cdot\nabla\cdot\left(\rho\sigma\sigma^{\T}\right) - \nabla\cdot\left(\rho u\right)
+% 	\label{eqn:fp_eqn}
+% \end{equation}
+% subject to some initial density \(\rho\left(x,0\right)\) given by the initial condition to \cref{eqn:gen_sde}.
+% For a fixed and deterministic initial condition \(y_0 = x\), the corresponding initial condition to \cref{eqn:fp_eqn} is the Dirac-delta distribution centred at \(x\).
+% To ensure that the solution is a valid probability density function on \(\R^n\), for any \(t \in [0,T]\), \(\rho\) must satisfy
+% \begin{subequations}\label{eqn:fp_valid_pdf}
+% 	\begin{align}
+% 		\int_{\R^n}{\rho\left(x, t\right)\dif x} = 1, \label{eqn:fp_valid_pdf_norm} \\
+% 		\lim_{x \to \infty}\rho\left(x,t\right) = 0. \label{eqn:fp_valid_pdf_limit}
+% 	\end{align}
+% \end{subequations}
+% Solving the Fokker-Planck equation provides an alternative method for finding the solution to a stochastic differential equation; rather than dealing with stochastic quantities, we instead seek solutions to the
+% However, the Fokker-Planck equation cannot be solved analytically except for simple cases and there are several practical difficulties in attempting to solve it numerically.
+% These difficulties include:
+% \begin{itemize}
+% 	\item \textbf{Dimensionality:} In high-dimensional systems, solving the Fokker-Planck equation numerically is computationally prohibitative, requiring a small spatial discretisation to be accurate.
+% 	\item \textbf{Boundary conditions:} The Fokker-Planck equation is often defined on an unbounded domain with the zero-limit constraint \cref{eqn:fp_valid_pdf_limit}, which presents computational difficulties.
+% 	\item \textbf{Normality constraints:} The Fokker-Planck equation must be solved with the additional normality condition \cref{eqn:fp_valid_pdf_norm}, which enforces an additional constraint on any numerical solution.
+% \end{itemize}
+% It is generally accepted that these difficulties mean that the computational cost of solving the Fokker-Planck equation is too high in \(3\)- or higher dimensions \citep{ZhaiEtAl_2022_DeepLearningMethod,Li_2019_DatadrivenMethodSteady,AllawalaMarston_2016_StatisticsStochasticallyForced}.
 
-\td{Perhaps comment on how the FP equation arises in other settings, and is a generalisation of the advection-diffusion equation and similar. Hence learning stuff about the solution to the SDE also tells us about the FP equation.}
+% \td{Perhaps comment on how the FP equation arises in other settings, and is a generalisation of the advection-diffusion equation and similar. Hence learning stuff about the solution to the SDE also tells us about the FP equation.}
 
 % \subsubsection{Relationship to the classical advection-diffusion equation}
 % The advection-diffusion equation describes the time-evolution of a passive and inert scalar quantity, such as temperature, salinity

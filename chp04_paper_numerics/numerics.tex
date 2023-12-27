@@ -439,67 +439,68 @@ Here, we demonstrate the extraction of coherent structures.
 
 
 
-\begin{figure}
-	\begin{center}
-		\begin{subfigure}{0.49\textwidth}
-			\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/rossby/ftle_0.3.pdf}
-			\caption{\(\oldepsilon_{\mathrm{mj}} = 0.3\)}
-		\end{subfigure}
-		\begin{subfigure}{0.49\textwidth}
-			\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/rossby/ftle_1.0.pdf}
-			\caption{\(\oldepsilon_{\mathrm{mj}} = 1.0\)}
-		\end{subfigure}
-		\caption{The finite-time Lyapunov exponent field of the meandering jet flow \cref{eqn:jet_ex} over the time \([0,1]\), for two different values of \(\oldepsilon_{\mathrm{mj}}\).
-			These fields should be compared with the corresponding stochastic sensitivity fields in \Cref{fig:ex_jet_s2_field}.}
-	\end{center}
-	\label{fig:ex_jet_ftle}
-\end{figure}
+% \begin{figure}
+% 	\begin{center}
+% 		\begin{subfigure}{0.49\textwidth}
+% 			\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/rossby/ftle_0.3.pdf}
+% 			\caption{\(\oldepsilon_{\mathrm{mj}} = 0.3\)}
+% 		\end{subfigure}
+% 		\begin{subfigure}{0.49\textwidth}
+% 			\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/rossby/ftle_1.0.pdf}
+% 			\caption{\(\oldepsilon_{\mathrm{mj}} = 1.0\)}
+% 		\end{subfigure}
+% 		\caption{The finite-time Lyapunov exponent field of the meandering jet flow \cref{eqn:jet_ex} over the time \([0,1]\), for two different values of \(\oldepsilon_{\mathrm{mj}}\).
+% 			These fields should be compared with the corresponding stochastic sensitivity fields in \Cref{fig:ex_jet_s2_field}.}
+% 	\end{center}
+% 	\label{fig:ex_jet_ftle}
+% \end{figure}
 
 
 
-In this example, the stochastic sensitivity and FTLE fields show strong similarities, supporting the claims in \Cref{sec:ftle_s2_connection} that stochastic sensitivity can be considered a generalisation of the FTLE.
-The two fields are quantifying differnet aspects of the flow, however, and so can show differences; such examples are available in \citet{Balasuriya_2020_StochasticSensitivityComputable} (see Figure 3.7) and \citet{BadzaEtAl_2023_HowSensitiveAre} (compare Figures 1 and 5, and Figures 11 and 15).
-To highlight the differences between the stochastic sensitivity field and the finite-time Lyapunov exponent, here we provide a brief and contrived example in which multiplicative noise has a substantial impact on the dynamical behaviour of the system.
-Following the example of \citet{BalasuriyaGottwald_2018_EstimatingStableUnstable}, consider the two-dimensional velocity field
-\begin{equation*}
-	u\!\left(y, t\right) = \begin{bmatrix}
-		-4y_1 + y_1^2 \\
-		3y_2 - y_2^3
-	\end{bmatrix},
-\end{equation*}
-To introduce multiplicative noise, we take the diffusivity
-\[
-	\sigma\!\left(y,t\right) = \begin{bmatrix}
-		1       & 0                                       \\
-		y_2 - 1 & 3\sin\!\left(2\pi y_1\right)e^{-0.8y_1}
-	\end{bmatrix},
-\]
-which in particular ensures a non-trivial spatial dependence along the stable manifold of interest.
+% In this example, the stochastic sensitivity and FTLE fields show strong similarities, supporting the claims in \Cref{sec:ftle_s2_connection} that stochastic sensitivity can be considered a generalisation of the FTLE.
+% The two fields are quantifying different aspects of the flow, however, and so can show differences; such examples are available in \citet{Balasuriya_2020_StochasticSensitivityComputable} (see Figure 3.7) and \citet{BadzaEtAl_2023_HowSensitiveAre} (compare Figures 1 and 5, and Figures 11 and 15).
+
+% To highlight the differences between the stochastic sensitivity field and the finite-time Lyapunov exponent, here we provide a brief and contrived example in which multiplicative noise has a substantial impact on the dynamical behaviour of the system.
+% Following the example of \citet{BalasuriyaGottwald_2018_EstimatingStableUnstable}, consider the two-dimensional velocity field
+% \begin{equation*}
+% 	u\!\left(y, t\right) = \begin{bmatrix}
+% 		-4y_1 + y_1^2 \\
+% 		3y_2 - y_2^3
+% 	\end{bmatrix},
+% \end{equation*}
+% To introduce multiplicative noise, we take the diffusivity
+% \[
+% 	\sigma\!\left(y,t\right) = \begin{bmatrix}
+% 		1       & 0                                       \\
+% 		y_2 - 1 & 3\sin\!\left(2\pi y_1\right)e^{-0.8y_1}
+% 	\end{bmatrix},
+% \]
+% which in particular ensures a non-trivial spatial dependence along the stable manifold of interest.
 
 
 
 
 
-\begin{figure}
-	\begin{center}
-		\begin{subfigure}{0.49\textwidth}
-			\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/unstable/ftle.pdf}
-			\caption{FTLE}
-			\label{fig:s2_ftle_ftle}
-		\end{subfigure}
-		\begin{subfigure}{0.49\textwidth}
-			\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/unstable/S2_zero.pdf}
-			\caption{\(S^2\) with fixed initial condition.}
-			\label{fig:s2_ftle_ftle}
-		\end{subfigure}		\begin{subfigure}{0.49\textwidth}
-			\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/unstable/S2_I.pdf}
-			\caption{\(S^2\) with standard Gaussian initial condition.}
-			\label{fig:s2_ftle_ftle}
-		\end{subfigure}
-		\caption{The stochastic sensitivity and FTLE-type stretching fields for the two-dimensional}
-		\label{fig:}
-	\end{center}
-\end{figure}
+% \begin{figure}
+% 	\begin{center}
+% 		\begin{subfigure}{0.49\textwidth}
+% 			\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/unstable/ftle.pdf}
+% 			\caption{FTLE}
+% 			\label{fig:s2_ftle_ftle}
+% 		\end{subfigure}
+% 		\begin{subfigure}{0.49\textwidth}
+% 			\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/unstable/S2_zero.pdf}
+% 			\caption{\(S^2\) with fixed initial condition.}
+% 			\label{fig:s2_ftle_ftle}
+% 		\end{subfigure}		\begin{subfigure}{0.49\textwidth}
+% 			\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/unstable/S2_I.pdf}
+% 			\caption{\(S^2\) with standard Gaussian initial condition.}
+% 			\label{fig:s2_ftle_ftle}
+% 		\end{subfigure}
+% 		\caption{The stochastic sensitivity and FTLE-type stretching fields for the two-dimensional}
+% 		\label{fig:}
+% 	\end{center}
+% \end{figure}
 
 
 

@@ -47,6 +47,7 @@ The \citet{Mazzoni_2008_ComputationalAspectsContinuous} method, outlined in \Cre
 Although computationally appealing, this Gaussian approximation is only `reasonable' in the limit of small initial and ongoing uncertainty, which we quantified exactly with the bound in \Cref{thm:main}, and demonstrated heuristically with examples in \Cref{fig:sine_hists,fig:1d_mult_hists,fig:y_hists}.
 In practice, the scale of the noise is an inherent part of a model and there is no guarantee that it is sufficiently small for Gaussian approximations to be reasonable.
 When the noise scale is larger, we see non-Gaussianity emerge---the numerical solutions in \Cref{fig:sine_hists,fig:1d_mult_hists,fig:y_hists} exhibit skewness, bi-modality, and other departures from Gaussianity.
+\td{Add a sentence referring to how these come up in practice, e.g. by citing \citet{SuraEtAl_2005_MultiplicativeNoiseNonGaussianity,del-Castillo-Negrete_1998_AsymmetricTransportNonGaussian,BraccoEtAl_2000_VelocityProbabilityDensity}.}
 Although the Gaussian approximation can still provide qualitative insight into the behaviour of these solutions (see stochastic sensitivity, for instance), to produce a reasonable approximation we need a method that can capture these departures from Gaussianity.
 
 \section{An example: Ben\^e's SDE}
@@ -222,6 +223,15 @@ Given a Gaussian component at a time \(s\), we can `propagate' the component for
 That is, we are updating the mean and covariance of the Gaussian component by approximating the solution to the original SDE \cref{eqn:sde_y_gmm} over \((s,t)\) with a linearisation about the deterministic trajectory initialised from the component mean.
 Given a mixture model with multiple Gaussian components, we can propagate each component separately to update the full model through time in a computationally efficient manner.
 
+\begin{figure}
+	\centering
+	\begin{tikzpicture}
+
+	\end{tikzpicture}
+	\caption{The splitting of a mean \(x\) and covariance matrix \(\Sigma\) into sigma points.}
+	\label{fig:sigma_points_ex}
+\end{figure}
+
 Our proposed method is ad-hoc and based on a simple intuition: the Gaussian solution provides a reasonable approximation for the local behaviour of the true SDE solution over a short timeframe, but once this is no longer the case, we can capture departures from Gaussianity by introducing more components into the mixture model.
 We expect heuristically that as the number of components increase, the full mixture model should provide a closer approximation of the SDE solution density, provided that the components are appropriately placed.
 However, our goal is to provide a numerically efficient algorithm, so we wish to minimise the number of components and use the Gaussian approximation whereever possible.
@@ -252,12 +262,13 @@ Any such sigma points satisfy \cref{eqn:cov_split_points}---Table I by \citet{Me
 The canonical set of sigma points originally proposed by \citet{Uhlmann_1995_DynamicMapBuilding}, which we use to apply the GMM algorithm in \Cref{ch:appls}, are
 \begin{subequations}\label{eqn:uhlman_sigma}
 	\begin{align}
-		x^{(0)}     & = x,                                                                                              \\
+		x^{(0)}     & = x,                                                          \\
 		x^{(i)}     & = x + \sqrt{n + \frac12}\left[\sqrt{\Sigma}\right]_{\cdot i}, \\
 		x^{(n + i)} & = x - \sqrt{n + \frac12}\left[\sqrt{\Sigma}\right]_{\cdot i},
 	\end{align}
 \end{subequations}
 for \(i = 1,\dotsc, n\), where \(\sqrt{\Sigma}\) denotes the symmetric square root of \(\Sigma\), and \(\left[\sqrt{\Sigma}\right]_{\cdot i}\) denotes the \(i\)th column of \(\sqrt{\Sigma}\).
+\Cref{fig:sigma_points_ex} depicts the splitting of a covariance and mean into 5 sigma points in 2-dimensions, using the canonical set \cref{eqn:uhlman_sigma}.
 However, we do not enforce a particular approach for selecting these points and leave this to be investigated further as future work.
 
 The mixture model algorithm is then as follows:
@@ -414,61 +425,61 @@ If the initial condition is Gaussian, this can be used as a single component mix
 \begin{figure}
 	\centering
 	\usetikzlibrary{fit}
-		\begin{tikzpicture}[node distance=70pt]
-			\tikzstyle{arrow} = [->,>=stealth]
+	\begin{tikzpicture}[node distance=70pt]
+		\tikzstyle{arrow} = [->,>=stealth]
 
-			\node (s) [rectangle, rounded corners, draw=black, align=center] {\textbf{Start} \\ Given \(x_0, T\) };
+		\node (s) [rectangle, rounded corners, draw=black, align=center] {\textbf{Start} \\ Given \(x_0, T\) };
 
-			\node (a) [rectangle, below of=s, draw=black, align=center, yshift=-10pt] {Set \(K = 1\) \\ Set \(t^{(1)} = 0\) \\ Set \(x^{(1)} = x_0\) \\ Set \(\Sigma^{(1)} = O\) \\ Set \(w^{(1)} = 1\)};
+		\node (a) [rectangle, below of=s, draw=black, align=center, yshift=-10pt] {Set \(K = 1\) \\ Set \(t^{(1)} = 0\) \\ Set \(x^{(1)} = x_0\) \\ Set \(\Sigma^{(1)} = O\) \\ Set \(w^{(1)} = 1\)};
 
-			\node (b) [diamond, below of=a, draw=black, align=center, yshift=-70pt] {Any \(i\) for \\ which \(t^{(i)} < T\)?};
+		\node (b) [diamond, below of=a, draw=black, align=center, yshift=-70pt] {Any \(i\) for \\ which \(t^{(i)} < T\)?};
 
-			\node (c) [rectangle, below of=b, draw=black, align=center, yshift=-70pt] {\textbf{Propagate} \\ Update \(x^{(i)}, \Sigma^{(i)}\) by solving \\ \cref{eqn:gauss_de} from time \(t^{(i)}\) until \\ time \(T\) \textbf{or} the splitting \\ criterion is reached. \\
+		\node (c) [rectangle, below of=b, draw=black, align=center, yshift=-70pt] {\textbf{Propagate} \\ Update \(x^{(i)}, \Sigma^{(i)}\) by solving \\ \cref{eqn:gauss_de} from time \(t^{(i)}\) until \\ time \(T\) \textbf{or} the splitting \\ criterion is reached. \\
 			Update \(t^{(i)}\) to the propagated time};
 
-			\node (d) [diamond, right of=c, draw=black, align=center, xshift = 90pt] {\(t^{(i)} = T\)?};
+		\node (d) [diamond, right of=c, draw=black, align=center, xshift = 90pt] {\(t^{(i)} = T\)?};
 
-			\node (e) [rectangle, right of=b, below of = d, draw=black, align=center, yshift = -80pt] {\textbf{Split} \\ Use the splitting method to \\ construct \(x^{(K + 1)}, \dotsc, x^{(K+S)}\) \\ and the covariances \(\Sigma^{(K + 1)}, \dotsc, \Sigma^{(K + S)}\) \\ such that \cref{eqn:cov_split_points} is satisfied. \\
+		\node (e) [rectangle, right of=b, below of = d, draw=black, align=center, yshift = -80pt] {\textbf{Split} \\ Use the splitting method to \\ construct \(x^{(K + 1)}, \dotsc, x^{(K+S)}\) \\ and the covariances \(\Sigma^{(K + 1)}, \dotsc, \Sigma^{(K + S)}\) \\ such that \cref{eqn:cov_split_points} is satisfied. \\
 			Set \(w^{(K + 1)} = \dotsb = w^{(K + s)} = w^{(i)} / (S + 1)\) \\ and \(w^{(i)} = w^{(i)} / (S + 1)\) \\
 			Set \(t^{(K + 1)} = \dotsb = t^{(K + S)} = t^{(i)}\) \\
 			Set \(K = K + S\)};
 
-			\node (f) [rectangle, rounded corners, left of=b, draw=black, align = center, xshift = -70pt] {\textbf{Stop}};
+		\node (f) [rectangle, rounded corners, left of=b, draw=black, align = center, xshift = -70pt] {\textbf{Stop}};
 
-			\draw [arrow] (s) -- (a);
-			\draw [arrow] (a) -- (b);
+		\draw [arrow] (s) -- (a);
+		\draw [arrow] (a) -- (b);
 
-			\draw [arrow] (b) -- node[anchor=east] {yes} (c);
-			\draw [arrow] (b) -- node[anchor=south] {no} (f);
+		\draw [arrow] (b) -- node[anchor=east] {yes} (c);
+		\draw [arrow] (b) -- node[anchor=south] {no} (f);
 
-			\draw [arrow] (c) -- (d);
-			\draw [arrow] (d) |- node[anchor=east, yshift=-50pt] {yes} (b);
+		\draw [arrow] (c) -- (d);
+		\draw [arrow] (d) |- node[anchor=east, yshift=-50pt] {yes} (b);
 
-			\draw [arrow] (d) -- node[anchor=east] {no} (e);
-			\draw (e) |- (b);
+		\draw [arrow] (d) -- node[anchor=east] {no} (e);
+		\draw (e) |- (b);
 
-			% Outline!
-			\node[inner sep=10pt, draw=red,fit = (b) (c) (d) (e), rounded corners] (fit) {};
+		% Outline!
+		\node[inner sep=10pt, draw=red,fit = (b) (c) (d) (e), rounded corners] (fit) {};
 
-			% \draw [arrow] (s) -- (a);
+		% \draw [arrow] (s) -- (a);
 
-			% \draw [arrow] (a) -- (b);
-			% \draw [arrow] (b) -- (d);
+		% \draw [arrow] (a) -- (b);
+		% \draw [arrow] (b) -- (d);
 
-			% \draw [arrow] (d) -- node[anchor=south] {no} (c);
-			% \draw [arrow] (d) -- node[anchor=east] {yes} (e);
+		% \draw [arrow] (d) -- node[anchor=south] {no} (c);
+		% \draw [arrow] (d) -- node[anchor=east] {yes} (e);
 
-			% \draw [arrow] (c) |- (b);
+		% \draw [arrow] (c) |- (b);
 
-			% \draw [arrow] (e) -- (f);
+		% \draw [arrow] (e) -- (f);
 
-			% \draw [arrow] (f) -- node[anchor=south] {yes} (g);
-			% \draw [arrow] (f) -- node[anchor=south] {no} (h);
+		% \draw [arrow] (f) -- node[anchor=south] {yes} (g);
+		% \draw [arrow] (f) -- node[anchor=south] {no} (h);
 
-			% \draw [arrow] (h) |- (b);
-		\end{tikzpicture}
+		% \draw [arrow] (h) |- (b);
+	\end{tikzpicture}
 	\caption{An algorithm flow chart of one particular implementation of the Gaussian mixture model with a certain initial condition.
-	The main propagation-splitting loop is contained within the outlined area.}
+		The main propagation-splitting loop is contained within the outlined area.}
 	\label{fig:}
 \end{figure}
 
@@ -523,26 +534,26 @@ This requires an ongoing evaluation of the error in using the approximation.
 Some possibilities include:
 \begin{itemize}
 	\item Alongside the propagation of the mixture model, one can also compute a small number of stochastic samples that solve the original SDE \cref{eqn:sde_y_gmm}.
-		These stochastic samples can be compared to the ongoing Gaussian evolutions, for instance using a probabilistic distance measure.
-		However, this would increase the computational load of the algorithm and may require many samples to accurately quantify departures from Gaussianity.
-	 The Gaussian mixture model does provides an analytic probability density function that can lend itself to further inference, as opposed to solely stochastic samples that require an additional step to compute a density function.
-	 There may be a trade-off between the number of samples and the desired computationally efficiency.
+	      These stochastic samples can be compared to the ongoing Gaussian evolutions, for instance using a probabilistic distance measure.
+	      However, this would increase the computational load of the algorithm and may require many samples to accurately quantify departures from Gaussianity.
+	      The Gaussian mixture model does provides an analytic probability density function that can lend itself to further inference, as opposed to solely stochastic samples that require an additional step to compute a density function.
+	      There may be a trade-off between the number of samples and the desired computationally efficiency.
 
 	\item A diagnostic based purely on the deterministic model will be computationally efficient, not requiring any stochastic simulation.
-		Stochastic sensitivity (introduced by \citet{Balasuriya_2020_StochasticSensitivityComputable} and extended in \Cref{sec:theory_s2}) is a scalar value that is computed directly from the covariance matrix of the Gaussian approximation, and quantifies the magnitude and direction of maximum uncertainty.
-		In highly nonlinear systems, stochastic sensitivity may provide a measure for evaluating non-Gaussianity.
-		This can be computed from each Gaussian component with minimal additional computational cost, by simply taking the operator norm of the component covariance matrix.
-		However, in regions of linearity and non-multiplicative noise, the solution to the SDE can be Gaussian, but stochastic sensitivity, being the magnitude of the noise, can increase.
-		A large value of stochastic sensitivity need to imply non-Gaussianity in these cases.
+	      Stochastic sensitivity (introduced by \citet{Balasuriya_2020_StochasticSensitivityComputable} and extended in \Cref{sec:theory_s2}) is a scalar value that is computed directly from the covariance matrix of the Gaussian approximation, and quantifies the magnitude and direction of maximum uncertainty.
+	      In highly nonlinear systems, stochastic sensitivity may provide a measure for evaluating non-Gaussianity.
+	      This can be computed from each Gaussian component with minimal additional computational cost, by simply taking the operator norm of the component covariance matrix.
+	      However, in regions of linearity and non-multiplicative noise, the solution to the SDE can be Gaussian, but stochastic sensitivity, being the magnitude of the noise, can increase.
+	      A large value of stochastic sensitivity need to imply non-Gaussianity in these cases.
 
 
 	\item \citet{DeMarsEtAl_2013_EntropyBasedApproachUncertainty} propose an algorithm for propagating an initial uncertainty through a nonlinear time-varying mapping, by using a Gaussian mixture model and a similar splitting algorithm.
-The principle is similar to ours; the uncertainty is propagated forward using a linearisation of the model until this is no longer a reasonable approximation.
-A split occurs when nonlinearity in the mapping, which would result in non-Gaussianity, is detected via an entropy-based measure.
-This measure uses the sigma point method to evaluate the mapping of a covariance matrix, which is compared to the ongoing propagation of a Gaussian component.
-The sigma point method provides an \emph{exact} computation for the covariance matrix of a deterministic nonlinear transformation of a random variable, provided that the transformation can be evaluated exactly.
-In our case however, there is ongoing uncertainty from the multiplicative noise and the SDE cannot be solved exactly, so we cannot evaluate the mapping required for the sigma point method.
-Nonetheless, this previous work may suggest a direction for further tuning the implementation of our method, including the selection of points when splitting a component.
+	      The principle is similar to ours; the uncertainty is propagated forward using a linearisation of the model until this is no longer a reasonable approximation.
+	      A split occurs when nonlinearity in the mapping, which would result in non-Gaussianity, is detected via an entropy-based measure.
+	      This measure uses the sigma point method to evaluate the mapping of a covariance matrix, which is compared to the ongoing propagation of a Gaussian component.
+	      The sigma point method provides an \emph{exact} computation for the covariance matrix of a deterministic nonlinear transformation of a random variable, provided that the transformation can be evaluated exactly.
+	      In our case however, there is ongoing uncertainty from the multiplicative noise and the SDE cannot be solved exactly, so we cannot evaluate the mapping required for the sigma point method.
+	      Nonetheless, this previous work may suggest a direction for further tuning the implementation of our method, including the selection of points when splitting a component.
 
 \end{itemize}
 We leave further development of this step of the algorithm for future work, and only consider simple demonstrative examples in the next chapter.

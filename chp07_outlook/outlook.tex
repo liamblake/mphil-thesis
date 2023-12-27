@@ -1,15 +1,15 @@
-\chapter{Future outlook and conclusions}\label{ch:outlook}
-In this chapter, we briefly discuss the implications of the work presented in this thesis, and highlight several avenues for further extensions and applications.
-
+\chapter{Discussion and future outlook}\label{ch:outlook}
+To conclude this thesis, we shall briefly discuss the implications of the work presented, and highlight several avenues for further extensions and applications.
 
 
 %%%% Just a dump of the paper conclusions, comments and all
-This paper has provided an {explicit} bound on the error between the solution of a nonlinear stochastic differential equation and an easily computable linearisation approximation that has been used across many different applications \cite[e.g.]{Jazwinski_2014_StochasticProcessesFiltering, Sanz-AlonsoStuart_2017_GaussianApproximationsSmall,KaszasHaller_2020_UniversalUpperEstimate,ArchambeauEtAl_2007_GaussianProcessApproximations}, building upon previous studies \cite{Blagoveshchenskii_1962_DiffusionProcessesDepending,FreidlinWentzell_1998_RandomPerturbationsDynamical,Sanz-AlonsoStuart_2017_GaussianApproximationsSmall}.
+\note{Summarise the thesis in full and talk briefly about implications of results, in a similar style to the paper conclusion.}
+In \Cref{ch:linear_theory}, we provided an \emph{explicit} bound on the error between the solution of a nonlinear stochastic differential equation and an easily computable linearisation approximation that has been used across many different applications \citep[e.g.]{Jazwinski_2014_StochasticProcessesFiltering, Sanz-AlonsoStuart_2017_GaussianApproximationsSmall,KaszasHaller_2020_UniversalUpperEstimate,ArchambeauEtAl_2007_GaussianProcessApproximations}, building upon previous studies \citep{Blagoveshchenskii_1962_DiffusionProcessesDepending,FreidlinWentzell_1998_RandomPerturbationsDynamical,Sanz-AlonsoStuart_2017_GaussianApproximationsSmall}.
 The theory applies to fully non-autonomous SDEs with multiplicative noise and a random initial condition.
 Our bound is written in terms of the scale of the ongoing noise (that is, a scaling of the diffusivity coefficient) and a measure of the uncertainty in the initial condition using the \(L_r\)-norm.
 A comparison in \cref{sec:comparison} suggests that our bound on the moments is tighter than implied by the gold standard \cite{Sanz-AlonsoStuart_2017_GaussianApproximationsSmall} in the literature.
 
-We also provided an explicit characteristation of the distribution of the solution to the linearised SDE, enabling efficient approximation of the original nonlinear SDE using solutions to the corresponding deterministic equation, whereas previously special cases of these computations were dispersed across other literature \cite{Jazwinski_2014_StochasticProcessesFiltering,Sanz-AlonsoStuart_2017_GaussianApproximationsSmall,SarkkaSolin_2019_AppliedStochasticDifferential}.
+We also provided an explicit characterisation of the distribution of the solution to the linearised SDE, enabling efficient approximation of the original nonlinear SDE using solutions to the corresponding deterministic equation, whereas previously special cases of these computations were dispersed across other literature \cite{Jazwinski_2014_StochasticProcessesFiltering,Sanz-AlonsoStuart_2017_GaussianApproximationsSmall,SarkkaSolin_2019_AppliedStochasticDifferential}.
 Finally, we validated the form of the bound numerically on three example stochastic differential equations, and in particular find that the strong error scales with the initial uncertainty and ongoing uncertainty exactly as predicted.
 % This result extends the convergence bound on the Kullback-Leibler divergence by Sanz-Alonso and Stuart \cite{Sanz-AlonsoStuart_2017_GaussianApproximationsSmall} to an explicit bound on the convergence of all moments of the difference between the exact SDE solution and the approximation, and further establishes the exact Gaussian distribution in the small-noise limit.
 % Our bound is verified numerically by plotting the first four raw moments of the distance between the true noise-scaled solution and the linearised solution (see \Cref{fig:gamma_z_valid}).
@@ -23,10 +23,6 @@ Finally, we validated the form of the bound numerically on three example stochas
 % The linearisation of the stochastic differential equation \cref{eqn:sde_y} used to construct the Gaussian approximation has been employed in data assimilation, e.g. in the continuous time continuous state-space extended Kalman filter \cite[\S 9]{Jazwinski_2014_StochasticProcessesFiltering}. The convergence analysis of this paper could contribute a new term, estimating the error due to linearisation, to the \emph{forecast uncertainty} covariance matrix employed in these extended Kalman filters.
 
 
-% A powerful advantage of this framework is that the diffusivity matrix \(\sigma\) is permitted to vary spatio-temporally, allowing for multiplicative noise.
-% Multiplicative noise is often ignored in practice, due to difficulties in working with analytically (see, for instance, the prior lack of rigourous justification of linearisations when the noise is multiplicative) and generating numerical realisations efficiently (e.g. the review in \cite{MoraEtAl_2017_StableNumericalScheme}).
-% It has also been shown that multiplicative noise on linear dynamics can model departures from Gaussianity observed in climate statistics \cite{SuraEtAl_2005_MultiplicativeNoiseNonGaussianity}, as opposed to nonlinear dynamics with only additive noise.
-% The spatio-temporal dependence of \(\sigma\) can also capture experimental and observational considerations that are otherwise ignored in the deterministic model, such as cloud cover when using satellite measurements or nonuniform uncertain across the field of view of a camera.
 % % The multiplicative noise is captured by the Gaussian approximation by evaluating \(\sigma\) along the deterministic reference trajectory.
 % % The Gaussian uncertainties capture both the model dynamics, and any multiplicative or spatiotemporal dependence in the uncertainty, through specification of \(\sigma\).
 % We therefore present a highly flexible framework that can capture any prior knowledge of non-uniform uncertainty that arises from modelling or experimental considerations.
@@ -35,17 +31,23 @@ Finally, we validated the form of the bound numerically on three example stochas
 % Our bound in \cref{eqn:main_ineq} is comparable to that placed on the Kullback-Leibler divergence by \citet{Sanz-AlonsoStuart_2017_GaussianApproximationsSmall}; the Kullback-Leibler between the linearised solution and the SDE solution is bounded by a sum of the Kullback-Leibler divergence in the initial condition and a constant term scaled by \(\epsilon\).
 % Our bound \cref{eqn:main_ineq} on the strong error between the SDE solution and the linearisation consists of error in the initial condition, a constant scaling with \(\epsilon\), and an additional term involving both the initial uncertainty and \(\epsilon\).
 
-Our error bound may be useful to investigate the validity of SDE linearisations in application domains such as Stochastic Parameterisation \cite{BernerEtAl_2017_StochasticParameterizationNew,Palmer_2019_StochasticWeatherClimate,LeutbecherEtAl_2017_StochasticRepresentationsModel} or Data Assimilation \cite{BudhirajaEtAl_2019_AssimilatingDataModels,ReichCotter_2015_ProbabilisticForecastingBayesian,LawEtAl_2015_DataAssimilationMathematical}, or to improve such linearisations by monitoring the skew or kurtosis.
 
 This paper also supplied theoretical and computational extension to the ``stochastic sensitivity'' tools introduced by \citet{Balasuriya_2020_StochasticSensitivityComputable}.
 Stochastic sensitivity was hitherto derived as the variance of an unknown limiting distribution and could only be computed in two spatial dimensions; we established that stochastic sensitivity, in any number of dimensions, is computable as the operator norm of the covariance matrix of the linearised SDE.
-We have also established that the limiting distribution in question is Gaussian, which may provide insight into properties of stochastic sensitivity as a means of uncertainty quantification in any model (not just in the fluids context) where an $ n $-dimensional state variable evolves according to a ``best available" model.
+We have also established that the limiting distribution in question is Gaussian, which may provide insight into properties of stochastic sensitivity as a means of uncertainty quantification in any model (not just in the fluids context) where an $ n $-dimensional state variable evolves according to a ``best available'' model.
 
 
-Our work on stochastic sensitivity computes the exact distribution of a Lagrangian coherent structure measure for the first time, and may be used to employ coherent structures as `data' in a Data Assimilation scheme. This idea is not new, and is explored in \cite{MacleanEtAl_2017_CoherentStructureApproach,MorzfeldEtAl_2018_FeaturebasedDataAssimilation,Schlueter-KuckDabiri_2019_ModelParameterEstimation}, albeit that the likelihood of a coherent structure was not computable. Our work fills that gap.
-Moreover, most traditional LCS measures are completely deterministic measures, not accounting for any uncertainty in the driving velocity field, and the sensitivity of these methods to such uncertainty has not been investigated in detail.
-The robustness of several LCS methods to stochastic noise has recently been explored in \cite{BadzaEtAl_2023_HowSensitiveAre}, but via stochastic simulation and summary statistics.
-In this paper we have presented a theoretical result for characterising Lagrangian trajectory uncertainty, which can be used to perform a purely theoretical analysis of such sensitivity in LCS computations.
+Through several example SDEs in \Cref{ch:linear_numerics}, we validated the form of our theoretical error bound and demonstrated heuristically that, in the limit of small noise, the solutions approach the approximate distributions computed by solving the linearised equivalents.
+Thus, we have provided a rigorous (in the sense of a bound and a limit) justification for using such approximations when the noise in the model is small.
+However, in \Cref{ch:gmm} we highlighted that there are limitations to using Gaussian approximations, most notably that they cannot capture features such as skew and multimodality in the solution distribution
+To overcome these limitations while still taking advantage of the computationally efficiency the linearisation approximation provides, we proposed an \emph{ad hoc} mixture model algorithm that uses a splitting process to approximate SDE solutions with Gaussian mixture models.
+Each component of the mixture model arises from a solution of the SDE linearised about a \emph{different} deterministic trajectory, which means that we can capture uncertainty in different regions.
+With a simple propagation-splitting procedure, the laogrithm is able to capture multimodality, skewness, and other departures from Gaussianity in the solution to a stochastic differential equation, providing an approximation that improves upon a single Gaussian component but does not require the computational expense of bulk simulation.
+Another advantage of this algorithm is that it provides a probability density function that can be evaluated analytically, as opposeds to stochastic samples which require an additional step to construct a density function estimate.
+Our aim throughout was to outline the algorithm and demonstrate the potential of it on several simple implementations, rather than explore the specifics of each step or analysing mathematically.
+Instead, we discuss several directions for further refinement of this algorithm in \Cref{sec:gmm_extensions} and leave this for future work.
+
+
 % An initial study into the impact of uncertainty of one such method -- the finite-time Lyapunov exponent -- has already been performed using stochastic sensitivity \cite{Balasuriya_2020_UncertaintyFinitetimeLyapunov}, albeit in only two-dimensions and without knowledge that the limiting distribution is Gaussian.
 
 % \td{In the following, be careful about mentioning the higher order terms. We have only provided an explicit bound for the first-order expansion, whereas the small noise proofs are up to arbitrary order. But our justification for looking at only the first order terms is the computability and use of Gaussian approximations elsewhere - higher order terms satisfy SDEs that cannot be solved in general and require higher order derivatives. This is possibly better placed in the introduction.}
@@ -211,19 +213,34 @@ In this paper we have presented a theoretical result for characterising Lagrangi
 % There are many extensions and applications of this work, particularly in establishing new connections between otherwise distant fields, of which we have only discussed a few here.
 
 
+\section{Selecting the diffusion matrix \(\sigma\)}
+\note{Discussion about selecting \(\sigma\), with a short review of some of the literature out there.}
+A powerful advantage of our framework is that the diffusivity matrix \(\sigma\) is permitted to vary spatio-temporally, allowing for multiplicative noise.
+Multiplicative noise is often ignored in practice, due to difficulties in working with analytically (see, for instance, the prior lack of rigourous justification of linearisations when the noise is multiplicative) and generating numerical realisations efficiently (e.g. the review in \cite{MoraEtAl_2017_StableNumericalScheme}).
+It has also been shown that multiplicative noise on linear dynamics can model departures from Gaussianity observed in climate statistics \cite{SuraEtAl_2005_MultiplicativeNoiseNonGaussianity}, as opposed to nonlinear dynamics with only additive noise.
+The spatio-temporal dependence of \(\sigma\) can also capture experimental and observational considerations that are otherwise ignored in the deterministic model, such as cloud cover when using satellite measurements or nonuniform uncertain across the field of view of a camera.
+This does raise the question, however, of how to specify \(\sigma\), particular when the aim is to measure uncertainty in a model that is only specified deterministically\lb{Word this better}.
+If there is no \emph{a priori} knowledge about the spatiotemporal nature of the noise, then the default choice of \(\sigma \equiv I\) addresses a generic situation \citehere.
+There are many different methods for estimating \(\sigma\) directly from observed data, e.g. via statistical estimation \citep{CotterPavliotis_2009_EstimatingEddyDiffusivities}  or the Bayesian inference approach of \citet{YingEtAl_2019_BayesianInferenceOcean}.
+\td{Definitely more to say here. Informed by physics, models, etc?? }
+\citet{BerloffMcWilliams_2002_MaterialTransportOceanic}
+Coupling these approaches with the approximation here could provide a complete and practical framework for constructing a Gaussian approximation from observed trajectory data only, without the need to directly specify the diffusion matrix \emph{a priori}.
 
+
+We must emphasise, however, that in general the specification of the diffusion term
 
 \section{Further theoretical developments}
-
 In this section, we briefly mention several different extensions to the theoretical results presented in \Cref{ch:linear_theory} and discuss the viability, implications, and potential applications of each.
 
 \subsection{Non-Gaussian noise processes}\label{sec:disc_levy}
+\note{Potential of using L\'evy processes}
 Throughout this thesis, we have considered It\^o stochastic differential equations driven by the canonical Wiener process, and so we are assuming that the noise in our system is white (zero correlation) and Gaussian.
 
-
 However, when modelling physical systems (e.g. climate and oceanographic models), there is observational evidence to suggest the underlying noise process may be better formulated as a more general \(\alpha\)-stable L\'evy process \citep{Ditlevsen_1999_ObservationAstableNoise, Viecelli_1998_PossibilitySingularLowFrequency}, which satisfy the same properties of the Wiener process, but without Gaussian increments \citep{Applebaum_2004_LevyProcessesStochastic}.
-\citet{PenlandEwald_2008_ModellingPhysicalSystems}
+A L\'evy process can capture departures from Gaussianity, such as skew and heavy-tailedness, in the ongoing noise process.
 
+\citet{PenlandEwald_2008_ModellingPhysicalSystems} provide \td{Summarise}
+\citet{GottwaldMelbourne_2013_HomogenizationDeterministicMaps} show that stochastic differential equations driven by L\'evy processes arises as the limit of \td{quickly summarise this paper}
 
 There is scope to determine whether the theory presented here, and importantly the computability, can be generalised to stochastic differential equations driven by arbitrary L\'evy processes.
 If we replace the Wiener process in \Cref{thm:main}, the proof in \Cref{app:main_thm_proof} will still hold since it relies on results for general It\^o integrals and square-integrable stochastic processes.
@@ -234,6 +251,7 @@ The practicality of this approximation then depends upon how easily this integra
 
 
 \subsection{Pursuing higher order terms}
+\note{Discuss the higher order terms in the power series expansion, and why this is not practical. Possibly suggest providing an explicit proof of higher order terms.}
 The linearisation approximation introduced in \Cref{ch:linear_theory} that underpins this thesis equivlaently arises by considering a formal power-series expansion of the solution
 That is, given the solution \(y_t^{(\epsilon)}\) to a small-noise SDE
 \begin{equation}\label{eqn:y_sde_outlook}
@@ -259,19 +277,63 @@ This equation is difficult to solve even numerically, due to the nonlinearity an
 
 
 \subsection{The Fokker-Planck equation}
+\note{Introduce FP-equation and talk about potential to link to current work.}
+The Fokker-Planck equation is a partial differential equation that describes the time-evolution of the probability density function of the solution to a stochastic differential equation.
+The probability density function \(\rho: \R^n \times [0,T] \to [0,\infty)\) for the solution to \cref{eqn:gen_sde} at time \(t \in [0,T]\) is the solution to the corresponding Fokker-Planck equation \citep{Risken_2012_FokkerPlanckEquationMethods}
+\begin{equation}
+	\dpd{\rho}{t} = \frac12\nabla\cdot\nabla\cdot\left(\rho\sigma\sigma^{\T}\right) - \nabla\cdot\left(\rho u\right)
+	\label{eqn:fp_eqn}
+\end{equation}
+subject to some initial density \(\rho\left(x,0\right)\) given by the initial condition to \cref{eqn:gen_sde}.
+% For a fixed and deterministic initial condition \(y_0 = x\), the corresponding initial condition to \cref{eqn:fp_eqn} is the Dirac-delta distribution centred at \(x\).
+% To ensure that the solution is a valid probability density function on \(\R^n\), for any \(t \in [0,T]\), \(\rho\) must satisfy
+% \begin{subequations}\label{eqn:fp_valid_pdf}
+% 	\begin{align}
+% 		\int_{\R^n}{\rho\left(x, t\right)\dif x} = 1, \label{eqn:fp_valid_pdf_norm} \\
+% 		\lim_{x \to \infty}\rho\left(x,t\right) = 0. \label{eqn:fp_valid_pdf_limit}
+% 	\end{align}
+% \end{subequations}
+Solving the Fokker-Planck equation provides an alternative method for finding the solution to a stochastic differential equation; rather than dealing with stochastic quantities, we instead seek solutions to the
+However, the Fokker-Planck equation cannot be solved analytically except for simple cases and there are several practical difficulties in attempting to solve it numerically.
+There are typically two approaches to numerically solving the Fokker-Planck equation: either by generating many stochastic realisations by solving the corresponding SDE \cref{eqn:gen_sde} numerically and using a density estimation method \citep{Silverman_2017_DensityEstimationStatisticsa}, or by directly solving the Fokker-Planck equation with a finite-difference or finite-element scheme \citep{PichlerEtAl_2013_NumericalSolutionFokker}.
+The main difficulties of either approach include:
+\begin{itemize}
+	\item \textbf{Dimensionality:} In high-dimensional systems, solving the Fokker-Planck equation numerically is computationally prohibitive, requiring either  a large number of stochastic samples or a small spatial discretisation to be accurate.
 
+	\item \textbf{Boundary conditions:} The Fokker-Planck equation is often defined on an unbounded domain with the zero-limit constraint \(\lim_{\norm{x} \to \infty}\rho\!\left(x,t\right) = 0\), which presents additional computational difficulties.
+
+	\item \textbf{Normality constraints:} The Fokker-Planck equation must be solved with additional normality condition---the solution represents a probability density function, and so must always be bounded and integrate to 1---which enforces an additional constraint on any numerical solution.
+\end{itemize}
+It is generally accepted that these difficulties mean that the computational cost of solving the Fokker-Planck equation is too high in \(3\)- or higher dimensions \citep{ZhaiEtAl_2022_DeepLearningMethod,Li_2019_DatadrivenMethodSteady,AllawalaMarston_2016_StatisticsStochasticallyForced,AndersonFarazmand_2024_FisherInformationShapemorphing}.
+There has been much recent interest in developing data-driven methods for solving the Fokker-Planck equation directly \citep{ZhaiEtAl_2022_DeepLearningMethod,Li_2019_DatadrivenMethodSteady,AllawalaMarston_2016_StatisticsStochasticallyForced,AndersonFarazmand_2024_FisherInformationShapemorphing}.
+\td{Need to link our work to FP equation, and explain how this may overcome limitations}
+Our approaches can provide analytic probability density functions, which are seen as direct approximations of the solution to the Fokker-Planck equation.
+
+Moreover, understanding the relationship between SDE linearisations and the Fokker-Planck equation may provide an avenue for further developing the Gaussian mixture model algorithm of \Cref{ch:gmm}.
+The aim of the mixture model is to approximate the probability density function of the solution to the SDE, and so the Fokker-Planck equation may be a more appropriate framework for investigating this algorithm, as opposed to the solution-trajectory focus of the theory in \Cref{ch:linear_theory}.
+
+\td{Implications for the advection-diffusion equation}
+The Fokker-Planck equation is equivalent to an advection-diffusion equation, which in classical mechanics\lb{?} describes the spread of a passive scalar within a flow, with a spatiotemporally varying diffusion coefficient.
+This connection often leads to the construction of \(\sigma\) in oceanographic models; the impact of subscale vortices is quantified via physical arguments to describe the transport of material with an advection-diffusion equation, which corresponds to a Fokker-Planck equation and therefore a stochastic differential equation.
 
 \section{Further development of the GMM algorithm}\label{sec:gmm_extensions}
+\note{Several avenues for further developing the GMM algorithm. Discuss \citet{DeMarsEtAl_2013_EntropyBasedApproachUncertainty} in more detail.}
+In describing our mixture model algorithm in \Cref{ch:gmm}, we deliberately left several steps in general terms: the initialisation of the algorithm (for an arbitrary initial condition), the criterion for deciding when to split a component, and the construction and weighting of the split points.
 
 
-\section{Bayesian inference and data assimilation}
 
-A Gaussian density or Gaussian mixture model lends itself to Bayesian inference, importance sampling, etc...
+\section{Further applications}
+In \Cref{ch:appls}, we applied the Gaussian approximation and the mixture model algorithm to data-driven examples.
+However, we only scratched the surface of the potential applications of this work.
+
+Our error bound may be useful to investigate the validity of SDE linearisations in application domains such as Stochastic Parameterisation \citep{BernerEtAl_2017_StochasticParameterizationNew,Palmer_2019_StochasticWeatherClimate,LeutbecherEtAl_2017_StochasticRepresentationsModel} or Data Assimilation \citep{BudhirajaEtAl_2019_AssimilatingDataModels,ReichCotter_2015_ProbabilisticForecastingBayesian,LawEtAl_2015_DataAssimilationMathematical}, or to improve such linearisations by monitoring the skew or kurtosis.
 
 
-\section{Lagrangian coherent structures}
+\subsection{Lagrangian coherent structures}
+\note{LCS extraction in n-dimensions. Quantifying uncertainty a la \citet{BadzaEtAl_2023_HowSensitiveAre}. Furthering \citet{Balasuriya_2020_UncertaintyFinitetimeLyapunov}, etc.}
 
-
+As a recent development, stochastic sensitivity has hitherto seen limited application \citep{BadzaEtAl_2023_HowSensitiveAre,Balasuriya_2020_UncertaintyFinitetimeLyapunov,FangEtAl_2020_DisentanglingResolutionPrecision}.
+We have presented a complete generalisation of these tools to arbitrary dimensions (\Cref{def:ss_Rn}), and established the connection to SDE linearisation that empowers a rapid computation (\Cref{thm:s2_calculation}).
 
 Most traditional LCS measures are completely deterministic measures, not accounting for any uncertainty in the driving velocity field, and the sensitivity of these methods to such uncertainty has not been investigated in detail.
 The robustness of several LCS methods to stochastic noise has recently been explored by \citet{BadzaEtAl_2023_HowSensitiveAre}, but via stochastic simulation and summary statistics.
@@ -280,11 +342,50 @@ The linearised covariance matrix and stochastic sensitivity values are computabl
 \citet{Balasuriya_2020_UncertaintyFinitetimeLyapunov} provides a preliminary derivation (using the previously 2-dimensional formulation of stochastic sensitivity by \citet{Balasuriya_2020_StochasticSensitivityComputable}) of uncertainty in the finite-time Lyapunov exponent.
 With the extension of stochastic sensitivity to arbitrary dimensions and the additional knowledge of Gaussianity in the relevant underlying distribution, this initial work could be formalised (e.g. in terms of statistical confidence intervals) to provide a leading-order estimate for the error in FTLE computations.
 
-
-
 \citet{BalasuriyaEtAl_2018_GeneralizedLagrangianCoherent} provide a framework that extends the notion of a Lagrangian coherent structure to capture spatial ``regions of interset'' in the time-evolution of other quantities that are transported by, but not fully locked to, a flow.
 Examples of these quantities include the concentration of pollutants, the density of an organism such as phytoplankton, temperature, and salinity in the fluid context.
 In \Cref{sec:fp_eqn}, we explained how via the Fokker-Plank equation, the spread of a tracer under the advection-diffusion equation can be equivalently captured by the solution to a stochastic differential equation.
 The spread of ``uncertainty'' in the stochastic formulation corresponds to the movement and dispersion of the tracer, in the sense that the probability density function of the stochastic solution is exactly the (normalised) tracer concentration.
 In capturing this uncertainty and extracting spatial regions from the resulting field, stochastic sensitivity can offer insight into the spread of such tracers, and potentially be used to extract generalised Lagrangian coherent structures in a broader framework.
 Hence, stochastic sensitivity is a far more general framework that can be applied to systems beyond the tracking of particles, particularly with the developments into arbitrary dimension provided by this thesis.
+
+\subsection{Bayesian inference and data assimilation}
+\note{Possible uses as a likelihood in Bayesian inference. Briefly discuss applications in DA - I wish Jack was here :(}
+A Gaussian density or Gaussian mixture model lends itself to Bayesian inference, importance sampling, etc...
+
+
+Data assimilation is a framework for improving uncertainties in predictions by combining model forecasts with observational data, accounting for error in both, and uncertainty quantification refers to the broader goal of capturing the uncertainty inherent in prediction \citep{BudhirajaEtAl_2019_AssimilatingDataModels,Jazwinski_2014_StochasticProcessesFiltering,LawEtAl_2015_DataAssimilationMathematical,ReichCotter_2015_ProbabilisticForecastingBayesian}.
+The Gaussian limit here provides a characterisation of model uncertainty, and may therefore be useful in data assimilation and uncertainty quantification.
+The linearisation of the stochastic differential equation \cref{eqn:sde_y} used to construct the Gaussian approximation has been employed in data assimilation, e.g. in the continuous time continuous state-space extended Kalman filter \citep[\S 9]{Jazwinski_2014_StochasticProcessesFiltering}.
+The convergence analysis of this paper could contribute a new term, estimating the error due to linearisation, to the \emph{forecast uncertainty} covariance matrix employed in these extended Kalman filters.
+
+Our work on stochastic sensitivity computes the exact distribution of a Lagrangian coherent structure measure for the first time, and may be used to employ coherent structures as `data' in a Data Assimilation scheme. This idea is not new, and is explored in \cite{MacleanEtAl_2017_CoherentStructureApproach,MorzfeldEtAl_2018_FeaturebasedDataAssimilation,Schlueter-KuckDabiri_2019_ModelParameterEstimation}, albeit that the likelihood of a coherent structure was not computable. Our work fills that gap.
+Moreover, most traditional LCS measures are completely deterministic measures, not accounting for any uncertainty in the driving velocity field, and the sensitivity of these methods to such uncertainty has not been investigated in detail.
+The robustness of several LCS methods to stochastic noise has recently been explored in \cite{BadzaEtAl_2023_HowSensitiveAre}, but via stochastic simulation and summary statistics.
+In this paper we have presented a theoretical result for characterising Lagrangian trajectory uncertainty, which can be used to perform a purely theoretical analysis of such sensitivity in LCS computations.
+
+Conversely, such approaches for estimating eddy diffusivity and particle dispersion rely upon numerical solutions.
+For example, the Bayesian approach of \cite{YingEtAl_2019_BayesianInferenceOcean} numerically solves the Fokker-Planck equation to compute the likelihood of the observed drifter data for each proposed diffusivity tensor, which requires significant computational overhead.
+Using the Gaussian approximation, computed using , we have a likelihood function that can be used directly in Bayesian inference methods.
+
+\subsection{Observation-driven modelling}
+\note{Possible advantages levied by the expressions for the Gaussian approximation written in terms of the flow-map.}
+\td{Perhaps find a better section name. Still need to check that there is enough here to warrant a whole dedicated subsection}
+
+
+\citet{Sura_2003_StochasticAnalysisSouthern} analyse the dynamics of sea-surface winds across the Southern Ocean by constructing a stochastic differential equation \emph{empirically}.
+The drift and diffusion of a stochastic differential equation can be defined as statistical quantities, by taking averages over the solution distribution.
+For instance, given an autonomous stochastic differential equation
+\begin{equation}\label{eqn:auto_sde}
+	\dif x_t = A\!\left(x_t\right)\dif t + B\!\left(x_t\right)\dif W_t,
+\end{equation}
+the drift \(A\) and diffusion \(B\) satisfy \citehere
+\begin{align*}
+	A(x)          & = \lim_{\delta t \to 0}\frac{1}{\delta t}\avg{x_{t + \delta t} - x}                                                   \\
+	B(x)B(x)^{\T} & = \lim_{\delta t \to 0}\frac{1}{\delta t}\avg{\left(x_{t + \delta t} - x\right)\left(x_{t + \delta} - x\right)^{\T}},
+\end{align*}
+where the expected values are taken over all trajectories solving \cref{eqn:auto_sde} with \(x_t = x\).
+
+In deriving expressions for the solution to a linearised stochastic differential equation, we provided explicit expressions (\Cref{cor:limit_moments}) for the mean and covariance of the linearised solution written in terms of just the flow map and diffusion matrix \(\sigma\).
+With specification of \(\sigma\), the first two moments of the solution to the linearised SDE can be computed by approximating the appropriate spatial derivatives of the flow map \(F\).
+That is, without the need to determine the velocity field as an intermediate step.

@@ -138,18 +138,19 @@ Standard examples include the modelling of weather using available data \cite{La
 
 % \section{Stochastic parameterisation}\label{sec:stoch_param}
 
-In any modelling scenario, there will inevitably be uncertainty in the model specification. o
+In any modelling scenario, there will inevitably be uncertainty in the model specification.
 The possible sources of uncertainty include, but are not limited to:
 \begin{itemize}
-	\item missing processes
 	\item the model is sourced from measured data, which itself includes observational error.
-	\item
+	\item information only being available on a spatiotemporal grid (resolution error).
+	\item a lack of a complete understanding of all the phenomena and processes involved.
+	\item imperfect knowledge of the initial conditions.
 \end{itemize}
+There are two primary manifestations of this uncertainty: in the initial state, and in the ongoing evolution of the model itself.
 
 
-
-All methods using this approach have uncertainties in the model specification arising from a variety of sources \cite{FangEtAl_2020_DisentanglingResolutionPrecision}: the model not capturing all phenomena because of the inevitable lack of a complete understanding of all processes involved, errors in measured data, information only available on spatio-temporal grids (resolution error), etc.
-There are generally two manifestations of this uncertainty: in the initial state, and in the ongoing evolution of the model itself.
+% All methods using this approach have uncertainties in the model specification arising from a variety of sources \cite{FangEtAl_2020_DisentanglingResolutionPrecision}: the model not capturing all phenomena because of the inevitable lack of a complete understanding of all processes involved, errors in measured data, information only available on spatio-temporal grids (resolution error), etc.
+% There are generally two manifestations of this uncertainty: in the initial state, and in the ongoing evolution of the model itself.
 
 
 
@@ -202,7 +203,6 @@ It has been shown that stochastic parameterisation can improve the quality of fo
 There is an emerging need to bridge the gap between mathematicians working on developing stochastic theory and algorithms, and the scientists looking to apply this work to their respective fields.
 In particular, \citet{BernerEtAl_2017_StochasticParameterizationNew} conclude that ``geoscientists are often unaware of mathematically rigorous results that can aid in the development of physically relevant parameterizations, [while] mathematicians often do not know about open issues in scientific applications that might be mathematically tractable''.
 
-
 Stochastic differential equations (SDEs) are a natural framework for introducing different sources of uncertainty into the continuous time evolution of a variable \citep{Oksendal_2003_StochasticDifferentialEquations,SarkkaSolin_2019_AppliedStochasticDifferential,KallianpurSundar_2014_StochasticAnalysisDiffusion}.
 Generally, in modelling situations the dynamics are highly nonlinear and one expects the noise to vary with both time and state (i.e. the noise can be \emph{multiplicative}), e.g. in atmospheric \citep{SuraEtAl_2005_MultiplicativeNoiseNonGaussianity,Sura_2003_StochasticAnalysisSouthern} and oceanic \citep{KamenkovichEtAl_2015_PropertiesOriginsAnisotropic} systems and from experimental and observational considerations.
 This complicates usage of the model for prediction and analysis; such SDEs are usually intractable to solve analytically and computationally expensive to approximate accurately.
@@ -228,6 +228,13 @@ This is particularly the case when the noise is multiplicative, which is a situa
 In addition, there is little understanding of the impact of the choice of initialisation of the deterministic trajectory on the validity of the linearisation.
 Much is already known about these linearisations; classical results in the context of small-noise series expansions \citep{Blagoveshchenskii_1962_DiffusionProcessesDepending} and large deviations theory \citep{FreidlinWentzell_1998_RandomPerturbationsDynamical} show that the strong error between SDE solution with a fixed initial condition and that of an appropriate linearisation is bounded.
 \citet{Sanz-AlonsoStuart_2017_GaussianApproximationsSmall} establish a strong result, bounding the Kullback-Leibler divergence between the solutions of autonomous SDEs with additive stationary noise and a linearised equivalent. Their result considers both an uncertain initial condition, and the evolving error due to the discrepancy between the models.
+
+
+\td{Motivate the \emph{qualitative} features that come from these stochastic systems - make LCSs relevant?}
+Even when the solutions themselves to the stochastic systems are not available, it can be useful to garner a \emph{qualitative} understanding of the system.
+
+\citet{Balasuriya_2020_StochasticSensitivityComputable} introduce the notion that spatial regions for which the overall uncertainty is small can correspond to coherent structures within the flow.
+
 
 % In \cref{sec:theory}, we directly bound the expectation of all moments of the distance between the linearisation and the true solution of the stochastic differential equation.
 % Our result extends the former convergence result of \citep{Sanz-AlonsoStuart_2017_GaussianApproximationsSmall} in three ways: we predict the scaling of all moments of the error, in the presence of multiplicative noise terms, and including time-dependent coefficients in the stochastic differential equations. We directly compare our results with those of \cite{Sanz-AlonsoStuart_2017_GaussianApproximationsSmall} in \cref{sec:comparison}.
@@ -284,9 +291,11 @@ Much is already known about these linearisations; classical results in the conte
 
 
 
+
 \section{Contributions of this thesis}
+The primary aim of this thesis is to address the need for computationally efficient schemes, by first understanding and then taking advantage of computationally efficient approximation methods.
 In \Cref{ch:background}, we provide a brief background on stochastic differential equations and the tools we will use.
-The remainder of the thesis, and the contributions each chapter proivides, are as follows:
+The remainder of the thesis, and the contributions each chapter provides, are as follows:
 \td{The following is possibly too specific/technical for this introduction.}
 \begin{itemize}
 	\item In \Cref{ch:linear_theory}, we address a deficiency in the \emph{theory} of SDE linearisations. %by providing an explicit bound on the strong error between a stochastic differential equation and an appropriate linearisation, capturing the impact of \emph{both} the ongoing linearisation and the choice of initial condition.

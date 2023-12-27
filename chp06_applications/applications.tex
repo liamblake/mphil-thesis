@@ -1,50 +1,50 @@
 \chapter{Applications}\label{ch:appls}
-In this chapter, we now apply the theoretical developments of \Cref{ch:linear_theory} and the mixture model algorithm described in \Cref{ch:gmm} to two different applications, using models constructed from observed data.
-We do not investigate any of these four applications in detail; rather, the aim is to demonstrate the applicability of the theory to a range of examples.
-
+We now apply the theoretical developments of \Cref{ch:linear_theory} and the mixture model algorithm of \Cref{ch:gmm} to two different applications, using models constructed from observed data.
+We do not investigate either application in detail; rather, the aim is to demonstrate the applicability of the theory to a range of examples.
 
 The first example is a stochastic model constructed from altimetry-derived velocity data of the surface of the Gulf Stream, a climatically important part of the North Atlantic ocean.
-This model is 2-dimensional, and in the spirit of stochastic sensitivity we constrcut a deterministic model and use the solutions of it t o apprximate a more ``correct'' stochastic counterpart.
+This model is 2-dimensional, and in the spirit of stochastic sensitivity we construct a deterministic model and use the solving trajectories to approximate the solution to an ``improved'' stochastic counterpart that accounts for measurement error and unresolved effects.
+
+The second example is a compartmental model for the spread of Ebola.
+\td{Overview of epi model}
 
 
 \section{The Hellinger distance}
-To quantitatively evaluate the performance of the Gaussian approximation and our mixture model, we will use the Hellinger distance to measure the distance between probability distributions.
-The Hellinger distance is an example of an \(f\)-divergence, a broader class of measures between two probability distributions.
-For two continuous probability distributions in \(\R^n\) with PDFs \(p\) and \(q\), the Hellinger distance between the two distributions is given by
+Before moving into the examples, however, we must first provide a measure to quantitatively evaluate the performance of the Gaussian approximation and our mixture model.
+We will use the Hellinger distance, which measures the distance between probability distributions.
+% The Hellinger distance is an example of an \(f\)-divergence, a broader class of measures between two probability distributions.
+For two continuous probability distributions in \(\R^n\) with respective probability density functions \(p\) and \(q\), the Hellinger distance between the two distributions is given by \citep{LeCamLoYang_2000_AsymptoticsStatistics}
 \begin{equation}\label{eqn:hell_dist}
 	D_H\!\left(p, q\right) = \sqrt{\frac12 \int_{\R^n}{\left(\sqrt{p(x)} - \sqrt{q(x)}\right)^2\dif x}} = \sqrt{1 - \int_{\R^n}{\sqrt{p(x)q(x)}\dif x}}.
 \end{equation}
-We previously discussed the Kullback-Leibler divergence---this measure was used by \citet{Sanz-AlonsoStuart_2017_GaussianApproximationsSmall} to quantify the performance of Gaussian approximations to SDE solutions and is another example of an \(f\)-divergence---but choose to use the Hellinger distance here.
-There are several attractive properties of the Hellinger distance that lead to us preferring it: the Hellinger distance is both symmetric and defines a metric on the space of probability measures, unlike the KL-divergence.
-Moreover, the Hellinger distance always takes values in the interval \([0,1]\), whereas the KL-divergence can become infinite.
+We previously discussed (in \Cref{sec:comparison}) the Kullback-Leibler divergence---this measure was used by \citet{Sanz-AlonsoStuart_2017_GaussianApproximationsSmall} to quantify the performance of Gaussian approximations to SDE solutions---but opt to use the Hellinger distance.
+There are several attractive properties of the Hellinger distance: the Hellinger distance is defines a metric on the space of probability measures and always takes values in the interval \([0,1]\), unlike the KL-divergence which is not a formal metric and can become infinite.
 
 Since the models we will be working with cannot be solved exactly, we will use stochastic samples as our ground `truth`, obtained either via a numerical solver (in the case of SDEs) or Gillespie simulation (in the case of population processes).
 That is, without access to the true solutions to our model, we instead take a large number of stochastic samples and compare our approximations to those.
 This fits in with the philosophy of our aims; the stochastic sampling approach is the standard in practice, and we seek approximations that give the same conclusions without the computational expense.
 
-However, working with stochastic samples from a continuous density presents a complication in using \cref{eqn:hell_dist} to compute the Hellinger distance: the calculation requires evaluation of the probability density function from which these realisations were sampled.
-This would require a choice for how to evaluate the density function and then compute the integral in \cref{eqn:hell_dist}; one option is to construct a kernel density estimator from the samples, where a certain known distribution (usually a Gaussian) is placed at each point and then combined into a mixture density.
-To avoid the need, we will instead use an \emph{empirical} estimator for the Hellinger distance that approximates \cref{eqn:hell_dist} without having to evaluate either probability density function.
+However, using stochastic samples presents a complication in using \cref{eqn:hell_dist} to compute the Hellinger distance: the calculation requires evaluation of the probability density function from which these realisations were sampled.
+This would require a choice for how to approximate the density function and then compute the integral in \cref{eqn:hell_dist}; one option is to construct a kernel density estimator, where a certain known distribution (usually a Gaussian with a small variance) is placed at each realisation and then combined into a mixture density.
+To avoid the need to make such a choice, we will instead use an \emph{empirical} estimator that approximates \cref{eqn:hell_dist} purely from samples and without having to evaluate either probability density function.
 Although we will be comparing the numerical realisations to analytically available probability density functions (from either a single Gaussian approximation of the mixture model algorithm---the availability of the PDFs is another advantage of these methods over Monte-Carlo simulation), we will generate samples from both distributions to use a purely empirical estimator.
-
-Specifically, we will employ the empirical estimator proposed by \citet{DingMullhaupt_2023_EmpiricalSquaredHellinger}, which extends a similar estimator for the KL-divergence by \citet{Perez-Cruz_2008_KullbackLeiblerDivergenceEstimation} to a broader class of divergences, including the Hellinger distance.
-Let \(\set{\hat{x}_1, \dotsc, \hat{x}_N}\) and \(\set{\hat{y}_1, \dotsc, \hat{y}_N}\) denote the two sets of realisations from the distributions \(P\) and \(Q\) respectively.
-The estimator is derived from the empirical cumulative density functions of each set of samples, and is first computed as
+We will employ the empirical estimator proposed by \citet{DingMullhaupt_2023_EmpiricalSquaredHellinger}, which extends a similar estimator for the KL-divergence by \citet{Perez-Cruz_2008_KullbackLeiblerDivergenceEstimation}. % to a broader class of divergences, including the Hellinger distance.
+Let \(\set{\hat{x}_1, \dotsc, \hat{x}_N}\) and \(\set{\hat{y}_1, \dotsc, \hat{y}_N}\) denote the two sets of realisations from the probability density functions \(p\) and \(q\) respectively.
+The estimator is first computed as
 \begin{equation}\label{eqn:hell_emp_Ha}
-	\hat{H}_a^2\!\left(P,Q\right) = 1 - \frac{\sqrt{N - 1}\left[(k-1)!\right]^2}{N^{3/2}\Gamma\!\left(k - \frac12\right)\Gamma\!\left(k + \frac12\right)} \sum_{i=1}^{N}\frac{r_k\!\left(x_i\right)^{n/2}}{s_k\!\left(\hat{x}_i\right)^{n/2}}
+	\hat{H}_a^2\!\left(p, q\right) = 1 - \frac{\sqrt{N - 1}\,\Gamma\!\left(k\right)^2}{N^{3/2}\,\Gamma\!\left(k - \frac12\right)\Gamma\!\left(k + \frac12\right)} \sum_{i=1}^{N}\frac{r_k\!\left(x_i\right)^{n/2}}{s_k\!\left(\hat{x}_i\right)^{n/2}}
 \end{equation}
-where \(\Gamma\) denotes the Gamma function, and \(r_k!\left(\hat{x}_i\right)\) and \(s_k\!\left(\hat{x}_i\right)\) denote the Euclidean distance to the \(k\)th nearest neighbour of \(\hat{x}_i\) in \(\set{\hat{x}_1, \dotsc, \hat{x}_N} \setminus \set{\hat{x}_i}\) and \(\set{\hat{y}_1, \dotsc, \hat{y}_N}\) respectively.
+where \(\Gamma\) denotes the Gamma function, and \(r_k\!\left(\hat{x}_i\right)\) and \(s_k\!\left(\hat{x}_i\right)\) denote the Euclidean distance to the \(k\)th nearest neighbour of \(\hat{x}_i\) in \(\set{\hat{x}_1, \dotsc, \hat{x}_N} \setminus \set{\hat{x}_i}\) and \(\set{\hat{y}_1, \dotsc, \hat{y}_N}\) respectively.
 The parameter \(k\) is the number of neighbouring points used to construct a \(k\)-nearest-neighbour density estimate as an intermediate step in the calculation.
 The value of \(k\) is specified in advance, and we take \(k = 5\) throughout to ensure a reasonable computation time.
-This provides a consistent (in the sense of almost sure convergence as \(N \to \infty\)) estimator of the squared Hellinger distance \citep{DingMullhaupt_2023_EmpiricalSquaredHellinger}.
-However, \cref{eqn:hell_emp_Ha} is not symmetric in \(P\) and \(Q\), i.e. \(\hat{H}_a^2\!\left(P,Q\right) \neq \hat{H}_a^2\!\left(Q,P\right)\) with the asymmetry arising in the distances \(r_k\) and \(s_k\), and in practice one direction can provide a more accurate estimator depending on the nature of the underlying distributions from which the samples are taken.
-To ensure symmetry and find a `middle ground` between the two asymmetric estimators, \citet{DingMullhaupt_2023_EmpiricalSquaredHellinger} propose taking the average:
+This provides a consistent (in the sense of almost sure convergence in the limit of infinite sample size \(N\)) estimator of the squared Hellinger distance \citep{DingMullhaupt_2023_EmpiricalSquaredHellinger}.
+However, \cref{eqn:hell_emp_Ha} is not symmetric in \(p\) and \(q\), i.e. \(\hat{H}_a^2\!\left(p,q\right) \neq \hat{H}_a^2\!\left(q,p\right)\) with the asymmetry arising in the distances \(r_k\) and \(s_k\).
+In practice, one direction can provide a more accurate estimator depending on the nature of the underlying distributions from which the samples are taken.
+To ensure symmetry in the final estimate and find a `middle ground` between the two asymmetric estimators, \citet{DingMullhaupt_2023_EmpiricalSquaredHellinger} propose taking the average:
 \begin{equation}\label{eqn:hell_emp}
-	\hat{H}\!\left(P,Q\right) = \sqrt{\frac{\hat{H}_a^2\!\left(P,Q\right) + \hat{H}_a^2\!\left(Q,P\right)}{2}},
+	\hat{H}\!\left(p,q\right) = \sqrt{\frac{\hat{H}_a^2\!\left(p,q\right) + \hat{H}_a^2\!\left(q,p\right)}{2}},
 \end{equation}
 which still exhibits the same convergence properties of \(\hat{H}_a\).
-We use \cref{eqn:hell_emp} to compute the Hellinger distance in the remainder of this chapter.
-% \citet{DingMullhaupt_2023_EmpiricalSquaredHellinger} show that the estimator converges almost surely to the true Hellinger distance, in the limit of infinite samples.
 
 \td{Comment on how this estimate provides a very strong estimate (any indication of this in the paper?? doesn't look like it), so small variance with lots of samples. Probably need to provide plots with error bounds in appendices.}
 
@@ -107,26 +107,32 @@ We use \cref{eqn:hell_emp} to compute the Hellinger distance in the remainder of
 
 
 \section{Drifter in the Gulf Stream}\label{sec:appl_ocean}
-For our first example, we consider a oceanographic model derived from satellite-observed data of part of the Gulf Stream.
+For our first application, we consider a oceanographic model derived from satellite-observed velocity data of part of the Gulf Stream.
 The Gulf Stream is a warm water current that originates in the Gulf of Mexico and travels through the North Atlantic and plays a vital role in climate patterns in the North and Western hemispheres \citep{Palter_2015_RoleGulfStream}.
 The stream itself consists of a rapidly-moving jet which varies dramatically with time, and small eddies of warm water that are formed and shed from the stream \citep{KangCurchitser_2013_GulfStreamEddy}.
-The Gulf Stream is a well-studied region of the ocean, due to the climatic importance and the interesting dynamical behaviour exhibited by the flow \citep{LiuEtAl_2018_GulfStreamTransport}.
+The Gulf Stream is a well-studied region of the ocean, due to the climatic importance and the interesting dynamical behaviour exhibited by the flow.
 
-Consider tracking the (2-dimensional) position of a small drifter travelling on the surface of the ocean.
+Consider tracking the longitudinal and latitudinal position of a drifter travelling on the surface of the ocean.
 We construct a differential equation for the time-evolution of the drifter position from geostrophic velocity data inferred from altimetry (sea surface height) observations by satellite.
-The dataset is supplied by the \citet{E.U.CopernicusMarineServiceCMEMS_2020_GlobalOceanGridded} and has been processed by the DUACS system.
-The sea surface height is proportional to the streamfunction for the surface flow, provided that the surface flow is treated as two-dimensional, and the constant of proportionality varies with latitude \citet{Park_2004_DeterminationSurfaceGeostrophic,DoglioniEtAl_2021_SeaSurfaceHeight}.
-This enables approximation of the zonal (eastwards) and meridional (northwards) geostrophic velocities, which are given in \unit{\metre\per\square\second}.
-We convert these velocities to \unit{\degree\per\square\day} via the following transformation: at longitude \(\lambda\) and latitude \(\phi\) (both in radians), the components \(u_{\mathrm{m}}\) and \(v_{\mathrm{m}}\) in \unit{\metre\per\square\second} are transformed as \citep{Capderou_2014_HandbookSatelliteOrbits}
-\begin{align*}
-	u\!\left(\lambda, \phi, t\right) & = \frac{1 - \left(2f - f^2\right)^2}{a}\left(1 - \left(2f - f^2\right)^2\sin^2\!\left(\phi\right)\right)^{3/2} u_{\mathrm{m}}\!\left(\lambda, \phi t\right) \\
-	v\!\left(\lambda, \phi, t\right) & = \frac{1}{a\cos\!\left(\phi\right)}\left(1 - \left(2f - f^2\right)^2\sin^2\!\left(\phi\right)\right)^{1/2} v_{\mathrm{m}}\!\left(\lambda, \phi t\right),
-\end{align*}
+The dataset is supplied by the \citet{E.U.CopernicusMarineServiceCMEMS_2020_GlobalOceanGridded} and has been processed by the Data Unification and Altimeter Combination System (DUACS).
+The sea surface height is proportional to the streamfunction for the surface flow, provided that the surface flow is treated as two-dimensional, and the constant of proportionality varies with latitude \citep{Park_2004_DeterminationSurfaceGeostrophic,DoglioniEtAl_2021_SeaSurfaceHeight}.
+This enables approximation of the zonal (eastwards) and meridional (northwards) geostrophic velocities, which are given in metres per second.
+These measurements are taken hourly and available on a \(0.25^\circ \times 0.25^\circ\) spatial grid.
+We convert the measured velocities to degrees per day via the following transformation: at longitude \(\lambda\) and latitude \(\phi\) (both in radians), the components \(u_{\mathrm{m}}\) and \(v_{\mathrm{m}}\) in metres per second are transformed as \citep{Capderou_2014_HandbookSatelliteOrbits}
+\begin{subequations}\label{eqn:natl_vel_conv}
+	\begin{align}
+		u\!\left(\lambda, \phi, t\right) & = \frac{1 - \left(2f - f^2\right)^2}{a}\left(1 - \left(2f - f^2\right)^2\sin^2\!\left(\phi\right)\right)^{3/2} u_{\mathrm{m}}\!\left(\lambda, \phi, t\right) \\
+		v\!\left(\lambda, \phi, t\right) & = \frac{1}{a\cos\!\left(\phi\right)}\left(1 - \left(2f - f^2\right)^2\sin^2\!\left(\phi\right)\right)^{1/2} v_{\mathrm{m}}\!\left(\lambda, \phi, t\right),
+	\end{align}
+\end{subequations}
 where \(a\) is the semi-major axis and \(f\) the flattening of an ellipsoid model of the Earth.
 We use the World Geodesic System 84, which gives the values \citep{Capderou_2014_HandbookSatelliteOrbits}
 \[
 	a = 6378137\,\unit{\metre}, \quad f = 1 / 298.257223563.
 \]
+Although the dataset provides global coverage, we focus our attention on the longitudes between \(-66^\circ\)E and \(-52^\circ\) and \(34^\circ\)N and \(46^\circ\), and measurements starting from midnight \DTMdisplaydate{2020}{01}{01}{-1}.
+We use a larger spatial subset for calculations, however, to prevent issues at the boundaries of the spatial domain.
+
 % Suppose we have the sea surface height (SSH) \(\eta = \eta\left(\lambda, \phi, t\right)\) at longitude \(\lambda\) and latitude \(\phi\) (both in radians), and at time \(t\).
 % The SSH \(\eta\) is then proportional to the streamfunction for the surface flow, if we treat the surface flow as two-dimensional, where the constant of proportionality varies with latitude \citep{Park_2004_DeterminationSurfaceGeostrophic, DoglioniEtAl_2021_SeaSurfaceHeight}.
 % The geostrophic zonal (east-west) and meridional (north-south) velocities \(u\) and \(v\) are then given by
@@ -172,23 +178,31 @@ We use the World Geodesic System 84, which gives the values \citep{Capderou_2014
 % 	\end{center}
 % \end{figure}
 
-
+\begin{figure}
+	\centering
+	% \includegraphics[width=\textwidth]{}
+	\td{Make this figure!}
+	\caption{Several trajectories that solve \cref{eqn:natl_ode} and describe the motion of drifters on the surface of the Gulf Stream.}
+	\label{fig:natl_ode_sols}
+\end{figure}
 
 
 The velocity data is Eulerian and unsteady (varying with time), so to predict the position of a drifter we must solve for a Lagrangian trajectory.
-This requires interpolating the velocity data, for which we use a linear interpolate.
-Let \(x_t \equiv \left(x_t^{(\mathrm{lon})}, x_t^{(\mathrm{lat})}\right)^{\T}\) denote the longitudinal and latitudinal position of the drifter \(t\) days after midnight \DTMdisplaydate{2020}{01}{01}{-1}.
+This first requires interpolating the velocity data between the spatial and temporal gridpoints, for which we use a linear interpolate.
+Let \(x_t \equiv \left(x_t^{(\mathrm{lon})}, x_t^{(\mathrm{lat})}\right)^{\T}\) denote the longitudinal (in degrees east) and latitudinal (in degrees north) position of the drifter \(t\) days after midnight \DTMdisplaydate{2020}{01}{01}{-1}.
 The deterministic model for \(x_t\), constructed purely from the interpolated velocity data, is
 \begin{equation}\label{eqn:natl_ode}
 	\dod{}{t}\begin{bmatrix}
 		x_t^{(\text{lon})} \\ x_t^{(\text{lat})}
 	\end{bmatrix} = \begin{bmatrix}
-		u\!\left(x^{(\mathrm{lon})}_t, x^{(\mathrm{lat})}_t, t\right) \\ v\!\left(x^{(\mathrm{lon})}_t, x^{(\mathrm{lat})}_t, t\right)
+		\tilde{u}\!\left(x^{(\mathrm{lon})}_t, x^{(\mathrm{lat})}_t, t\right) \\ \tilde{v}\!\left(x^{(\mathrm{lon})}_t, x^{(\mathrm{lat})}_t, t\right)
 	\end{bmatrix},
 \end{equation}
-where \(u\) and \(v\) are the interpolated zonal and meridional velocities respectively.
+where \(\tilde{u}\) and \(\tilde{v}\) are the interpolated zonal and meridional velocities respectively.
 In this context, we may think of \cref{eqn:natl_ode} as our ``best available'' deterministic model for the time-evolution of the drifter position; if the data (and the subsequent interpolation) were exactly correct, then \cref{eqn:natl_ode} would provide accurate predictions.
 However, this is certainly not the case and there are many sources of uncertainty not accounted for by using \cref{eqn:natl_ode} alone.
+\Cref{fig:natl_ode_sols} shows some example trajectories that solve \cref{eqn:natl_ode}, evolving over the span of a week.
+\td{Describe the behaviour once of thep lot is there}
 
 \begin{figure}
 	\centering
@@ -200,13 +214,14 @@ However, this is certainly not the case and there are many sources of uncertaint
 		\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/v_err_0}
 		\caption{Meridional component}
 	\end{subfigure}
-	\caption{The mapping error in the (a) zonal (longitudinal) and (b) meridional velocity components at midnight \DTMdisplaydate{2020}{01}{01}{-1}.}
+	\caption{The mapping error in the (a) zonal (longitudinal) and (b) meridional velocity components at midnight \DTMdisplaydate{2020}{01}{01}{-1} (\(t = 0\)).}
 	\label{fig:natl_err}
 \end{figure}
 
-The dataset additionally includes estimates for the mapping error (an estimate of the variance) in the zonal and meridional velocity measurements, and in particular provides an indication of measurement error; typically the error is smaller in regions directly under satellite tracks.
+The dataset additionally includes estimates for the mapping error (an estimate of the variance) in the zonal and meridional velocity measurements, and in particular provides an indication of measurement error. %; typically the error is smaller in regions directly under satellite tracks.
 The mapping error in each velocity component at \(t = 0\) is shown in \Cref{fig:natl_err}, as an example of the structure of the field, along with contours of the sea surface height.
-The error varies with time, but retains the main structure in which is appears highest along the Gulf Stream, which is not a surprise as this region contains the most complicated part of the flow.
+\td{Rewrite the following couple of sentences}
+The error varies with time, but retains the main structure in that it appears highest along the Gulf Stream, which is not a surprise as this region contains the most complicated part of the flow.
 We can capture both the spatial and temporal variation in this mapping error by adding multiplicative noise to the deterministic model \cref{eqn:natl_ode}.
 To account for measurement error, we use the following stochastic model:
 \begin{equation}
@@ -221,7 +236,11 @@ To account for measurement error, we use the following stochastic model:
 	\end{multlined}
 	\label{eqn:natl_sde}
 \end{equation}
-where \(u_{\mathrm{err}}\) and \(v_{\mathrm{err}}\) are the interpolated error estimates for the zonal and meridional velocities (converted to \unit{\degree\per\square\day} using the same transformation as was done on the velocity data), and \(L_r = 0.25 \mathrm{\,degrees}\) is the spatial resolution of the data.
+where \(\tilde{u}_{\mathrm{err}}\) and \(\tilde{v}_{\mathrm{err}}\) are the interpolated error estimates for the zonal and meridional velocities (converted to degrees per day using the same transformation \cref{eqn:natl_vel_conv} as was done on the velocity data), and \(L_r = 0.25^\circ\) is the spatial resolution of the data.
+Our choice for the diffusion matrix \(\sigma\) comes from the intuition that \(\sigma\sigma^{\T}\) represents the instantaneous variance of the noise in our stochastic differential equation.
+In \cref{eqn:natl_sde} we have a stochastic model for the evolution of trajectories that is intended to improve over \cref{eqn:natl_ode} by accounting for measurement error and unresolved sugrid effects.
+Both coefficients depend on time and the noise is multiplicative, making \cref{eqn:natl_sde} the most general type of SDE that our theory is equipped to handle.
+
 
 
 
@@ -291,16 +310,7 @@ where \(u_{\mathrm{err}}\) and \(v_{\mathrm{err}}\) are the interpolated error e
 
 
 
-\subsection{Exploring a single trajectory}
-In this example, we shall consider a fixed initial condition and explore the resulting trajectory.
-Suppose that at midnight \DTMdisplaydate{2021}{01}{01}{-1}, the drifter is located within the stream  at longitude \(60.5^\circ\) west and \(39^\circ\) north.
-We accordingly consider the evolution of the models \cref{eqn:natl_ode} and \cref{eqn:natl_sde} with the initial condition \(x_0 = (-60.5, 39)^{\T}\).
-By solving the deterministic model \cref{eqn:natl_ode} numerically, we predict the position of the drifter after \(t = 7\) days (at midnight \DTMdisplaydate{2021}{01}{08}{-1}) and show the time-evolution of the solution trajectory in \Cref{fig:natl_det_traj}.
-The drifter is transported by the jet stream.
-This is the prediction of the deterministic model \cref{eqn:natl_ode}, but when accountinf for uncertainty with the stochastic model \cref{eqn:natl_sde}, we get a more complicated picture.
-\Cref{fig:natl_stoch_rels} shows the result of \(N = 1000\) numerical realisations (obtained via Euler-Maruyama integration with a step size of ) of the stochastic model \cref{eqn:natl_sde}, starting from the fixed initial condition \(x_0\) and evolved over the same week-long time frame.
-Each red point corresponds to a single realisation at midnight \DTMdisplaydate{2021}{01}{08}{-1}; although a large number of the realisations have been transported along the stream, many break off from the stream in eddies, resulting in several clusters.
-This example highlights the importance of stochastic models; the deterministic model suggests that the drifter will follow the Stream itself, but the dynamic behaviour of the flow means that any stochasticity can result in vastly different positions.
+\subsection{Exploring a single trajectory}\label{sec:na_single}
 
 \begin{figure}
 	\begin{center}
@@ -321,6 +331,17 @@ This example highlights the importance of stochastic models; the deterministic m
 			The regions of land for which there is no data is indicated in black.}
 	\end{center}
 \end{figure}
+
+
+In this example, we shall consider a fixed initial condition and explore the resulting trajectory.
+Suppose that at midnight \DTMdisplaydate{2021}{01}{01}{-1}, the drifter is located within the stream  at longitude \(60.5^\circ\) west and \(39^\circ\) north.
+We accordingly consider the evolution of the models \cref{eqn:natl_ode} and \cref{eqn:natl_sde} with the initial condition \(x_0 = (-60.5, 39)^{\T}\).
+By solving the deterministic model \cref{eqn:natl_ode} numerically, we predict the position of the drifter after \(t = 7\) days (at midnight \DTMdisplaydate{2021}{01}{08}{-1}) and show the time-evolution of the solution trajectory in \Cref{fig:natl_det_traj}.
+The drifter is transported by the jet stream.
+This is the prediction of the deterministic model \cref{eqn:natl_ode}, but when accounting for uncertainty with the stochastic model \cref{eqn:natl_sde}, we get a more complicated picture.
+\Cref{fig:natl_stoch_rels} shows the result of \(N = 1000\) numerical realisations (obtained via Euler-Maruyama integration with a step size of ) of the stochastic model \cref{eqn:natl_sde}, starting from the fixed initial condition \(x_0\) and evolved over the same week-long time frame.
+Each red point corresponds to a single realisation at midnight \DTMdisplaydate{2021}{01}{08}{-1}; although a large number of the realisations have been transported along the stream, many break off from the stream in eddies, resulting in several clusters.
+This example highlights the importance of stochastic models; the deterministic model suggests that the drifter will follow the Stream itself, but the dynamic behaviour of the flow means that any stochasticity can result in vastly different positions.
 
 \begin{figure}
 	\begin{center}
@@ -360,7 +381,7 @@ We now move onto a more precise analysis of the time-evolution probability distr
 The marginal distributions in the longitudinal and latitudinal directions are shown on each axis.
 Overlaid in red are the Gaussian solution to the linearisation of \cref{eqn:natl_sde}, computed by numerically solving the ODE \cref{eqn:pi_ode} for the covariance matrix.
 The deterministic trajectory and covariance matrix are computed simultaneously using the Mazzoni method outlined in \Cref{sec:mazzoni}.
-This computation requires the gradient of the velocity field, which we approximate with a centered finite difference.
+This computation requires the gradient of the velocity field, which we approximate with a centred finite difference.
 In \Cref{fig:natl_em}, on each joint histogram we have plotted contours of the bivariate Gaussian, and on each marginal we have plotted the probability density function of the Gaussian solution corresponding to that component.
 \td{Interpret the plots. Nothing too crazy to say. Need to make sure they are actually correct, however. \(t = 1\) not looking great.}
 After a single day (\(t = 1\)), the numerical realisations match the Gaussian approximation.
@@ -374,62 +395,22 @@ The distribution is clearly non-Gaussian, due to both the nonlinearity of the fl
 		\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/traj_stoch_hell_dist_0.25}
 		\caption{The estimated Hellinger distance between \(N = 10000\) Euler-Maruyama samples of \cref{eqn:natl_sde} and the Gaussian process solution to the linearisation, \(t\) days after midnight \DTMdisplaydate{2021}{01}{01}{-1}.}
 		\label{fig:natl_hell}
-		% \end{subfigure}
-		% \begin{subfigure}[t]{0.49\textwidth}
-		% \includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/traj_stoch_S2}
-		% 	\caption{Stochastic sensitivity \(S^2\).}
-		% \end{subfigure}
-		% \begin{subfigure}[t]{0.49\textwidth}
-		% \includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/traj_stoch_s2min}
-		% 	\caption{The minimum eigenvalue of the linearisation covariance matrix.}
-		% \end{subfigure}
-		% \begin{subfigure}[t]{0.49\textwidth}
-		% \includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/traj_stoch_ratio}
-		% 	\caption{The ratio of eigenvalues of the linearisation covariance matrix.}
-		% \end{subfigure}
-		% \caption{ \(t\) days after midnight \DTMdisplaydate{2021}{01}{01}{-1}.}
-		% \label{fig:natl_metrics}
 	\end{center}
 \end{figure}
 
-To evaluate the Gaussian approximation over
-\Cref{fig:natl_hell} plots the Hellinger distance between the Gaussian approximation and Euler-Maruyama samples solving \eqref{eqn:natl_sde}, using a bin size corresponding to the .
-In \Cref{app:supp_hell_natl}, we provide additional figures showing the same computation, but for varying bin sizes, to verify that the Hellinger distance computation is reasonably robust to changes in this size.
-\td{Actually get this plots in there.}
+To evaluate the Gaussian approximation over the time-evolution of the trajectory and the stochastic solution,
+\Cref{fig:natl_hell} plots the estimated Hellinger distance between the Gaussian approximation and Euler-Maruyama samples solving \eqref{eqn:natl_sde}.
+% In \Cref{app:supp_hell_natl}, we provide additional figures showing the same computation, but for varying bin sizes, to verify that the Hellinger distance computation is reasonably robust to changes in this size.
+% \td{Actually get this plots in there.}
 As expected, the distance increases over time, as the numerical solution to \eqref{eqn:natl_sde} quickly becomes non-Gaussian.
 However, there are two times where the Gaussian approximation \emph{improves}: at \(t \approx 3.3\) and \(t \approx 6\).
-
-
-
 \td{Conclude by answering `so what?`. Why would we want such approximations in the first place? How is this any better? We just have a shit approximation of a highly non-Gaussian distribution.}
 
 
 \subsection{Stochastic sensitivity}
+We now compute the stochastic sensitivity field.
 As in \Cref{sec:comput_s2} of \Cref{ch:linear_numerics}, the purpose of this example is to demonstrate the computation of stochastic sensitivity from the covariance matrix, rather than provide any new insight.
-A similar example of computing the stochastic sensitivity field for a similar sea-surface dataset of the Gulf Stream, albeit using the original method of calculation \citep{Balasuriya_2020_StochasticSensitivityComputable}, is found in \citet{BadzaEtAl_2023_HowSensitiveAre}.
-
-\Cref{fig:na_s2_grid} plots the stochastic sensitivity field for a grid of initial conditions at the \(0.25^\circ \times 0.25^\circ\) resolution of the velocity data.
-That is, each initial condition corresponds to a point at which the surface velocity data was available.
-
-
-The stream is outlined by regions of high uncertainty, which is expected as near these edges trajectories can undergo qualitatively very different behaviours by either remaining in the stream or leaving it in an eddy.
-
-Away from the stream (either north or south of it), the flow is reasonably isotropic and the level of noise from measurement error is small and consequently there is a relatively small uncertainty in the trajectories.
-
-At higher resolutions, conclusions from the deterministic model alone cannot be trusted completely; between the gridpoints the velocity data has been interpolated.
-Although the stochastic model also uses this interpolated data, the fact that the model can account
-This is an advantage of stochastic sensitivity over other deterministic measures, such as the finite-time Lyapunov exponent, which are limited by the resolution of the data.
-
-
-
-
-On the right-hand side of \Cref{fig:na_s2}, we show robust sets extracted from the stochastic sensitivity field at each resolution, using a threshold of \(2^\circ\).
-Additional plots showing robust sets extracted with different thresholds are provided in \Cref{app:s2_robust}, and result in \td{something}.
-...
-This structure is better resolved in the higher-resolution field, where we can clearly see
-The centres of these vortices, where we expect coherency in the deterministic system, and therefore robustness in the stochastic system, are also included in the set.
-
-
+A similar example of computing the stochastic sensitivity field for a similar sea-surface dataset of the Gulf Stream, albeit using the original method of calculation \citep{Balasuriya_2020_StochasticSensitivityComputable}, is provided by \citet{BadzaEtAl_2023_HowSensitiveAre}.
 
 \begin{figure}
 	\centering
@@ -443,37 +424,43 @@ The centres of these vortices, where we expect coherency in the deterministic sy
 		\includegraphics[width=0.49\textwidth]{chp06_applications/figures/gulf_stream/S2_field_high}
 		\includegraphics[width=0.49\textwidth]{chp06_applications/figures/gulf_stream/S2_robust_high_2.0}
 		\caption{At the higher resolution of \(0.025^\circ \times 0.025^\circ\).}
-		\label{fig:na_s2_grid}
+		\label{fig:na_s2_high}
 	\end{subfigure}
-	% \begin{subfigure}[t]{0.49\textwidth}
-	% 	\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/S2_field_grid}
-	% 	\caption{The stochastic sensitivity \(S^2\).}
-	% 	\label{fig:na_S2}
-	% \end{subfigure}
-	% \begin{subfigure}[t]{0.49\textwidth}
-	% 	\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/s2min_field_grid}
-	% 	\caption{The minimum eigenvalue of the covariance matrix.}
-	% \end{subfigure}
-	% \begin{subfigure}[t]{0.49\textwidth}
-	% 	\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/ratio_field_grid}
-	% 	\caption{The ratio of the stochastic sensitivity value (maximum eigenvalue) and the minimum eigenvalue of the covariance matrix, which captures the `narrowness' of the linearised distribution.}
-	% \end{subfigure}
-	% \begin{subfigure}[t]{0.49\textwidth}
-	% 	\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/ftle_field_grid}
-	% 	\caption{The stretching rate field used in the FTLE calculation.}
-	% \end{subfigure}
-	% \begin{subfigure}[t]{0.49\textwidth}
-	% 	\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/cov_field_grid}
-	% 	\caption{The \((1,2)\)th entry of the covariance matrix, corresponding to the covariance between coordinates.
-	% 		White indicates regions in which the entry is zero.}
-	% \end{subfigure}
 	\caption{The stochastic sensitivity fields (left) computed from the linearisation covariance matrix on a grid of initial conditions, at two different resolutions.
-		Note that values near the boundaries of the data and the land are not trustworthy, as the Gaussian approximations do not account for these boundaries.
-		From each field, robust sets corresponding to coherent structures are extracted with a threshold of \(R = 2^\circ\) and shown on in cyan the right.
-		In all figures, the regions of land for which there is no velocity data is indicated in black.}
+		% Note that values near the boundaries of the data and the land are not trustworthy, as the Gaussian approximations do not account for these boundaries.
+		From each field, robust sets are extracted with a threshold of \(R = 2^\circ\) and shown on in cyan the right.
+		In all four figures, the regions of land for which there is no velocity data is indicated in black.}
 	\label{fig:na_s2}
 \end{figure}
 
+\Cref{fig:na_s2_grid} plots the stochastic sensitivity field for a grid of initial conditions at the \(0.25^\circ \times 0.25^\circ\) resolution of the velocity data, over the timespan of a week from midnight \DTMdisplaydate{2020}{01}{01}{-1} (\(t = 0\)) to midnight \DTMdisplaydate{2020}{01}{08}{-1} (\(t = 7\)).
+That is, each initial condition corresponds to a point at which the surface velocity data was available.
+The stochastic sensitivity field quantifies the magnitude of the uncertainty (modelled by the SDE \cref{eqn:natl_sde}) in the deterministic trajectory (solving \cref{eqn:natl_ode}) starting from each initial condition.
+Although the resolution of the velocity data is low, we can still distinguish the stream itself as a region of high uncertainty.
+Away from the stream (either north or south of it), the flow is reasonably isotropic and the level of noise from measurement error is small and consequently there is are relatively small \(S^2\) values.
+
+\citet{Balasuriya_2020_StochasticSensitivityComputable} provided a simple method for extracting possibly coherent sets from the stochastic sensitivity field, by taking the initial conditions for which the \(S^2\) value is under a certain threshold.
+Using a threshold of \(2^\circ\), the right-hand side of \Cref{fig:na_s2_grid} shows in cyan the initial conditions which correspond to a robust set.
+Additional plots showing robust sets extracted with different thresholds are provided in \Cref{app:s2_robust}.
+We see that the regions away from the stream emerge as robust sets.
+Notably, parts of the stream are \emph{not} included in these sets, due to the larger uncertainty.
+However, the low resolution of the data means that we cannot make any further conclusions, as finer structure has not been resolved.
+
+The resolution of the data is a significant limitation of the deterministic model; since the velocity data has been interpolated between gridpoints, any conclusions relying on the deterministic model alone at cannot be trusted completely at higher resolutions.
+% For instance, if we were to compute the finite-time Lyapunov exponent of \cref{eqn:natl_ode} on a set of ini
+Although the stochastic model also uses this interpolated data, the model is in some sense accounting for the uncertainty introduced by the interpolation.
+That is, we are resolving the behaviour of the system between the gridpoints by introducing stochastic noise.
+Since stochastic sensitivity is a property of the \emph{stochastic} system, and not just the deterministic one, we are permitted to investigate and make conclusions from this field at a higher resolution than that prescribed by the data.
+This is an advantage of stochastic sensitivity over other deterministic measures, such as the finite-time Lyapunov exponent, which are limited by the resolution of the data.
+\Cref{fig:na_s2_high} computes stochastic sensitivity on a \(0.025^\circ\times 0.025\) grid of initial conditions, at a higher resolution than the velocity data.
+We see several eddy-like structures highlighted above and below the stream, where uncertainty is large on the boundaries of the eddies and smaller within.
+These eddies were not apparent in the lower resolution \(S^2\) field or the corresponding robust sets.
+% The stream is outlined by regions of high uncertainty, which is expected as near these edges trajectories can undergo qualitatively very different behaviours by either remaining in the stream or leaving it in an eddy.
+On the right-hand side of \Cref{fig:na_s2_high}, we show robust sets extracted from the higher resolution stochastic sensitivity field, again using a threshold of \(2^\circ\).
+This structure is better resolved in the higher-resolution field, where we can clearly see the complicated structure of the stream emerge as regions of non-robustness (that is, not contained in the sets).
+The centres of the eddies, where we expect coherency in the deterministic system, and therefore robustness in the stochastic system, are also included in the robust set.
+By increasing the resolution, we are therefore able to identify regions of low uncertainty and distinguish finer structures within the flow.
+% \td{Conclude by summarising the implications of stochastic sensitivity - what have we just done?}
 
 
 
@@ -505,19 +492,8 @@ The centres of these vortices, where we expect coherency in the deterministic sy
 % \end{figure}
 
 \subsection{The mixture model}
-To conclude this example, we will explore a simple implementation of the mixture model algorithm described in \Cref{ch:gmm} to predict the distribution of stochastic solutions about the single trajectory in the previous example.
-Again, our aim is to not investigate the algorithm and model in detail, but to rather demonstrate the potential of this algorithm in efficiently approximating the stochastic solution, and therefore as a tool for improving predictions.
-
-As discussed in \Cref{ch:gmm}, we expect that the mixture model approach will work best in moderate noise models and over reasonably short timeframes.
-We take the same fixed initial condition \(x_0 = \left(-60.5, 39\right)^{\T}\) but instead consider the position of the drifter at \(t = 3\), so at midnight \DTMdisplaydate{2021}{01}{04}{-1}.
-The distribution of numerical samples at this time is given in \Cref{fig:natl_em_3}; the aim here is to use the mixture model algorithm to approximate this non-Gaussian distribution with a small number of Gaussian components, each constructed as solutions to the linearised SDE.
-To better understand the impact of the deterministic flow dynamics on the behaviour of the stochastic solution, \Cref{fig:na_hist_t3} plots the evolution of the stochastic samples over three days up to \(t = 3\) and includes contours of the sea surface height at each time.
-The contours correspond to the instantaneous streamlines of the deterministic flow.
-A majority of the stochastic realisations are propagated by the stream itself, but we see that a number of trajectories leave the stream early and move westwards, creating an arc-like structure of lower density in the empirical distribution.
-This behaviour is likely due to the formation and breaking off of an eddy from the stream in the region which the trajectories pass through.
-Turning our attention to the distribution of samples at \(t = 3\), the two marginal distributions (in the longitudinal and latitudinal directions) in \Cref{fig:natl_em_3} demonstrate the qualitative departures from Gaussianity mentioned previously: in the longitudinal direction, the distribution of samples is bimodal, whereas in the latitudinal direction we see skew in the southern direction.
-The distribution is 2-dimensional, however, so there are aspects of the joint density that are not reflected by the two marginal distributions, such as the curved structure of the density function.
-This is a highly non-Gaussian distribution with features such as the scatter of points in the westwards direction that we would like to capture with a mixture model approximation.
+To conclude this example, we will explore a simple implementation of the mixture model algorithm described in \Cref{ch:gmm} to predict the distribution of stochastic solutions about the single trajectory in \Cref{sec:na_single}.
+Again, our aim is not to investigate the algorithm and model in detail, but to rather demonstrate the potential of this algorithm in efficiently approximating the stochastic solution.
 
 \begin{figure}
 	\centering
@@ -545,6 +521,19 @@ This is a highly non-Gaussian distribution with features such as the scatter of 
 	\label{fig:na_hist_t3}
 \end{figure}
 
+\td{Need to find the best place for this paragraph}
+As discussed in \Cref{ch:gmm}, we expect that the mixture model approach will work best in moderate noise models and over reasonably short timeframes.
+We take the same fixed initial condition \(x_0 = \left(-60.5, 39\right)^{\T}\) but instead consider the position of the drifter at \(t = 3\), so at midnight \DTMdisplaydate{2021}{01}{04}{-1}.
+\td{Work out where to put this}
+The distribution of numerical samples at this time is given in \Cref{fig:natl_em_3}; the aim here is to use the mixture model algorithm to approximate this non-Gaussian distribution with a small number of Gaussian components, each constructed as solutions to the linearised SDE.
+To better understand the impact of the deterministic flow dynamics on the behaviour of the stochastic solution, \Cref{fig:na_hist_t3} plots the evolution of the stochastic samples over three days up to \(t = 3\) and includes contours of the sea surface height at each time.
+The contours correspond to the instantaneous streamlines of the deterministic flow.
+A majority of the stochastic realisations are propagated by the stream itself, but we see that a number of trajectories leave the stream early and move westwards, creating an arc-like structure of lower density in the empirical distribution.
+This behaviour is likely due to the formation and breaking off of an eddy from the stream in the region which the trajectories pass through.
+Turning our attention to the distribution of samples at \(t = 3\), the two marginal distributions (in the longitudinal and latitudinal directions) in \Cref{fig:natl_em_3} demonstrate the qualitative departures from Gaussianity mentioned previously: in the longitudinal direction, the distribution of samples is bimodal, whereas in the latitudinal direction we see skew in the southern direction.
+The distribution is 2-dimensional, however, so there are aspects of the joint density that are not reflected by the two marginal distributions, such as the curved structure of the density function.
+This is a highly non-Gaussian distribution with features such as the scatter of points in the westwards direction that we would like to capture with a mixture model approximation.
+
 First, we shall implement the GMM algorithm with a single manually specified split, which results in a mixture model with 5 components at the final time.
 For a given splitting time, we can use the Hellinger distance between the resulting mixture model and the 10000 numerical realisations of the true solution to evaluate the resulting fit.
 This allows us to `tune' the choice of splitting time, by finding that which results in the smallest distance.
@@ -552,69 +541,77 @@ This method, of course, relies upon us having already obtained the numerical sam
 However, the purposes of this example is to demonstrate that such an optimal time can be found, and to suggest that, once equipped with an appropriate online splitting criterion, the mixture model algorithm provides an efficient ad-hoc method for capturing key features of the distribution.
 As a benchmark, the single Gaussian component (shown in \Cref{fig:natl_em_3} overlaid on the histograms of samples) gave a Hellinger distance of approximately 0.48761.
 
-\Cref{fig:na_1split_hell} plots the Hellinger distance for each run of the mixture model algorithm with the split at times \(t_s\), each varying by an hour.
-The Hellinger distance between the single Gaussian approximation and the same EM samples is also indicated by the green line.
-We can see that an early split time (less than \(t = 2\), say) results in a mixture model that improves over the single Gaussian approximation.
-When the split occurs later, the quality of the resulting mixture model worsens.\td{Any way to interpret this? Not getting enough information of the surrounding flow?}
-The minimum Hellinger distance of approximately 0.30191 occurs with a split at \(t_s = 33/24\) days, or at 9am \DTMdisplaydate{2021}{01}{02}{-1}, which we take as our `best' fit.
-We compare the resulting mixture model against the numerical samples in \Cref{fig:na_1split_best}, in the same fashion as \Cref{fig:natl_em} where contours of the mixture probability density function are shown on the joint histogram and the marginal PDFs on each marginal histogram.
-However, the mixture fails to capture the spread of samples in the southern direction, even though this only corresponds to a small proportion of the samples.
-
+\begin{figure}
+	\centering
+	\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/hell_dist_split}
+	\caption{The Hellinger distance between the mixture model implemented with a single split at time \(t_s\) and 10000 Euler-Maruyama samples of the solution to \Cref{eqn:natl_sde} at \(t = 3\).}
+	\label{fig:na_1split_hell}
+\end{figure}
 
 \begin{figure}
-	\begin{center}
-		\begin{subfigure}{\textwidth}
-			\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/hell_dist_split}
-			\caption{The Hellinger distance between stochastic samples and the mixture model implemented with a single split at time \(t_s\).}
-			\label{fig:na_1split_hell}
-		\end{subfigure}
-		\begin{subfigure}{\textwidth}
-			\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/gmm_split_best}
-			\caption{The best-fitting mixture model, with a single split at \(t_s = \) ().
-				The joint histogram (center) includes the component means (as red points) and continues of the mixture density.
-				Each axis provides marginal histograms of the numerical samples, with the corresponding marginal PDFs of the mixture density in red.}
-			\label{fig:na_1split_best}
-		\end{subfigure}
-		\caption{The Gaussian mixture model algorithm implemented with a single on the Gulf Stream trajectory with initial condition \(x_0 = \left(-60.5, 39\right)^{\T}\) and over the timespan from midnight \DTMdisplaydate{2021}{01}{01}{-1} to midnight \DTMdisplaydate{2021}{01}{04}{-1}.}
-		\label{fig:na_1split}
-	\end{center}
+	\centering
+	\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/gmm_split_best}
+	\caption{The best-fitting mixture model with a single split at \(t_s = 33/24\) (9am \DTMdisplaydate{2021}{01}{02}{-1}).
+		The joint histogram (centre) includes the component means (as red points) and contours of the mixture density.
+		Each axis provides marginal histograms of the numerical samples, with the corresponding marginal PDFs of the mixture density in red.}
+	\label{fig:na_1split_best}
 \end{figure}
 
 
+\Cref{fig:na_1split_hell} plots, against the split time \(t_s\), the Hellinger distance between each mixture model and a set of 10000 EM samples.
+With a single split, each mixture model consists of 5 equally weighted components: the single Gaussian component evolved from the initial condition, and the 4 additional components resulting from the splitting step.
+The Hellinger distance between the single Gaussian approximation and the same EM samples is also indicated by the green line.
+We can see that an early split time (less than \(t = 2\), say) results in a mixture model that improves over the single Gaussian approximation.
+When the split occurs later, the quality of the resulting mixture model worsens.%\td{Any way to interpret this? Not getting enough information of the surrounding flow?}
+The minimum Hellinger distance of approximately 0.30191 occurs with a split at \(t_s = 33/24\) days, or at 9am \DTMdisplaydate{2021}{01}{02}{-1}, which we take as our `best' fit.
+We compare the resulting mixture model against the numerical samples in \Cref{fig:na_1split_best}, in the same fashion as \Cref{fig:natl_em} where contours of the mixture probability density function are shown on the joint histogram and the marginal PDFs on each marginal histogram.
+The mixture model captures several important qualitative features of the empirical distribution, including the bimodality in the longitudinal marginal and part of the `curved' shape of the joint distribution.
+Comparing directly to the single Gaussian in \Cref{fig:natl_em_3}, the latitudinal marginal is much improved with a smaller variance\lb{improve this!}.
+However, the mixture fails to capture the spread of samples in the southern direction, even though this only corresponds to a small proportion of the samples.
+Regardless, this result is promising, as with only a single split and four more components we have improved over the single Gaussian approximation.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/hell_dist_2split}
+	\caption{The Hellinger distance between the mixture model implemented with two splits---the first at \(t_{s,1}\) days, and the second at \(t_{s,2} > t_{s,1}\) days---and 10000 Euler-Maruyama samples of the solution to \cref{eqn:natl_sde} at \(t = 3\).
+		When \(t_{s,1} = t_{s,2}\), the result for a single split at that time is shown for comparison.
+		The minimising value is indicated by the black box.}
+	\label{fig:na_2split_hell}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/gmm_2split_best}
+	\caption{The best-fitting mixture model (in red) with two splits on each component, over histograms of 10000 Euler-Maruyama samples.
+		The central joint histogram shows contours of the mixture density, with the component means indicated by the red circles.
+		On the longitudinal and latitudinal marginals on each axis, the probability density functions of the corresponding marginals of the mixture model are shown.}
+	\label{fig:na_2split_best}
+\end{figure}
+
+Five components may not be sufficient to fully capture the shape and spread of the empirical distribution, so we now consider adding an additional splitting step to the mixture model.
+After the first split at time \(t_{s,1}\), we will split each new trajectory at a later time \(t_{s,2}\).
+For simplicity, each of the five trajectories are split at the \emph{same} time \(t_{s,2}\), but in general the algorithm allows for each trajectory to be split at different times.
+Each mean-covariance pair is split at time \(t_{s,2}\) into four additional points, again using the canonical sigma points \cref{eqn:uhlman_sigma}.
+Once again, we consider a range of times for \(t_{s,1}\) and \(t_{s,2}\), construct the mixture model using each pair of times, and compute the Hellinger distance between the mixture density and the EM samples to find the best configuration.
+The resulting Hellinger distances are shown in \Cref{fig:na_2split_best}
 The optimal configuration with two splits has the first at \(t_{s,1} = 3/4\) (at 6pm \DTMdisplaydate{2021}{01}{01}{-1}) and the second at \(t_{s,2} = 43/24\) (at 7pm \DTMdisplaydate{2021}{01}{02}{-1}), and results in a Hellinger distance of approximately 0.14684.
 This distance is a substantial improvement over both the single Gaussian component and the mixture model with a single split.
 In \Cref{fig:na_2split_best}, we compare this mixture density against the stochastic samples, in the same arrangement as \Cref{fig:na_1split_best}.
+The shape of the empirical distribution is captured by the mixture model, including the scatter of points leaving the stream in the westward direction.
+The bimodality in the longitudinal marginal, and the skew in the latitudinal are captured by the mixture model.\lb{Need a better discussion than this!}
 
-\begin{figure}
-	\begin{center}
-		\begin{subfigure}{\textwidth}
-			\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/hell_dist_2split}
-			\caption{Two splits: the first at \(t_{s,1}\) days, and the second at \(t_{s,2} > t_{s,1}\) days.
-				When \(t_{s,1} = t_{s,2}\), the result for a single split at that time is shown for comparison.
-				The minimising value is indicated by the black box.}
-			\label{fig:na_2split_hell}
-		\end{subfigure}
-		\begin{subfigure}{\textwidth}
-			\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/gmm_2split_best}
-			\caption{The best-fitting mixture model (according to the Hellinger distance) with two splits on each component.}
-			\label{fig:na_2split_best}
-		\end{subfigure}
-		\caption{}
-		\label{fig:na_2split}
-	\end{center}
-\end{figure}
-
-
+The 25-component mixture model provides a close representation of the empirical distribution, both heuristically (by capturing qualitative departures from Gaussianity) and supported by the small Hellinger distance 0.14684.
+Whereas we propagated 10000 Euler-Maruyama samples to construct the empirical distribution, the mixture model consists of only 25 mean-covariance pairs, the computation of which can be thought of as requiring the propagation of only 125 values (the two components of each mean and the three components of each symmetric covariance matrix).
+A mixture model with fewer components may also provide the same quality of approximation, which would be even more computationally efficient.
+Estimating the true solution distribution is a difficult problem, as the deterministic dynamics are complicated and highly non-linear, and the non-uniformity of error in the observations used to construct it means that the noise is multiplicative.
 With a simple implementation of the mixture model, we are able to capture key features and provide a close approximation of the distribution of the solution at \(t = 3\).
-Estimating this distribution is a difficult problem, as the deterministic dynamics are complicated and highly non-linear, and the non-uniformity of error in the observations used to construct it means that the noise is multiplicative.
-
 Evaluating the mixture model and finding the best splitting times required a set of numerical realisations of the SDE solution, when our aim is to avoid this computational cost.
-However, we continue to emphasise that this example is demonstrative and the mixture model has only been proposed as an outline of an algorithm, and at this point is highly ad-hoc.
+However, we continue to emphasise that this example is demonstrative and the mixture model has only been proposed as an outline of an algorithm, and at this stage is highly ad-hoc.
 Nonetheless, the results of this section are encouraging.
-There are clear splitting times in \Cref{fig:na_1split,fig:na_2split} for which the mixture model results in an optimal (with respect to the Hellinger distance) fit.\td{Need to articulate this better.}
+% There are clear splitting times in \Cref{fig:na_1split_hell,fig:na_2split_hell} for which the mixture model results in an optimal (with respect to the Hellinger distance) fit.\td{Need to articulate this better.}
 Once equipped with an appropriate splitting criterion, the mixture model algorithm could become a highly effective method for circumventing bulk simulation in stochastic systems.
 Even in lieu of this splitting criterion, the mixture model provides an explicit form for the probability density function, which may lend itself to further applications.
-We discuss this in detail in \Cref{sec:gmm_extensions}.
+We discuss this in \Cref{sec:gmm_extensions}.
 
 
 
@@ -953,44 +950,93 @@ For our final example, we take a 6-compartment population process model that was
 
 For a fixed population size, this model is 5-dimensional.
 
-\begin{figure}
-	\begin{center}
-		\begin{tabular}{|c|c|c|c|}
-			\hline
-			Transition & \multicolumn{2}{c|}{Event}    & Rate \(\lambda_i\)                                                                                                     \\ \hline
-			(1)        & Exposure                      & \(\left(S, E\right) \to \left(S-1, E+1\right)\)     & \(\left(\beta_I SI + \beta_H SH + \beta_F SF\right) / N\)        \\ \hline
-			(2)        & Shedding                      & \(\left(E, I\right) \to \left(E - 1, I + 1\right)\) & \(\alpha E\)                                                     \\ \hline
-			(3)        & Hospitalisation               & \(\left(I, H\right) \to \left(I - 1, H + 1\right)\) & \(\gamma_H \theta_1 I\)                                          \\ \hline
-			(4)        & Hospital death without burial & \(\left(H, D\right) \to (H - 1, D + 1)\)            & \(\gamma_{dh}\delta_2 H\)                                        \\ \hline
-			(5)        & Burial                        & \(\left(D\right) \to \left(D - 1\right)\)           & \(\gamma_f D\)                                                   \\ \hline
-			(6)        & Death with burial             & \(\left(I\right) \to \left(I - 1\right)\)           & \(\gamma_i\left(1 - \theta_1\right)\left(1 - \delta_1\right) I\) \\ \hline
-			(7)        & Death without burial          & \(\left(I, D\right) \to \left(I - 1, D + 1\right)\) & \(\delta_1 \left(1 - \theta_1\right) \gamma_d I\)                \\ \hline
-			(8)        & Hospital death with burial    & \(\left(H\right) \to \left(H - 1\right)\)           & \(\gamma_{ih}\left(1 - \delta_2\right)H\)                        \\ \hline
-		\end{tabular}
+\begin{landscape}
+	\begin{figure}
+		\begin{center}
+			\begin{tabular}{|c|c|c|c|}
+				\hline
+				Transition & \multicolumn{2}{c|}{Event}    & Rate \(\lambda_i\)                                                                                                     \\ \hline
+				(1)        & Exposure                      & \(\left(S, E\right) \to \left(S-1, E+1\right)\)     & \(\left(\beta_I SI + \beta_H SH + \beta_F SF\right) / N\)        \\ \hline
+				(2)        & Shedding                      & \(\left(E, I\right) \to \left(E - 1, I + 1\right)\) & \(\alpha E\)                                                     \\ \hline
+				(3)        & Hospitalisation               & \(\left(I, H\right) \to \left(I - 1, H + 1\right)\) & \(\gamma_H \theta_1 I\)                                          \\ \hline
+				(4)        & Hospital death without burial & \(\left(H, D\right) \to (H - 1, D + 1)\)            & \(\gamma_{dh}\delta_2 H\)                                        \\ \hline
+				(5)        & Burial                        & \(\left(D\right) \to \left(D - 1\right)\)           & \(\gamma_f D\)                                                   \\ \hline
+				(6)        & Death with burial             & \(\left(I\right) \to \left(I - 1\right)\)           & \(\gamma_i\left(1 - \theta_1\right)\left(1 - \delta_1\right) I\) \\ \hline
+				(7)        & Death without burial          & \(\left(I, D\right) \to \left(I - 1, D + 1\right)\) & \(\delta_1 \left(1 - \theta_1\right) \gamma_d I\)                \\ \hline
+				(8)        & Hospital death with burial    & \(\left(H\right) \to \left(H - 1\right)\)           & \(\gamma_{ih}\left(1 - \delta_2\right)H\)                        \\ \hline
+			\end{tabular}
 
-		\begin{tikzpicture}
-			\node (S) [draw] {S};
-			\node (E) [draw, right=of S] {E};
-			\node (I) [draw, right=of E] {I};
-			\node (H) [draw, right=of I] {H};
-			\node (F) [draw, right=of H] {F};
-			\node (R) [draw, right=of F] {R};
-			\path[->,thick] (S) edge[above] node{(1)}  (E)
-			(E) edge[above] node{(2)} (I)
-			(I) edge[above] node{(3)} (H)
-			(H) edge[above] node{(4)} (F)
-			(F) edge[above] node{(5)} (R)
-			(I) edge[bend right, below] node{(6)} (R)
-			(I) edge[bend right, below] node{(7)} (F)
-			(H) edge[bend left, above] node{(8)} (R);
-		\end{tikzpicture}
-		\caption{Transition probabilities of the Ebola model.}
-		\label{fig:ebola_transition}
-	\end{center}
-\end{figure}
+			\begin{tikzpicture}
+				\node (S) [draw] {S};
+				\node (E) [draw, right=of S] {E};
+				\node (I) [draw, right=of E] {I};
+				\node (H) [draw, right=of I] {H};
+				\node (F) [draw, right=of H] {F};
+				\node (R) [draw, right=of F] {R};
+				\path[->,thick] (S) edge[above] node{(1)}  (E)
+				(E) edge[above] node{(2)} (I)
+				(I) edge[above] node{(3)} (H)
+				(H) edge[above] node{(4)} (F)
+				(F) edge[above] node{(5)} (R)
+				(I) edge[bend right, below] node{(6)} (R)
+				(I) edge[bend right, below] node{(7)} (F)
+				(H) edge[bend left, above] node{(8)} (R);
+			\end{tikzpicture}
+			\caption{Transition probabilities of the Ebola model.}
+			\label{fig:ebola_transition}
+		\end{center}
+	\end{figure}
+\end{landscape}
 
 
-Let \(X_t^{(N)} = \left(S_t / N, I_t / N, E_t / N, H_t / N, D_t / N\right)^{\T}\) denote the proportion of individuals in each compartment at time \(t\).
+The model consists of 6 compartments, so that an individual is one of:
+\begin{itemize}
+	\item susceptible (\(S\)), having not yet been exposed to the virus,
+	\item exposed (\(E\)), having been exposed to the virus but not yet infectious,
+	\item infected (\(I\)), infected with the virus and infectious to susceptible individuals,
+	\item hospitalised (\(H\)), infected with the virus but hospitalised,
+	\item deceased (\(F\)) without burial, meaning that the individual is still infectious, and
+	\item removed (\(R\)), meaning that the individual is no longer infectious or susceptible.
+\end{itemize}
+\Cref{fig:ebola_transition} shows the transition diagram and corresponding transitions rates between the compartments.
+
+
+\begin{landscape}
+	\begin{figure}
+		\begin{center}
+			\begin{tabular}{|c|c|c|}
+				\hline
+				Parameter                                                               & Value               & Source                                                                                                                                 \\ \hline
+				Population size \(M\)                                                   & 200000              & \citet{DowellEtAl_1999_TransmissionEbolaHemorrhagic}                                                                                   \\
+				Initial cases \(I_0\)                                                   & 3                   & \citet{KhanEtAl_1999_ReemergenceEbolaHemorrhagic}                                                                                      \\
+				Mean duration of incubation	\(\alpha\)                                  & \(1 / 7\) per day   & \citet{DowellEtAl_1999_TransmissionEbolaHemorrhagic,BwakaEtAl_1999_EbolaHemorrhagicFever,NdambiEtAl_1999_EpidemiologicClinicalAspects} \\
+				Mean time to hospitalisation \(\gamma_h\)                               & \(1 / 9.6\) per day & \citet{KhanEtAl_1999_ReemergenceEbolaHemorrhagic}                                                                                      \\
+				Mean duration of infectious period \(\gamma_i\)                         & \(1 / 10\) per day  & \citet{DowellEtAl_1999_TransmissionEbolaHemorrhagic,RoweEtAl_1999_ClinicalVirologicImmunologic}                                        \\
+				Mean time to death \(\gamma_d\)                                         & \(1 / 2\) per day   & \citet{KhanEtAl_1999_ReemergenceEbolaHemorrhagic}                                                                                      \\
+				Proportion of hospitalised cases \(\theta_1\)                           & \(0.67\)            & \citet{KhanEtAl_1999_ReemergenceEbolaHemorrhagic}                                                                                      \\
+				Unhospitalised Case-fatality ratio (with burial) \(\delta_1\)           & \(0.8\)             & \citet{KhanEtAl_1999_ReemergenceEbolaHemorrhagic}                                                                                      \\
+				Hospitalised case-fatality ratio (with burial)\(\delta_2\)              & \(0.8\)             & \citet{KhanEtAl_1999_ReemergenceEbolaHemorrhagic}                                                                                      \\
+				Transmission rate in the community \(\beta_I\)                          & \(0.588\) per week  & \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola}                                                                                    \\
+				Transmission rate at the hospital \(\beta_H\)                           & \(0.794\) per week  & \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola}                                                                                    \\
+				Transmission rate during funerals \(\beta_F\)                           & \(7.653\) per week  & \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola}                                                                                    \\
+				Mean time from hospitalisation to death \(\gamma_{dh}\)                 & per week            & \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola}                                                                                    \\
+				Mean time from hospitalisation to end of infectiousness \(\gamma_{ih}\) & per week            & \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola}                                                                                    \\
+				\hline
+			\end{tabular}
+		\end{center}
+		\caption{Parameter values for the Ebola model, estimated from the 1995 outbreak in the Democratic Republic of Congo.
+			This table is adapted from Tables 3 and 4 of \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola}, where values sourced directly from \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola} have been estimated from morbidity data.}
+		\td{Descriptions of variables not quite right}
+		\label{tab:ebola_param_vals}
+	\end{figure}
+\end{landscape}
+
+\Cref{tab:ebola_param_vals} provides parameter values for the model, including the physical interpretations of each parameter.
+These parameter values are taken from a combination of previous studies \citep{DowellEtAl_1999_TransmissionEbolaHemorrhagic,KhanEtAl_1999_ReemergenceEbolaHemorrhagic,BwakaEtAl_1999_EbolaHemorrhagicFever,NdambiEtAl_1999_EpidemiologicClinicalAspects} and estimates provided by \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola}.
+The estimates of \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola} are maximum likelihood estimates fitted on morbidity data from the 1995 Ebola outbreak in the Democratic Republic of Congo.
+
+
+Let \(X_t^{(N)} = \left(S_t / N, I_t / N, E_t / N, H_t / N, D_t / N\right)^{\T}\) denote the proportion of individuals in each compartment after \(t\) weeks.
 The population process is also density dependent, with
 \[
 	f\!\left(\left(s, e, i, h, d\right), l\right) = \begin{cases}
@@ -1008,25 +1054,25 @@ The population process is also density dependent, with
 The deterministic differential equation is
 \[
 	\dod{X_t^{(\infty)}}{t} = \begin{bmatrix}
-		-\beta_I X_t^{(\infty, 1)}X_t^{(\infty, 3)} - \beta_H X_t^{(\infty, 1)}X_t^{(\infty, 4)} - \beta_F X_t^{(\infty, 1)}X_t^{(\infty,5)}                                        \\
-		\beta_I X_t^{(\infty, 1)}X_t^{(\infty, 3)} + \beta_H X_t^{(\infty, 1)}X_t^{(\infty, 4)} + \beta_F X_t^{(\infty, 1)}X_t^{(\infty,5)} - \alpha X_t^{(\infty, 2)}              \\
-		\alpha X_t^{(\infty, 2)} - \left(\gamma_h + \gamma_i\left(1 - \theta_1\right)\left(1 - \delta_1\right) + \delta_1\left(1 - \theta_1\right)\gamma_d\right) X_t^{(\infty, 3)} \\
-		\gamma_h\theta_1 X_t^{(\infty, 3)} - \gamma_{dh}\delta_2 X_t^{(\infty, 4)} - \gamma_{ih}\left(1 - \delta_2\right)X_t^{(\infty,4)}                                           \\
+		-\beta_I X_t^{(\infty, 1)}X_t^{(\infty, 3)} - \beta_H X_t^{(\infty, 1)}X_t^{(\infty, 4)} - \beta_F X_t^{(\infty, 1)}X_t^{(\infty,5)}                                                \\
+		\beta_I X_t^{(\infty, 1)}X_t^{(\infty, 3)} + \beta_H X_t^{(\infty, 1)}X_t^{(\infty, 4)} + \beta_F X_t^{(\infty, 1)}X_t^{(\infty,5)} - \alpha X_t^{(\infty, 2)}                      \\
+		\alpha X_t^{(\infty, 2)} - \left(\gamma_h\theta_1 + \gamma_i\left(1 - \theta_1\right)\left(1 - \delta_1\right) + \delta_1\left(1 - \theta_1\right)\gamma_d\right) X_t^{(\infty, 3)} \\
+		\gamma_h\theta_1 X_t^{(\infty, 3)} - \left(\gamma_{dh}\delta_2 + \gamma_{ih}\left(1 - \delta_2\right) \right) X_t^{(\infty, 4)}                                                     \\
 		\gamma_{dh}\delta_2 X_t^{(\infty, 4)} + \delta_1\left(1 - \theta_1\right)\gamma_d X_t^{(\infty, 3)} - \gamma_f X_t^{(\infty, 5)}
 	\end{bmatrix}.
 \]
 The \(5\times 5\) diffusion matrix \(g\) satisfies
 
 \begin{scriptaligned}
-	\left[g\!\left(X_t^{(\infty)}\right)g\!\left(X_t^{(\infty)}\right)^{\T}\right]_{11} & =	\beta_I X_t^{(\infty, 1)} X_t^{(\infty, 2)} + \beta_H X_t^{(\infty, 1)} X_t^{(\infty, 4)} + \beta_F X_t^{(\infty, 1)} X_t^{(\infty, 5)} \\
-	\left[g\!\left(X_t^{(\infty)}\right)g\!\left(X_t^{(\infty)}\right)^{\T}\right]_{12} = \left[g\!\left(X_t^{(\infty)}\right)g\!\left(X_t^{(\infty)}\right)^{\T}\right]_{21} & =  -\beta_I X_t^{(\infty, 1)} X_t^{(\infty, 2)} - \beta_H X_t^{(\infty, 1)} X_t^{(\infty, 4)} - \beta_F X_t^{(\infty, 1)} X_t^{(\infty, 5)} \\
-	\left[g\!\left(X_t^{(\infty)}\right)g\!\left(X_t^{(\infty)}\right)^{\T}\right]_{22} & = \beta_I X_t^{(\infty, 1)} X_t^{(\infty, 2)} + \beta_H X_t^{(\infty, 1)} X_t^{(\infty, 4)} + \beta_F X_t^{(\infty, 1)} X_t^{(\infty, 5)} +  \alpha X_t^{(\infty, 2)} \\
-	\left[g\!\left(X_t^{(\infty)}\right)g\!\left(X_t^{(\infty)}\right)^{\T}\right]_{23} = \left[g\!\left(X_t^{(\infty)}\right)g\!\left(X_t^{(\infty)}\right)^{\T}\right]_{32} & = -\alpha X_t^{(\infty, 2)} \\
+	\left[g\!\left(X_t^{(\infty)}\right)g\!\left(X_t^{(\infty)}\right)^{\T}\right]_{11} & =	\beta_I X_t^{(\infty, 1)} X_t^{(\infty, 3)} + \beta_H X_t^{(\infty, 1)} X_t^{(\infty, 4)} + \beta_F X_t^{(\infty, 1)} X_t^{(\infty, 5)} \\
+	\left[g\!\left(X_t^{(\infty)}\right)g\!\left(X_t^{(\infty)}\right)^{\T}\right]_{12} & = \left[g\!\left(X_t^{(\infty)}\right)g\!\left(X_t^{(\infty)}\right)^{\T}\right]_{21} =  -\beta_I X_t^{(\infty, 1)} X_t^{(\infty, 3)} - \beta_H X_t^{(\infty, 1)} X_t^{(\infty, 4)} - \beta_F X_t^{(\infty, 1)} X_t^{(\infty, 5)} \\
+	\left[g\!\left(X_t^{(\infty)}\right)g\!\left(X_t^{(\infty)}\right)^{\T}\right]_{22} & = \beta_I X_t^{(\infty, 1)} X_t^{(\infty, 3)} + \beta_H X_t^{(\infty, 1)} X_t^{(\infty, 4)} + \beta_F X_t^{(\infty, 1)} X_t^{(\infty, 5)} +  \alpha X_t^{(\infty, 2)} \\
+	\left[g\!\left(X_t^{(\infty)}\right)g\!\left(X_t^{(\infty)}\right)^{\T}\right]_{23} & = \left[g\!\left(X_t^{(\infty)}\right)g\!\left(X_t^{(\infty)}\right)^{\T}\right]_{32} = -\alpha X_t^{(\infty, 2)} \\
 	\left[g\!\left(X_t^{(\infty)}\right)g\!\left(X_t^{(\infty)}\right)^{\T}\right]_{33} & = \alpha X_t^{(\infty, 2)} + \left(\gamma_H \theta_1  + \gamma_i(	1 - \theta_1)(1 - \delta_1) + \delta_1(1 - \theta_1)\gamma_d\right)X_t^{(\infty, 1)} \\
-	\left[g\!\left(X_t^{(\infty)}\right)g\!\left(X_t^{(\infty)}\right)^{\T}\right]_{34} = \left[g\!\left(X_t^{(\infty)}\right)g\!\left(X_t^{(\infty)}\right)^{\T}\right]_{43} & = - \gamma_H \theta_1 X_t^{(\infty, 1)}\\
-	\left[g\!\left(X_t^{(\infty)}\right)g\!\left(X_t^{(\infty)}\right)^{\T}\right]_{35} = \left[g\!\left(X_t^{(\infty)}\right)g\!\left(X_t^{(\infty)}\right)^{\T}\right]_{53} & = - \delta_1(1 - \theta_1)\gamma_d X_t^{(\infty, 1)}\\
+	\left[g\!\left(X_t^{(\infty)}\right)g\!\left(X_t^{(\infty)}\right)^{\T}\right]_{34} & = \left[g\!\left(X_t^{(\infty)}\right)g\!\left(X_t^{(\infty)}\right)^{\T}\right]_{43} = - \gamma_H \theta_1 X_t^{(\infty, 1)}\\
+	\left[g\!\left(X_t^{(\infty)}\right)g\!\left(X_t^{(\infty)}\right)^{\T}\right]_{35} & = \left[g\!\left(X_t^{(\infty)}\right)g\!\left(X_t^{(\infty)}\right)^{\T}\right]_{53} = - \delta_1(1 - \theta_1)\gamma_d X_t^{(\infty, 1)}\\
 	\left[g\!\left(X_t^{(\infty)}\right)g\!\left(X_t^{(\infty)}\right)^{\T}\right]_{44} & = \gamma_H \theta_1 X_t^{(\infty, 1)} + \left(\gamma_{dh}\delta_2  + \gamma_{ih}(1 - \delta_2)\right)X_t^{(\infty, 4)} \\
-	\left[g\!\left(X_t^{(\infty)}\right)g\!\left(X_t^{(\infty)}\right)^{\T}\right]_{45} = \left[g\!\left(X_t^{(\infty)}\right)g\!\left(X_t^{(\infty)}\right)^{\T}\right]_{54} & = -\gamma_{dh}\delta_2 X_t^{(\infty, 4)} \\
+	\left[g\!\left(X_t^{(\infty)}\right)g\!\left(X_t^{(\infty)}\right)^{\T}\right]_{45} & = \left[g\!\left(X_t^{(\infty)}\right)g\!\left(X_t^{(\infty)}\right)^{\T}\right]_{54} = -\gamma_{dh}\delta_2 X_t^{(\infty, 4)} \\
 	\left[g\!\left(X_t^{(\infty)}\right)g\!\left(X_t^{(\infty)}\right)^{\T}\right]_{55} & = \delta_1(1 - \theta_1)\gamma_d X_t^{(\infty, 1)} + \gamma_{dh}\delta_2 X_t^{(\infty, 4)} + \gamma_f X_t^{(\infty, 5)}
 \end{scriptaligned}
 with all other entries zero.
@@ -1036,39 +1082,21 @@ There are many choices of \(g\) such that the product \(gg^{\T}\) has these entr
 
 
 
-
-\DeclareSIUnit\week{week}
-\begin{table}
-	\begin{center}
-		\begin{tabular}{|c|c|c|}
-			\hline
-			Parameter             & Value                       & Source                                                                            \\ \hline
-			Population size \(N\) & 200000                                                                                                          \\
-			Initial cases \(I_0\) & 3                                                                                                               \\
-			\(\alpha\)            & \(1 / 7\) \unit{\per\day}                                                                                       \\
-			\(\gamma_h\)          & \(1 / 9.6\) \unit{\per\day}                                                                                     \\
-			\(\gamma_i\)          & \(1 / 10\) \unit{\per\day}                                                                                      \\
-			\(\gamma_f\)          & \(1 / 2\) \unit{\per\day}                                                                                       \\
-			\(\theta_1\)          & \(0.67\)                                                                                                        \\
-			\(\delta_1\)          & \(0.8\)                                                                                                         \\
-			\(\delta_2\)          & \(0.8\)                                                                                                         \\
-			\(\beta_I\)           & \(0.588\) \unit{\per\week}  & \multirow{3}{*}{Estimated by \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola}} \\
-			\(\beta_H\)           & \(0.794\) \unit{\per\week}  &                                                                                   \\
-			\(\beta_F\)           & \(7.653\) \unit{\per\week}  &                                                                                   \\
-			\hline
-		\end{tabular}
-	\end{center}
-	\caption{Parameter values for the Ebola model, estimated from the 1995 outbreak in the Democratic Republic of Congo.}
-	\label{tab:ebola_param_vals}
-\end{table}
-
+\begin{landscape}
+	\begin{figure}
+		\centering
+		\includegraphics[width=\textheight]{chp06_applications/figures/seihfr/seihfr_marginals_gaussian}
+		\caption{big guy}
+		\label{fig:}
+	\end{figure}
+\end{landscape}
 
 
 
 
 \begin{figure}
 	\begin{center}
-		\includegraphics[width=\textwidth]{chp06_applications/figures/seihfr/seihfr_s2.pdf}
+		\includegraphics[width=\textwidth]{chp06_applications/figures/seihfr/seihfr_s2}
 		\caption{}
 		\label{fig:}
 	\end{center}
