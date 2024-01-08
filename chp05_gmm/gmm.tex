@@ -271,6 +271,8 @@ for \(i = 1,\dotsc, n\), where \(\sqrt{\Sigma}\) denotes the symmetric square ro
 \Cref{fig:sigma_points_ex} depicts the splitting of a covariance and mean into 5 sigma points in 2-dimensions, using the canonical set \cref{eqn:uhlman_sigma}.
 However, we do not enforce a particular approach for selecting these points and leave this to be investigated further as future work.
 
+A key part of the algorithm is deciding \emph{when} to split, a criterion which should decide when the Gaussian approximation is no longer a reasonable representation of the nearby solution behaviour.
+We do not provide a specific choice for this splitting criterion, and instead save a brief discussion of some options for later in \Cref{sec:gmm_split_disc}.
 The mixture model algorithm is then as follows:
 \begin{enumerate}
 	\item Initialise a Gaussian mixture model with \(N\) components, setting \(t^{(1)} = 0\), \(x^{(1)},\dotsc, x^{(N)}\) to be the component means, \(\Sigma^{(1)}, \dotsc, \Sigma^{(N)}\) to be the component covariance matrices, and \(w^{(1)}, \dotsc, w^{(N)}\) to be the component weights.
@@ -526,7 +528,7 @@ This would be particularly advantageous in a situation where the true solution i
 % However, such algorithms have seen little use in practice, particularly in the oceanography and climate modelling circles.
 % In the following chapter (\Cref{ch:appls}), we will demonstrate the mixture model algorithm on examples from these domains.\lb{careful with this paragraph}
 
-\section{The splitting criterion}
+\section{The splitting criterion}\label{sec:gmm_split_disc}
 In the implementation of our algorithm on Ben\^e's SDE, we manually chose a single split time.
 However, in general the algorithm requires a choice of criterion for when to split a Gaussian component, for which there are several choices.
 A given Gaussian component should be split when the linearised SDE is no longer a reasonable approximation for the original SDE about the deterministic trajectory corresponding to the component.

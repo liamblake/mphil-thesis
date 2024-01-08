@@ -4,10 +4,13 @@ However, as we highlighted in \Cref{sec:bkg_sim_limits} there are limitations to
 An alternative approach is to approximate the SDE by a simplified one, which can be solved analytically.
 A linearisation procedure is one such approach when the noise is small, which replaces the coefficients of the SDE with first-order Taylor expansions.
 This linearisation scheme is accordingly used across a range of literature and applications \citep{Jazwinski_2014_StochasticProcessesFiltering,SarkkaSolin_2019_AppliedStochasticDifferential,KaszasHaller_2020_UniversalUpperEstimate,ArchambeauEtAl_2007_GaussianProcessApproximations,Sanz-AlonsoStuart_2017_GaussianApproximationsSmall,LawEtAl_2015_DataAssimilationMathematical,ReichCotter_2015_ProbabilisticForecastingBayesian,BudhirajaEtAl_2019_AssimilatingDataModels,LeGlandWang_2002_AsymptoticNormalityPartially}.
+Much is already known about the theory of these linearisations: classical results in the context of small-noise series expansions \citep{Blagoveshchenskii_1962_DiffusionProcessesDepending} and large deviations theory \citep{FreidlinWentzell_1998_RandomPerturbationsDynamical} show that the strong error between SDE solution with a fixed initial condition and that of an appropriate linearisation is bounded.
+\citet{Sanz-AlonsoStuart_2017_GaussianApproximationsSmall} establish a strong result, bounding the Kullback-Leibler divergence between the solutions of autonomous SDEs with additive stationary noise and a linearised equivalent. Their result considers both an uncertain initial condition, and the evolving error due to the discrepancy between the models.
 
-In this chapter, we build upon previous small-noise studies by \citet{Blagoveshchenskii_1962_DiffusionProcessesDepending}, \citet{FreidlinWentzell_1998_RandomPerturbationsDynamical}, and \citet{Sanz-AlonsoStuart_2017_GaussianApproximationsSmall} to provide an explicit bound for the error between a general class of stochastic differential equations and corresponding computable linearisations written in terms of a deterministic system.
-Our framework accounts for non-autonomous coefficients, multiplicative noise, and uncertain initial conditions.
+In this chapter, we build upon these previous small-noise studies \citep{Blagoveshchenskii_1962_DiffusionProcessesDepending,FreidlinWentzell_1998_RandomPerturbationsDynamical,Sanz-AlonsoStuart_2017_GaussianApproximationsSmall} to provide an explicit bound for the error between a general class of stochastic differential equations and corresponding computable linearisations written in terms of a deterministic system.
+Our framework accounts for non-autonomous coefficients, multiplicative noise, and uncertain initial conditions in a stochastic differential equation of arbitrary dimension---a more general situation than that considered by \citet{Blagoveshchenskii_1962_DiffusionProcessesDepending} and \citet{FreidlinWentzell_1998_RandomPerturbationsDynamical}.
 In \Cref{sec:theory}, we state the bound, written in terms of both the initial and the ongoing uncertainty, and provide an explicit characterisation of the solution to the linearised SDE including computations for the first two moments.
+We directly compare our newly-derived bound to that on the KL-divergence by \citet{Sanz-AlonsoStuart_2017_GaussianApproximationsSmall}, and postulate that our bound is tighter.
 
 The second contribution of this chapter is to provide theoretical and computational extension to the original formulation of stochastic sensitivity by \citet{Balasuriya_2020_StochasticSensitivityComputable}, in \Cref{sec:theory_s2}.
 We provide a definition of stochastic sensitivity for \(n\)-dimensions, and establish that the value can be computed from a linearised SDE.
@@ -464,11 +467,14 @@ In \Cref{sec:comput_s2}, we provide some preliminary numerical results that illu
 
 
 \section{Proofs of results}\label{sec:paper_proofs}
+In this section, we provide proofs of all the results in this chapter.
+We use several results from deterministic and It\^o calculus, which are stated in \Cref{app:theory} for reference.
+
 \subsection{Preliminaries for proofs}\label{app:gauss}
 
 There are several generic results and inequalities that we use several times throughout our proofs, which we state here for completeness.
 We write \(W_t = \left(W_t^{(1)}, \hdots, W_t^{(m)}\right)^{\T}\) as the components of the canonical \(m\)-dimensional Wiener process, where each \(W_t^{(i)}\) are mutually independent 1-dimensional Wiener processes.
-The flow map \(F_0^t: \R^n \to \R^n\) summarises solutions of the deterministic model \cref{eqn:ode_det}, given by
+The flow map \(F_0^t: \R^n \to \R^n\) summarises solutions of the deterministic model \cref{eqn:ode_det} and is given by
 \begin{equation}
 	F_{0}^{t}(x) = x + \int_{0}^{t}{u\left(F_{0}^{\tau}(x), \tau\right)\dif \tau},
 	\label{eqn:flow_map_int}

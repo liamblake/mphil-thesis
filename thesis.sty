@@ -25,6 +25,7 @@
 \let\MakeUppercase%\textsf
 
 \RequirePackage{graphicx}
+\RequirePackage[dvipsnames]{xcolor}
 
 \RequirePackage[authoryear,sort,comma]{natbib}
 \setcitestyle{authoryear,aysep={}}
@@ -62,10 +63,6 @@
 \RequirePackage{bbm}
 % Hyperlinks are cool
 \RequirePackage{url}
-\RequirePackage{xcolor}
-\RequirePackage[colorlinks,linkcolor=magenta,citecolor=cyan,urlcolor=red,filecolor=red,breaklinks,bookmarks,bookmarksopen]{hyperref}
-\RequirePackage[capitalise,nameinlink,noabbrev]{cleveref}
-\crefname{equation}{}{}
 
 \RequirePackage[mode=buildnew]{standalone}
 
@@ -110,6 +107,9 @@
 
 }{}
 
+\RequirePackage[colorlinks,linkcolor=magenta,citecolor=cyan,urlcolor=red,filecolor=red,breaklinks,bookmarks,bookmarksopen]{hyperref}
+\RequirePackage[capitalise,nameinlink,noabbrev]{cleveref}
+\crefname{equation}{}{}
 
 % Allow numbering of individuals lines in an align env
 \newcommand{\numberthis}{\addtocounter{equation}{1}\tag{\theequation}}

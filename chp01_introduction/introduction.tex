@@ -1,17 +1,166 @@
 %!TEX root = ../thesis.tex
 
 \chapter{Introduction}
-%%% This is just a dump of the introduction to paper, comments and all.
+Differential equations are used ubitiquously to model, predict, and nderstand many different phenomena across a broad range of contexts.
+
+
 \td{Make this introduction more general, less fancy words}
 Many phenomena across geophysical, biological and socio-economic applications can be modelled using a continuous-time dynamical system, i.e., an ordinary differential equation \cite[e.g.]{BrauerCastillo-Chavez_2012_MathematicalModelsPopulation,TelEtAl_2005_ChemicalBiologicalActivity,Wiggins_2005_DynamicalSystemsApproach}.
 Given initial values of a multi-dimensional state variable, such equations can be solved numerically to predict the state at future times.
 The governing dynamics may be specified using existing phenomenological models, but in modern applications these are usually supplemented or driven by observed data \cite{LawEtAl_2015_DataAssimilationMathematical,ReichCotter_2015_ProbabilisticForecastingBayesian}.
 Standard examples include the modelling of weather using available data \cite{LawEtAl_2015_DataAssimilationMathematical,ReichCotter_2015_ProbabilisticForecastingBayesian}, and predicting concentrations of, for instance, temperature, pollutants or phytoplankton in the ocean using observed current velocity data \cite{AbascalEtAl_2009_ApplicationHFRadar,dOvidioEtAl_2010_FluidDynamicalNiches}.
 
+\begin{figure}
+	\begin{center}
+		\begin{tikzpicture}[scale=1.5]
+			\pgfdeclareimage{img}{chp01_introduction/figures/gulf_stream_ssh.pdf}
+
+			% \node at (4,3) {\pgfuseimage{img}};
+
+			\foreach \x in {0,2,4,6,8}
+			\foreach \y in {0,1.5,3}
+				{
+					\draw[->,color=red] (\x,\y) -- ++(rnd*360:rnd+0.2);
+					\fill (\x,\y) circle (1.5pt);
+				}
+		\end{tikzpicture}
+		\caption{An illustration of unresolved subgrid effects in a spatial discretisation.
+			When a system is discretised, either from measurements or to numerically solve a model, processes between the grid points and no longer resolved or observed and yet can have a significant impact on the system.}
+		\td{Make this diagram more specific}
+		\label{fig:subgrid_effects}
+	\end{center}
+\end{figure}
+
+These models are usually specified in a purely \emph{deterministic} fashion, so that each component is treated as being known exactly.
+The model provides for a given initial condition, one prediction of the future state.
+However, in any modelling scenario, there will inevitably be uncertainty in the model specification.
+The possible sources of uncertainty include, but are not limited to:
+\begin{itemize}
+	\item the model is sourced from measured data, which itself includes observational error.
+	\item information only being available on a spatiotemporal grid (resolution error).
+	\item a lack of a complete understanding of all the phenomena and processes involved.
+	\item imperfect knowledge of the initial conditions.
+\end{itemize}
+There are two primary manifestations of this uncertainty: in the initial state, and in the ongoing evolution of the model itself.
+In weather and climate modelling, resolution issues pose a significant challenge in producing accurate predictions.
+Many such prediction models rely upon a spatial discretisation for tractable analysis and simulation.
+Often, an extremely high resolution is needed to produce accurate simulations and predictions; for example, \citet{DawsonEtAl_2012_SimulatingRegimeStructures} demonstrated such requirements\lb{Read paper and be specific about numbers} for the state-of-the-art European Centre for Medium-Range Weather Forecasts (ECMWF) forecast model.
+\Cref{fig:subgrid_effects} depicts how features (represented by the grey structure) in a model can be missed when a model (given as vectors in red) is only known at points on a finite grid (black points).
+
+
+One approach to accounting for these sources of uncertainty is by replacing the deterministic model with a \emph{stochastic} one, where the uncertainty is introduced as an inherit part of the model and the solutions are treated as random quantities.
+\td{Flow more neatly into \emph{stochastic} models}
+The formal introduction of stochastic terms to account for unknown and unresolved processes into an otherwise deterministic model is known as \emph{stochastic parameterisation}, particularly in scientific circles.
+\citet{BernerEtAl_2017_StochasticParameterizationNew} review the need for stochastic parameterisation in weather and climate models and discuss how stochastic terms can quantify four different aspects of these models:
+\begin{itemize}
+	\item directly estimating uncertainty,
+	\item reducing systematic model errors arising from unresolved subgrid processes,
+	\item triggering regime changes, and
+	\item encapsulating the effect of external forcing.
+\end{itemize}
+\citet{DawsonPalmer_2015_SimulatingWeatherRegimes} showed through simulation studies that the performance of a high-resolution purely deterministic model can be matched by a lower-resolution stochastic model.
+Stochastic parameterisation is also employed in oceanographic modelling, where unresolved motion from subgrid-scale eddies and turbulence are modelled as stochastic noise \citep{Griffa_1996_ApplicationsStochasticParticle,BerloffMcWilliams_2002_MaterialTransportOceanic}.
+\td{Flow from here into the need for maths - justifications, proofs, etc.?}
+There is an emerging need to bridge the gap between mathematicians working on developing stochastic theory and algorithms, and the scientists looking to apply this work to their respective fields.
+In particular, \citet{BernerEtAl_2017_StochasticParameterizationNew} conclude that ``geoscientists are often unaware of mathematically rigorous results that can aid in the development of physically relevant parameterizations, [while] mathematicians often do not know about open issues in scientific applications that might be mathematically tractable''.
+\td{Write a better segue}
+Stochastic differential equations (SDEs) are a natural framework for introducing different sources of uncertainty into the continuous time evolution of a variable \citep{Oksendal_2003_StochasticDifferentialEquations,SarkkaSolin_2019_AppliedStochasticDifferential,KallianpurSundar_2014_StochasticAnalysisDiffusion}.
+The uncertainty is introduced as a (possibly time- and state-dependent) stochastic process that contributes to the ongoing evolution of the state variable.
+The solution is now itself a random quantity, in that at a given time, rather than predicting a single value for the state, the stochastic solution gives a probability distribution\lb{Can improve these two sentences}.
+Although an SDE allows us to account for sources of uncertainty in the model, the usage of such an equation presents new challenges, first requiring an entirely new type of calculus to formulate \citep{Ito_1944_StochasticIntegral,Ito_1946_StochasticIntegralEquation}.
+Finding exact solutions is almost always impossible, and working with the equations and their solutions analytically is more difficult than for the deterministic counterparts.
+Nevertheless, stochastic differential equations are used across a range of fields, including in financial mathematics \citehere, biological modelling \citep[e.g.]{PreislerEtAl_2004_ModelingAnimalMovements,another}, physics \citep[e.g.]{StraussEffenberger_2017_HitchhikerGuideStochastic,GardinerEtAl_1992_WavefunctionQuantumStochastic,another}, atmospheric modelling \citehere, and oceanography \citep{BerloffMcWilliams_2002_MaterialTransportOceanic}.
+Note that there are several different formulations of stochastic calculus, which are related by certain transformations of the resulting SDEs.
+We focus our attention solely on It\^o SDEs, with the understanding that our results may be applied to other formulations via the appropriate transformation.
+Generally, in modelling situations the dynamics are highly nonlinear and one expects the noise to vary with both time and state (i.e. the noise can be \emph{multiplicative}), e.g. in atmospheric \citep{SuraEtAl_2005_MultiplicativeNoiseNonGaussianity,Sura_2003_StochasticAnalysisSouthern} and oceanic \citep{KamenkovichEtAl_2015_PropertiesOriginsAnisotropic} systems and from experimental and observational considerations.
+This further complicates usage of the model for prediction and analysis; such SDEs are intractable to solve analytically and computationally expensive to approximate accurately.
+Data-based models---that is, models possessing terms in the equations which are driven by data rather than by explicitly specified functions---and uncertainty in the initial state render additional problems in obtaining a theoretical understanding of the stochastic system.
+Nonetheless, bulk stochastic (also known as Monte-Carlo) simulation of these models is the gold standard in many applications, most notably climate modelling where large-scale ensemble predictions are used \citep{Collins_2007_EnsemblesProbabilitiesNew,LeutbecherEtAl_2017_StochasticRepresentationsModel}.
+
+Despite the availability of Monte-Carlo solutions to complicated stochastic models, the most significant drawback of this approach in practice is the computational cost.
+In general, a large number of samples is required for convergent statistics and accurate inference, and often generating representative realisations of the models reaches the lmit of our computational capabilities.
+Overcoming this significant limitation is an are aof ongoing research in \emph{every} field in which such stochastic models are used.
+For example, the recent review by \citet{LeutbecherEtAl_2017_StochasticRepresentationsModel} highlights the need to develop computationally efficient schemes for quantifying stochasticity in weather and climate forecast models.
+In particular, the authors state that ```the aim of current and future developments in stochastic representations of model uncertainty is to develop schemes that are computationally highly efficient and contribute only moderately to the overall computational cost...''.
+
+Let us consider this problem from a mathematical perspective, we are given a possibly highly nonlinear SDE with non-trivial noise components
+We cannot solve such equations analytically, and numerical simulation is computationally expensive.
+The overall aim of this thesis is to address this difficulty by developing computationally efficient characterisations of uncertainty and algorithms for approximating the probability distributions of the solution (as opposed to just generating samples).
+We aim to take advantage of the computational ease of generating solutions to a deterministic system relative to taking many samples of a stochastic one.
+
+In lieu of an exact solution, a common approach to characterising and approximating the solution of nonlinear SDEs with small noise is via a ``linearisation'' through time about a single deterministic trajectory.
+A linearised stochastic differential equation, obtained by truncating Taylor expansions of each coefficient \citep[e.g.]{Jazwinski_2014_StochasticProcessesFiltering,Blagoveshchenskii_1962_DiffusionProcessesDepending}, can be solved analytically and is accordingly used across a diversity of literature and applications \citep{Jazwinski_2014_StochasticProcessesFiltering,SarkkaSolin_2019_AppliedStochasticDifferential,KaszasHaller_2020_UniversalUpperEstimate,ArchambeauEtAl_2007_GaussianProcessApproximations,Sanz-AlonsoStuart_2017_GaussianApproximationsSmall,LawEtAl_2015_DataAssimilationMathematical,ReichCotter_2015_ProbabilisticForecastingBayesian,BudhirajaEtAl_2019_AssimilatingDataModels}.
+However, often these linearisations are applied without rigorous justification and a clear understanding of \emph{how} the linearisation relates to the nonlinear SDE.
+This is particularly the case when the noise is multiplicative, which is a situation that is often ignored but necessary in practice.
+In addition, there is little understanding of the impact of the choice of initialisation of the deterministic trajectory on the validity of the linearisation.
 
 
 
+\td{Motivate the \emph{qualitative} features that come from these stochastic systems - make LCSs relevant?}
+Even when the solutions themselves to the stochastic systems are not available, it can be useful to garner a \emph{qualitative} understanding of the system.
 
+\citet{Balasuriya_2020_StochasticSensitivityComputable} introduce the notion that spatial regions for which the overall uncertainty is small can correspond to coherent structures within the flow.
+
+
+Although computationally efficient, the Gaussian approximations arising from SDE linearisations are limited in the features which they can capture: multimodality, skewness, and nonlinear correlations\lb{Is this the right term for whackiness in the joint densities??} are commonly observed in practice \citep{SuraEtAl_2005_MultiplicativeNoiseNonGaussianity,BraccoEtAl_2000_VelocityProbabilityDensity,del-Castillo-Negrete_1998_AsymmetricTransportNonGaussian}, but cannot be captured by a single Gaussian component alone.
+
+
+\section{Contributions of this thesis}
+In \Cref{ch:background}, we provide a brief background on stochastic differential equations and the tools we will use.
+The remainder of the thesis, and the contributions each chapter provides, are as follows:
+\td{The following is possibly too specific/technical for this introduction.}
+\begin{itemize}
+	\item In \Cref{ch:linear_theory}, we address a deficiency in the \emph{theory} of SDE linearisations. %by providing an explicit bound on the strong error between a stochastic differential equation and an appropriate linearisation, capturing the impact of \emph{both} the ongoing linearisation and the choice of initial condition.
+	      The aim here is to provide a rigorously justified framework for computing efficient approximations of nonlinear stochastic differential equations, subject to arbitrary and random initial conditions.
+	      Much of the content in this chapter and the following \Cref{ch:linear_numerics} has been submitted for review as a research article to \emph{Communications in Mathematical Sciences} \citep{BlakeEtAl_2023_ConvergenceStochasticDifferential}.
+	      This chapter is the primary theoretical contribution of this thesis, and includes:
+
+	      \begin{itemize}
+		      \item We first build upon previous studies of small-noise expansions \cite[e.g.]{Sanz-AlonsoStuart_2017_GaussianApproximationsSmall,Blagoveshchenskii_1962_DiffusionProcessesDepending,FreidlinWentzell_1998_RandomPerturbationsDynamical} to provide an direct proof of a bound on the error between the solution to an SDE and a corresponding linearisation about a deterministic trajectory.
+		            Our result holds for a multidimensional and fully-nonautonomous SDE with multiplicative noise subject to an arbitrary initial condition, and the bound itself is written explicitly in terms of the scales of the uncertainty in the initial condition and the ongoing noise.
+
+
+		            % Be clear here. Two sentences - often lacks justification, OR when the justification is there, only additive or autonomous. "Albeit"
+		            % The Gaussian distribution solving the linearised SDE appears in other literature and applications but often lacks justification \cite{Jazwinski_2014_StochasticProcessesFiltering, SarkkaSolin_2019_AppliedStochasticDifferential}.
+		            % On the other hand, when the linearisation is justified, this is disregarding time-dependence in the coefficients and multiplicative noise \cite{Sanz-AlonsoStuart_2017_GaussianApproximationsSmall}.
+
+		      \item By providing explicit solutions to the lienarised SDE, we provide in a single place a framework for efficiently computing the solution, enable efficient approximation and characterisation of the nonlinear SDE without resorting to bulk Monte-Carlo simulation.
+		            Such an approximation used across a range of literature and applications \citep{Jazwinski_2014_StochasticProcessesFiltering,SarkkaSolin_2019_AppliedStochasticDifferential,KaszasHaller_2020_UniversalUpperEstimate,ArchambeauEtAl_2007_GaussianProcessApproximations,Sanz-AlonsoStuart_2017_GaussianApproximationsSmall,LawEtAl_2015_DataAssimilationMathematical,ReichCotter_2015_ProbabilisticForecastingBayesian,BudhirajaEtAl_2019_AssimilatingDataModels} but is dispersed across many different sources and often stated without an explicit justification.
+		            By considering a general nonlinear SDE, we are able to provide a single framework for computing such approximations.
+		            \td{Need to rework this dotpoint}
+
+		            % The solution of the linearisation is expressed as an independent sum of the transformed initial condition and the ongoing
+		            % In \Cref{thm:limit_moments}, the mean and covariance of the linearisation are written in terms of the diffusion term and gradients of \emph{either} the drift term (as a pair of ordinary differential equations consistent with that arising elsewhere \cite[e.g.]{Jazwinski_2014_StochasticProcessesFiltering, Sanz-AlonsoStuart_2017_GaussianApproximationsSmall, SarkkaSolin_2019_AppliedStochasticDifferential, ArchambeauEtAl_2007_GaussianProcessApproximations}), or the flow map of the corresponding deterministic system.
+		            % The latter is an alternative characterisation that allows the Gaussian distribution to be computed \emph{entirely from the solution dynamics} of a deterministic model and specification of any multiplicative noise effects known prior.
+
+		      \item In \Cref{sec:theory_s2}, we use the linearisation framework to extend the notion of ``stochastic sensitivity'' first introduced by \citet{Balasuriya_2020_StochasticSensitivityComputable}, which seeks to explicitly quantify the impact of vector field uncertainty on the solution trajectories of dynamical systems \citep{BranickiUda_2021_LagrangianUncertaintyQuantification,KaszasHaller_2020_UniversalUpperEstimate,BranickiUda_2023_PathBasedDivergenceRates,Balibrea-IniestaEtAl_2016_LagrangianDescriptorsStochastic}.
+		            Whereas previously the definition of stochastic sensitivity was restricted to two-dimensions \citep{Balasuriya_2020_StochasticSensitivityComputable}, we provide a new definition in arbitrary dimensions and prove a convenient expression for computation.
+		            This is the second significant theoretical contribution of this work, enabling this new tool to be applied to a much broader class of models.
+
+	      \end{itemize}
+
+	\item In \Cref{ch:linear_numerics}, we validate the results of \Cref{sec:theory} using stochastic simulations from a 2-dimensional model.
+	      In particular, we demonstrate that the first four moments of the distance between the realisations and the Gaussian limit follow the predicted bound.
+	      We also illustrate a key prediction from \Cref{sec:theory_s2}; that the computable covariance matrix of the Gaussian limit captures the time-evolution of uncertainty, even when the noise is multiplicative.
+
+	\item In \Cref{ch:gmm}, we outline an algorithm that employs the linearisation approximation to construct a Gaussian mixture model for the solution to a stochastic differential equation, which can capture non-Gaussianity while still being efficient to compute.
+	      The algorithm is preliminary, with several implementation details deliberately left vague and warranting further development.
+	      However, we demonstrate the potential of such an approach on examples in the following chapter.
+
+	\item In \Cref{ch:appls}, we apply the tools developed in \Cref{ch:linear_theory,ch:gmm} to two examples constructed from observed data: the position of a sea surface drifter and a 5-dimensional compartmental model for an outbreak of Ebola.
+	      The latter example arises from a different context---stochastic models on a discrete state space---where linearised stochastic differential equations arise from large-population limits \citep{Kurtz_1970_SolutionsOrdinaryDifferential,Kurtz_1971_LimitTheoremsSequences}.
+	      We explain how these results imply that the theory we develop for stochastic differential equations can be applied to these models, opening up a whole new range of applications, particularly in mathematical biology and epidemiology.
+
+	\item In \Cref{ch:outlook}, we conclude this thesis by discussing the possible applications and future extensions of our work.
+	      Since our theory is reasonably general, and we have only outlined a mixture model algorithm, there is much scope for theoretical extension, further numerical investigation, and application to a range of models.
+	      In the final chapter, we briefly discuss many of these possible future directions.
+
+
+\end{itemize}
+
+
+
+%%%%% DUMP OF PAPER CONTEXTS
 %, as a scalar measure of uncertainty about any solution trajectory of the deterministic model.
 % This also extends stochastic sensitivity as a means of Lagrangian coherent structure extraction to fluid flows of arbitrary dimension.
 % Moreover, by additionally accounting for initial condition uncertainty, we are able to relate stochastic sensitivity to the finite-time Lyapunov exponent (FTLE) \cite{ShaddenEtAl_2005_DefinitionPropertiesLagrangian,YouLeung_2021_ComputingFiniteTime,GuoEtAl_2016_FiniteTimeLyapunovExponents,Balasuriya_2020_UncertaintyFinitetimeLyapunov}.
@@ -138,102 +287,9 @@ Standard examples include the modelling of weather using available data \cite{La
 
 % \section{Stochastic parameterisation}\label{sec:stoch_param}
 
-In any modelling scenario, there will inevitably be uncertainty in the model specification.
-The possible sources of uncertainty include, but are not limited to:
-\begin{itemize}
-	\item the model is sourced from measured data, which itself includes observational error.
-	\item information only being available on a spatiotemporal grid (resolution error).
-	\item a lack of a complete understanding of all the phenomena and processes involved.
-	\item imperfect knowledge of the initial conditions.
-\end{itemize}
-There are two primary manifestations of this uncertainty: in the initial state, and in the ongoing evolution of the model itself.
-
 
 % All methods using this approach have uncertainties in the model specification arising from a variety of sources \cite{FangEtAl_2020_DisentanglingResolutionPrecision}: the model not capturing all phenomena because of the inevitable lack of a complete understanding of all processes involved, errors in measured data, information only available on spatio-temporal grids (resolution error), etc.
 % There are generally two manifestations of this uncertainty: in the initial state, and in the ongoing evolution of the model itself.
-
-
-
-
-Many numerical weather and climate prediction models rely upon a spatial discretisation for tractable analysis and simulation.
-Often, an extremely high resolution is needed to produce accurate simulations and predictions; for example, \citet{DawsonEtAl_2012_SimulatingRegimeStructures} demonstrated such requirements\lb{Read paper and be specific about numbers} for the state-of-the-art European Centre for Medium-Range Weather Forecasts (ECMWF) forecast model.
-
-\begin{figure}
-	\begin{center}
-		\begin{tikzpicture}[scale=1.5]
-			\pgfdeclareimage{img}{chp01_introduction/figures/gulf_stream_ssh.pdf}
-
-			% \node at (4,3) {\pgfuseimage{img}};
-
-			\foreach \x in {0,2,4,6,8}
-			\foreach \y in {0,2,4,6}
-				{
-					\draw[->,color=red] (\x,\y) -- ++(rnd*360:rnd+0.2);
-					\fill (\x,\y) circle (1.5pt);
-				}
-		\end{tikzpicture}
-		\caption{An illustration of unresolved subgrid effects in a spatial discretisation.
-			When a system is discretised, either from measurements or to numerically solve a model, processes between the grid points and no longer resolved or observed and yet can have a noticeable impact on the system.}
-		\label{fig:subgrid_effects}
-	\end{center}
-\end{figure}
-
-
-
-
-The formal introduction of stochastic terms to account for unknown and unresolved processes into an otherwise deterministic model is known as \emph{stochastic parameterisation}, particularly in scientific circles.
-\citet{BernerEtAl_2017_StochasticParameterizationNew} review the need for stochastic parameterisation in weather and climate models and discuss how stochastic terms can quantify four different aspects of these models:
-\begin{itemize}
-	\item directly estimating uncertainty,
-	\item reducing systematic model errors arising from unresolved subgrid processes,
-	\item triggering regime changes, and
-	\item encapsulating the effect of external forcing.
-\end{itemize}
-\citet{DawsonPalmer_2015_SimulatingWeatherRegimes} showed through simulation studies that the performance of a high-resolution purely deterministic model can be matched by a lower-resolution stochastic model.
-
-Although stochastic parameterisation is more common in the atmospheric modelling context, oceanography also suffers from the same trade-off between spatial resolution and accuracy of predictions.
-Consequently, there is much interest in emplying stochastic parameterisation in oceanographic modelling \citep{Griffa_1996_ApplicationsStochasticParticle}.
-\td{Eddy parameterisation - turbulent flows are modelled as stochastic.}
-
-The mathematical formulation of stochastic parameterisation -- where model predictions are now random quantities -- lends itself naturally to data assimilation \citep{BudhirajaEtAl_2019_AssimilatingDataModels,Jazwinski_2014_StochasticProcessesFiltering,LawEtAl_2015_DataAssimilationMathematical,ReichCotter_2015_ProbabilisticForecastingBayesian}, where ongoing observations are combined with predictions from a model to produce an improved forecast.
-Data assimilation provides a framework that can simultaneously account for uncertainty in the observations and the model itself.
-It has been shown that stochastic parameterisation can improve the quality of forecasts in data assimilation schemes \citep{MitchellGottwald_2012_DataAssimilationSlow,HaEtAl_2015_ComparisonModelError}, and so these applications are an active error of research \citep[e.g.]{GottwaldHarlim_2013_RoleAdditiveMultiplicative}.
-
-\td{Flow from here into the need for maths - justifications, proofs, etc.?}
-There is an emerging need to bridge the gap between mathematicians working on developing stochastic theory and algorithms, and the scientists looking to apply this work to their respective fields.
-In particular, \citet{BernerEtAl_2017_StochasticParameterizationNew} conclude that ``geoscientists are often unaware of mathematically rigorous results that can aid in the development of physically relevant parameterizations, [while] mathematicians often do not know about open issues in scientific applications that might be mathematically tractable''.
-
-Stochastic differential equations (SDEs) are a natural framework for introducing different sources of uncertainty into the continuous time evolution of a variable \citep{Oksendal_2003_StochasticDifferentialEquations,SarkkaSolin_2019_AppliedStochasticDifferential,KallianpurSundar_2014_StochasticAnalysisDiffusion}.
-Generally, in modelling situations the dynamics are highly nonlinear and one expects the noise to vary with both time and state (i.e. the noise can be \emph{multiplicative}), e.g. in atmospheric \citep{SuraEtAl_2005_MultiplicativeNoiseNonGaussianity,Sura_2003_StochasticAnalysisSouthern} and oceanic \citep{KamenkovichEtAl_2015_PropertiesOriginsAnisotropic} systems and from experimental and observational considerations.
-This complicates usage of the model for prediction and analysis; such SDEs are usually intractable to solve analytically and computationally expensive to approximate accurately.
-Data-based models---that is, models possessing terms in the equations which are driven by data rather than by explicitly specified functions---and uncertainty in the initial state render additional problems in obtaining a theoretical understanding of the stochastic system.
-Nonetheless, bulk stochastic simulation of these models is the gold standard in many applications, most notably climate modelling where large-scale ensemble predictions are used \citep{Collins_2007_EnsemblesProbabilitiesNew,LeutbecherEtAl_2017_StochasticRepresentationsModel}.
-
-However, the most significant drawback of bulk stochastic simulation is the computational load.
-In general, a large number of samples is required for convergent statistics and accurate inference.
-The recent review by \citet{LeutbecherEtAl_2017_StochasticRepresentationsModel} highlights the need to develop computationally efficient schemes for quantifying stochasticity in weather and climate forecast models.
-In particular, the authors state that ```the aim of current and future developments in stochastic representations of model uncertainty is to develop schemes that are computationally highly efficient and contribute only moderately to the overall computational cost...''.
-
-
-Returning to a mathematical perspective, we are given a possibly highly nonlinear SDE with non-trivial noise components
-We cannot solve such equations analytically, and numerical simulation is computationally expensive.
-The overall aim of this thesis is to address this problem, by developing characterisations of uncertainty and algorithms for approximating solution probability densities (as opposed to just generating samples) that are computationally efficient.
-We aim to take advantage of the computational ease of generating solutions to a deterministic system (relative to taking many samples of a stochastic one).
-
-
-A common approach to characterising and approximating the solution of nonlinear SDEs with small noise is via a ``linearisation'' through time about a single deterministic trajectory.
-A linearised stochastic differential equation, obtained by truncating Taylor expansions of each coefficient \citep[e.g.]{Jazwinski_2014_StochasticProcessesFiltering,Blagoveshchenskii_1962_DiffusionProcessesDepending}, can be solved analytically and is accordingly used across a diversity of literature and applications \citep{Jazwinski_2014_StochasticProcessesFiltering,SarkkaSolin_2019_AppliedStochasticDifferential,KaszasHaller_2020_UniversalUpperEstimate,ArchambeauEtAl_2007_GaussianProcessApproximations,Sanz-AlonsoStuart_2017_GaussianApproximationsSmall,LawEtAl_2015_DataAssimilationMathematical,ReichCotter_2015_ProbabilisticForecastingBayesian,BudhirajaEtAl_2019_AssimilatingDataModels}.
-However, often these linearisations are applied without rigorous justification and a clear understanding of \emph{how} the linearisation relates to the nonlinear SDE.
-This is particularly the case when the noise is multiplicative, which is a situation that is often ignored but necessary in practice.
-In addition, there is little understanding of the impact of the choice of initialisation of the deterministic trajectory on the validity of the linearisation.
-Much is already known about these linearisations; classical results in the context of small-noise series expansions \citep{Blagoveshchenskii_1962_DiffusionProcessesDepending} and large deviations theory \citep{FreidlinWentzell_1998_RandomPerturbationsDynamical} show that the strong error between SDE solution with a fixed initial condition and that of an appropriate linearisation is bounded.
-\citet{Sanz-AlonsoStuart_2017_GaussianApproximationsSmall} establish a strong result, bounding the Kullback-Leibler divergence between the solutions of autonomous SDEs with additive stationary noise and a linearised equivalent. Their result considers both an uncertain initial condition, and the evolving error due to the discrepancy between the models.
-
-
-\td{Motivate the \emph{qualitative} features that come from these stochastic systems - make LCSs relevant?}
-Even when the solutions themselves to the stochastic systems are not available, it can be useful to garner a \emph{qualitative} understanding of the system.
-
-\citet{Balasuriya_2020_StochasticSensitivityComputable} introduce the notion that spatial regions for which the overall uncertainty is small can correspond to coherent structures within the flow.
 
 
 % In \cref{sec:theory}, we directly bound the expectation of all moments of the distance between the linearisation and the true solution of the stochastic differential equation.
@@ -289,62 +345,6 @@ Even when the solutions themselves to the stochastic systems are not available, 
 
 % The purpose of this example was to highlight the importance of accounting for measurement error and unresolved processes in a ; when the dynamics are complicated, then any uncertainty can have a significant impact on our inferences from the model, both quantitatively and qualitatively.
 
-
-
-
-\section{Contributions of this thesis}
-The primary aim of this thesis is to address the need for computationally efficient schemes, by first understanding and then taking advantage of computationally efficient approximation methods.
-In \Cref{ch:background}, we provide a brief background on stochastic differential equations and the tools we will use.
-The remainder of the thesis, and the contributions each chapter provides, are as follows:
-\td{The following is possibly too specific/technical for this introduction.}
-\begin{itemize}
-	\item In \Cref{ch:linear_theory}, we address a deficiency in the \emph{theory} of SDE linearisations. %by providing an explicit bound on the strong error between a stochastic differential equation and an appropriate linearisation, capturing the impact of \emph{both} the ongoing linearisation and the choice of initial condition.
-	      The aim here is to provide a rigorously justified framework for computing efficient approximations of nonlinear stochastic differential equations, subject to arbitrary and random initial conditions.
-	      Much of the content in this chapter and the following \Cref{ch:linear_numerics} has been submitted for review as a research article to \emph{Communications in Mathematical Sciences} \citep{BlakeEtAl_2023_ConvergenceStochasticDifferential}.
-	      This chapter is the primary theoretical contribution of this thesis, and includes:
-
-	      \begin{itemize}
-		      \item We first build upon previous studies of small-noise expansions \cite[e.g.]{Sanz-AlonsoStuart_2017_GaussianApproximationsSmall,Blagoveshchenskii_1962_DiffusionProcessesDepending,FreidlinWentzell_1998_RandomPerturbationsDynamical} to provide an direct proof of a bound on the error between the solution to an SDE and a corresponding linearisation about a deterministic trajectory.
-		            Our result holds for a multidimensional and fully-nonautonomous SDE with multiplicative noise subject to an arbitrary initial condition, and the bound itself is written explicitly in terms of the scales of the uncertainty in the initial condition and the ongoing noise.
-
-
-		            % Be clear here. Two sentences - often lacks justification, OR when the justification is there, only additive or autonomous. "Albeit"
-		            % The Gaussian distribution solving the linearised SDE appears in other literature and applications but often lacks justification \cite{Jazwinski_2014_StochasticProcessesFiltering, SarkkaSolin_2019_AppliedStochasticDifferential}.
-		            % On the other hand, when the linearisation is justified, this is disregarding time-dependence in the coefficients and multiplicative noise \cite{Sanz-AlonsoStuart_2017_GaussianApproximationsSmall}.
-
-		      \item By providing explicit solutions to the lienarised SDE, we provide in a single place a framework for efficiently computing the solution, enable efficient approximation and characterisation of the nonlinear SDE without resorting to bulk Monte-Carlo simulation.
-		            Such an approximation used across a range of literature and applications \citep{Jazwinski_2014_StochasticProcessesFiltering,SarkkaSolin_2019_AppliedStochasticDifferential,KaszasHaller_2020_UniversalUpperEstimate,ArchambeauEtAl_2007_GaussianProcessApproximations,Sanz-AlonsoStuart_2017_GaussianApproximationsSmall,LawEtAl_2015_DataAssimilationMathematical,ReichCotter_2015_ProbabilisticForecastingBayesian,BudhirajaEtAl_2019_AssimilatingDataModels} but is dispersed across many different sources and often stated without an explicit justification.
-		            By considering a general nonlinear SDE, we are able to provide a single framework for computing such approximations.
-		            \td{Need to rework this dotpoint}
-
-		            % The solution of the linearisation is expressed as an independent sum of the transformed initial condition and the ongoing
-		            % In \Cref{thm:limit_moments}, the mean and covariance of the linearisation are written in terms of the diffusion term and gradients of \emph{either} the drift term (as a pair of ordinary differential equations consistent with that arising elsewhere \cite[e.g.]{Jazwinski_2014_StochasticProcessesFiltering, Sanz-AlonsoStuart_2017_GaussianApproximationsSmall, SarkkaSolin_2019_AppliedStochasticDifferential, ArchambeauEtAl_2007_GaussianProcessApproximations}), or the flow map of the corresponding deterministic system.
-		            % The latter is an alternative characterisation that allows the Gaussian distribution to be computed \emph{entirely from the solution dynamics} of a deterministic model and specification of any multiplicative noise effects known prior.
-
-		      \item In \Cref{sec:theory_s2}, we use the linearisation framework to extend the notion of ``stochastic sensitivity'' first introduced by \citet{Balasuriya_2020_StochasticSensitivityComputable}, which seeks to explicitly quantify the impact of vector field uncertainty on the solution trajectories of dynamical systems \citep{BranickiUda_2021_LagrangianUncertaintyQuantification,KaszasHaller_2020_UniversalUpperEstimate,BranickiUda_2023_PathBasedDivergenceRates,Balibrea-IniestaEtAl_2016_LagrangianDescriptorsStochastic}.
-		            Whereas previously the definition of stochastic sensitivity was restricted to two-dimensions \citep{Balasuriya_2020_StochasticSensitivityComputable}, we provide a new definition in arbitrary dimensions and prove a convenient expression for computation.
-		            This is the second significant theoretical contribution of this work, enabling this new tool to be applied to a much broader class of models.
-
-	      \end{itemize}
-
-	\item In \Cref{ch:linear_numerics}, we validate the results of \Cref{sec:theory} using stochastic simulations from a 2-dimensional model.
-	      In particular, we demonstrate that the first four moments of the distance between the realisations and the Gaussian limit follow the predicted bound.
-	      We also illustrate a key prediction from \Cref{sec:theory_s2}; that the computable covariance matrix of the Gaussian limit captures the time-evolution of uncertainty, even when the noise is multiplicative.
-
-	\item In \Cref{ch:gmm}, we outline an algorithm that employs the linearisation approximation to construct a Gaussian mixture model for the solution to a stochastic differential equation, which can capture non-Gaussianity while still being efficient to compute.
-	      The algorithm is preliminary, with several implementation details deliberately left vague and warranting further development.
-	      However, we demonstrate the potential of such an approach on examples in the following chapter.
-
-	\item In \Cref{ch:appls}, we apply the tools developed in \Cref{ch:linear_theory,ch:gmm} to two examples constructed from observed data: the position of a sea surface drifter and a 5-dimensional compartmental model for an outbreak of Ebola.
-	      The latter example arises from a different context---stochastic models on a discrete state space---where linearised stochastic differential equations arise from large-population limits \citep{Kurtz_1970_SolutionsOrdinaryDifferential,Kurtz_1971_LimitTheoremsSequences}.
-	      We explain how these results imply that the theory we develop for stochastic differential equations can be applied to these models, opening up a whole new range of applications, particularly in mathematical biology and epidemiology.
-
-	\item In \Cref{ch:outlook}, we conclude this thesis by discussing the possible applications and future extensions of our work.
-	      Since our theory is reasonably general, and we have only outlined a mixture model algorithm, there is much scope for theoretical extension, further numerical investigation, and application to a range of models.
-	      In the final chapter, we briefly discuss many of these possible future directions.
-
-
-\end{itemize}
 
 % The second contribution of the paper is to % In the context of two-dimensional, unsteady fluid flow, stochastic sensitivity works with Eulerian velocity data as the underlying deterministic model, and seeks to quantify the uncertainty in an eventual Lagrangian trajectory location.
 % This methodology was originally developed by Balasuriya \cite{Balasuriya_2020_StochasticSensitivityComputable} as a tool for determining Lagrangian coherent structures (LCS) \cite{BalasuriyaEtAl_2018_GeneralizedLagrangianCoherent,HadjighasemEtAl_2017_CriticalComparisonLagrangian} in fluid flows, in that clusters of trajectories which have small uncertainty may be thought of as more ``coherent'' than others.

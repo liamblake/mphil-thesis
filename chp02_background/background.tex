@@ -193,8 +193,6 @@ This leads to the It\^o integral, and It\^o stochastic differential equations, w
 
 
 \subsection{The Wiener process}
-
-
 In the absence of any additional knowledge about the nature of the noise (such as skew), the canonical Wiener process is the standard choice.
 Defined formally, the (one-dimensional) canonical \emph{Wiener process} is a stochastic process \(B_t\) taking values in \(\R\) and satisfying the following properties:
 \begin{romanate}
@@ -412,27 +410,32 @@ There are many other schemes for generating approximate samples of a stochastic 
 \section{Lagrangian coherent structures}\label{sec:bkg_lcs}
 In this section, we take a brief sojourn into the field of Lagrangian coherent structures (LCSs), which provide qualitative insight into the behaviour of a dynamical system, particularly in the fluid flow context.
 Although LCSs are not the primary focus of this work, the field provides potential applications for our uncertainty quantification, that will build upon preliminary work by \citet{Balasuriya_2020_StochasticSensitivityComputable,Balasuriya_2020_UncertaintyFinitetimeLyapunov,BadzaEtAl_2023_HowSensitiveAre}.
-\td{What insight are we after? Provide a sentence or two describing \emph{what} LCSs are.}
+There is no universally accepted definition of a coherent structure, but typically these are structures within a flow that remain together over the time-evolution of the system and separate the spatial domain into regions with qualitatively different behaviour \citep{BalasuriyaEtAl_2018_GeneralizedLagrangianCoherent}.
 \Cref{fig:lcs_examples} show examples of coherent structures in observed fluid flows, which can be considered LCSs.\lb{Get a proper reference. Photoplankton: \url{https://climate.nasa.gov/climate_resources/170/summer-blooms-in-the-baltic/}}
 
 \begin{figure}
 	\begin{center}
-		\begin{subfigure}{0.49\textwidth}
-			\caption{An oil slick from the \emph{Deepwater Horizon} oil spill in 2010.}
+		\begin{subfigure}[t]{0.49\textwidth}
+			\includegraphics[width=\textwidth]{chp02_background/figures/dwh}
+			\caption{An oil slick from the \emph{Deepwater Horizon} oil spill in 2010 (NASA Image of the Day, May 19, 2010).
+				Note the southwards extension of the slick, which appeared suddenly.}
+			\label{fig:lcs_deepwater}
 		\end{subfigure}
-		\begin{subfigure}{0.49\textwidth}
+		\begin{subfigure}[t]{0.49\textwidth}
 			\includegraphics[width=\textwidth]{chp02_background/figures/red_spot.png}
-			\caption{Jupiter's Great Red Spot, as photographed by the Voyager probe in 1979 (NASA/JPL-Caltech).}
+			\caption{Jupiter's Great Red Spot, as photographed by the Voyager probe in 1979 (NASA/JPL-Caltech).
+				The storm is an example of a vortex or eddy within the atmospheric flow of the planet.}
 		\end{subfigure}
-		\begin{subfigure}{0.49\textwidth}
+		\begin{subfigure}[t]{0.49\textwidth}
+			\includegraphics[width=\textwidth]{chp02_background/figures/photoplankton}
+			\caption{Photoplankton blooms in the Baltic sea.
+				The structure of these blooms reflect the underlying flow of the Sea, and coherent structure emerge.}
+		\end{subfigure}
+		\begin{subfigure}[t]{0.49\textwidth}
 			\includegraphics[width=\textwidth]{chp02_background/figures/photoplankton}
 			\caption{Photoplankton blooms in the Baltic sea.}
 		\end{subfigure}
-		\begin{subfigure}{0.49\textwidth}
-			\includegraphics[width=\textwidth]{chp02_background/figures/photoplankton}
-			\caption{Photoplankton blooms in the Baltic sea.}
-		\end{subfigure}
-		\caption{Examples of coherent patterns emerging in fluid flows.}
+		\caption{Examples of coherent patterns emerging in fluid flows observed in nature.}
 		\label{fig:lcs_examples}
 	\end{center}
 \end{figure}
@@ -441,9 +444,12 @@ In a steady system (that is, the vector field \(u\) in \cref{eqn:det_ode} is ind
 For example, unstable and stable manifolds cannot be intersected by solution trajectories, and so can act as barriers for the transport of material within a flow.
 However, when the system is non-autonomous (that is, the vector field explicitly depends on time \(t\)), these structures can themselves vary with time and the problem of identifying them is far more non-trivial.
 Lagrangian coherent structure (LCS) theory provides a mathematical framework for defining and identifying such structures within a given flow \citep{BalasuriyaEtAl_2018_GeneralizedLagrangianCoherent}.
-
-There are many procedures and heuristics for extracting these regions from a given flow, which draw upon different mathematical techniques, including , , and statistical clustering.
+There are many procedures and heuristics for extracting these regions from a given flow, which draw upon different mathematical techniques, including variational calculus\lb{!!}, transfer operators, and statistical clustering.
 Detailed reviews of approaches to Lagrangian coherent structure extraction are provided by \citet{BalasuriyaEtAl_2018_GeneralizedLagrangianCoherent}, \citet{HadjighasemEtAl_2017_CriticalComparisonLagrangian}, and \citet{PeacockDabiri_2010_IntroductionFocusIssue}.
+
+Coherent structures can provide valuable qualitative insight into the behaviour of a flow, by providing us with an outline of the underlying dynamics.
+An example is in the study of the spread of the oil slick resulting from the 2010 Deepwater Horizon disaster in the Gulf of Mexico (see \Cref{fig:lcs_deepwater}).
+Investigations into showed that the behaviour of the slick could be understood, and therefore predicted in future cases, by using Lagrangian coherent structures and the insight they provide \citep{OlascoagaEtAl_2013_DrifterMotionGulf,OlascoagaHaller_2012_ForecastingSuddenChanges}, which explained dynamics that were otherwise poorly understood due to the time-varying and complex nature of the flow.\lb{My word this sentence is terrible.}
 
 One of the best known procedures for extracting LCSs is via the finite-time Lyapunov exponent (FTLE) \citep{ShaddenEtAl_2005_DefinitionPropertiesLagrangian}, which is a measure quantifying the stretching of infinitesimal regions of a flow over a finite time period.
 Take an initial condition \(x\) and let \(F_0^t\) represent the flow map of our system over the time interval \([0,t]\).
@@ -468,9 +474,10 @@ The finite-time Lyapunov exponent is then computed as
 	\label{eqn:ftle_defn}
 \end{equation}
 Note that the operator norm \(\norm{\nabla F_0^t\!\left(x\right)}\) in \cref{eqn:ftle_defn} can be readily computed as the square root of the largest eigenvalue of the Cauchy-Green tensor \(\left[\nabla F_0^t\!\left(x\right)\right]^{\T}\nabla F_0^t\!\left(x\right)\).
-Over the set of initial conditions, the FTLE is a scalar field.
+Over the set of initial conditions, the FTLE is a scalar field that measures for each initial condition the stretching and contraction along the resulting trajectory.
+The FTLE is a measure of exponential stretching (hence the scalings in \cref{eqn:ftle_defn}), and provides insight into the nonlinearity of a system, including as an indicator of one defining feature of chaos.
 It was shown by \citet{ShaddenEtAl_2005_DefinitionPropertiesLagrangian} that the maximising ridges of the FTLE field can correspond to flow barriers, and so by finding these ridges, one can extract coherent structures for the flow.
-\td{Talk about how FTLE provides general insight into the system too}
+
 
 % In \Cref{fig:gs_lcs}, we compute the FTLE field of our Gulf Stream velocity model over a timespan of 7 days.
 
@@ -493,7 +500,7 @@ It was shown by \citet{ShaddenEtAl_2005_DefinitionPropertiesLagrangian} that the
 % \end{figure}
 
 
-Most well-established LCS frameworks and extraction procedures are purely deterministic, in that they are defined and compute solely in terms of the behaviour of the underlying ordinary differetnial equation.
+Most well-established LCS frameworks and extraction procedures are purely deterministic, in that they are defined and compute solely in terms of the behaviour of the underlying ordinary differential equation.
 However, uncertainty in such systems is inevitable and these methods do not explicitly account for this.
 There is accordingly an emerging interest \citep{Balasuriya_2020_StochasticApproachesLagrangian,anymore?} in extending LCS theory to stochastic settings (which is the relevance of LCSs to this thesis).
 There are several different ways in which stochasticity is being accounted for in recent LCS developments:
@@ -550,7 +557,7 @@ The SDE \cref{eqn:s2_sde} is considered subject to a \emph{fixed} initial condit
 
 To quantify uncertainty in a way that is independent of the noise scale \(\epsilon\), \citet{Balasuriya_2020_StochasticSensitivityComputable} defined the random variable \(z_\epsilon\left(x_0,t\right)\) as
 \[
-	z_\epsilon\!\left(x_0,t\right) \coloneqq \frac{y_t - F_0^t(x_0)}{\epsilon},
+	z_\epsilon\!\left(x,t\right) \coloneqq \frac{y_t - F_0^t\!\left(x\right)}{\epsilon},
 \]
 which captures the random deviation between the ``true'' stochastic trajectories and the deterministic flow map.
 The aim was to compute statistics of \(z_\epsilon\).
@@ -580,8 +587,48 @@ For proofs of these results, see the appendices of \citet{Balasuriya_2020_Stocha
 	\end{alpharate}
 \end{definition}
 
+\begin{figure}
+	\centering
+	\usetikzlibrary{arrows.meta}
+	\begin{tikzpicture}[scale=2]
+
+		% Actual path
+		\draw (1,1) .. controls (2.5,-0.5) and (4,1.4) .. (5, 0.5);
+
+		% Stochastic path -- just place a random walk between specified points
+		\draw[color=ForestGreen, decorate, decoration={random steps, segment length = 1pt, amplitude=2pt}] (1,1) .. controls (2.5, -0.2) and (3.7,2.7) .. (6.4, 2.1);
+
+		% S2 quantities
+		\path[-{Latex[length=3mm, width=1.5mm]},blue] (5,0.5) edge node[left, xshift=-2pt] {\(\epsilon z_\epsilon\!\left(x, t\right)\)} (6.4, 2.1);
+		% Calculation here: fix theta, the angle of the projection. Length of the vector between det point and end of projection is l*sin(n), where l is the length of the vector between the det and stoch points, and n = pi/2 - phi + theta, where phi is the angle of the vector between the det and stoch points.
+		\def\vecl{sqrt(1.4^2 + 1.6^2)};
+		\def\projtheta{pi/7};
+		\def\projphi{atan(1.6 / 1.4) * pi / 180}
+		\path[red] (5,0.5) edge node[right, xshift=2pt] {\(\epsilon P_{\epsilon}\!\left(x,\theta\right)\)} ({5 +\vecl*cos((\projphi - \projtheta) r) * cos(\projtheta r)}, {0.5 + \vecl* cos((\projphi - \projtheta) r) * sin(\projtheta r)});
+
+		\path[dashed, gray] (6.4, 2.1) edge ({5 + \vecl * cos((\projphi - \projtheta) r) * cos(\projtheta r)}, {0.5 + \vecl * cos((\projphi - \projtheta) r) * sin(\projtheta r)});
+
+		% Reference angle
+		\path[dashed,gray] (5,0.5) edge (7,0.5);
+		\draw[gray] (5.5,0.5) arc (0:{\projtheta * 180 / pi}:0.5) node[midway, xshift=5pt] {\(\theta\)};
+
+		% Points
+		\filldraw [black] (1,1) circle (1pt) node[anchor=east] {\(x\)};
+		\filldraw [black] (5,0.5) circle (1pt) node [anchor=north] {\(F_0^t\!\left(x\right)\)};
+		\filldraw [color=ForestGreen] (6.4, 2.1) circle (1pt) node [anchor=south] {\(y_t\)};
+
+	\end{tikzpicture}
+	\caption{The entities used in the definition of stochastic sensitivity, including the mapping from the deterministic flow map solving \cref{eqn:s2_ode} (in black) and the `true', but random, trajectory that solves the stochastic equation \cref{eqn:s2_sde}. }
+	\label{fig:s2_diag}
+\end{figure}
+
 The anisotropic uncertainty is a measure of the uncertainty in a specified direction \(\theta\), whereas stochastic sensitivity is a scalar field which for a given initial condition measures the uncertainty in the corresponding Lagrangian trajectory.
-By employing techniques from both deterministic and stochastic calculus (i.e. Gr\"onwall's inequality, the Burkholder-Davis-Gundy inequality, It\^o's Lemma), \citet{Balasuriya_2020_StochasticSensitivityComputable} further established expressions for both the anisotropic uncertainty and the stochastic sensitivity that are computable given only the flow map and velocity data.
+\Cref{fig:s2_diag} shows a pictorial representation of the set-up in two dimensions: the deterministic flow \cref{eqn:s2_ode} (in black) takes the initial condition and provides a computable prediction of the state at time \(t\).
+Simultaneously, the solution to the stochastic system \cref{eqn:s2_sde} (in green) gives a different, random value \(y_t\) for the true position at time \(t\).
+We take the difference (in blue) between the deterministic position and the stochastic and project (in red) this vector onto a ray of angle \(\theta\).
+The anisotropic uncertainty in the direction of \(\theta\) is then calculated by computing the variance of \(P_{\epsilon}\!\left(x, \theta\right)\) and taking the \(\epsilon\downarrow 0\) limit.
+By maximising this limiting variance across all possible angles \(\theta\), we get the stochastic sensitivity value, a single scalar number associated with the initial condition \(x\).
+Using techniques from both deterministic and stochastic calculus (i.e. Gr\"onwall's inequality, the Burkholder-Davis-Gundy inequality, It\^o's Lemma), \citet{Balasuriya_2020_StochasticSensitivityComputable} further established expressions for both the anisotropic uncertainty and the stochastic sensitivity that are computable given only the flow map and velocity data.
 
 \begin{theorem}[\citealt{Balasuriya_2020_StochasticSensitivityComputable}]\label{thm:orig_s2_calculation}
 	For \(x \in \R^2\), set \(w \coloneqq F_0^t(x)\).
@@ -615,40 +662,43 @@ By employing techniques from both deterministic and stochastic calculus (i.e. Gr
 	where \(\Lambda_{ij}\) is the \((i,j)\)-element of \(\Lambda\).
 \end{theorem}
 
-
-
+Since stochastic sensitivity provides a scalar field on the set of initial conditions to \cref{eqn:s2_ode}, \citet{Balasuriya_2020_StochasticSensitivityComputable} also proposes that stochastic sensitivity can be used to extract Lagrangian coherent structures from the two-dimensional flow.
 A \emph{robust set} is a subset of initial conditions such that the stochastic sensitivity is below a given threshold.
 That is, a robust set consists of those initial conditions for which the uncertainty in the corresponding flow trajectory, as measured by stochastic sensitivity, is small enough.
-
+Given a threshold \(R\), a robust set is defined as
+\[
+	\mathrm{RS}\!\left(R\right) \coloneqq \setc{x \in \Omega_0}{S^2\!\left(x\right) < R},
+\]
+where \(\Omega_0 \subset \R^2\) is the domain of initial conditions of interest.
+Numerical experiments by \citet{BalasuriyaEtAl_2018_GeneralizedLagrangianCoherent}, \citet{Balasuriya_2020_StochasticSensitivityComputable}, and \citet{BadzaEtAl_2023_HowSensitiveAre} show that \td{these structures are extracted. Need to check GLCS paper.}.
+Unlike a majority of previous methods for identifying LCSs which treat the dynamical system as fully deterministic and ignore any uncertainty, stochastic sensitivity, and therefore the extracted robust sets, explicitly accounts for stochasticity.
+The threshold \(R\) can be informed by lengthscales from the resolution (e.g. the resolution of the underlying velocity data, if the noise in \cref{eqn:s2_sde} is thought of as accounting for subgrid effects) and advective and diffusivity properties of the flow (such as the P\'eclet number)---see \citet{Balasuriya_2020_StochasticSensitivityComputable} for details on this.
+However, when we later use a similar idea to extract robust sets, we select \(R\) without any prior knowledge and instead choose a value that results in coherent structures that match our qualitative expectations.
 
 
 \subsection{Current applications \& shortcomings}
 Since stochastic sensitivity is only a recent development, it has only been applied in a limited number of places so far.
 Here, we briefly review the literature in which the original formulation stochastic sensitivity by \citet{Balasuriya_2020_StochasticSensitivityComputable} has been applied.
-
 \begin{itemize}
 	\item \citet{Balasuriya_2020_UncertaintyFinitetimeLyapunov} uses stochastic sensitivity to compute an error bound for the finite-time Lyapunov (FTLE) computation.
 	      The computable \(S^2\) value is used as an estimate of the standard deviation of the deviation between the deterministic and ``true'' (stochastic) trajectories, leading to a computable error bound on the FTLE value.
 
+	\item \citet{FangEtAl_2020_DisentanglingResolutionPrecision} use stochastic sensitivity in an investigation of the interplay between three different sources of error in dynamical systems: errors from unresolved processes due to limited resolution, errors from limited precision, and the inherent stochasticity in the dynamical behaviour of the system.
+	      The authors find that \td{What do they find? Need to briefly summarise these results.}
 
-	\item \citet{FangEtAl_2020_DisentanglingResolutionPrecision}
+	\item \citet{FangOuellette_2021_AssessingInformationContent}, extending previous work by \citet{FangEtAl_2019_LocalLinearityCoherent} use stochastic sensitivity to construct coherent structures that assess the information content (in an information-theoretic sense) of a dynamical system.
+	      Stochastic sensitivity is used to provide a state-dependent lengthscale to decide whether inherent stochasticity in the system is too large to be useful\lb{Need to be more specific than this}.
 
-
-	\item \citet{BadzaEtAl_2023_HowSensitiveAre} investigate the impact of velocity uncertainty on Lagrangian coherent structures (e.g. see the reviews by \citet{BalasuriyaEtAl_2018_GeneralizedLagrangianCoherent} and \citet{HadjighasemEtAl_2017_CriticalComparisonLagrangian}) extracted as robust sets with stochastic sensitivity.
-	      The stochastic model \cref{eqn:ss_sde} is used to generate realisations of Lagrangian trajectories subject to noise on the velocity field.
-	      By directly capturing such uncertainty as a means of coherent set \citet{BadzaEtAl_2023_HowSensitiveAre} showed that robust sets extracted with stochastic sensitivity do SOMETHING.
+	\item \citet{BadzaEtAl_2023_HowSensitiveAre} investigate the impact of velocity uncertainty on Lagrangian coherent structures extracted as robust sets with stochastic sensitivity.
+	      The stochastic model \cref{eqn:s2_sde} is used to generate realisations of Lagrangian trajectories subject to noise on the velocity field.
+	      By directly capturing such uncertainty as a means of coherent set \citet{BadzaEtAl_2023_HowSensitiveAre} showed that robust sets extracted with stochastic sensitivity are typically more robust to perturbations, since the framework directly accounts for these unlike other LCS methods.
 
 \end{itemize}
-There are several limitations to the work as originally presented by \citet{Balasuriya_2020_StochasticSensitivityComputable}:
-\begin{enumerate}
-	\item The tools are restricted to two-dimensional models, and the constructions using projections have no obvious extension to \(n\)-dimensions.
-	      Extending stochastic sensitivity to \(n\)-dimensions will enable application to a much broader class of models beyond the fluid flow context, including high-dimensional climate models.
 
-	\item \citet{Balasuriya_2020_StochasticSensitivityComputable} only computes the expectation and variance of the projections \(P_\epsilon(x,\theta)\), which does not give us the distribution under the limit as \(\epsilon\) approaches 0.
-
-	\item The computational formula for the anisotropic uncertainty and stochastic sensitivity, as described in \Cref{thm:orig_s2_calculation}, require knowledge of the divergence \(\nabla\cdot u\) of the velocity field, and computation of four integrals.
-\end{enumerate}
-
-
-
-In \Cref{sec:theory_s2}, we present an extension of stochastic sensitivity to \(n\)-dimensions that overcomes these limitations.
+However, as stochastic sensitivity has only been defined in two-dimensions, these studies are also all restricted to two-dimensional systems.
+This is a significant limitation of the original work, and one we will overcome; in \Cref{ch:linear_theory}, our primary theoretical chapter, we will present a new definition of stochastic sensitivity in \(n\)-dimensions that overcomes these limitations while still maintaining the computability of the measure.
+Extending stochastic sensitivity to \(n\)-dimensions will enable application to a much broader class of models beyond the fluid flow context, including high-dimensional climate models, and accordingly the extension of all the aforementioned studies and applications.
+Moreover, \citet{Balasuriya_2020_StochasticSensitivityComputable} only computes the expectation and variance of the projections \(P_\epsilon(x,\theta)\), which does not give us the distribution under the limit as \(\epsilon\) approaches 0.
+The computational formula for the anisotropic uncertainty and stochastic sensitivity, as described in \Cref{thm:orig_s2_calculation}, require knowledge of the divergence \(\nabla\cdot u\) of the velocity field, and computation of four integrals.
+While these expressions are computable given only velocity data, they are cumbersome and require the evaluation of several integrals, likely numerically in practice.
+We also address these difficulties by directly relating stochastic sensitivity to the theory of stochastic differential equation linearisations and provide a computation for the value that only requires taking the operator norm of a covariance matrix, obtained as the solution to an ordinary differential equation\lb{Woah, way too long of a sentence}.

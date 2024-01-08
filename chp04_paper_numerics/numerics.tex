@@ -4,7 +4,7 @@
 In this chapter, we provide numerical validation of the results in \Cref{ch:linear_theory} on example stochastic differential equations.
 A majority of the context this chapter again appears in the submitted article \citep{BlakeEtAl_2023_ConvergenceStochasticDifferential}.
 The overview in \Cref{sec:mazzoni} of an algorithm for efficiently solving the mean-covariance equations for the linearisation approximation does not appear in the submitted article.
-\Cref{sec:comput_s2} provides an initial and heuristic comparison between the stochastic sensitivity and finite-time Lyapunov fields, which also does not appear in the submitted article.
+\Cref{sec:comput_s2_3d} provides an example of stochastic sensitivity computed for a three-dimensional system, which also does not appear in the article.
 
 \section{Mazzoni's method}\label{sec:mazzoni}
 \td{Update equation references! Relate to stuff in the paper, not the later chapter!!}
@@ -387,6 +387,8 @@ The least squares lines of best fit for each value of \(r\) in \Cref{fig:gamma_z
 
 \section{Computing stochastic sensitivity} \label{sec:comput_s2}
 In this section, we illustrate the computability of stochastic sensitivity as described in \Cref{thm:s2_calculation}.
+
+\subsection{In 2-dimensions}
 We again consider the meandering jet \cref{eqn:jet_ex} with multiplicative noise described by \cref{eqn:jet_ex_sigma}.
 We take the same choice of parameters as in \cref{sec:numerics_2d}, except for the perturbation amplitude \(\oldepsilon_{\mathrm{mj}}\) which is varied to obtain qualitatively different behaviour in the system.
 For each initial condition in a \(400 \times 400\) uniform grid on \(\left[0, \pi\right] \times \left[0, \pi\right]\), the \(S^2\) value is calculated using \cref{eqn:s2_calculation}.
@@ -416,12 +418,6 @@ When \(\oldepsilon_{\mathrm{mj}} = 0.3\) (\Cref{fig:s2_field_0.3}), the \(S^2\) 
 As a region of small \(S^2\) value, the meandering jet emerges as a coherent structure, consisting of initial points whose eventual fate is significantly more certain than in other regions.
 When \(\oldepsilon_{\mathrm{mj}} = 1.0\) (\Cref{fig:s2_field_1.0}, the deterministic flow is dominated by oscillatory perturbation, which
 
-The stochastic sensitivity field can highlight Lagrangian coherent structures within the flow, by identifying regions of the flow with a relatively small uncertainty, as measured by a \emph{single} number for each initial condition.
-Subsets of the spatial domain corresponding to coherent structures can be extracted, e.g. by taking a threshold on \(S^2\) as described in the original work \citep{Balasuriya_2020_StochasticSensitivityComputable}; further examples of coherent structure extraction with stochastic sensitivity on both toy models and real data can be found in \citet{Balasuriya_2020_StochasticSensitivityComputable} and \citet{BadzaEtAl_2023_HowSensitiveAre}.
-Here, we demonstrate the extraction of coherent structures.
-
-
-\td{Use cyan for robust sets, to be consistent with later results.}
 \begin{figure}
 	\begin{center}
 		\begin{subfigure}{0.49\textwidth}
@@ -432,10 +428,17 @@ Here, we demonstrate the extraction of coherent structures.
 			\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/rossby/S2_robust_1.0.pdf}
 			\caption{\(\oldepsilon_{\mathrm{mj}} = 1.0\), \(R = 10\)}
 		\end{subfigure}
-		\caption{Robust sets extracted from the stochastic sensitivity fields in \Cref{fig:s2_field}, by taking the initial conditions with a stochastic sensitivity value above a specified threshold \(R\). }
+		\caption{Robust sets extracted from the stochastic sensitivity fields in \Cref{fig:ex_jet_s2_field}, by taking the initial conditions with a stochastic sensitivity value above a specified threshold \(R\). }
+\td{Use cyan for robust sets, to be consistent with later results.}
 		\label{fig:ex_jet_robust}
 	\end{center}
 \end{figure}
+
+The stochastic sensitivity field can highlight Lagrangian coherent structures within the flow, by identifying regions of the flow with a relatively small uncertainty, as measured by a \emph{single} number for each initial condition.
+Subsets of the spatial domain corresponding to coherent structures can be extracted, e.g. by taking a threshold on \(S^2\) as described in the original work \citep{Balasuriya_2020_StochasticSensitivityComputable}; further examples of coherent structure extraction with stochastic sensitivity on both toy models and real data can be found in \citet{Balasuriya_2020_StochasticSensitivityComputable} and \citet{BadzaEtAl_2023_HowSensitiveAre}.
+Here, we demonstrate the extraction of coherent structures.
+\td{Interpret the sets}
+
 
 
 
@@ -538,3 +541,45 @@ Here, we demonstrate the extraction of coherent structures.
 %This was a contrived example, but demonstrates that the stochastic sensitivity field provides further insight into the qualitative behaviour of
 
 %Moreover, this simple example demonstrates the claim in \Cref{sec:theory_s2} that the stochastic sensitivity field can be considered a generalisation of the finite-time Lyapunov exponent, in that features of the latter are captured while additionally accounting for ongoing uncertainties.
+
+\subsection{In 3-dimensions}\label{sec:comput_s2_3d}
+In \Cref{def:ss_Rn}, we have provided a new definition for stochastic sensitivity in arbitrary dimensions, whereas previously the definition and computation were limited to only two.
+This is the second main contribution of this thesis and so we shall demonstrate this extension on an example toy-model in three-dimensions.
+Consider the Gromeka-Arnold-Beltrami-Childress flow \citep{DombreEtAl_1986_ChaoticStreamlinesABC}:
+\begin{equation}\label{eqn:gabc}
+	u\!\left(y\right) = \begin{bmatrix}
+		A\sin\!\left(y_3\right) + C\cos\!\left(y_2\right) \\
+		B\sin\!\left(y_1\right) + A\cos\!\left(y_3\right) \\
+		C\sin\!\left(y_2\right) + B\cos\!\left(y_1\right)
+	\end{bmatrix},
+\end{equation}
+where \(A, B, C > 0\) are constants.
+The flow arises as an exact solution to Euler's equation and is often used as a testbed for Lagrangian analysis in 3-dimensions \citep[e.g.]{NelsonJacobs_2016_HighorderVisualizationThreedimensional,BruntonRowley_2010_FastComputationFinitetime,Haller_2001_DistinguishedMaterialSurfaces,SulmanEtAl_2013_LeavingFlatlandDiagnostics}.
+We take the parameters \(A = \sqrt{3}\), \(B = \sqrt{2}\), and \(C = 1\), which are values known to result in chaos \citep{DombreEtAl_1986_ChaoticStreamlinesABC}.
+The flow is spatially periodic in \([0,2\pi] \times [0,2\pi] \times [0,2\pi]\) and consists of intersecting vortex tubes.
+
+\begin{figure}
+	\centering
+	\begin{subfigure}[t]{0.49\textwidth}
+		\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/gabc/S2_box_1.0_cropped}
+		% \includegraphics[width=0.49\textwidth]{chp04_paper_numerics/figures/gabc/robust_box_1}
+		\caption{\(t = 1\)}
+		\label{fig:gabc_S2_1}
+	\end{subfigure}
+	\begin{subfigure}[t]{0.49\textwidth}
+		\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/gabc/S2_box_3.0_cropped}
+		% \includegraphics[width=0.49\textwidth]{chp04_paper_numerics/figures/gabc/robust_box_1}
+		\caption{\(t = 3\)}
+		\label{fig:gabc_S2_3}
+	\end{subfigure}
+	\caption{The stochastic sensitivity field for the GABC flow \cref{eqn:gabc} with identity diffusion, over the time interval \([0,t]\).}%, and robust sets (right) extracted with a threshold of \(R = 0.8\).}
+	\label{fig:gabc_S2}
+\end{figure}
+
+To introduce 3-dimensional noise to the system, we set \(\sigma \equiv I\), the \(3 \times 3\) identity matrix, and compute stochastic sensitivity for a \(200\times 200\) grid of initial conditions on each face of the cube \([0,2\pi] \times [0,2\pi] \times [0,2\pi]\).
+The spatial periodicity and symmetry of the dynamics means that these three faces are sufficient to describe the entire structure of the field within the region \citep{DombreEtAl_1986_ChaoticStreamlinesABC}\lb{Still not 100\% sure about this - take a look at the interval structure with plots of slices}.
+As with the two-dimensional example, for each initial condition we compute the \(3\times 3\) covariance matrix using the Mazzoni method.
+The stochastic sensitivity value is then computed by taking the operator norm of the covariance matrix.
+\Cref{fig:gabc_S2} plots the stochastic sensitivity on the three faces of the cube, at two different times.
+At \(t = 1\), as in \Cref{fig:gabc_S2_1}, the vortex structures are highlighted by the stochastic sensitivity field, in that these regions have a higher uncertainty due to the ??
+\td{Interpret - looks like the vortex structures are hilighted by the field?}
