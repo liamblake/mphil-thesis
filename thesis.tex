@@ -9,6 +9,8 @@
 
 \usepackage{thesis}
 
+\bibliography{thesis}
+
 % % Big line spacing
 % \linespread{1.5}
 
@@ -16,38 +18,16 @@
 % \RequirePackage{lineno}
 % \linenumbers
 
+% \includeonly{chp02_background/background}
+
 \begin{document}
-\frontmatter
-
-\maketitle
-
-% List of todos. Ugly but need to get them done!
-\listoftodos
-
-% Make the following tables
-\tableofcontents
-% \listoftables
-\listoffigures
-
-\chapter{List of Acronyms}
-\newcommand{\acr}[2]{\item[] \textbf{#1:} #2}
-\begin{itemize}
-	\acr{ODE}{ordinary differential equation}
-	\acr{SDE}{stochastic differential equation}
-	\acr{PDF}{probability density function}
-	\acr{FP}{Fokker-Planck}
-	\acr{DA}{data assimilation}
-	\acr{LCS}{Lagrangian coherent structure}
-	\acr{EM}{Euler-Maruyama}
-	\acr{FTLE}{finite-time Lyapunov exponent}
-\end{itemize}
+\include{frontmatter}
 
 % Frontmatter
 \include{front/abstract}
 \include{front/statement}
 \include{front/acknowledgements}
 % \include{front/dedication}
-
 
 \mainmatter
 
@@ -63,6 +43,7 @@
 % Appendices
 \appendix
 \include{appendix/sde_theory}
+\include{appendix/bene_calculations}
 % \include{appendix/sde_solutions.tex}
 % \include{appendix/fp_discretisation}
 % \include{appendix/more_plots}
@@ -73,7 +54,8 @@
 \addcontentsline{toc}{chapter}{Bibliography}
 
 % What style to use and what file to use for the bibliography
-\bibliographystyle{plainnat}
-\bibliography{thesis}
+% \bibliographystyle{plainnat}
+% \bibliography{thesis}
+\printbibliography
 
 \end{document}

@@ -39,6 +39,7 @@ An important result for establishing bounds on a function given an integral ineq
 \section{Analytical tools for It\^o calculus}\label{app:ito_tools}
 There are several tools available for the analytic treatment of It\^o integrals and solutions to stochastic differential equations, which we make particular use of in the proofs presented in \Cref{ch:linear_theory}.
 The first is It\^o's isometry, which relates the expectation of an It\^o integral to that of a deterministic one and is useful for computing moments.
+
 \begin{theorem}[It\^o's Isometry]\label{thm:ito_isom}
 	Let \(f: \Omega \times [0,T] \to \R\) be an It\^o integrable stochastic process.
 	Then, for any \(t \in [0,T]\)
@@ -46,6 +47,7 @@ The first is It\^o's isometry, which relates the expectation of an It\^o integra
 		\avg{\left(\int_0^t{f\left(\omega, \tau\right)\dif W_\tau}\right)^2} = \avg{\int_0^t{f\left(\omega, \tau\right)^2\dif\tau}}
 	\]
 \end{theorem}
+
 \begin{proof}
 	It\^o's isometry typically arises in the formal construction of the It\^o integral.
 	For example, see Section 5.1 of \citet{KallianpurSundar_2014_StochasticAnalysisDiffusion}.
@@ -53,6 +55,7 @@ The first is It\^o's isometry, which relates the expectation of an It\^o integra
 
 Next, we have It\^o's Lemma (or the It\^o Formula), which is a change-of-variables formula in stochastic calculus and can be thought of as a generalisation of the chain rule from deterministic calculus.
 We state and use the multidimensional form of the Lemma for solutions to It\^o stochastic differential equations, although more general forms exist (e.g. see Theorem 5.4.1 of \citet{KallianpurSundar_2014_StochasticAnalysisDiffusion}).
+
 \begin{theorem}[It\^o's Lemma]\label{thm:ito_lemma}
 	Let \(X_t\) be the strong solution to the stochastic differential equation
 	\[
@@ -65,11 +68,13 @@ We state and use the multidimensional form of the Lemma for solutions to It\^o s
 		         & \qquad\qquad\qquad\qquad + \nabla f\left(X_t, t\right)b\left(X_t, t\right) \dif W_t.
 	\end{align*}
 \end{theorem}
+
 \begin{proof}
 
 \end{proof}
 
 Our third and final result is the Burkholder-Davis-Gundy inequality, which when applied to stochastic integrals provides bounds on the expected norm.
+
 \begin{theorem}[Burkholder-Davis-Gundy Inequality]\label{thm:bdg}
 	Let \(M_t\) be an It\^o-integrable stochastic process taking values in \(\R^n\).
 	Then, for any \(p > 0\) there exists constants \(c_p, C_p > 0\) independent of the stochastic process \(M_t\) such that

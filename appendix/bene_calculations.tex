@@ -1,0 +1,29 @@
+%!TEX root = ../thesis.tex
+
+\chapter{Calculations for Ben\^e's SDE}\label{app:bene_sde}
+Consider Ben\^e's stochastic differential equation:
+\begin{equation}
+	\dif x_t = \tanh\!\left(x_t\right)\dif t + \dif W_t.
+	\label{eqn:bene_sde_app}
+\end{equation}
+This SDE was used as an example in \Cref{ch:gmm} to demonstrate some of the explicit calculations used in linearising the SDE, and to highlight the limitations of Gaussian approximations and motivate the mixture model algorithm.
+In this appendix, we provide details on these calculations.
+
+
+In the notation used throughout this thesis, the drift in \cref{eqn:bene_sde_app} is \(u\!\left(y,t\right) = \tanh\!\left(y\right)\) and the diffusivity is \(\sigma\!\left(y,t\right) = 1\).
+
+
+Over a time interval \(\)
+
+\[
+	\nabla F_s^t\!\left(x\right) = \frac{e^{t-s}\cosh\!\left(x\right)}{\sqrt{e^{2t - 2s}\sinh^2\!\left(x\right) + 1}}
+\]
+
+
+The variance of the linearisation solution over \([s,t]\) is given explicitly by \cref{eqn:pi_expl_eqn} (with the initial variance \(\var{l_s} = 0\)), which we can evaluate:
+\begin{align*}
+	\var{l_t} & = \left[\nabla F_s^t\!\left(x_0\right)\right]^2\int_s^t{\left[\nabla F_s^\tau\!\left(x_0\right)\right]^{-2}\dif\tau}                        \\
+	          & = \frac{e^{2t}}{e^{2t - 2s}\sinh^2\!\left(x_0\right) + 1}\int_s^t{\left(e^{- 2s}\sinh^2\!\left(x_0\right) + e^{- 2\tau}\right)\dif\tau}     \\
+	          & = \frac{e^{2t - 2s}\left(\sinh^2\!\left(x_0\right)(t - s) - \frac12 e^{2s - 2t} + \frac12\right)}{e^{2t - 2s}\sinh^2\!\left(x_0\right) + 1} \\
+	          & = \frac{2\sinh^2\!\left(x_0\right)\left(t - s\right) + e^{2t - 2s} - 1}{2\sinh^2\!\left(x_0\right) + 2e^{2s - 2t}}.
+\end{align*}

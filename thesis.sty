@@ -11,10 +11,10 @@
 	in\\
 	\ifx\discipline\undefined Specify {\tt$\backslash$discipline}%
 	\else\discipline\fi\\
-	at The University of Adelaide\\
+	at The University of Adelaide \\
 	Faculty of Sciences, Engineering and Technology \\
-	Discipline of Mathematical Sciences
-	%School of Computer and Mathematical Sciences
+	Discipline of Mathematical Sciences \\
+	School of Computer and Mathematical Sciences
 	\\\vfil
 	\includegraphics{UoA_logo_col_vert}
 }
@@ -27,16 +27,53 @@
 \RequirePackage{graphicx}
 \RequirePackage[dvipsnames]{xcolor}
 
-\RequirePackage[authoryear,sort,comma]{natbib}
-\setcitestyle{authoryear,aysep={}}
+% \RequirePackage[authoryear,sort,comma]{natbib}
+% \setcitestyle{authoryear,aysep={}}
+% TODO: Need to ensure that all names are written out fully, so don't have to set uniquename.
+% e.g. if the bibliography includes A. Stuart and Andrew Stuart, the two names will be written out in FULL when citing.
+\RequirePackage[natbib, style=authoryear, maxcitenames=2, maxbibnames=4, uniquename=false]{biblatex}
+
+% Fix to link the name as well in citations - https://tex.stackexchange.com/questions/15951/hyperlink-name-with-biblatex-authoryear-biblatex-1-4b/27107#27107
+\DeclareFieldFormat{citehyperref}{%
+  \DeclareFieldAlias{bibhyperref}{noformat}% Avoid nested links
+  \bibhyperref{#1}}
+
+\DeclareFieldFormat{textcitehyperref}{%
+  \DeclareFieldAlias{bibhyperref}{noformat}% Avoid nested links
+  \bibhyperref{%
+    #1%
+    \ifbool{cbx:parens}
+      {\bibcloseparen\global\boolfalse{cbx:parens}}
+      {}}}
+
+\savebibmacro{cite}
+\savebibmacro{textcite}
+
+\renewbibmacro*{cite}{%
+  \printtext[citehyperref]{%
+    \restorebibmacro{cite}%
+    \usebibmacro{cite}}}
+
+\renewbibmacro*{textcite}{%
+  \ifboolexpr{
+    ( not test {\iffieldundef{prenote}} and
+      test {\ifnumequal{\value{citecount}}{1}} )
+    or
+    ( not test {\iffieldundef{postnote}} and
+      test {\ifnumequal{\value{citecount}}{\value{citetotal}}} )
+  }
+    {\DeclareFieldAlias{textcitehyperref}{noformat}}
+    {}%
+  \printtext[textcitehyperref]{%
+    \restorebibmacro{textcite}%
+    \usebibmacro{textcite}}}
 
 \RequirePackage[twoside,left=2cm,right=2cm,bindingoffset=1cm]{geometry}
 \RequirePackage{bibentry}
 
 % TikZ
 \RequirePackage{pgfplots}
-\usetikzlibrary{calc, shapes.geometric, arrows, positioning}
-
+\usetikzlibrary{calc, shapes.geometric, arrows, positioning, arrows.meta}
 
 % Subfigures
 \RequirePackage{caption}
@@ -344,6 +381,26 @@
 \newtheorem{result}{Result}[section]
 \newtheorem{hypo}{Hypothesis}[section]
 \newtheorem{remark}{Remark}[section]
+
+% Wrap each theorem-like environment in a minipage, to prevent splitting across multiple pages. Should only be a couple of places where this comes into effect.
+% \RequirePackage{etoolbox}
+% \AtBeginEnvironment{theorem}{\noindent\begin{minipage}{\textwidth}}
+% \AtEndEnvironment{theorem}{\end{minipage}}
+% \AtBeginEnvironment{definition}{\noindent\begin{minipage}{\textwidth}}
+% \AtEndEnvironment{definition}{\end{minipage}}
+% \AtBeginEnvironment{corollary}{\noindent\begin{minipage}{\textwidth}}
+% \AtEndEnvironment{corollary}{\end{minipage}}
+% \AtBeginEnvironment{example}{\noindent\begin{minipage}{\textwidth}}
+% \AtEndEnvironment{example}{\end{minipage}}
+% \AtBeginEnvironment{lemma}{\noindent\begin{minipage}{\textwidth}}
+% \AtEndEnvironment{lemma}{\end{minipage}}
+% \AtBeginEnvironment{result}{\noindent\begin{minipage}{\textwidth}}
+% \AtEndEnvironment{result}{\end{minipage}}
+% \AtBeginEnvironment{hypo}{\noindent\begin{minipage}{\textwidth}}
+% \AtEndEnvironment{hypo}{\end{minipage}}
+% \AtBeginEnvironment{remark}{\noindent\begin{minipage}{\textwidth}}
+% \AtEndEnvironment{remark}{\end{minipage}}
+
 
 % Slightly weird bug - if not explicitly defined then cleveref is using \MakeUppercase, but this results in a linebreak before the link.
 \Crefname{hypo}{Hypothesis}{}

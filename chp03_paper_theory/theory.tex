@@ -348,6 +348,46 @@ Stochastic sensitivity ascribes a scalar value to each deterministic trajectory 
 The aim is to provide a \emph{single} computable number for each deterministic trajectory quantifying the impact of uncertainty in the velocity, independent of the scale (\(\epsilon\)) of the noise.
 The natural restating of this original definition of stochastic sensitivity \citep{Balasuriya_2020_StochasticSensitivityComputable} in the $ n $-dimensional setting is as follows:
 
+\begin{figure}
+	\centering
+	\begin{tikzpicture}[scale=2]
+		\pgfmathsetseed{1}
+
+		% Actual path
+		\draw (1,1) .. controls (2.5,-0.5) and (4,1.4) .. (5, 0.5);
+
+		% Stochastic path -- just place a random walk between specified points
+		\draw[color=ForestGreen, decorate, decoration={random steps, segment length = 1pt, amplitude=2pt}] (1,1) .. controls (2.5, -0.2) and (3.7,2.7) .. (6.4, 2.1);
+
+		% S2 quantities
+		\path[-{Latex[length=3mm, width=1.5mm]},blue] (5,0.5) edge node[left, xshift=-5pt] {\(y_t^{(\epsilon)} - F_0^t\!\left(x_0\right)\)} (6.4, 2.1);
+		% Calculation here: fix theta, the angle of the projection. Length of the vector between det point and end of projection is l*sin(n), where l is the length of the vector between the det and stoch points, and n = pi/2 - phi + theta, where phi is the angle of the vector between the det and stoch points.
+		\def\vecl{sqrt(1.4^2 + 1.6^2)};
+		\def\projtheta{pi/7};
+		\def\projphi{atan(1.6 / 1.4) * pi / 180}
+		\path[red] (5,0.5) edge ({5 +\vecl*cos((\projphi - \projtheta) r) * cos(\projtheta r)}, {0.5 + \vecl* cos((\projphi - \projtheta) r) * sin(\projtheta r)});
+
+		\path[dashed, gray] (6.4, 2.1) edge ({5 + \vecl * cos((\projphi - \projtheta) r) * cos(\projtheta r)}, {0.5 + \vecl * cos((\projphi - \projtheta) r) * sin(\projtheta r)});
+
+		% Reference angle
+		% \path[dashed,gray] (5,0.5) edge (7,0.5);
+		% \draw[gray] (5.5,0.5) arc (0:{\projtheta * 180 / pi}:0.5) node[midway, xshift=5pt, yshift=2pt] {\(\theta\)};
+
+		% Instead, we get a vector p
+		\path[-{Latex[length=3mm, width=1.5mm]}, gray] (5,0.5) edge node[right, xshift=5pt, yshift=-2pt] {\(p\)} ({5 + cos(\projtheta r)}, {0.5 + sin(\projtheta r)});
+
+
+		% Points
+		\filldraw [black] (1,1) circle (1pt) node[anchor=east] {\(x_0\)};
+		\filldraw [black] (5,0.5) circle (1pt) node [anchor=north] {\(F_0^t\!\left(x_0\right)\)};
+		\filldraw [color=ForestGreen] (6.4, 2.1) circle (1pt) node [anchor=south] {\(y_t^{(\epsilon)}\)};
+
+	\end{tikzpicture}
+	\caption{The entities used in \Cref{def:ss_Rn} of stochastic sensitivity in arbitrary dimensions, which should be compared to \Cref{fig:s2_diag}.
+	}
+	\label{fig:s2_diag_Rn}
+\end{figure}
+
 \begin{definition}[Stochastic sensitivity in \(\R^n\)]\label{def:ss_Rn}
 	The \emph{stochastic sensitivity} is a scalar field \(S^2: \R^n \times [0,T] \to \left[0, \infty\right)\) given by
 	\begin{equation*}
@@ -355,6 +395,8 @@ The natural restating of this original definition of stochastic sensitivity \cit
 	\end{equation*}
 \end{definition}
 
+\Cref{fig:s2_diag_Rn} illustrates the quantities involved in \Cref{def:ss_Rn}, to be compared directly to \Cref{fig:s2_diag} which represented the original definition of stochastic sensitivity.
+The ray of angle \(\theta\) in the original definition has been replaced with a unit vector \(p\), we compute the projection (in red) of the deviation (in blue) between the deterministic (in black) and stochastic (in green) predictions, and then maximising this projection over all possible unit vectors \(p\).
 \Cref{def:ss_Rn} is in the spirit of principal components analysis \citep{Jolliffe_2002_PrincipalComponentAnalysis}, performing a dimension reduction by projecting onto the direction in which the variance is maximised, thus capturing the most uncertainty in the data with a scalar value.
 The anisotropic uncertainty in two-dimensions \citep{Balasuriya_2020_StochasticSensitivityComputable} is the direction-dependent projection (prior to optimising over all directions in \Cref{def:ss_Rn}).
 Explicit theoretical expressions for both the stochastic sensitivity and the anisotropic sensitivity in two dimensions were obtained by \citet{Balasuriya_2020_StochasticSensitivityComputable}; these allowed for quantifying certainty in eventual trajectory locations without having to perform stochastic simulations.

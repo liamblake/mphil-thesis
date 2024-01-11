@@ -139,6 +139,11 @@ Equivalently, the flow map satisfies the integral form of \cref{eqn:det_ode}:
 	F_s^t\!\left(x\right) = x + \int_s^t{u\!\left(F_s^{\tau}\!\left(x\right), \tau\right)\dif \tau}.
 \end{equation}
 We use the flow map to represent all solutions of the deterministic differential equation \cref{eqn:det_ode}, with the understanding that for any relevant initial condition, the flow map at that point can be readily computed by solving the ODE either analytically or numerically.
+For a well-defined flow, the flow map \(F_s^t\) is reversible, in that we could have \(t < s\), with the property
+\[
+	F_s^t\!\left(F_t^s\!\left(x\right)\right) = x,
+\]
+for any times \(s\) and \(t\).
 We view the flow map primarily as a function of the initial condition, so that it quantifies the impact of changes in the initial condition on future predictions.
 Accordingly, the gradient \(\nabla F_s^t\) of the flow map (with respect to the initial condition) provides insight into the local behaviour of the dynamical system \citep{Arnold_1973_OrdinaryDifferentialEquations,TruesdellNoll_2004_NonLinearFieldTheories}.
 For any times \(s, t \in [0,T]\), this gradient	\(\nabla F_s^t\) satisfies a useful property:
@@ -164,28 +169,33 @@ When working in a continuous-time and continuous-state modelling scenario, a nat
 Although an SDE is an ``improvement'' over the deterministic ODE, in the sense that uncertainty can be encoded in the model itself, the compromise is that solutions are no longer straightforward to obtain or even analyse.
 In fact, the formal treatment of SDEs requires an entirely new notion of integration, as we shall discuss.\lb{This repeats what the introduction said - probably need to remove}
 Nonetheless, SDEs provide a rich framework for modelling and are used as predictive tools in a range of applications and fields. % \citep{Balasuriya_2020_StochasticApproachesLagrangian,SarkkaSolin_2019_AppliedStochasticDifferential,Oksendal_2003_StochasticDifferentialEquations,Jazwinski_2014_StochasticProcessesFiltering}.
-There are several different ways to construct stochastic differential equations from deterministic dynamics; the following motivation of stochastic differential equations loosely follows a similar one available in \citet{Oksendal_2003_StochasticDifferentialEquations}, but other formulations of SDEs are available, e.g. using rough path theory \citep{FrizVictoir_2010_MultidimensionalStochasticProcesses} or multiscale dynamics \citep{MelbourneStuart_2011_NoteDiffusionLimits,GottwaldMelbourne_2013_HomogenizationDeterministicMaps,PavliotisStuart_2008_MultiscaleMethods}.
+There are several different ways to construct stochastic differential equations from deterministic dynamics; the following motivation of stochastic differential equations loosely follows a similar one available in \citet{Oksendal_2003_StochasticDifferentialEquations}, but other formulations of SDEs are available, e.g. using rough path theory \citep{FrizVictoir_2010_MultidimensionalStochasticProcesses} or by average the `fast' dynamics in a multiscale system \citep{MelbourneStuart_2011_NoteDiffusionLimits,GottwaldMelbourne_2013_HomogenizationDeterministicMaps,PavliotisStuart_2008_MultiscaleMethods}.
 
 Suppose that we have a deterministic ordinary differential equation, i.e. \cref{eqn:ode_det}, and aim to account for uncertainty in the vector field \(u\).
 In lieu of any additional understanding of this uncertainty, we model it as a stochastic noise.
-Ideally, we would parameterise the uncertainty with some continuous-time stochastic process \(\xi_t\!\left(x_t\right)\), and write
-\[
-	\dod{y_t}{t} = u\left(x_t, t\right) + \xi_t\!\left(x_t\right).
-\]
-The noise process \(\xi_t\) can depend on the state, since we may expect that the magnitude and structure of the uncertainty varies with both the state and time.
-In most modelling situations, we expect that the noise process \(\xi_t\) should have the properties:
-\begin{enumerate}
-	\item For any two distinct times \(s \neq t\), the random variables \(\xi_s\) and \(\xi_t\) are independent.
-	\item The process is stationary, that is the joint distribution of \(\xi_{t_1 + t}, \dotsc, \xi_{t_k + t}\) does not depend on \(t\).
-	\item For all \(t\), \(\avg{\xi_t} = 0\).
-\end{enumerate}
-Additionally, since we are modelling with a continuum, the noise process \(\xi_t\) should be (with probability \(1\)) continuous in time.
-However, such a noise process \(\xi_t\) does not exist \citep{Oksendal_2003_StochasticDifferentialEquations}, in that there is no  continuous process with properties 1 to 3, so we need an alternative formulation of the integral.
-This leads to the It\^o integral, and It\^o stochastic differential equations, which we introduce in \Cref{sec:bkg_ito} and \Cref{sec:bkg_sde} respectively.
-\td{Segue into talking about Wiener processes - need to motivate WHY we choose to use white noise.}
+Ideally, we would parameterise the uncertainty with some continuous-time stochastic process \(\xi_t\), and write
+\begin{equation}\label{eqn:fake_sde}
+	\dod{y_t}{t} = u\left(x_t, t\right) + \sigma\!\left(x_t, t\right)\xi_t,
+\end{equation}
+where \(\sigma\) is a specified part of the model that modulates how the magnitude and structure of the uncertainty varies with state and time.
+Since we are modelling with a continuum, the noise process \(\xi_t\) should be (with probability \(1\)) continuous in time, and should, without any additional prior knowledge, evolve independently of itself through time, follow a probability distribution that does not depend on time, and have zero expectation.
+That is, \(xi_t\) should be a white noise process in the absence of any additional knowledge of the nature of the noise, beyond specification of \(\sigma\).
+However, there does not exist \emph{any} process \(x_t\) that satisfies all of these properties \citep{Oksendal_2003_StochasticDifferentialEquations}; continuity cannot be enforced.
+This complication requires an alternative formulation, which leads to an entirely new type of calculus built around the It\^o integral and It\^o stochastic differential equations, which we introduce in \Cref{sec:bkg_ito} and \Cref{sec:bkg_sde} respectively.
+
+% In most modelling situations, we expect that the noise process \(\xi_t\) should have the properties:
+% \begin{enumerate}
+% 	\item For any two distinct times \(s \neq t\), the random variables \(\xi_s\) and \(\xi_t\) are independent.
+% 	\item The process is stationary, that is the joint distribution of \(\xi_{t_1 + t}, \dotsc, \xi_{t_k + t}\) does not depend on \(t\).
+% 	\item For all \(t\), \(\avg{\xi_t} = 0\).
+% \end{enumerate}
+% Additionally, since we are modelling with a continuum, the noise process \(\xi_t\) should be (with probability \(1\)) continuous in time.
+% However, such a noise process \(\xi_t\) does not exist \citep{Oksendal_2003_StochasticDifferentialEquations}, in that there is no  continuous process with properties 1 to 3, so we need an alternative formulation of the integral.
+% This leads to the It\^o integral, and It\^o stochastic differential equations, which we introduce in \Cref{sec:bkg_ito} and \Cref{sec:bkg_sde} respectively.
 
 \subsection{The Wiener process}
-In the absence of any additional knowledge about the nature of the noise (such as skew), the canonical Wiener process is the standard choice.
+In the absence of any additional knowledge about the nature of the noise (such as skew), the canonical Wiener process is the standard choice as the driving stochastic process.
+The Wiener process is the definite integral of a white noise process, and is therefore an appropriate choice to ensure that the ``solution'' (the result after integration through time) of \cref{eqn:fake_sde} involves the idealised noise process \(\xi_t\) that we were initially after\lb{I don't think this makes any sense to the reader, but it's difficult to explain this intuitively. I believe that the idea is that this white noise process is the `derivative' of the Wiener process (in the sense that \(W_t\) is the integral of \(\xi_t\)).}.
 Defined formally, the (one-dimensional) canonical \emph{Wiener process} is a stochastic process \(B_t\) taking values in \(\R\) and satisfying the following properties:
 \begin{romanate}
 	\item \(B_0 = 0\),
@@ -198,6 +208,7 @@ The \emph{\(n\)-dimensional Wiener process} is a stochastic process \(W_t\) taki
 It follows that for the \(n\)-dimensional Wiener process \(W_t\), at any time \(t > 0\), \(W_t \sim \mathcal{N}\left(0, tI\right)\), an \(n\)-dimensional Gaussian distribution with mean zero and covariance matrix \(tI\).
 \Cref{fig:wiener_rels} plots realisations of a one-dimensional and two-dimensional Wiener process.
 
+
 \begin{figure}
 	\begin{center}
 		\includegraphics[width=0.49\textwidth]{chp02_background/figures/wiener_realisations_1d.pdf}
@@ -209,8 +220,7 @@ It follows that for the \(n\)-dimensional Wiener process \(W_t\), at any time \(
 
 
 \subsection{The It\^o integral}\label{sec:bkg_ito}
-\td{Not sure about this first sentence - WHY do we want to integrate wrt BM in the first place??}
-The non-differentiability of the Wiener process means that standard deterministic calculus is not sufficient to introduce continuous-time uncertainty into a differential equation.
+With probability \(1\), the path of a Wiener process is continuous, but differentiable nowhere, which means that standard deterministic calculus is not sufficient to introduce continuous-time uncertainty into a differential equation.
 Instead, this led to an entirely new definition of the integral by \citet{Ito_1944_StochasticIntegral,Ito_1946_StochasticIntegralEquation} that allowed integration with respect to a broad class of stochastic processes, laying the foundation for the formal framework of stochastic differential equations.
 Here, we provide one definition of the It\^o integral, but do not go into technical detail.
 See the textbooks by \citet{KallianpurSundar_2014_StochasticAnalysisDiffusion} and \citet{Oksendal_2003_StochasticDifferentialEquations}, for instance, for a detailed introduction to and construction of the It\^o integral and subsequent properties.
@@ -220,9 +230,10 @@ For our purposes, we can define an It\^o integral as the limit in probability of
 	\sum_{\left[t_i, t_{i+1}\right] \in \mathcal{P}_N}{f\left(t_{i}\right)\left(W_{t_{i+1}} - W_{t_i}\right)} \xlongrightarrow[\text{probability}]{} \int_a^b{f(t)\dif W_t}, \quad \text{as } N \to \infty
 \end{equation}
 where \(\mathcal{P}_N\) is a partition of \(\left[a,b\right]\) with \(\lim_{N \to \infty}\mathcal{P}_N = [a,b]\), \emph{\`a la} the definition of the Riemann integral.
+The It\^o integral is itself a random variable.
 It can be shown \citep[e.g.]{KallianpurSundar_2014_StochasticAnalysisDiffusion,Oksendal_2003_StochasticDifferentialEquations} that this limit exists for a large class of both deterministic- and random-valued functions, by constructing appropriate approximations of the function \(f\).
-\td{Should probably summarise what these functions look like}
-The It\^o integral is itself a random variable, which captures \td{Some intuition!!}
+% Such functions for which the integral exist are termed \emph{It\^o-integrable} and are those that are measurable with respect to the probability space on which the Wiener process is defined
+% \td{Should probably summarise what these functions look like}
 
 The extension of the It\^o integral to vector- and matrix-valued functions is straightforward.
 Let \(g \colon [a,b] \to \R^{n \times m}\) be a function giving possibly random \(n \times m\) matrices (take \(m = 1\) to describe a vector-valued function).
@@ -236,25 +247,25 @@ Then, we define the It\^o integral of \(g\) with respect to the \(m\)-dimensiona
 		\mathcal{I}_{i} = \sum_{j=1}^m{\int_a^b{g_{ij}\left(t\right) \dif W_t^{(j)}}},
 	\end{equation}
 \end{subequations}
-	for \(i = 1,\dotsc, n\) and where \(g_{ij}\) denotes the \((i,j)\)th element of \(g\).
+for \(i = 1,\dotsc, n\) and where \(g_{ij}\) denotes the \((i,j)\)th element of \(g\).
 
 In many ways, the It\^o integral behaves like other classical notions of the integral, including acting as a linear operator.
 For any It\^o-integrable functions \(f,g \colon [a,b] \to \R\) and values \(\alpha,\beta \in \R\), which may be random but are constant with respect to \(t\):
 \begin{enumerate}
 	\item Linearity:
-		\[
-			\int_{a}^{b}{\left[\alpha f\!\left(t\right) + \beta g\!\left(t\right)\right]\dif W_t} = \alpha \int_{a}^{b}{f\!\left(t\right)\dif W_t} + \beta \int_a^b{g\!\left(t\right)\dif W_t}.
-		\]
+	      \[
+		      \int_{a}^{b}{\left[\alpha f\!\left(t\right) + \beta g\!\left(t\right)\right]\dif W_t} = \alpha \int_{a}^{b}{f\!\left(t\right)\dif W_t} + \beta \int_a^b{g\!\left(t\right)\dif W_t}.
+	      \]
 
 	\item Zero expectation:
-		\[
-			\avg{\int_a^b{f\!\left(t\right)\dif W_t}} = 0.
-		\]
+	      \[
+		      \avg{\int_a^b{f\!\left(t\right)\dif W_t}} = 0.
+	      \]
 
 	\item The It\^o isometry:
-		\[
-			\avg{\left(\int_a^b{f\!\left(t\right)\dif W_t}\right)^2} = \int_a^b{\avg{f\!\left(t\right)^2}\dif t}.
-		\]
+	      \[
+		      \avg{\left(\int_a^b{f\!\left(t\right)\dif W_t}\right)^2} = \int_a^b{\avg{f\!\left(t\right)^2}\dif t}.
+	      \]
 \end{enumerate}
 The first two of these properties immediately extend to It\^o integrals of vector- and matrix-valued functions.
 The third property, the It\^o isometry, is a fundamental result that enables the calculation of the variance of an It\^o integral.
@@ -288,7 +299,7 @@ The results that are used in this thesis (most notably in the proofs presented i
 
 The nature of the noise is characterised by the diffusion matrix \(\sigma\).
 When \(\sigma\) does not depend on the solution \(y_t\), the noise is termed \emph{additive}, whereas if \(\sigma\) does depend on the solution, then the noise is \emph{multiplicative}.
-SDEs with additive noise are typically easier to solve and analyse than those with multiplicative noise, but multiplicative noise is often required in practice to capture uncertainty that varies with state.
+SDEs with additive noise are typically easier to solve and analyse than those with multiplicative noise \citep{SanchoEtAl_1982_AnalyticalNumericalStudies}, but multiplicative noise is often required in practice to capture uncertainty that varies with state.
 
 \begin{figure}
 	\begin{center}
@@ -301,9 +312,8 @@ SDEs with additive noise are typically easier to solve and analyse than those wi
 \end{figure}
 
 As an example, in \Cref{fig:sde_sol_sample} we show 10 realisations of the solution to the SDE \(\dif x_t = \sin\!\left(x_t\right)\dif t + \dif W_t\).
-Although the deterministic dynamics can give a rough indication of the behaviour of the stochastic samples, even additive noise can result in when the drift is nonlinear, evidenced by the two trajectories (blue and orange) that clearly deviate from the deterministic trajectory.
 At any given time \(t\), the solution \(x_t\) follows a probability distribution over \(\R\), the (numerically estimated---see \Cref{sec:numeric_sdes}) probability density function of which is shown at \(t = \pi\) on the right-hand side of \Cref{fig:sde_sol_sample}.
-\td{Just a single sentence interpreting}
+Although the deterministic dynamics can give a loose indication of the behaviour of the stochastic samples, even additive noise can result in when the drift is nonlinear, evidenced by the trajectory (in orange) that clearly deviates from the deterministic one.
 
 
 % Stochastic differential equations also arise as the limit of deterministic slow-fast systems, where the average behaviour of the `fast' dynamics can be shown to converge to the solution of a stochastic differential equation \citep[e.g.]{WongZakai_1965_ConvergenceOrdinaryIntegrals,MelbourneStuart_2011_NoteDiffusionLimits,GottwaldMelbourne_2013_HomogenizationDeterministicMaps}\lb{Maybe some better citations out there.}.
@@ -337,7 +347,7 @@ When the initial condition is random, one samples \(\hat{x}_0\) from that distri
 % 	\avg{\norm{x_t - \hat{x}_{t}\left(\Delta t\right)}} = \mathcal{O}\left(\Delta t^{0.5}\right),
 % \]
 % where \(\hat{x}_t\left(\Delta t\right)\) is the Euler-Maruyama estimate at time \(t\) using step size \(\Delta t\).
-There are many other schemes for generating approximate samples of a stochastic differential equation, of varying precision and computational efficiency, many of which are given in \citet{KloedenPlaten_1992_NumericalSolutionStochastic}.
+There are many other schemes for generating approximate samples of a stochastic differential equation, of varying precision and computational complexity, many of which are given in \citet{KloedenPlaten_1992_NumericalSolutionStochastic}.
 Numerical schemes give us access to approximate solutions to otherwise intractable SDEs.
 However, this comes at a computational cost: a large number of samples paths is often required to generate convergent statistics and make accurate inferences.
 One of the primary aims of this thesis is to overcome this expense, by devising alternative ways of approximating and characterising SDE solutions that are computationally cheaper.
@@ -433,75 +443,87 @@ One of the primary aims of this thesis is to overcome this expense, by devising 
 
 
 \section{Lagrangian coherent structures}\label{sec:bkg_lcs}
-In this section, we take a brief sojourn into the field of Lagrangian coherent structures (LCSs), which provide qualitative insight into the behaviour of a dynamical system, particularly in the fluid flow context.
-Although LCSs are not the primary focus of this work, the field provides potential applications for our uncertainty quantification, that will build upon preliminary work by \citet{Balasuriya_2020_StochasticSensitivityComputable,Balasuriya_2020_UncertaintyFinitetimeLyapunov,BadzaEtAl_2023_HowSensitiveAre}.
-There is no universally accepted definition of a coherent structure, but typically these are structures within a flow that remain together over the time-evolution of the system and separate the spatial domain into regions with qualitatively different behaviour \citep{BalasuriyaEtAl_2018_GeneralizedLagrangianCoherent}.
-\Cref{fig:lcs_examples} show examples of coherent structures in observed fluid flows, which can be considered LCSs.\lb{Get a proper reference. Photoplankton: \url{https://climate.nasa.gov/climate_resources/170/summer-blooms-in-the-baltic/}}
 
 \begin{figure}
 	\begin{center}
 		\begin{subfigure}[t]{0.49\textwidth}
-			\includegraphics[width=\textwidth]{chp02_background/figures/dwh}
+			\includegraphics[width=\textwidth]{chp02_background/figures/dwh_cropped}
 			\caption{An oil slick from the \emph{Deepwater Horizon} oil spill in 2010 (NASA Image of the Day, May 19, 2010).
-				Note the southwards extension of the slick, which appeared suddenly.}
+				The southwards extension of the slick appeared unexpectedly.}
 			\label{fig:lcs_deepwater}
 		\end{subfigure}
 		\begin{subfigure}[t]{0.49\textwidth}
+			\includegraphics[width=\textwidth]{chp02_background/figures/photoplankton}
+			\caption{Phytoplankton blooms in the Baltic sea (NASA Earth Observatory, July 18, 2018).
+				The structure of these blooms reflect the underlying flow of the Sea.}
+			\label{fig:lcs_phyto}
+		\end{subfigure}
+		\begin{subfigure}[t]{\textwidth}
 			\includegraphics[width=\textwidth]{chp02_background/figures/red_spot.png}
 			\caption{Jupiter's Great Red Spot, as photographed by the Voyager probe in 1979 (NASA/JPL-Caltech).
 				The storm is an example of a vortex or eddy within the atmospheric flow of the planet.}
 		\end{subfigure}
-		\begin{subfigure}[t]{0.49\textwidth}
-			\includegraphics[width=\textwidth]{chp02_background/figures/photoplankton}
-			\caption{Photoplankton blooms in the Baltic sea.
-				The structure of these blooms reflect the underlying flow of the Sea, and coherent structure emerge.}
-		\end{subfigure}
-		\begin{subfigure}[t]{0.49\textwidth}
-			\includegraphics[width=\textwidth]{chp02_background/figures/photoplankton}
-			\caption{Photoplankton blooms in the Baltic sea.}
-		\end{subfigure}
+		% \begin{subfigure}[t]{0.49\textwidth}
+		% 	% \includegraphics[width=\textwidth]{chp02_background/figures/photoplankton}
+		% 	\td{Get one more example!}
+		% 	\caption{}
+		% \end{subfigure}
 		\caption{Examples of coherent patterns emerging in fluid flows observed in nature.}
 		\label{fig:lcs_examples}
 	\end{center}
 \end{figure}
 
+In this section, we take a brief sojourn into the field of Lagrangian coherent structures (LCSs), which provide qualitative insight into the behaviour of a dynamical system, particularly in context of the fluid flows.
+Although LCSs are not the primary focus of this work, the field provides potential applications for our uncertainty quantification, that builds upon preliminary work by \citet{Balasuriya_2020_StochasticSensitivityComputable,Balasuriya_2020_UncertaintyFinitetimeLyapunov} and \citet{BadzaEtAl_2023_HowSensitiveAre}.
+There is no universally accepted definition of a coherent structure, but typically these are structures within a flow that remain together over the time-evolution of the system and separate the spatial domain into regions with qualitatively different behaviour \citep{BalasuriyaEtAl_2018_GeneralizedLagrangianCoherent}.
+\Cref{fig:lcs_examples} show examples of coherent structures in observed fluid flows, which can be considered LCSs.
+These are structures such as vortices, eddies, and jets that influence the transport of material within the fluid.
+For instance, in \Cref{fig:lcs_deepwater,fig:lcs_phyto} the observed patterns of the oil slick and phytoplankton blooms respectively reflect the behaviour of the underlying ocean flow and are influenced by jet- and eddy-like structures.
+
+
 In a steady system (that is, the vector field \(u\) in \cref{eqn:det_ode} is independent of time), we can gain this insight by using classical methods in dynamical systems, such as phase portrait analysis and identifying unstable and stable manifolds.
 For example, unstable and stable manifolds cannot be intersected by solution trajectories, and so can act as barriers for the transport of material within a flow.
 However, when the system is non-autonomous (that is, the vector field explicitly depends on time \(t\)), these structures can themselves vary with time and the problem of identifying them is far more non-trivial.
-Lagrangian coherent structure (LCS) theory provides a mathematical framework for defining and identifying such structures within a given flow \citep{BalasuriyaEtAl_2018_GeneralizedLagrangianCoherent}.
-There are many procedures and heuristics for extracting these regions from a given flow, which draw upon different mathematical techniques, including variational calculus\lb{!!}, transfer operators, and statistical clustering.
-Detailed reviews of approaches to Lagrangian coherent structure extraction are provided by \citet{BalasuriyaEtAl_2018_GeneralizedLagrangianCoherent}, \citet{HadjighasemEtAl_2017_CriticalComparisonLagrangian}, and \citet{PeacockDabiri_2010_IntroductionFocusIssue}.
+Lagrangian coherent structure theory provides a mathematical framework for defining and identifying such structures within a given flow \citep{BalasuriyaEtAl_2018_GeneralizedLagrangianCoherent}.
+There are many procedures and heuristics for extracting these regions from a given flow, which draw upon different mathematical techniques, including classical dynamical system theory, variational calculus, transfer-operators, and statistical clustering.
+Detailed reviews of approaches to Lagrangian coherent structure extraction are provided by \citet{PeacockDabiri_2010_IntroductionFocusIssue}, \citet{HadjighasemEtAl_2017_CriticalComparisonLagrangian}, and \citet{BalasuriyaEtAl_2018_GeneralizedLagrangianCoherent}.
 
-Coherent structures can provide valuable qualitative insight into the behaviour of a flow, by providing us with an outline of the underlying dynamics.
+Coherent structures can provide valuable qualitative insight into the behaviour of a flow, by providing an outline of the transport properties and underlying dynamics.
 An example is in the study of the spread of the oil slick resulting from the 2010 Deepwater Horizon disaster in the Gulf of Mexico (see \Cref{fig:lcs_deepwater}).
-Investigations into showed that the behaviour of the slick could be understood, and therefore predicted in future cases, by using Lagrangian coherent structures and the insight they provide \citep{OlascoagaEtAl_2013_DrifterMotionGulf,OlascoagaHaller_2012_ForecastingSuddenChanges}, which explained dynamics that were otherwise poorly understood due to the time-varying and complex nature of the flow.\lb{My word this sentence is terrible.}
+Investigations into showed that the behaviour of the slick, including a sudden and unexpected extension of the slick, could be understood and therefore predicted in future cases by using Lagrangian coherent structures and the insight they provide \citep{OlascoagaEtAl_2013_DrifterMotionGulf,OlascoagaHaller_2012_ForecastingSuddenChanges}.
+This approach explained dynamics that were otherwise poorly understood due to the time-varying and complex nature of the flow.
 
-One of the best known procedures for extracting LCSs is via the finite-time Lyapunov exponent (FTLE) \citep{ShaddenEtAl_2005_DefinitionPropertiesLagrangian}, which is a measure quantifying the stretching of infinitesimal regions of a flow over a finite time period.
-Take an initial condition \(x\) and let \(F_0^t\) represent the flow map of our system over the time interval \([0,t]\).
-We wish to quantify the impact of a small change in the initial condition on the flow at time \(t\), so take \(\delta\) as a small and arbitrary perturbation to \(x\).
-Then, we measure the \emph{stretching} in the direction of \(\delta\) with
-\[
-	s\!\left(x, \delta\right) = \frac{\norm{F_0^t\!\left(x + \delta\right) - F_0^t\!\left(x\right)}}{\norm{\delta}}
-\]
-For sufficiently small \(\delta\), we can replace the mapped perturbation with a linearisation of the flow map about \(x\), that is
-\[
-	s\!\left(x, \delta\right) \approx \frac{\norm{\nabla F_0^t\!\left(x\right) \delta}}{\norm{\delta}}.
-\]
-% \Cref{fig:ftle_illustr} provides a pictorial representation of this calculation; a small !!!!!
-Taking the supremum over all possible perturbations \(\delta\), we have
-\[
-	\sup_{\delta \in \R^n, \, \delta \neq 0}s\!\left(x, \delta\right) \approx \norm{\nabla F_0^t\!\left(x\right)},
-\]
-which quantifies the stretching about the trajectory \(F_0^t\!\left(x\right)\).
-The finite-time Lyapunov exponent is then computed as
-\begin{equation}
-	\mathrm{FTLE}_0^t\!\left(x\right) = \frac{1}{\abs{t}}\ln\!\left(\norm{\nabla F_0^t\!\left(x\right)}\right).
-	\label{eqn:ftle_defn}
-\end{equation}
-Note that the operator norm \(\norm{\nabla F_0^t\!\left(x\right)}\) in \cref{eqn:ftle_defn} can be readily computed as the square root of the largest eigenvalue of the Cauchy-Green tensor \(\left[\nabla F_0^t\!\left(x\right)\right]^{\T}\nabla F_0^t\!\left(x\right)\).
-Over the set of initial conditions, the FTLE is a scalar field that measures for each initial condition the stretching and contraction along the resulting trajectory.
-The FTLE is a measure of exponential stretching (hence the scalings in \cref{eqn:ftle_defn}), and provides insight into the nonlinearity of a system, including as an indicator of one defining feature of chaos.
-It was shown by \citet{ShaddenEtAl_2005_DefinitionPropertiesLagrangian} that the maximising ridges of the FTLE field can correspond to flow barriers, and so by finding these ridges, one can extract coherent structures for the flow.
+One of the most well-studied and frequently used procedures for extracting Lagrangian coherent structures is via the finite-time Lyapunov exponent (FTLE), which is a measure quantifying the stretching of infinitesimal regions of the flow over a time period.
+The FTLE can be computed as a scalar field over a set of initial conditions, from which the maximising ridges can correspond to flow barriers \citep{ShaddenEtAl_2005_DefinitionPropertiesLagrangian}.
+Importantly, the finite-time Lyapunov exponent can be computed only using the gradients of the flow map, which ensures a highly practical and flexible procedure that can be used across many different contexts.
+The FTLE is an example of a common class of LCS methods that first compute a field over a set of initial conditions, and then extracts coherent structures based on that field.
+
+% One of the best known procedures for extracting LCSs is via the finite-time Lyapunov exponent (FTLE) \citep{ShaddenEtAl_2005_DefinitionPropertiesLagrangian}, which is a measure quantifying the stretching of infinitesimal regions of a flow over a finite time period.
+% Take an initial condition \(x\) and let \(F_0^t\) represent the flow map of our system over the time interval \([0,t]\).
+% We wish to quantify the impact of a small change in the initial condition on the flow at time \(t\), so take \(\delta\) as a small and arbitrary perturbation to \(x\).
+% Then, we measure the \emph{stretching} in the direction of \(\delta\) with
+% \[
+% 	s\!\left(x, \delta\right) = \frac{\norm{F_0^t\!\left(x + \delta\right) - F_0^t\!\left(x\right)}}{\norm{\delta}}
+% \]
+% For sufficiently small \(\delta\), we can replace the mapped perturbation with a linearisation of the flow map about \(x\), that is
+% \[
+% 	s\!\left(x, \delta\right) \approx \frac{\norm{\nabla F_0^t\!\left(x\right) \delta}}{\norm{\delta}}.
+% \]
+% % \Cref{fig:ftle_illustr} provides a pictorial representation of this calculation; a small !!!!!
+% Taking the supremum over all possible perturbations \(\delta\), we have
+% \[
+% 	\sup_{\delta \in \R^n, \, \delta \neq 0}s\!\left(x, \delta\right) \approx \norm{\nabla F_0^t\!\left(x\right)},
+% \]
+% which quantifies the stretching about the trajectory \(F_0^t\!\left(x\right)\).
+% The finite-time Lyapunov exponent is then computed as
+% \begin{equation}
+% 	\mathrm{FTLE}_0^t\!\left(x\right) = \frac{1}{\abs{t}}\ln\!\left(\norm{\nabla F_0^t\!\left(x\right)}\right).
+% 	\label{eqn:ftle_defn}
+% \end{equation}
+% Note that the operator norm \(\norm{\nabla F_0^t\!\left(x\right)}\) in \cref{eqn:ftle_defn} can be readily computed as the square root of the largest eigenvalue of the Cauchy-Green tensor \(\left[\nabla F_0^t\!\left(x\right)\right]^{\T}\nabla F_0^t\!\left(x\right)\).
+% Over the set of initial conditions, the FTLE is a scalar field that measures for each initial condition the stretching and contraction along the resulting trajectory.
+% The FTLE is a measure of exponential stretching (hence the scalings in \cref{eqn:ftle_defn}), and provides insight into the nonlinearity of a system, including as an indicator of one defining feature of chaos.
+% It was shown by \citet{ShaddenEtAl_2005_DefinitionPropertiesLagrangian} that the maximising ridges of the FTLE field can correspond to flow barriers, and so by finding these ridges, one can extract coherent structures for the flow.
 
 
 % In \Cref{fig:gs_lcs}, we compute the FTLE field of our Gulf Stream velocity model over a timespan of 7 days.
@@ -526,96 +548,94 @@ It was shown by \citet{ShaddenEtAl_2005_DefinitionPropertiesLagrangian} that the
 
 
 Most well-established LCS frameworks and extraction procedures are purely deterministic, in that they are defined and compute solely in terms of the behaviour of the underlying ordinary differential equation.
-However, uncertainty in such systems is inevitable and these methods do not explicitly account for this.
-There is accordingly an emerging interest \citep{Balasuriya_2020_StochasticApproachesLagrangian,anymore?} in extending LCS theory to stochastic settings (which is the relevance of LCSs to this thesis).
-There are several different ways in which stochasticity is being accounted for in recent LCS developments:
+However, uncertainty in such systems is inevitable in practice and these methods fail to explicitly account for this.
+Accordingly, there is an emerging interest \citep{Balasuriya_2020_StochasticApproachesLagrangian} in extending LCS theory to stochastic settings.
+There are two primary ways in which stochastic has been recently investigated in the LCS community:
 \begin{romanate}
-	\item in creating novel computable measures that explicitly account for such ongoing uncertainty, e.g. see (in \Cref{sec:s2_summ}) stochastic sensitivity introduced by \citet{Balasuriya_2020_StochasticSensitivityComputable}, model sensitivity introduced by \citet{KaszasHaller_2020_UniversalUpperEstimate}, and the finite-time divergence rate by \citet{BranickiUda_2023_PathBasedDivergenceRates}.
+	\item in creating novel procedures that explicitly account for such ongoing uncertainty, such as by using properties of corresponding stochastic systems.
+	For example, see (in \Cref{sec:s2_summ}) stochastic sensitivity introduced by \citet{Balasuriya_2020_StochasticSensitivityComputable}, model sensitivity introduced by \citet{KaszasHaller_2020_UniversalUpperEstimate}, and the finite-time divergence rate by \citet{BranickiUda_2023_PathBasedDivergenceRates}.
 	These are scalar fields defined on initial conditions that measure the certainty in the corresponding deterministic trajectories, and can be used to extract coherent regions in similar ways to deterministic methods.
-
-	\item in directly extracting coherent regions for the stochastic flow.
-	\citet{BalasuriyaGottwald_2018_EstimatingStableUnstable} consider stationary flows subject to small-scale stochastic perturbations, and quantify the behaviour of particles
-	\citet{DennerEtAl_2016_ComputingCoherentSets} directly compute coherent sets by working with a discretised Fokker-Planck equation.
-	\td{Do a touch more reading on this.}
+	As another example, \citet{DennerEtAl_2016_ComputingCoherentSets} directly compute coherent sets by working with a discretised Fokker-Planck equation, which is a partial differential equation that governs the probability density function of an SDE solution (a brief overview is provided in \Cref{sec:disc_fp}).
+	This Fokker-Planck approach extends the transfer-operator method of \citet{Froyland_2013_AnalyticFrameworkIdentifying}, which is a popular method for LCS detection and extraction by encoding how densities are pushed forward by the flow.
+	Until recently the transfer-operator, at least in the context of Lagrangian analysis, has been viewed as purely deterministic, but provides a framework for naturally including velocity field uncertainties that is only recently being explored \citet{Balasuriya_2020_StochasticApproachesLagrangian}.
 
 	\item in understanding the direct impact of velocity uncertainty on well-established deterministic LCS measures.
 	\citet{BadzaEtAl_2023_HowSensitiveAre} provide a systematic analysis, using Monte Carlo simulation and summary statistics to evaluate the robustness of several common LCS extraction schemes to velocity uncertainty.
-	It is shown that LCS methods that directly account for this uncertainty, such as stochastic sensitivity \citep{Balasuriya_2020_StochasticSensitivityComputable}, are the most robust.
-	The finite-time Lyapunov exponent has received particular attention, with recent studies aiming to quantify the impact of velocity field uncertainty on the FTLE computation: \citet{GuoEtAl_2016_FiniteTimeLyapunovExponents} use stochastic simulation and statistical analysis, \citet{Balasuriya_2020_UncertaintyFinitetimeLyapunov} provides theoretical error bounds on the FTLE computation, and \citet{YouLeung_2021_ComputingFiniteTime} propose an approach for computing the expected FTLE field.
+	% It is shown that LCS methods that directly account for this uncertainty, such as stochastic sensitivity \citep{Balasuriya_2020_StochasticSensitivityComputable}, are the most robust.
+	The finite-time Lyapunov exponent has received particular attention, with recent studies aiming to quantify the impact of velocity field uncertainty on the FTLE computation: \citet{GuoEtAl_2016_FiniteTimeLyapunovExponents} use stochastic simulation and statistical analysis, \citet{Balasuriya_2020_UncertaintyFinitetimeLyapunov} provides theoretical error bounds on the FTLE computation, and \citet{YouLeung_2021_ComputingFiniteTime} propose an approach for computing the (statistically) expected FTLE field.
 
 \end{romanate}
 In this thesis, we are primarily interested point (i), by exploring how our characterisations of uncertainty can be applied to extract coherent structures.
 This is directly extending the stochastic sensitivity of \citet{Balasuriya_2020_StochasticSensitivityComputable}, which is summarised in \Cref{sec:s2_summ}.
-We will also discuss (in \Cref{ch:outlook}) how we anticipate our work could be applied to point (iii), as a quantification of uncertainty in computations involving the flow map in other LCS schemes.
-
-
+We will also discuss (in \Cref{ch:outlook}) how we anticipate our work could be applied to point (ii), as a quantification of uncertainty in computations involving the flow map in other LCS schemes.
 
 
 
 
 \section{Stochastic sensitivity}\label{sec:s2_summ}
-To conclude our background and motivation, this section provides a brief summary of stochastic sensitivity, a computable measure of uncertainty in flows introduced by \citet{Balasuriya_2020_StochasticSensitivityComputable}.
-These tools were provided for 2-dimensional systems only, and the primary motivation was top undestand uncertainty in fluid flows.
-% Further technical details, including the main theorems, are reproduced in \Cref{app:s2_details}.
-
-Given possibly time-dependent velocity data \(u: \R^2 \times [0,T] \to \R^2\), \citet{Balasuriya_2020_StochasticSensitivityComputable} considers the evolution of solutions to the differential equation
+To conclude our background and motivation, this section provides a brief summary of stochastic sensitivity, a measure of uncertainty in differential equation introduced by \citet{Balasuriya_2020_StochasticSensitivityComputable}.
+These tools are \emph{computable} given only velocity data, which enables an efficient quantification of uncertainty in a stochastic system without needing bulk simulation.
+Stochastic sensitivity was originally provided for 2-dimensional systems only, and the primary motivation was to understand the impact of velocity field uncertainty on fluid flows.
+Given possibly time-dependent velocity data \(u\colon \R^2 \times [0,T] \to \R^2\), \citet{Balasuriya_2020_StochasticSensitivityComputable} considers the evolution of solutions to the ordinary differential equation
 \begin{equation}\label{eqn:s2_ode}
-	\dod{x_t}{t} = u\!\left(x_t, t\right).
+	\dod{x_t}{t} = u\!\left(x_t, t\right),
 \end{equation}
+subject to some fixed initial condition \(x_0\).
 The velocity field \(u\) is \emph{Eulerian}, in that it describes the fluid velocity at a given point in space and time.
 The trajectories that solve \cref{eqn:s2_ode} are \emph{Lagrangian}, and correspond to the movement of idealised infinitesimal particles within the flow.
 These Lagrangian trajectories are summarised by the flow map \(F_s^t\) of \cref{eqn:s2_ode}.
-In most practical situations, the Eulerian velocity data driving ocean and atmospheric models relies upon measurements of estimates obtained on a low resolution spatial discretisation.
-\citet{Balasuriya_2020_StochasticSensitivityComputable} introduces stochastic sensitivity as a new tool for directly quantifying the impact of Eulerian uncertainty on Lagrangian trajectories.
+As we have continued to emphasise, the velocity field \(u\) is in practice subject to unavoidable uncertainties.
+\citet{Balasuriya_2020_StochasticSensitivityComputable} aims to quantify the impact of this Eulerian uncertainty, directly attributed to \(u\), on the Lagrangian trajectories arising from integration of the velocity field.
+% In most practical situations, the Eulerian velocity data driving ocean and atmospheric models relies upon measurements of estimates obtained on a low resolution spatial discretisation.
+% \citet{Balasuriya_2020_StochasticSensitivityComputable} introduces stochastic sensitivity as a new tool for directly quantifying the impact of Eulerian uncertainty on Lagrangian trajectories.
 
 To directly account for these unresolved sources of uncertainty, the ``true'' Lagrangian trajectories evolve as solution to the stochastic differential equation
 \begin{equation}
-	\sde{y_t}{u\left(y_t, t\right)}{\epsilon\sigma\left(y_t, t\right)}, \quad y_0 = x_0
+	\sde{y_t}{u\!\left(y_t, t\right)}{\epsilon\sigma\!\left(y_t, t\right)}, \quad y_0 = x_0
 	\label{eqn:s2_sde},
 \end{equation}
-where \(0 < \epsilon \ll 1\) is a parameter quantifying the scale of the noise, \(\sigma:	\R^2\times[0,T] \to \R^{2\times 2}\) is the \(2\times 2\) diffusion matrix, and \(W_t\) is the canonical two-dimensional Wiener process.
-In the original formulation \citep{Balasuriya_2020_StochasticSensitivityComputable}, \(\epsilon\) is a dimensionless parameter and \(\sigma\) is dimensional, but an alternative scaling technique relates \(\epsilon\) to spatial and velocity uncertainty scales in the data (see the follow-up work by \citet{BadzaEtAl_2023_HowSensitiveAre,Balasuriya_2020_UncertaintyFinitetimeLyapunov,FangEtAl_2020_DisentanglingResolutionPrecision} for examples).
+where \(0 < \epsilon \ll 1\) is a parameter quantifying the scale of the noise, \(\sigma\colon	\R^2\times[0,T] \to \R^{2\times 2}\) is the \(2\times 2\) diffusion matrix, and \(W_t\) is the canonical two-dimensional Wiener process.
+In the original formulation \citep{Balasuriya_2020_StochasticSensitivityComputable}, \(\epsilon\) is a dimensionless parameter and \(\sigma\) is dimensional, but an alternative scaling technique relates \(\epsilon\) to spatial and velocity uncertainty scales in the data (see the follow-up work by \citet{Balasuriya_2020_UncertaintyFinitetimeLyapunov}, \citet{FangEtAl_2020_DisentanglingResolutionPrecision}, and \citet{BadzaEtAl_2023_HowSensitiveAre} for examples).
 Since \(\sigma\) can vary by both space and time, the noise is permitted to be multiplicative.
-The diffusion matrix \(\sigma\) is specified \emph{a priori}, based on any knowledge of how uncertainty varies with space and time, e.g. from experimental considerations, observation error estimates.
+The diffusion matrix \(\sigma\) is specified \emph{a priori}, based on any knowledge of how uncertainty varies with space and time, e.g. from experimental considerations, observation error estimates, physics-informed models, etc.
 If no such prior information is known, then \(\sigma \equiv I\), the \(2 \times 2\) identity matrix is the default choice.
-The SDE \cref{eqn:s2_sde} is considered subject to a \emph{fixed} initial condition \(x_0\).
 
-To quantify uncertainty in a way that is independent of the noise scale \(\epsilon\), \citet{Balasuriya_2020_StochasticSensitivityComputable} defined the random variable \(z_\epsilon\left(x_0,t\right)\) as
+Next, to quantify uncertainty at a time \(t\), \citet{Balasuriya_2020_StochasticSensitivityComputable} defined the random variable \(z_\epsilon\left(x_0\right)\) as
 \[
-	z_\epsilon\!\left(x,t\right) \coloneqq \frac{y_t - F_0^t\!\left(x\right)}{\epsilon},
+	z_\epsilon\!\left(x_0\right) \coloneqq \frac{y_t - F_0^t\!\left(x_0\right)}{\epsilon},
 \]
 which captures the random deviation between the ``true'' stochastic trajectories and the deterministic flow map.
 The aim was to compute statistics of \(z_\epsilon\).
-To derive such quantities that can be computed in practice, \citet{Balasuriya_2020_StochasticSensitivityComputable} considers the signed projection of \(z_\epsilon\!\left(x,t\right)\) onto a ray emanating from the deterministic position \(F_0^t(x)\) in a given direction \(\theta\), defining
+To derive such quantities that can be computed in practice, \citet{Balasuriya_2020_StochasticSensitivityComputable} considers the signed projection of \(z_\epsilon\!\left(x_0\right)\) onto a ray emanating from the deterministic position \(F_0^t\!\left(x_0\right)\) in a given direction \(\theta\), defining
 \[
-	P_\epsilon\!\left(x,\theta\right) \coloneqq \hat{n}^{\T}\!\left(\theta\right) z_\epsilon\!(x_0,t), \quad \hat{n}\!\left(\theta\right) = \begin{bmatrix}
+	P_\epsilon\!\left(x_0,\theta\right) \coloneqq \hat{n}^{\T}\!\left(\theta\right) z_\epsilon\!(x_0), \quad \hat{n}\!\left(\theta\right) = \begin{bmatrix}
 		\cos{\theta} \\
 		\sin{\theta}
 	\end{bmatrix}.
 \]
 where \(\theta \in \left[-\pi/2, \pi/2\right)\).
-The statistics of \(z_\epsilon\left(x,T\right)\) and \(P_\epsilon(x,\theta)\) are considered in the limit as \(\epsilon\downarrow 0\), which provides a characterisation of the uncertainty of the model that is \emph{independent} of the scale of the noise.
-\citet{Balasuriya_2020_StochasticSensitivityComputable} provided computable expressions for the mean and variance of \(P_\epsilon\left(x,\theta\right)\) in this limit of small noise, which we summarise here.
-For proofs of these results, see the appendices of \citet{Balasuriya_2020_StochasticSensitivityComputable}.
+The statistics of \(z_\epsilon\!\left(x_0\right)\) and \(P_\epsilon\!\left(x_0,\theta\right)\) are considered in the limit as \(\epsilon\downarrow 0\), which provides a characterisation of the uncertainty of the model that is \emph{independent} of the scale of the noise.
+\citet{Balasuriya_2020_StochasticSensitivityComputable} defines two measures of uncertainty from the variance of \(P_\epsilon\) in this limit:  %provided computable expressions for the mean and variance of \(P_\epsilon\left(x,\theta\right)\) in this limit of small noise, which we summarise here.
+% For proofs of these results, see the appendices of \citet{Balasuriya_2020_StochasticSensitivityComputable}.
 
 \begin{definition}[\citealt{Balasuriya_2020_StochasticSensitivityComputable}]
 	\begin{alpharate}
 		\item The \textbf{anisotropic uncertainty} is a scalar field \(A: \R^2\times\left[-\pi/2, \pi/2\right) \to [0,\infty)\) defined by
 		\[
-			A(x,\theta) \coloneqq \sqrt{\lim_{\epsilon\downarrow 0}\var{P_\epsilon(x,\theta)}}.
+			A\!\left(x_0,\theta\right) \coloneqq \sqrt{\lim_{\epsilon\downarrow 0}\var{P_\epsilon\!\left(x_0,\theta\right)}}.
 		\]
 
 		\item The \textbf{stochastic sensitivity} is a scalar field \(S: \R^2 \to [0,\infty)\) defined by
 		\[
-			S^2(x) \coloneqq \lim_{\epsilon\downarrow 0}\sup_{\theta}{\var{P_\epsilon(x,\theta)}}.
+			S^2\!\left(x_0\right) \coloneqq \lim_{\epsilon\downarrow 0}\sup_{\theta}{\var{P_\epsilon\!\left(x_0,\theta\right)}}.
 		\]
 	\end{alpharate}
 \end{definition}
 
 \begin{figure}
 	\centering
-	\usetikzlibrary{arrows.meta}
 	\begin{tikzpicture}[scale=2]
+		\pgfmathsetseed{1}
 
 		% Actual path
 		\draw (1,1) .. controls (2.5,-0.5) and (4,1.4) .. (5, 0.5);
@@ -624,26 +644,26 @@ For proofs of these results, see the appendices of \citet{Balasuriya_2020_Stocha
 		\draw[color=ForestGreen, decorate, decoration={random steps, segment length = 1pt, amplitude=2pt}] (1,1) .. controls (2.5, -0.2) and (3.7,2.7) .. (6.4, 2.1);
 
 		% S2 quantities
-		\path[-{Latex[length=3mm, width=1.5mm]},blue] (5,0.5) edge node[left, xshift=-2pt] {\(\epsilon z_\epsilon\!\left(x, t\right)\)} (6.4, 2.1);
+		\path[-{Latex[length=3mm, width=1.5mm]},blue] (5,0.5) edge node[left, xshift=-5pt] {\(\epsilon z_\epsilon\!\left(x_0\right)\)} (6.4, 2.1);
 		% Calculation here: fix theta, the angle of the projection. Length of the vector between det point and end of projection is l*sin(n), where l is the length of the vector between the det and stoch points, and n = pi/2 - phi + theta, where phi is the angle of the vector between the det and stoch points.
 		\def\vecl{sqrt(1.4^2 + 1.6^2)};
 		\def\projtheta{pi/7};
 		\def\projphi{atan(1.6 / 1.4) * pi / 180}
-		\path[red] (5,0.5) edge node[right, xshift=2pt] {\(\epsilon P_{\epsilon}\!\left(x,\theta\right)\)} ({5 +\vecl*cos((\projphi - \projtheta) r) * cos(\projtheta r)}, {0.5 + \vecl* cos((\projphi - \projtheta) r) * sin(\projtheta r)});
+		\path[red] (5,0.5) edge node[right, xshift=5pt] {\(\epsilon P_{\epsilon}\!\left(x,\theta\right)\)} ({5 +\vecl*cos((\projphi - \projtheta) r) * cos(\projtheta r)}, {0.5 + \vecl* cos((\projphi - \projtheta) r) * sin(\projtheta r)});
 
 		\path[dashed, gray] (6.4, 2.1) edge ({5 + \vecl * cos((\projphi - \projtheta) r) * cos(\projtheta r)}, {0.5 + \vecl * cos((\projphi - \projtheta) r) * sin(\projtheta r)});
 
 		% Reference angle
 		\path[dashed,gray] (5,0.5) edge (7,0.5);
-		\draw[gray] (5.5,0.5) arc (0:{\projtheta * 180 / pi}:0.5) node[midway, xshift=5pt] {\(\theta\)};
+		\draw[gray] (5.5,0.5) arc (0:{\projtheta * 180 / pi}:0.5) node[midway, xshift=5pt, yshift=2pt] {\(\theta\)};
 
 		% Points
-		\filldraw [black] (1,1) circle (1pt) node[anchor=east] {\(x\)};
-		\filldraw [black] (5,0.5) circle (1pt) node [anchor=north] {\(F_0^t\!\left(x\right)\)};
+		\filldraw [black] (1,1) circle (1pt) node[anchor=east] {\(x_0\)};
+		\filldraw [black] (5,0.5) circle (1pt) node [anchor=north] {\(F_0^t\!\left(x_0\right)\)};
 		\filldraw [color=ForestGreen] (6.4, 2.1) circle (1pt) node [anchor=south] {\(y_t\)};
 
 	\end{tikzpicture}
-	\caption{The entities used in the definition of stochastic sensitivity, including the mapping from the deterministic flow map solving \cref{eqn:s2_ode} (in black) and the `true', but random, trajectory that solves the stochastic equation \cref{eqn:s2_sde}. }
+	\caption{The entities used in the definition of stochastic sensitivity, including the mapping (in black) from the deterministic flow map solving \cref{eqn:s2_ode} and the `true', but random, trajectory that solves the stochastic equation \cref{eqn:s2_sde} (in green).}
 	\label{fig:s2_diag}
 \end{figure}
 
@@ -653,20 +673,19 @@ Simultaneously, the solution to the stochastic system \cref{eqn:s2_sde} (in gree
 We take the difference (in blue) between the deterministic position and the stochastic and project (in red) this vector onto a ray of angle \(\theta\).
 The anisotropic uncertainty in the direction of \(\theta\) is then calculated by computing the variance of \(P_{\epsilon}\!\left(x, \theta\right)\) and taking the \(\epsilon\downarrow 0\) limit.
 By maximising this limiting variance across all possible angles \(\theta\), we get the stochastic sensitivity value, a single scalar number associated with the initial condition \(x\).
-Using techniques from both deterministic and stochastic calculus (i.e. Gr\"onwall's inequality, the Burkholder-Davis-Gundy inequality, It\^o's Lemma), \citet{Balasuriya_2020_StochasticSensitivityComputable} further established expressions for both the anisotropic uncertainty and the stochastic sensitivity that are computable given only the flow map and velocity data.
+Using techniques from both deterministic and stochastic calculus, \citet{Balasuriya_2020_StochasticSensitivityComputable} further established expressions for both the anisotropic uncertainty and the stochastic sensitivity that are computable given only the flow map and velocity data.
 
 \begin{theorem}[\citealt{Balasuriya_2020_StochasticSensitivityComputable}]\label{thm:orig_s2_calculation}
-	For \(x \in \R^2\), set \(w \coloneqq F_0^t(x)\).
+	For \(x_0 \in \R^2\), set \(w \coloneqq F_0^t\!\left(x_0\right)\) and fix \(t \in [0,T]\).
 	Then, for any \(\theta \in \left[-\pi/2, \pi/2\right)\),
 	\[
-		A\!\left(x,\theta\right) = \left(\int_0^T{\norm{\Lambda\left(x, t, T\right)J\hat{n}\!\left(\theta\right)}\dif t}\right)^{1/2},
+		A\!\left(x_0,\theta\right) = \left(\int_0^t{\norm{\Lambda\!\left(x_0, \tau\right)J\hat{n}\!\left(\theta\right)}\dif \tau}\right)^{1/2},
 	\]
 	where
-	\td{Use \(w\) appropriately}
 	\[
-		\Lambda\!\left(x,t\right) \coloneqq e^{\int_t^T{\left[\nabla \cdot u\right]\left(F_t^\xi\!\left(x\right), \xi\right)\dif\xi}}\sigma\left(F_0^t(x), t\right)^{\T}J \nabla_w F_T^t\!\left(w\right),
+		\Lambda\!\left(x_0,\tau\right) \coloneqq e^{\int_\tau^t{\left[\nabla \cdot u\right]\!\left(F_\tau^\xi\!\left(x_0\right), \xi\right)\dif\xi}}\sigma\left(F_0^\tau\!\left(x\right), \tau\right)^{\T} J \nabla_w F_t^\tau\!\left(w\right),
 	\]
-	with the gradients \(\nabla_w\) of the flow map taken with respect to the mapped position \(w\), and
+	with the gradient \(\nabla_w\) of the flow map taken with respect to the mapped position \(w\), and
 	\[
 		J \coloneqq \begin{bmatrix}
 			0 & -1 \\
@@ -675,19 +694,26 @@ Using techniques from both deterministic and stochastic calculus (i.e. Gr\"onwal
 	\]
 	Additionally, stochastic sensitivity is computed as
 	\[
-		S^2(x) = P(x) + N(x),
+		S^2\!\left(x_0\right) = P\!\left(x_0\right) + N\!\left(x_0\right),
 	\]
 	with
 	\begin{align*}
-		L(x) & \coloneqq \frac12\sum_{i=1}^2\int_0^T\left[\Lambda_{i2}\left(x,t, T\right)^2 - \Lambda_{i1}\left(x,t,T\right)^2\right]\dif t \\
-		M(x) & \coloneqq \sum_{i=1}^2\int_0^T{\Lambda_{i1}\left(x,t,T\right)\Lambda_{i2}\left(x,t,T\right)\dif t}                           \\
-		N(x) & \coloneqq \sqrt{L^2(x) + M^2(x)}                                                                                             \\
-		P(x) & \coloneqq \abs{\frac12\sum_{i=1}^2\sum_{j=1}^2{\int_0^T{\Lambda_{ij}\left(x,t,T\right)^2\dif t}}},
+		L\!\left(x_0\right) & \coloneqq \frac12\sum_{i=1}^2\int_0^T\left[\Lambda_{i2}\!\left(x_0,\tau\right)^2 - \Lambda_{i1}\!\left(x_0,\tau\right)^2\right]\dif\tau \\
+		M\!\left(x_0\right) & \coloneqq \sum_{i=1}^2\int_0^T{\Lambda_{i1}\!\left(x_0,\tau\right)\Lambda_{i2}\!\left(x_0,\tau\right)\dif t}                            \\
+		N\!\left(x_0\right) & \coloneqq \sqrt{L^2\!\left(x_0\right) + M^2(x)}                                                                                         \\
+		P\!\left(x_0\right) & \coloneqq \abs{\frac12\sum_{i=1}^2\sum_{j=1}^2{\int_0^T{\Lambda_{ij}\!\left(x_0,\tau\right)^2\dif t}}},
 	\end{align*}
 	where \(\Lambda_{ij}\) is the \((i,j)\)-element of \(\Lambda\).
 \end{theorem}
+\begin{proof}
+	See the appendices of \citet{Balasuriya_2020_StochasticSensitivityComputable}.
+\end{proof}
 
-Since stochastic sensitivity provides a scalar field on the set of initial conditions to \cref{eqn:s2_ode}, \citet{Balasuriya_2020_StochasticSensitivityComputable} also proposes that stochastic sensitivity can be used to extract Lagrangian coherent structures from the two-dimensional flow.
+\citet{Balasuriya_2020_StochasticSensitivityComputable} also provides nonlinear scalings of stochastic sensitivity that are informed by the spatial resolution and diffusivity scale in the specific model.
+However, stochastic sensitivity provides a theoretical field that makes no reference to any of these particular physical considerations, and in this thesis we will only look at the unscaled field.
+We do note that taking the logarithm of the stochastic sensitivity field has often proved useful for visualisation \citep[e.g.]{BadzaEtAl_2023_HowSensitiveAre}.
+
+Since stochastic sensitivity provides a scalar field on the set of initial conditions to \cref{eqn:s2_ode}, \citet{Balasuriya_2020_StochasticSensitivityComputable} also proposes that stochastic sensitivity can be used to distinguish spatial regions of interest within the flow, in the spirit of Lagrangian coherent structure analysis.
 A \emph{robust set} is a subset of initial conditions such that the stochastic sensitivity is below a given threshold.
 That is, a robust set consists of those initial conditions for which the uncertainty in the corresponding flow trajectory, as measured by stochastic sensitivity, is small enough.
 Given a threshold \(R\), a robust set is defined as
@@ -695,35 +721,34 @@ Given a threshold \(R\), a robust set is defined as
 	\mathrm{RS}\!\left(R\right) \coloneqq \setc{x \in \Omega_0}{S^2\!\left(x\right) < R},
 \]
 where \(\Omega_0 \subset \R^2\) is the domain of initial conditions of interest.
-Numerical experiments by \citet{BalasuriyaEtAl_2018_GeneralizedLagrangianCoherent}, \citet{Balasuriya_2020_StochasticSensitivityComputable}, and \citet{BadzaEtAl_2023_HowSensitiveAre} show that \td{these structures are extracted. Need to check GLCS paper.}.
-Unlike a majority of previous methods for identifying LCSs which treat the dynamical system as fully deterministic and ignore any uncertainty, stochastic sensitivity, and therefore the extracted robust sets, explicitly accounts for stochasticity.
+Numerical experiments by \citet{Balasuriya_2020_StochasticSensitivityComputable}, and \citet{BadzaEtAl_2023_HowSensitiveAre} suggest that such sets can correspond to coherent structures within the flow.
+Unlike a majority of previous methods for identifying LCSs which treat the dynamical system as fully deterministic and ignore any uncertainty, stochastic sensitivity, and therefore the extracted robust sets, explicitly accounts for stochasticity and is therefore highly novel within the LCS community.
 The threshold \(R\) can be informed by lengthscales from the resolution (e.g. the resolution of the underlying velocity data, if the noise in \cref{eqn:s2_sde} is thought of as accounting for subgrid effects) and advective and diffusivity properties of the flow (such as the P\'eclet number)---see \citet{Balasuriya_2020_StochasticSensitivityComputable} for details on this.
 However, when we later use a similar idea to extract robust sets, we select \(R\) without any prior knowledge and instead choose a value that results in coherent structures that match our qualitative expectations.
 
 
-\subsection{Current applications \& shortcomings}
-Since stochastic sensitivity is only a recent development, it has only been applied in a limited number of places so far.
-Here, we briefly review the literature in which the original formulation stochastic sensitivity by \citet{Balasuriya_2020_StochasticSensitivityComputable} has been applied.
+% \subsection{Current applications \& shortcomings}
+Since stochastic sensitivity is only a recent development, it has only been applied in a limited number of places so far:
 \begin{itemize}
 	\item \citet{Balasuriya_2020_UncertaintyFinitetimeLyapunov} uses stochastic sensitivity to compute an error bound for the finite-time Lyapunov (FTLE) computation.
 	      The computable \(S^2\) value is used as an estimate of the standard deviation of the deviation between the deterministic and ``true'' (stochastic) trajectories, leading to a computable error bound on the FTLE value.
 
 	\item \citet{FangEtAl_2020_DisentanglingResolutionPrecision} use stochastic sensitivity in an investigation of the interplay between three different sources of error in dynamical systems: errors from unresolved processes due to limited resolution, errors from limited precision, and the inherent stochasticity in the dynamical behaviour of the system.
-	      The authors find that \td{What do they find? Need to briefly summarise these results.}
+	      % The authors find that \td{What do they find? Need to briefly summarise these results.}
 
-	\item \citet{FangOuellette_2021_AssessingInformationContent}, extending previous work by \citet{FangEtAl_2019_LocalLinearityCoherent} use stochastic sensitivity to construct coherent structures that assess the information content (in an information-theoretic sense) of a dynamical system.
-	      Stochastic sensitivity is used to provide a state-dependent lengthscale to decide whether inherent stochasticity in the system is too large to be useful\lb{Need to be more specific than this}.
+	\item \citet{FangOuellette_2021_AssessingInformationContent}, extending previous work by \citet{FangEtAl_2019_LocalLinearityCoherent}, use stochastic sensitivity to construct spatial objects that assess the information content (in an information-theoretic sense) of a dynamical system.
+	      Stochastic sensitivity is used to provide a state-dependent lengthscale to assess whether the inherent stochasticity in the system dominates over resolution and linearisation errors.
 
 	\item \citet{BadzaEtAl_2023_HowSensitiveAre} investigate the impact of velocity uncertainty on Lagrangian coherent structures extracted as robust sets with stochastic sensitivity.
-	      The stochastic model \cref{eqn:s2_sde} is used to generate realisations of Lagrangian trajectories subject to noise on the velocity field.
-	      By directly capturing such uncertainty as a means of coherent set \citet{BadzaEtAl_2023_HowSensitiveAre} showed that robust sets extracted with stochastic sensitivity are typically more robust to perturbations, since the framework directly accounts for these unlike other LCS methods.
+	      The stochastic model \cref{eqn:s2_sde} is used to generate realisations of Lagrangian trajectories subject to noise on the velocity field, and summary statistics are used to evaluate the stability of a range of coherent structure techniques to this noise.
+	      By directly capturing such uncertainty as a means of coherent set \citet{BadzaEtAl_2023_HowSensitiveAre} showed that robust sets extracted with stochastic sensitivity typically remain stable under perturbations, since the framework directly accounts for this stochasticity unlike other LCS methods.
 
 \end{itemize}
 
 However, as stochastic sensitivity has only been defined in two-dimensions, these studies are also all restricted to two-dimensional systems.
-This is a significant limitation of the original work, and one we will overcome; in \Cref{ch:linear_theory}, our primary theoretical chapter, we will present a new definition of stochastic sensitivity in \(n\)-dimensions that overcomes these limitations while still maintaining the computability of the measure.
+This is a significant limitation of the original work, and one we will overcome; in \Cref{ch:linear_theory}, our primary theoretical chapter, we will present a new definition of stochastic sensitivity in \(n\)-dimensions that maintains the computability of the measure.
 Extending stochastic sensitivity to \(n\)-dimensions will enable application to a much broader class of models beyond the fluid flow context, including high-dimensional climate models, and accordingly the extension of all the aforementioned studies and applications.
-Moreover, \citet{Balasuriya_2020_StochasticSensitivityComputable} only computes the expectation and variance of the projections \(P_\epsilon(x,\theta)\), which does not give us the distribution under the limit as \(\epsilon\) approaches 0.
-The computational formula for the anisotropic uncertainty and stochastic sensitivity, as described in \Cref{thm:orig_s2_calculation}, require knowledge of the divergence \(\nabla\cdot u\) of the velocity field, and computation of four integrals.
-While these expressions are computable given only velocity data, they are cumbersome and require the evaluation of several integrals, likely numerically in practice.
-We also address these difficulties by directly relating stochastic sensitivity to the theory of stochastic differential equation linearisations and provide a computation for the value that only requires taking the operator norm of a covariance matrix, obtained as the solution to an ordinary differential equation\lb{Woah, way too long of a sentence}.
+Moreover, \citet{Balasuriya_2020_StochasticSensitivityComputable} only computes the expectation and variance of the projections \(P_\epsilon(x,\theta)\), which does not describe the full  distribution under the \(\epsilon\downarrow 0\) limit.
+The computational formula for the anisotropic uncertainty and stochastic sensitivity, in \Cref{thm:orig_s2_calculation}, requires knowledge of the divergence \(\nabla\cdot u\) of the velocity field, and computation of four integrals.
+While these expressions are computable given only velocity data, they are cumbersome.
+We also address these difficulties by directly relating stochastic sensitivity to the theory of stochastic differential equation linearisations and provide a computation for the value that only requires taking the operator norm of the matrix solution to an ordinary differential equation.

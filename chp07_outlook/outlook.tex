@@ -239,7 +239,7 @@ This equation is difficult to solve even numerically, due to the nonlinearity an
 Thus, while there is potential to extend our \emph{theoretical} results to higher-order expansions, we expect that there would not be the sane \emph{practicality} of computation that we relied upon later in the thesis.
 
 
-\subsection{The Fokker-Planck equation}
+\subsection{The Fokker-Planck equation}\label{sec:disc_fp}
 \note{Introduce FP-equation and talk about potential to link to current work.}
 The Fokker-Planck equation is a partial differential equation that describes the time-evolution of the probability density function of the solution to a stochastic differential equation.
 The probability density function \(\rho\) for the solution to the SDE \cref{eqn:gen_sde} at time \(t \in [0,T]\) is the solution to the corresponding Fokker-Planck equation \citep{Risken_2012_FokkerPlanckEquationMethods}
@@ -278,9 +278,9 @@ The aim of the mixture model is to approximate the probability density function 
 The Fokker-Planck equation is equivalent to an advection-diffusion equation, which in classical mechanics\lb{?} describes the spread of a passive scalar within a flow, with a spatiotemporally varying diffusion coefficient.
 This connection often leads to the construction of \(\sigma\) in oceanographic models; the impact of subscale vortices is quantified via physical arguments to describe the transport of material with an advection-diffusion equation, which corresponds to a Fokker-Planck equation and therefore a stochastic differential equation.
 
-\section{Further development of the GMM algorithm}\label{sec:gmm_extensions}
-\note{Several avenues for further developing the GMM algorithm. Discuss \citet{DeMarsEtAl_2013_EntropyBasedApproachUncertainty} in more detail.}
-In describing our mixture model algorithm in \Cref{ch:gmm}, we deliberately left several steps in general terms: the initialisation of the algorithm (for an arbitrary initial condition), the criterion for deciding when to split a component, and the construction and weighting of the split points.
+% \section{Further development of the GMM algorithm}\label{sec:gmm_extensions}
+% \note{Several avenues for further developing the GMM algorithm. Discuss \citet{DeMarsEtAl_2013_EntropyBasedApproachUncertainty} in more detail.}
+% In describing our mixture model algorithm in \Cref{ch:gmm}, we deliberately left several steps in general terms: the initialisation of the algorithm (for an arbitrary initial condition), the criterion for deciding when to split a component, and the construction and weighting of the split points.
 
 
 
