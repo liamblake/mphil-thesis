@@ -15,10 +15,10 @@ The gradient (with respect to the initial condition) of the flow map \cref{eqn:b
 \]
 The variance of the linearisation solution over \([s,t]\) is given explicitly by \cref{eqn:pi_expl_eqn} (with the initial variance \(\var{l_s} = 0\)), which we can evaluate:
 \begin{align*}
-	\var{l_t} & = \left[\nabla F_s^t\!\left(x_0\right)\right]^2\int_s^t{\left[\nabla F_s^\tau\!\left(x_0\right)\right]^{-2}\dif\tau} \\
-			& = \frac{e^{2t}}{e^{2t - 2s}\sinh^2\!\left(x_0\right) + 1}\int_s^t{\left(e^{- 2s}\sinh^2\!\left(x_0\right) + e^{- 2\tau}\right)\dif\tau} \\
-			& = \frac{e^{2t - 2s}\left(\sinh^2\!\left(x_0\right)(t - s) - \frac12 e^{2s - 2t} + \frac12\right)}{e^{2t - 2s}\sinh^2\!\left(x_0\right) + 1} \\
-			& = \frac{2\sinh^2\!\left(x_0\right)\left(t - s\right) + e^{2t - 2s} - 1}{2\sinh^2\!\left(x_0\right) + 2e^{2s - 2t}}.
+	\var{l_t} & = \left[\nabla F_s^t\!\left(x_0\right)\right]^2\int_s^t{\left[\nabla F_s^\tau\!\left(x_0\right)\right]^{-2}\dif\tau}                        \\
+	          & = \frac{e^{2t}}{e^{2t - 2s}\sinh^2\!\left(x_0\right) + 1}\int_s^t{\left(e^{- 2s}\sinh^2\!\left(x_0\right) + e^{- 2\tau}\right)\dif\tau}     \\
+	          & = \frac{e^{2t - 2s}\left(\sinh^2\!\left(x_0\right)(t - s) - \frac12 e^{2s - 2t} + \frac12\right)}{e^{2t - 2s}\sinh^2\!\left(x_0\right) + 1} \\
+	          & = \frac{2\sinh^2\!\left(x_0\right)\left(t - s\right) + e^{2t - 2s} - 1}{2\sinh^2\!\left(x_0\right) + 2e^{2s - 2t}}.
 \end{align*}
 
 

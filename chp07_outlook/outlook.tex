@@ -24,7 +24,7 @@ In particular, we found that the strong error scales with the initial uncertaint
 We also demonstrated the new computation of stochastic sensitivity in two dimensions (in \Cref{sec:compute_s2_2d}) and, for the first time, in 3-dimensions (in \Cref{sec:comput_s2_3d}).
 
 Although linearisation approximations of SDEs have proven to be useful in both applications and as a theoretical tool (e.g.\ stochastic sensitivity), in \Cref{ch:gmm} we highlighted that there are limitations to using such approximations, particularly when the resulting linearisation solution is a Gaussian process.
-A Gaussian approximation cannot capture features such as skew and multimodality, despite these distinctly non-Gaussian attributes arising btho in the solutions of nonlinear and multiplicative noise SDES, and in observed statistics \citep{SuraEtAl_2005_MultiplicativeNoiseNonGaussianity,del-Castillo-Negrete_1998_AsymmetricTransportNonGaussian,BraccoEtAl_2000_VelocityProbabilityDensity}.
+A Gaussian approximation cannot capture features such as skew and multimodality, despite these distinctly non-Gaussian attributes arising both in the solutions of nonlinear and multiplicative noise SDEs, and in observed statistics \citep{SuraEtAl_2005_MultiplicativeNoiseNonGaussianity,del-Castillo-Negrete_1998_AsymmetricTransportNonGaussian,BraccoEtAl_2000_VelocityProbabilityDensity}.
 To overcome these limitations while still taking advantage of the computationally efficient linearisation approximation, we proposed an \emph{ad hoc} algorithm that uses a splitting process to approximate SDE solutions with a Gaussian mixture model.
 Each component of the mixture model arises from a solution of the SDE linearised about a \emph{different} deterministic trajectory, which can capture uncertainty in different regions of the state spoace.
 With a simple propagation-splitting procedure, the algorithm is able to capture multimodality, skewness, and other departures from Gaussianity to provide an approximation that improves upon a single Gaussian component but does not require the computational expense of bulk simulation.
@@ -44,9 +44,9 @@ Motivated by this, we explored two simple implementations of the mixture model a
 The mixture model showed highly promising results on this example trajectory; with only 2 splits and 25 components, the algorithm was able to closely recreate the highly non-Gaussian distribution (in \Cref{fig:na_2split_best}).
 % \td{Make sure you emphasise that we only demonstrated the mixture model on contrived examples and cheated}
 
-In the remainder of this chapter, we raise several discussion points on the possible implications, extensions, and applications of this work.
+In the remainder of this chapter, we raise several discussion points on the possible implications and extensions of our work.
 This is by no means an exhaustive list; since we have provided results for a general class of stochastic differential equations, our results have the potential to be applied across a wide range of fields, well beyond the scope of this thesis.
-
+Broadly speaking, our theoretical work (namely the error bound in \Cref{thm:main}) may be useful to investigate the validity of SDE linearisations in application domains such as Stochastic Parameterisation \citep{BernerEtAl_2017_StochasticParameterizationNew,Palmer_2019_StochasticWeatherClimate,LeutbecherEtAl_2017_StochasticRepresentationsModel} or Data Assimilation \citep{BudhirajaEtAl_2019_AssimilatingDataModels,ReichCotter_2015_ProbabilisticForecastingBayesian,LawEtAl_2015_DataAssimilationMathematical}, or to improve such linearisations by monitoring the skew or kurtosis.
 
 
 
@@ -84,33 +84,37 @@ In many practical situations, we can enforce boundary conditions on the evolutio
 These conditions are typically informed by physical aspects of the model, such as expecting that a variable of interest is non-negative, the presence of impermeable boundaries, or limitations of the underlying data.
 The Gulf Stream example in \Cref{sec:appl_ocean} provided one such situation.
 Firstly, the subset of altimetry data that we used was only available on a finite spatial region, which is almost always the case in data-driven models.
+Outside of this region, we have no data and so there is an implict boundary: once a trajectory leaves the data domain we can no longer propagate it forward or make further inferences.
 We also expected, from physical considerations, that drifter trajectories cannot move onto the regions of land within the dataset, creating impermeable boundaries.
 For an ordinary differential equation, boundary conditions usually do not pose a significant problem.
 However, the treatment of these boundaries in stochastic differential equations can be more complicated, requiring adjustments to both the drift and diffusion.
 There are two types of boundary conditions: absorbing, which act as fixed points, and reflecting, where the trajectories are `pushed away' from the boundary.
 Reflecting boundary conditions can also be enforced with a modification of the drift---see \citet{Pilipenko_2014_IntroductionStochasticDifferential} for an introduction.
-An absorbing boundary condition present a more difficult proposition \citep{Mannella_1999_AbsorbingBoundariesOptimal,CorrealesEscudero_2019_ItoVsStratonovich,TouboulWainrib_2015_DynamicsAbsorptionProperties} and requires modifying the \td{Write something or leave a note}.
+An absorbing boundary condition present a more difficult proposition, such as requiring specialised numerical schemes \citep{Mannella_1999_AbsorbingBoundariesOptimal}, causing a breakdown in the Markovian behaviour of the solution \citep{Munoz_1998_NatureDifferentTypes}, and even causing ambiguity of the stochastic differential equation itself \citep{CorrealesEscudero_2019_ItoVsStratonovich}.
 
 % can be accounted for by setting both the drift and diffusivity in the stochastic differential equation to zero on the boundary \citehere.
 % However, such adjustments will often violate the requirements of smoothness in these terms set out in \Cref{hyp:smooth}.
 % Regardless, these SDEs are well-defined and can be proven to have solutions under relaxed continuity conditions.\lb{Need to double check all this}
 
-Even without considering these technical modifications , there are difficulties in using our approaches in the presence of boundaries.
+Even without considering these technical modifications, there are difficulties in using our tools in the presence of boundaries.
 An \(n\)-dimensional Gaussian density has support on the entirety of \(\R^n\), meaning that for any sensible non-empty region in \(\R^n\), there is a non-zero probability that a random variable following a non-degenerate Gaussian distribution takes a value in that region.
 This property means that a Gaussian approximation, such as that arising from the linearisation of an SDE, cannot capture boundaries.
 Consequently, our mixture model suffers from the same limitation.
+A further difficulty in the mixture model algorithm is the selection of new components when splitting; without adjustment the new components may be placed across boundaries and violate conditions on the state.
+This can be avoided by appropriately adjusting the new components and their weights, for instance, but is another practical issue that needs further consideration.
 We avoided complications in our Gulf Stream example by ensuring that the target densities and the evolution of solution trajectories were sufficiently far from the boundaries so that the probability that a solution or the resulting approximations were nearby was negligible.
 Without these considerations however, the boundaries pose a significant problem---any inferences that use the linearisation, most notably stochastic sensitivity, cannot be trusted near those boundaries.
 When generating realisations, a n\"aive approach to handle these boundaries is to discard any trajectories that leave the spatial domain.
 In a similar vein, one may adjust the approximate probability density functions obtained by our techniques by discarding from the probability mass that violates the boundary conditions and renormalise the function.
-This approach is not supported with a mathematical justification, however, and would not reflect the behaviour of the solution at the boundary (e.g.\ absorbing versus reflecting)
+This approach is not supported with a mathematical justification, however, and would not reflect the behaviour of the solution at the boundary (e.g.\ absorbing versus reflecting).
 A more intriguing prospect is to adjust the linearised SDEs themselves to include these boundary conditions, and attempt to find an appropriate solution.
-This is not easy, however, due to the aforementioned theoretical modifications that must be made to the formulation and solution approach to a stochastic differential equation in the presence of boundaries, even when that SDE is linear.\lb{Not sure how convincing this is... need an example or some more theory to back it up}
+This is not easy, however, due to the aforementioned theoretical modifications that must be made to the formulation and solution approach to a stochastic differential equation in the presence of boundaries, even when that SDE is linear.
+Any headway in this direction could overcome one of the most significant limitations of Gaussian/linearisation approximations of stochastic differential equations.
 
 
 
 % \begin{itemize}
-% 	\item Boundary conditions can be informed by physical aspects of the model, e.g.\ expecting that a variable must be non-negative or the presence of boundaries, or limitations of the underlying data, e.g.\ only available on a finite set.
+% 	\item Boundar.g.\ expecting that a variable must be non-negative or the presence of boundaries, or limitations of the underlying data, e.g.\ only available on a finite set.
 % 	\item We saw some examples of this - the Gulf Stream dataset was only available on a finite spatial grid, and there was land which was both missing data and . Epi examples - population sizes are non-negative, and once we scaled to approximate with the diffusion limits, the variables were confined to \([0,1]\).
 % 	\item Enforcing these boundary conditions on a stochastic differential equation is difficult, since stochasticity messes things up.
 % 	\item A couple of standard options are absorbing boundary conditions - the drift and diffusion are set to zero, which means that the boundary acts as a fixed point of the system.
@@ -253,8 +257,8 @@ Establishing a theoretical connection between between stochastic sensitivity and
 Beyond these applications, stochastic sensitivity also has the potential as a \emph{theoretical} quantity, as a characterisation of Lagrangian trajectory uncertainty.
 Most traditional LCS measures are completely deterministic measures, not accounting for any uncertainty in the driving velocity field, and the sensitivity of these methods to such uncertainty has not been investigated in detail.
 The robustness of several LCS methods to stochastic noise has recently been explored by \citet{BadzaEtAl_2023_HowSensitiveAre}, but via stochastic simulation and summary statistics.
-Stochastic sensitivity can be used to perform a purely theoretical analysis of such sensitivity in LCS computations.\lb{Don't think this is that clear.}
-More generally, the linearised covariance matrix and stochastic sensitivity values are computable using the flow map gradient \(\nabla F_0^t\), which is a quantity often used in LCS computation, and so can enable a rapid computation to \emph{supplement} an LCS extraction scheme.\lb{Probably need another sentence here...!}
+Stochastic sensitivity can be used to perform a purely theoretical analysis of such sensitivity in LCS computations.%\lb{Don't think this is that clear.}
+More generally, the linearised covariance matrix and stochastic sensitivity values are computable using the flow map gradient \(\nabla F_0^t\), which is a quantity often used in LCS computation, and so can enable a rapid computation to \emph{supplement} an LCS extraction scheme.%\lb{Probably need another sentence here...!}
 \citet{Balasuriya_2020_UncertaintyFinitetimeLyapunov} provides a preliminary derivation (using the previously 2-dimensional formulation of stochastic sensitivity) of uncertainty in the finite-time Lyapunov exponent, as an example of how stochastic sensitivity can be used as a theoretical tool in LCS analysis.
 In this work, stochastic sensitivity provided an estimate of the standard deviation in the flow map, but with the extension of stochastic sensitivity to arbitrary dimensions and the additional knowledge of Gaussianity in the relevant underlying distribution, this initial work could be formalised (e.g.\ in terms of statistical confidence intervals) to provide a leading-order estimate for the error in FTLE computations.
 There has been much recent interest in understanding the impact of uncertainty on the FTLE \citep{Balasuriya_2020_UncertaintyFinitetimeLyapunov,YouLeung_2021_ComputingFiniteTime,GuoEtAl_2016_FiniteTimeLyapunovExponents}.
@@ -299,15 +303,17 @@ The formalisation of this connection is currently being pursued.
 % In this paper we have presented a theoretical result for characterising Lagrangian trajectory uncertainty, which can be used to perform a purely theoretical analysis of such sensitivity in LCS computations.
 
 
-\section{Applications to population processes}
+\section{Applications to population processes}\label{sec:epi_disc}
 To conclude this thesis with one final digression, we discuss results for stochastic systems evolving over discrete state space that are analogous to ours.
 This suggest that the tools we have developed can be applied to a far broader range of modelling scenarios.
 A population process is a stochastic process that evolves on a discrete state space, with each component of the process typically evolving over some subset of the positive integers.
-As the name suggests, such a process is used to model the number of individuals in a population \citep{Kendall_1949_StochasticProcessesPopulation}, and are used extensively across many fields but most notably within epidemiological, biological, and ecological modelling \citep{Brauer_2008_CompartmentalModelsEpidemiology}.
+As the name suggests, such a process is used to model the number of individuals in a population \citep{Kendall_1949_StochasticProcessesPopulation} and are used extensively across many fields but most notably within epidemiological, biological, and ecological modelling \citep{Brauer_2008_CompartmentalModelsEpidemiology}.
 A classic example is as a model of the spread of an infectious disease in a population, where the process counts the number of individuals in each stage of the disease.
-For a well-mixed and homogeneous population, a continuous time Markov chain (CTMC) is a natural choice for modelling the evolution of a population process.
-A continuous-time Markov chain (CTMC) is a stochastic process evolving over a discrete state space. The dynamics of the process are specified by the transition rates, which give the instantaneous probability per unit time of the process transitioning from one state to another.
-For a detailed introduction to CTMCs, see \citet{Anderson_1991_ContinuousTimeMarkovChains}—--the key properties for our purposes are that a CTMC is fully described by its state space and transition rates, can be easily simulated from, and is consequently used across many different applications to model the evolution of a population.
+For a well-mixed and homogeneous population, a continuous time Markov chain (CTMC) is a natural choice a mathematical framework for the evolution of a population process.
+A CTMC is a stochastic process evolving over a discrete state space in continuous time where the process moves from one state to another at a specified rate.
+The dynamics of the process are characterised by these transition rates, which give the instantaneous probability per unit time of the process transitioning from one state to another at a specified rate.
+The term ``Markov'' refers to the assumption that the behaviour of the process at a given time only depends on the current state and nopt any of the preceding history.
+For a detailed introduction to CTMCs, see \citet{Anderson_1991_ContinuousTimeMarkovChains}—--the key properties for our purposes are that a CTMC is fully described by its state space and transition rates, can be simulated from numerically to generate realisations, and is consequently used across many different applications to model the evolution of a population.
 
 \usetikzlibrary{automata,positioning,arrows}
 \tikzset{->, node distance = 2cm}
@@ -315,7 +321,7 @@ For a detailed introduction to CTMCs, see \citet{Anderson_1991_ContinuousTimeMar
 	\begin{center}
 		\begin{tabular}{|c|c|c|c|}
 			\hline
-			Transition & \multicolumn{2}{c|}{Event} & Rate                                                                  \\ \hline
+			Transition & \multicolumn{2}{c|}{Event} & Rate                                                                  \\ \hhline{|=|=|=|=|}
 			1          & Infection                  & \(\left(S, I\right) \to \left(S-1, I + 1\right)\) & \(\beta S I / M\) \\ \hline
 			2          & Recovery                   & \(\left(S,I\right) \to \left(S, I - 1\right)\)    & \(\gamma I\)      \\ \hline
 		\end{tabular} \\
@@ -327,36 +333,38 @@ For a detailed introduction to CTMCs, see \citet{Anderson_1991_ContinuousTimeMar
 			\draw (S) edge[above] node{(1)} (I)
 			(I) edge[above] node{(2)} (R);
 		\end{tikzpicture}
-		\caption{A description of the SIR model formulated as a continuous-time Markov chain, including the transition rates and (below) the corresponding transitions between states for an individual in a population.}
+		\caption{A description of the SIR model formulated as a continuous-time Markov chain, including (top) the transition rates and (bottom) the corresponding transitions between states for an individual in a population.}
 		\label{fig:sir_transition}
 	\end{center}
 \end{figure}
 
 As a simple example, consider the susceptible-infected-recovered (SIR) model \citep{Allen_2017_PrimerStochasticEpidemic}, which is used to represent the spread of an infectious disease through a population where each individual is either susceptible (able to be infected), infected (and therefore infectious to susceptible individuals), or recovered (unable to be re-infected).
-The transition rates are listed in \Cref{fig:sir_transition}, with the diagram indicating how an individual in the population moves through the three possible stages: susceptible (able to be infected), infected (able to infect susceptible individuals), and recovered (no longer infectious and unable to be re-infected).
+The transition rates are listed in \Cref{fig:sir_transition}, with the diagram indicating how an individual in the population moves through the three possible stages.
 In the table, \(S\) denotes the number of susceptible individuals and \(I\) the number of infected individuals.
 For a fixed population size \(M\), the number of recovered individuals \(R\) is given by \(R = M - S - I\), so we can formulate the stochastic model as two-dimensional.
 Let \(X_t \equiv \left(S_t,I_t\right)\) be the stochastic process, where \(S_t\) is the number of susceptible individuals and \(I_t\) the number of infected at time \(t\).
-The state space of the process is then \(S=\setc{(s,i)}{s,i\in\set{0,1,\dotsc,M}, \, s + i \leq M}\).
-There are two possible events that lead to a change in the state of the process: an infection of a susceptible individual, which occurs with a rate of \(\beta S_t I_t\) with \(S_t\) and \(I_t\) denoting the number of susceptible and infected individuals respectively, and a recovery of an infected individual, which occurs with rate \(\gamma I\).
+The state space of the process is then \(S = \setc{(s,i)}{s,i\in\set{0,1,\dotsc,M}, \, s + i \leq M}\).
+There are two possible events that lead to a change in the state of the process: an infection of a susceptible individual, which occurs with a rate of \(\beta S_t I_t\) with \(S_t\) and \(I_t\) denoting the number of susceptible and infected individuals respectively at the time \(t\), and a recovery of an infected individual, which occurs with rate \(\gamma I_t\).
 This is sufficient to fully describe the CTMC model.
 
-As with stochastic differential equations, these models cannot generally be solved (in the sense of finding distributions at certain times, determining the long-term behaviour of the process, etc.) analytically, but can be simulated \citep{Gillespie_1977_ExactStochasticSimulation}, which is standard practice.
+As with stochastic differential equations, these models cannot in general be solved (in the sense of finding distributions across the state space at certain times, determining the long-term behaviour of the process, etc.) analytically, but can be simulated \citep{Gillespie_1977_ExactStochasticSimulation}, which is standard practice.
 We summarise a method for simulating from a CTMC in \Cref{app:ctmc_sim}, which is used in examples later in this section.
-The need for stochastic simulation leads to the same issues in practice as we highlighted with SDES; for complicated models, this is numerically inefficient and a large number of samples if needed for accurate inference \citehere.
-However, these are approaches to approximating the behaviour of the CTMC this circumvent these computational difficulties.
-Seminal work by \citet{Kurtz_1970_SolutionsOrdinaryDifferential,Kurtz_1971_LimitTheoremsSequences} showed that the stochastic evolution of certain CTMC/population processes converge to the solutions to an ordinary and stochastic differential equation in the limit of infinite population size.
-These processes are typically modelling a fixed population size and require that the transition rates only depend on the state of the process through the population-scaled proportion (e.g. the rates only depend on \(X_t/M\) and not \(X_t\) directly for a population process \(X_t\) evolving with a fixed population size \(X_t\)).
+The need for stochastic simulation leads to the same practical issues as we highlighted with SDEs; for complicated models, this is numerically inefficient and a large number of samples is needed for accurate inference.
+However, these are approaches to approximating the behaviour of the CTMC that circumvent these computational difficulties.
+Seminal work by \citet{Kurtz_1970_SolutionsOrdinaryDifferential,Kurtz_1971_LimitTheoremsSequences} showed that the stochastic evolution of certain CTMCs converge to the solutions to an ordinary and stochastic differential equation in the limit of infinite population size.
+These processes are typically modelling a fixed population size and require that the transition rates only depend on the state of the process through the population-scaled proportion (e.g. the rates only depend on \(\frac1M X_t\) and not \(X_t\) directly for a population process \(X_t\) evolving with a fixed population size \(M\)).
 Similar results for generalisations of these conditions do exist \citep{Pollett_1990_ModelInterferenceSearching}, however.
 We briefly summarise these results---further details are provided in \Cref{app:epi_kurtz}---to which we can draw analogies with our own work.
-Let \(X_t\) denote an \(n\)-dimensional population process, with each component taking values on the discrete set \(\set{0, 1, \dotsc, M}\).
+Let \(X_t^{(M)}\) denote an \(n\)-dimensional population process, with each component taking values on the discrete set \(\set{0, 1, \dotsc, M}\).
+The density process is then \(Y_t^{(M)} = \frac1M X_t^{(M)}\).
 % In the limit of large population sizes, a deterministic ordinary differential equation and linear stochastic differential equation arise from certain population processes, despite these processes being discrete.
-\citet{Kurtz_1970_SolutionsOrdinaryDifferential} showed that in the limit of large population size, \(M \to \infty\), the density process \(Y_t^{(i)}\) converges in probability to the deterministic trajectory \(Y_t^{(\infty)}\) that solves the ODE \citep{Kurtz_1970_SolutionsOrdinaryDifferential}
+\citet{Kurtz_1970_SolutionsOrdinaryDifferential} showed that in the limit of large population size, \(M \to \infty\), the density process \(Y_t^{(M)}\) converges in probability to the deterministic trajectory \(Y_t^{(\infty)}\) that solves the ODE \citep{Kurtz_1970_SolutionsOrdinaryDifferential}
 \begin{equation}\label{eqn:ctmc_ode}
-	\dod{Y_t^{(\infty)}}{t} = Q\!\left(Y_t^{(\infty)}\right), \quad Y_0^{(\infty)} = \frac{X_0}{M},
+	\dod{Y_t^{(\infty)}}{t} = Q\!\left(Y_t^{(\infty)}\right), \quad Y_0^{(\infty)} = \lim_{M\to\infty}\frac1M X^{(M)}_0,
 \end{equation}
 where \(Q\) is determined by the transition rates of the Markov chain and captures the average (macroscopic) behaviour of the density process.
 The deterministic ODE \cref{eqn:ctmc_ode} is sometimes termed the \emph{fluid limit} of the population process.
+Although the initial condition to \cref{eqn:ctmc_ode} is formally written as a limit, in practice \(Y_0^{(M)}\) can be specified directly.
 \citet{Kurtz_1971_LimitTheoremsSequences} then further establishes a stronger result; that the stochastic variation of \(Y_t^{(M)}\) for large \(M\) can be described by the solution to a stochastic differential equation.
 That is, the scaled process
 \[
@@ -364,7 +372,7 @@ That is, the scaled process
 \]
 which captures the deviation between the population process and the fluid limit, converges in distribution to the solution to the linear stochastic differential equation \citep{Kurtz_1971_LimitTheoremsSequences}
 \begin{equation}
-	\dif Z_t^{(\infty)} = \nabla Q\!\left(Y_t^{(\infty)}\right) Z_t^{(\infty)}\dif t + G\!\left(Y_t^{(\infty)}\right)\dif W_t
+	\dif Z_t^{(\infty)} = \nabla Q\!\left(Y_t^{(\infty)}\right) Z_t^{(\infty)}\dif t + G\!\left(Y_t^{(\infty)}\right)\dif W_t, \quad Z_0^{(M)} = 0,
 	\label{eqn:ctmc_sde}
 \end{equation}
 where the \(n\times n\) diffusion matrix \(G\) is also determined by the transition rates of the Markov chain, and \(W_t\) is a canonical \(n\)-dimensional Wiener process.
@@ -382,6 +390,7 @@ which is then a linearisation of the nonlinear SDE
 about the deterministic limit \(Y_t^{(\infty)}\).
 The diffusion limit \cref{eqn:ctmc_sde} (or \cref{eqn:ctmc_sde_lin_lim}) can be solved, and in the case of a fixed initial condition \(X_0\), follow a Gaussian distribution at any fixed time.
 For large populations, the diffusion limit is used as an approximation to the population process that avoids the need for bulk simulation and has been shown to work remarkably well \citep{PollettEtAl_2010_ModellingPopulationProcesses}.
+
 To illustrate the equations with an example, the SIR model is a density-dependent process.
 The fluid limit is
 \begin{equation}
@@ -391,7 +400,8 @@ The fluid limit is
 	\end{bmatrix},
 	\label{eqn:sir_fluid_limit}
 \end{equation}
-where \(X_t^{(\infty)} \equiv \left(X_t^{(\infty, 1)}, X_t^{(\infty, 2)}\right)^{\T}\).
+where \(Y_t^{(\infty)} \equiv \left(Y_t^{(\infty, 1)},Y_t^{(\infty, 2)}\right)^{\T}\) is the density process.
+Here, the components of the density process are the proportion of the population susceptible and infected respectively.
 The diffusion limit is the linear SDE
 \begin{equation}
 	\dif Z_t^{(\infty)} = \begin{bmatrix}
@@ -414,8 +424,9 @@ The fluid limit \cref{eqn:ctmc_ode} is analogous to the convergence of a small-n
 The diffusion limit in unscaled form \cref{eqn:ctmc_sde_lin_lim} is then comparable to the general linearisation \cref{eqn:linear_sde_inform} of a stochastic differential equation \cref{eqn:sde_y}, with \(\epsilon = 1/\sqrt{M}\).
 However, a key difference is that in the SDE linearisation procedure, we start from a continuous state-space process and arrive at a continuous state-space process in the limit.
 Whereas, in the diffusion limit, the converging process is on a \emph{discrete} state-space and the limit is on a continuous one.
+We have also proven a stronger notion of convergence than in the original work of \citet{Kurtz_1971_LimitTheoremsSequences,Kurtz_1970_SolutionsOrdinaryDifferential}, by establishing bounds on the expectation (thus implying convergence in \(r\)th mean) in \Cref{thm:main}.
 Regardless, our results and the diffusion limit for population processes are built around the same underlying linear stochastic differential equation, and so our practical results (i.e.\ stochastic sensitivity and the Gaussian mixture model algorithm) can be applied to characterise and approximate the solutions to these models.
-In particular, we expect that the mixture model algorithm we have described may find a place in moderate-population compartmental models, where the population is large enough to be ``reasonably'' approximated by the continuum and SDE equations, but small enough to exhibit non-Gaussian behaviour.\lb{Can definitely strengthen this discussion. Consider rewrite.}
+In particular, we expect that the mixture model algorithm we have described may find a place in moderate-population compartmental models, where the population is large enough to be ``reasonably'' approximated by the continuous SDE equations, but small enough to exhibit non-Gaussian behaviour.
 
 \begin{figure}
 	\begin{center}
@@ -439,35 +450,40 @@ In particular, we expect that the mixture model algorithm we have described may 
 			\label{fig:sir_gauss_rels_4}
 		\end{subfigure}
 		\caption{Histograms of Monte-Carlo simulations of the density process for the SIR model (with marginal plots on each axis), and the probability density function of the corresponding solution to the diffusion limit \cref{eqn:sir_diff_limit} plotted in red.
-			Each sample path is initialised with 10\% of the population infected (i.e.\ \(x_0 = \left(0.1, 0.9\right)^{\T}\)).}
+		The parameters are \(\beta = 1.2\) and \(\gamma = 0.8\), and each sample path is initialised with 10\% of the population infected and simulated up to \(t = 5\).
+		The bins are chosen to reflect the state-space \(\set{0, 1/M, 2/M, \dotsc, 1}\) of the density process.}
 		\label{fig:sir_gauss_rels}
 	\end{center}
 \end{figure}
 
-We shall now demonstrate some of these calculations, to highlight how our results are consistent with those in the population process modelling space and postulate future application of ours.
-In \Cref{fig:sir_gauss_rels}, we show histograms of \(10000\) Monte-Carlo simulations of the population-scaled SIR model for four different population sizes. We also compute the Gaussian solution to the diffusion limit, using the \citet{Mazzoni_2008_ComputationalAspectsContinuous} method for rapid computation, and show resulting density as contours on the joint histograms and by plotting the marginal PDFs on each axis.
+We shall now demonstrate some of these calculations, to highlight how our results are consistent with those in the population process modelling space and postulate future application of stochastic sensitivity and our mixture model algorithm.
+In \Cref{fig:sir_gauss_rels}, we show histograms of \(10000\) realisations of the population-scaled SIR model (so realisations of the density process) for four different population sizes.
+We set the parameters \(\beta = 1.2\) and \(\gamma = 0.8\), initialised each process with 10\% of the population infected and the remaining susceptible (so \(X_0^{(M)} = \left(0.1M, 0.9M\right)^{\T}\)) and show each realisation at \(t = 5\) time units.
+We also compute the Gaussian solution to the diffusion limit, using the \citet{Mazzoni_2008_ComputationalAspectsContinuous} method for rapid computation of the moments of the solution to \Cref{eqn:ctmc_sde_lin_lim}, and show resulting density as contours on the joint histograms and by plotting the marginal PDFs on each axis.
 As the population size \(M\) increases, the Gaussian approximation provides a closer representation of the empirical distribution of the samples.
 This should be compared with \Cref{fig:sine_hists,fig:1d_mult_hists}, where we verified heuristically that the solutions to small-noise SDEs approached the Gaussian solution of the linearisation.
-It is also evident in \Cref{figLsir_gauss_rels} that the boundaries limit the validity of the Gaussian approximation: the density process is restricted to \([0, 1]\) with an absorbing state at \(0\) that results in the accumulation of probability mass seen in the histograms.
-Such boundary problems are common in epidemiological and biological models, e.g. the early spread of a disease through a population is often of interest, and the inability of the diffusion limit to appropriately account for them is accepted as a limitation in practice \citehere.
+It is also evident in \Cref{fig:sir_gauss_rels} that the boundaries limit the validity of the Gaussian approximation: the density process is restricted to \([0, 1]\) with an absorbing state at \(0\) that results in the accumulation of probability mass seen in the histograms.
+Such boundary problems are common in epidemiological and biological models, e.g. the early spread of a disease through a population is often of interest, and the inability of the diffusion limit to appropriately account is as a significant limitation.
 We discussed in \Cref{sec:disc_bc} the boundary complication in reference to our SDE linearisation framework and suggested that appropriately accounting for boundary conditions and absorbing states would be a valuable avenue for future work.
-Any developments to this end, whether that be a modification to the linearised SDE itself or an adjustment to the solution PDF, would also be useful for the diffusion limit of a CTMC and therefore be a valuable contribution to this field also.
+Any developments to this end, whether that be a modification to the linearised SDE itself or an adjustment to the solution PDF, would also be useful for the diffusion limit of a CTMC.
 
 
 \begin{figure}
 	\begin{center}
 		\includegraphics[width=\textwidth]{chp06_applications/figures/sir/sir_s2_R0}
-		\caption{The stochastic sensitivity value (in black) of the SIR diffusion limit \cref{eqn:sir_diff_limit} at time \(T = 5\) and from the fixed initial proportion \(i_0 = 0.1\), for varying reproductive number \(R_0 = \beta / \gamma\).
-			The maximum projection of the sample covariance matrix (in various colours) for \(N = 1000\) stochastic simulations of the discrete population process over the same time interval is included.
-			The corresponding initial condition is \(\left(0.9M, 0.1M\right)^{\T}\)}
+		\caption{The stochastic sensitivity value (in black) of the SIR diffusion limit \cref{eqn:sir_diff_limit} at time \(t = 5\) and from the fixed initial condition of 10\% of the population infected, for \(\beta = 1\) and varying \(\gamma\).
+			The maximum projection of the sample covariance matrix (in various colours) for \(1000\) stochastic simulations of the discrete population process over the same time interval is included.}
 		\label{fig:sir_s2}
 	\end{center}
 \end{figure}
 
-Next, we briefly discuss the potential of stochastic sensitivity in the field of population processes.
-We can compute stochastic sensitivity for a density-dependent CTMC using the diffusion limit, where the covariance matrix of the solution to the diffusion limit is used in the calculation of \Cref{wrong}.
+Next, we compute stochastic sensitivity for a density-dependent CTMC using the diffusion limit.
+We can compute the covariance matrix of the solution to the diffusion limit \cref{eqn:ctmc_sde}, which satisfies the covariance differential equation \cref{eqn:pi_ode} from \Cref{ch:linear_theory} with \(Q\) in place of \(u\) and \(g\) in place of \(\sigma\).
+Then, the stochastic sensitivity value is calculated by taking the operator norm, using this matrix in place of \(\Sigma_0^t\) in \Cref{thm:s2_calculation}.
 In \Cref{fig:sir_s2}, we plot the computed stochastic sensitivity for the SIR model against the corresponding empirical value (the operator norm of the sample covariance matrix) from 1000 realisations of the population process, for varying population size \(M\).
-We have fixed \(\gamma = 1\) and varied the reproductive number \(R_0 = \beta/\gamma\) of the model, which is a parameter of interest in modelling the spread of diseases.
+We have fixed \(\beta = 1\) and varied \(\gamma\).
+For each parameter value, we again initialised with 10\% of the population infected and considered up to \(T = 4\).
+The variance is of the density process, but can be rescaled to that of the original population process by multiplying by \(M^2\).
 Even for a small population size, the stochastic sensitivity provides a reliable indication of the variation in the population process, and therefore can serve as a tool in analysing these models.
 This is not dissimilar to the work of \citet{PollettEtAl_2010_ModellingPopulationProcesses}, who suggest that the covariance matrix of the solution to the diffusion limit measures the ``unexplained variation'' in using the fluid limit alone to approximate the fully stochastic process.
 One advantage of stochastic sensitivity is that it provides a single number, by performing a dimension reduction, which avoids ambiguity in higher dimensions and provides a similar diagnosis for population processes.
@@ -477,7 +493,7 @@ One advantage of stochastic sensitivity is that it provides a single number, by 
 	\begin{center}
 		\begin{tabular}{|c|c|c|}
 			\hline
-			Transition & Event                                               & Rate \(\lambda_i\)                                               \\ \hline
+			Transition & Event                                               & Rate \(\lambda_i\)                                               \\ \hhline{|=|=|=|}
 			(1)        & \(\left(S, E\right) \to \left(S-1, E+1\right)\)     & \(\left(\beta_I SI + \beta_H SH + \beta_F SF\right) / N\)        \\ \hline
 			(2)        & \(\left(E, I\right) \to \left(E - 1, I + 1\right)\) & \(\alpha E\)                                                     \\ \hline
 			(3)        & \(\left(I, H\right) \to \left(I - 1, H + 1\right)\) & \(\gamma_H \theta_1 I\)                                          \\ \hline
@@ -493,61 +509,64 @@ One advantage of stochastic sensitivity is that it provides a single number, by 
 			\node (E) [draw, right=of S] {E};
 			\node (I) [draw, right=of E] {I};
 			\node (H) [draw, right=of I] {H};
-			\node (F) [draw, right=of H] {F};
+			\node (F) [draw, right=of H] {D};
 			\node (R) [draw, right=of F] {R};
 			\path[->,thick] (S) edge[above] node{(1)}  (E)
 			(E) edge[above] node{(2)} (I)
 			(I) edge[above] node{(3)} (H)
 			(H) edge[above] node{(4)} (F)
 			(F) edge[above] node{(5)} (R)
-			(I) edge[bend right, below] node{(6)} (R)
+			(I) edge[bend right=90, above] node{(6)} (R)
 			(I) edge[bend right, below] node{(7)} (F)
-			(H) edge[bend left, above] node{(8)} (R);
+			(H) edge[bend left=90, below] node{(8)} (R);
 		\end{tikzpicture}
-		\caption{Transition probabilities of the Ebola model.}
+		\caption{Transition probabilities of the Ebola model of \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola}.}
 		\label{fig:ebola_transition}
 	\end{center}
 \end{figure}
 
-Finally, we will demonstrate the computation of the Gaussian approximation on a more complicated model in 5-dimensions, and postulate applications of our mixture model algorithm to this field.
-The purpose of this example is primary to demonstrate the computation (with the \citet{Mazzoni_2008_ComputationalAspectsContinuous} method) on a high-dimensional model and confirm consistency with the diffusion limit.
+Finally, we will demonstrate the computation of the Gaussian approximation on a 5-dimensional model.
 The Gaussian approximations become particularly useful in high-dimensions, where the number of stochastic samples to make accurate inferences scales poorly.
-To illustrate this, and demonstrate the Gaussian computations we have used throughout this thesis in a higher-dimensional setting, we consider a 5- dimensional model for the spread of Ebola, used in a case study by \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola}.
+We consider a 5-dimensional model for the spread of Ebola, used in a case study by \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola} on two particular outbreaks in the Democratic Republic of Congo and Uganda.
 This model is far more complicated than the SIR example: the transition events and a diagram corresponding to the evolution of an individual through the stages of the infection are provided in \Cref{fig:ebola_transition}.
-An individual in the population is in one of six possible stages: susceptible (\(S\)), exposed to the infection but not yet infectious (\(E\)), infectious to susceptible individuals (\(I\)), hospitalised (\(H\)), deceased with a traditional burial (\(D\)), and removed from the population and no longer infectious or susceptible (\(R\)).
-We choose this model specifically as the study by \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola} provides values for all the involved parameters that are fitted using an actual outbreak of Ebola in 1995 in the Democratic Republic of Congo, immediately providing us with a physically relevant model. The population size is fixed at \(M = 200000\) \citep{DowellEtAl_1999_TransmissionEbolaHemorrhagic} and the initial condition is \(X_0 = (0, 0, 3, 0, 0)\) \citep{KhanEtAl_1999_ReemergenceEbolaHemorrhagic} in accordance with the 1995 outbreak. The
-model by \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola} is then formulated as a 5-dimensional CTMC \(Xt \equiv \left(S_t, E_t, I_t, H_t, D_t\right)^{\T}\), where each component tracks the number of individuals in each of the compartments and the number of removed individuals at any time given by \(R_t = M - S_t - E_t - I_t - H_t - D_t\).
-
+Similar to the SIR model, an individual the population is in one of six possible stages: susceptible (\(S\)), exposed to the infection but not yet infectious (\(E\)), infectious to susceptible individuals (\(I\)), hospitalised (\(H\)), deceased with a traditional burial (\(D\)), and removed from the population and no longer infectious or susceptible (\(R\)).
+We choose this model specifically as the study by \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola} provides values for all the involved parameters that are fitted using an actual outbreak of Ebola in 1995 in the Democratic Republic of Congo, immediately providing us with a physically relevant model. The population size is fixed at \(M = 200000\) \citep{DowellEtAl_1999_TransmissionEbolaHemorrhagic} and the initial condition is \(X_0 = (0, 0, 3, 0, 0)\) \citep{KhanEtAl_1999_ReemergenceEbolaHemorrhagic} in accordance with the 1995 outbreak.
+The model by \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola} is then formulated as a 5-dimensional CTMC \(Xt \equiv \left(S_t, E_t, I_t, H_t, D_t\right)^{\T}\), where each component tracks the number of individuals in each of the compartments and the number of removed individuals at any time given by \(R_t = M - S_t - E_t - I_t - H_t - D_t\).
 Since we only provide a demonstration of the computation involved, rather than exploring this example in detail, further details are left to \Cref{app:ebola}.
-We take the parameter values from \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola}, who combined values estimated from other studies \citep{BwakaEtAl_1999_EbolaHemorrhagicFever,DowellEtAl_1999_TransmissionEbolaHemorrhagic,KhanEtAl_1999_ReemergenceEbolaHemorrhagic,NdambiEtAl_1999_EpidemiologicClinicalAspects,RoweEtAl_1999_ClinicalVirologicImmunologic} with their own maximum likelihood estimates using morbidity data. The parameter values and their interpretations in context are provided in \Cref{tab:ebola_param_vals} in \Cref{app:ebola}.
+We take the parameter values from \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola}, who combined values estimated from other studies \citep{BwakaEtAl_1999_EbolaHemorrhagicFever,DowellEtAl_1999_TransmissionEbolaHemorrhagic,KhanEtAl_1999_ReemergenceEbolaHemorrhagic,NdambiEtAl_1999_EpidemiologicClinicalAspects,RoweEtAl_1999_ClinicalVirologicImmunologic} with their own maximum likelihood estimates using morbidity data.
+These parameter values are provided in \Cref{tab:ebola_param_vals} in \Cref{app:ebola}.
 
-The CTMC with the rates described in Figure 7.4 is density-dependent, meaning that the fluid and diffusion limits hold. We provide the ODE and SDE in Appendix C.3, for which we can solve jointly by again using Mazzoni’s method, which scales well with the increased dimension as the algorithm relies primarily on matrix calculations.
+The CTMC with the rates described in \Cref{fig:ebola_transition} is density-dependent, meaning that the fluid and diffusion limits hold.
+We provide the ODE and SDE in \Cref{app:ebola}, for which we can solve jointly by again using the Mazzoni method, which scales well with the increased dimension as the algorithm relies primarily on matrix calculations.
 
-\begin{landscape}
-	\begin{figure}
-		\centering
-		\includegraphics[width=\textheight]{chp06_applications/figures/seihfr/seihfr_marginals_gaussian}
-		\caption{big guy}
-		\label{fig:ebola_marginals}
-	\end{figure}
-\end{landscape}
-
-
-In \Cref{fig:ebola_marginals}, we have generated 10000 realisations of the CTMC model after 20 weeks and plotted empirical histograms.
+In \Cref{fig:ebola_marginals}, we have generated 10000 realisations of the CTMC model after 20 weeks and plotted empirical histograms of the population-scaled counts.
 To visualise the 5-dimensional distribution of these realisations, we have plotted joint histograms of each pair of components on the off-diagonals. On the diagonal, we have included histograms of each component of the realisations.
 We also compute the Gaussian solution to the diffusion limit and overlay contours of the joint marginal PDFs corresponding to each pair of components, and the PDF itself on each single-variable marginal.
-Since the population size in this example is large (200, 000), the Gaussian approximation is reasonable, even in this high-dimensional setting.
+Since the population size in this example is large (\(M = 200000\)), the Gaussian approximation is reasonable even in this high-dimensional setting.
 However, there are small departures from Gaussianity, including skewness in the single-variable marginals and nonlinear correlations in the joint density.
-This MIXTURE MODEL CAN HELP HERE.
-One complication with immediately applying the mixture model algorithm is the appropriate handling of these boundary conditions, notably in the placing of the new component means when splitting.
-As part of our discussion on boundary conditions,
+The mixture model algorithm may have potential to capture these features and provide a more accurate approximation.
+This would require further development of the algorithm, however, including appropriate handling of the boundary conditions (i.e.\ note the proximity of the component distributions to \(0\)).
+Nonetheless, we expect that the mixture model will provide a computationally efficient alternative to stochastic simukation of high dimensional CTMC models, and this has much potential in this area.
+% This is also being pursued as future work from this areagcc
 
 We have only provided a short overview of the diffusion limit, drawn analogies and complemented this discussion with two examples.
 These connections are highly promising, however, and suggest that stochastic sensitivity and our mixture model, with further refinement, has applications across a far broader range of models than the stochastic differential equations we originally worked with.
 The mixture model in particular could provide an approximate method for solving complicated and high-dimensional stochastic models without simulation, which is an area of high interest in the fields of biological modelling \citehere.
 Moreover, whereas the diffusion limit and the inference on the model it provides is well used across applications \citep[e.g.]{PollettEtAl_2010_ModellingPopulationProcesses,Pollett_1990_ModelInterferenceSearching}, these ideas are novel in the dynamical systems and stochastic differential equations
 settings.
-By establishing these connections, we can open up new tools from either field en, rewrite, that can be employed in novel ways.
+By establishing connections between our results and those for discrete stochastic models, we can provide tools from either field in new situations and contexts, bridging a gap between two otherwise disparate fields.
+
+\begin{landscape}
+	\begin{figure}
+		\centering
+		\includegraphics[width=\textheight]{chp06_applications/figures/seihfr/seihfr_marginals_gaussian}
+		\caption{Histograms of 100000 realisations of the 5-dimensional Ebola model by \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola}, after 20 weeks.
+		Each row and column corresponds to one of the 5 components of the process, with the off-diagonal plots showing the joint bivariate histograms of each pair of components and the diagonal entries showing the single-component marginals.
+		Overlaid in red on each histogram are the contours (for the joint histograms) or probability density functions (for the single-component histograms) of the corresponding marginals of the Gaussian approximation that solves the diffusion limit.}
+		\note{I will tweak this plot to include axis ticks next week; my first run through of the full thesis will be to bring all plots up to scratch and ensure that they are consistent.}
+		\label{fig:ebola_marginals}
+	\end{figure}
+\end{landscape}
 
 % \subsection{Observation-driven modelling}
 % \note{Possible advantages levied by the expressions for the Gaussian approximation written in terms of the flow-map.}
