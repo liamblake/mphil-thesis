@@ -1,29 +1,63 @@
 %!TEX root = ../thesis.tex
 
-\chapter{Calculations for Ben\^e's SDE}\label{app:bene_sde}
-Consider Ben\^e's stochastic differential equation:
+\chapter{Calculations for the Bene\v{s} SDE}\label{app:bene_calculations}
+Consider the Bene\v{s} stochastic differential equation:
 \begin{equation}
 	\dif x_t = \tanh\!\left(x_t\right)\dif t + \dif W_t.
 	\label{eqn:bene_sde_app}
 \end{equation}
 This SDE was used as an example in \Cref{ch:gmm} to demonstrate some of the explicit calculations used in linearising the SDE, and to highlight the limitations of Gaussian approximations and motivate the mixture model algorithm.
 In this appendix, we provide details on these calculations.
-
-
 In the notation used throughout this thesis, the drift in \cref{eqn:bene_sde_app} is \(u\!\left(y,t\right) = \tanh\!\left(y\right)\) and the diffusivity is \(\sigma\!\left(y,t\right) = 1\).
-
-
-Over a time interval \(\)
-
+The gradient (with respect to the initial condition) of the flow map \cref{eqn:bene_ode_sol} over the interval \([s,t]\) is
 \[
-	\nabla F_s^t\!\left(x\right) = \frac{e^{t-s}\cosh\!\left(x\right)}{\sqrt{e^{2t - 2s}\sinh^2\!\left(x\right) + 1}}
+	\nabla F_s^t\!\left(x\right) = \frac{e^{t-s}\cosh\!\left(x\right)}{\sqrt{e^{2t - 2s}\sinh^2\!\left(x\right) + 1}}.
 \]
-
-
 The variance of the linearisation solution over \([s,t]\) is given explicitly by \cref{eqn:pi_expl_eqn} (with the initial variance \(\var{l_s} = 0\)), which we can evaluate:
 \begin{align*}
-	\var{l_t} & = \left[\nabla F_s^t\!\left(x_0\right)\right]^2\int_s^t{\left[\nabla F_s^\tau\!\left(x_0\right)\right]^{-2}\dif\tau}                        \\
-	          & = \frac{e^{2t}}{e^{2t - 2s}\sinh^2\!\left(x_0\right) + 1}\int_s^t{\left(e^{- 2s}\sinh^2\!\left(x_0\right) + e^{- 2\tau}\right)\dif\tau}     \\
-	          & = \frac{e^{2t - 2s}\left(\sinh^2\!\left(x_0\right)(t - s) - \frac12 e^{2s - 2t} + \frac12\right)}{e^{2t - 2s}\sinh^2\!\left(x_0\right) + 1} \\
-	          & = \frac{2\sinh^2\!\left(x_0\right)\left(t - s\right) + e^{2t - 2s} - 1}{2\sinh^2\!\left(x_0\right) + 2e^{2s - 2t}}.
+	\var{l_t} & = \left[\nabla F_s^t\!\left(x_0\right)\right]^2\int_s^t{\left[\nabla F_s^\tau\!\left(x_0\right)\right]^{-2}\dif\tau} \\
+			& = \frac{e^{2t}}{e^{2t - 2s}\sinh^2\!\left(x_0\right) + 1}\int_s^t{\left(e^{- 2s}\sinh^2\!\left(x_0\right) + e^{- 2\tau}\right)\dif\tau} \\
+			& = \frac{e^{2t - 2s}\left(\sinh^2\!\left(x_0\right)(t - s) - \frac12 e^{2s - 2t} + \frac12\right)}{e^{2t - 2s}\sinh^2\!\left(x_0\right) + 1} \\
+			& = \frac{2\sinh^2\!\left(x_0\right)\left(t - s\right) + e^{2t - 2s} - 1}{2\sinh^2\!\left(x_0\right) + 2e^{2s - 2t}}.
 \end{align*}
+
+
+
+
+
+\section{Estimation of the solution PDF via Green's functions}
+For a \emph{fixed} initial condition \(x_0\), the solution to \cref{eqn:bene_sde_app} at time \(t\) has the probability density function
+\[
+	G\!\left(x, t; x_0\right) = \frac{1}{\sqrt{2\pi t}}\frac{\cosh\!\left(x\right)}{\cosh\!\left(x_0\right)}\exp\!\left[-\frac{t}{2} - \frac{1}{2t}\left(x - x_0\right)^2\right].
+\]
+This probability density function serves as the fundamental solution (or Green's function) to the Fokker-Planck equation corresponding to \cref{eqn:bene_sde_app}:
+\begin{equation}\label{eqn:bene_sde_fp}
+	\dpd{p(x,t)}{t} = -\dod{}{x}\!\left[p(x,t)\tanh\!\left(x\right)\right] + \frac12\dod[2]{p(x,t)}{x},
+\end{equation}
+when subject to the Dirac-delta initial condition \(p(x,0) = \delta(x - x_0)\).
+Since the Fokker-Planck equation \cref{eqn:bene_sde_fp} is linear and therefore has a linear solution operator, the solution subject to an \emph{arbitrary} initial density \(p(x,0) = p_0(x)\) is the convolution
+\begin{equation}\label{eqn:fp_greens_1d}
+	p(x,t) = \int_{\R}{p_0\!\left(x_0\right)G\!\left(x, t; x_0\right)\dif x_0}.
+\end{equation}
+In general, this integral cannot be evaluated analytically.
+However, we can devise a Monte-Carlo estimator that only requires sampling from the initial condition and no solving of the corresponding SDE.
+If we view \(p_0\) as a probability density function on \(\R\) and \(G\!\left(x,t; x_0\right)\) as a function of the random initial condition, then \cref{eqn:fp_greens_1d} can be reframed as
+\[
+	p(x,t) = \mathds{E}_{p_0}\!\left[G\!\left(x, t; x_0\right)\right].
+\]
+Assuming that we can generate samples from the initial density \(p_0\), then \cref{eqn:fp_greens_1d} can be approximated via a Monte-Carlo estimate to evaluate the solution PDF \(p\) at a fixed point \(x\).
+That is, let \(x_0^{(1)}, \dotsc, x_0^{(N)}\) denote \(N\) samples from the initial density \(p_0\), then we have the Monte-Carlo estimate
+\[
+	p(x,t) = \frac{1}{N}\sum_{i=1}^{N}{G\!\left(x, t; x_0^{(i)}\right)} + \mathcal{O}\!\left(\frac{1}{N}\right).
+\]
+Note that since \cref{eqn:bene_sde_app} is autonomous, one can relabel time to instead consider the solution over the interval \([s,t]\).
+That is, given the fixed value \(x_s\), the probability density function of the solution at the later time \(t > s\) is
+\[
+	G\!\left(x, t; s, x_s\right) = \frac{1}{\sqrt{2\pi (t - s)}}\frac{\cosh\!\left(x\right)}{\cosh\!\left(x_0\right)}\exp\!\left[-\frac{t - s}{2} - \frac{1}{2(t - s)}\left(x - x_0\right)^2\right].
+\]
+We can then use the same Monte-Carlo estimate derived via Green's function as above to approximate the probability density function of the solution to \cref{eqn:bene_sde_app} at time \(t\), subject to some sampleable density at time \(s\).
+
+% The approximate Hellinger distance between an approximating density \(q(x)\) and \(p(x,t)\) at a fixed time \(t\) is then
+% \[
+% 	H\!\left(p, q\right)^2 = 1 - \frac{1}{\sqrt{N}}\int_{\R}{\sqrt{q(x)\sum_{i=1}^{N}{G\!\left(x, t; x_0^{(i)}\right)}} \dif x} + \mathcal{O}\!\left(\frac{1}{\sqrt{N}}\right)
+% \]

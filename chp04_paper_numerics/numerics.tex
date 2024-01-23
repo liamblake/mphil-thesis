@@ -8,6 +8,7 @@ The overview in \Cref{sec:mazzoni} of an algorithm for efficiently solving the m
 
 \section{Mazzoni's method}\label{sec:mazzoni}
 \td{Update equation references! Relate to stuff in the paper, not the later chapter!!}
+\td{Comment on how the method only relies on matrix operations, efficient and scales well!}
 An important consideration  when solving \cref{eqn:gauss_de} numerically is that \(\Pi_t\) represents a covariance matrix and must remain symmetric and positive semi-definite.
 However, many standard numerical ODE schemes do not take this into account, so a specialised scheme is required.
 Similar equations of the form \cref{eqn:gauss_de} (although often without explicit dependence on both time and the state in the \(\sigma\) term) are solved numerically in other applications, notably when implementing the extended Kalman filter \citep{Jazwinski_2014_StochasticProcessesFiltering, KulikovaKulikov_2014_AdaptiveODESolvers}.
@@ -152,7 +153,7 @@ and the solution follows a Gaussian distribution, specifically
 where \(\Sigma_0^t\!\left(\mu\right)\) is computed by solving \cref{eqn:pi_ode} numerically subject to a zero initial condition.
 
 In this example, we take \(\mu_0 = 0.5\) and consider the solutions of \cref{eqn:sine_sde} and \cref{eqn:sine_linear} at time \(t = 1.5\).
-We generate accurate samples of \cref{eqn:sine_sde} and \cref{eqn:sine_linear} jointly (i.e. using the same numerical realisations of the Wiener process \(W_t\)) using the stochastic Runge-Kutta scheme SRI \citep{Rossler_2010_RungeKuttaMethodsStrong} with an adaptive step size \citep{RackauckasNie_2017_AdaptiveMethodsStochastic}.
+We generate accurate samples of \cref{eqn:sine_sde} and \cref{eqn:sine_linear} jointly (i.e.\ using the same numerical realisations of the Wiener process \(W_t\)) using the stochastic Runge-Kutta scheme SRI \citep{Rossler_2010_RungeKuttaMethodsStrong} with an adaptive step size \citep{RackauckasNie_2017_AdaptiveMethodsStochastic}.
 
 \begin{figure}
 	\begin{center}
@@ -388,57 +389,60 @@ The least squares lines of best fit for each value of \(r\) in \Cref{fig:gamma_z
 \section{Computing stochastic sensitivity} \label{sec:comput_s2}
 In this section, we illustrate the computability of stochastic sensitivity as described in \Cref{thm:s2_calculation}.
 
-\subsection{In 2-dimensions}
-We again consider the meandering jet \cref{eqn:jet_ex} with multiplicative noise described by \cref{eqn:jet_ex_sigma}.
-We take the same choice of parameters as in \cref{sec:numerics_2d}, except for the perturbation amplitude \(\oldepsilon_{\mathrm{mj}}\) which is varied to obtain qualitatively different behaviour in the system.
-For each initial condition in a \(400 \times 400\) uniform grid on \(\left[0, \pi\right] \times \left[0, \pi\right]\), the \(S^2\) value is calculated using \cref{eqn:s2_calculation}.
-\Cref{fig:ex_jet_s2_field} shows the resulting \(S^2\) field from time \(0\) to \(t = 1\), for two different values of \(\oldepsilon_{\mathrm{mj}}\).
+\subsection{In 2-dimensions}\label{sec:compute_s2_2d}
 
 \begin{figure}
 	\begin{center}
-		\begin{subfigure}{0.49\textwidth}
-			\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/rossby/S2_zero_0.3.pdf}
+		\begin{subfigure}{\textwidth}
+			\includegraphics[width=0.49\textwidth]{chp04_paper_numerics/figures/rossby/S2_zero_0.3}
+			\includegraphics[width=0.49\textwidth]{chp04_paper_numerics/figures/rossby/S2_robust_0.3}
 			\caption{\(\oldepsilon_{\mathrm{mj}} = 0.3\)}
 			\label{fig:s2_field_0.3}
 		\end{subfigure}
-		\begin{subfigure}{0.49\textwidth}
-			\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/rossby/s2_zero_1.0.pdf}
+		\begin{subfigure}{\textwidth}
+			\includegraphics[width=0.49\textwidth]{chp04_paper_numerics/figures/rossby/s2_zero_1.0}
+			\includegraphics[width=0.49\textwidth]{chp04_paper_numerics/figures/rossby/s2_robust_1.0}
 			\caption{\(\oldepsilon_{\mathrm{mj}} = 1.0\)}
 			\label{fig:s2_field_1.0}
 		\end{subfigure}
-		% \includegraphics[width=\textwidth]{figures/s2_field_0.3.pdf}
-		\caption{The \(S^2\) field of the meandering jet flow \cref{eqn:jet_ex} over the time interval \([0,1]\), for two different sets of parameters with qualitatively different behaviour.
-			The \(S^2\) value for each initial condition is computed directly as the operator norm of the covariance matrix \(\Sigma_0^1\!\left(x_0\right)\), as per \cref{eqn:s2_calculation}.}
+		\caption{(Left) The \(S^2\) field of the meandering jet flow \cref{eqn:jet_ex} over the time interval \([0,1]\), for two different sets of parameters with qualitatively different behaviour.
+			The \(S^2\) value for each initial condition is computed directly as the operator norm of the covariance matrix \(\Sigma_0^1\!\left(x_0\right)\), as per \cref{eqn:s2_calculation}.
+			(Right) Robust sets extracted from the stochastic sensitivity fields, by taking the initial conditions with a stochastic sensitivity value about a threshold of \(10\).}
 		\label{fig:ex_jet_s2_field}
 	\end{center}
 \end{figure}
 
-
+We again consider the meandering jet \cref{eqn:jet_ex} with multiplicative noise described by \cref{eqn:jet_ex_sigma}.
+We take the same choice of parameters as in \cref{sec:numerics_2d}, except for the perturbation amplitude \(\oldepsilon_{\mathrm{mj}}\) which is varied to obtain qualitatively different behaviour in the system.
+For each initial condition in a \(400 \times 400\) uniform grid on \(\left[0, \pi\right] \times \left[0, \pi\right]\), the \(S^2\) value is calculated using \cref{eqn:s2_calculation}.
+\Cref{fig:ex_jet_s2_field} shows the resulting \(S^2\) field from time \(0\) to \(t = 1\), for two different values of \(\oldepsilon_{\mathrm{mj}}\).
+We also extract robust sets from each stochastic sensitivity field, by highlighting in cyan on the right side of \Cref{fig:ex_jet_s2_field} those initial conditions with a stochastic sensitivity value less than the specified threshold of 10.
 When \(\oldepsilon_{\mathrm{mj}} = 0.3\) (\Cref{fig:s2_field_0.3}), the \(S^2\) field is largest in the elongated gyre regions outside of the meandering jet, where the flow exhibits chaotic behaviour \citep{Pierrehumbert_1991_ChaoticMixingTracer} and we accordingly expect larger uncertainty due to the model dynamics.
-As a region of small \(S^2\) value, the meandering jet emerges as a coherent structure, consisting of initial points whose eventual fate is significantly more certain than in other regions.
-When \(\oldepsilon_{\mathrm{mj}} = 1.0\) (\Cref{fig:s2_field_1.0}, the deterministic flow is dominated by oscillatory perturbation, which
+As a region of small \(S^2\) value, the meandering jet emerges as a robust set, consisting of initial points whose eventual fate is significantly more certain than in other regions.
+When \(\oldepsilon_{\mathrm{mj}} = 1.0\) (\Cref{fig:s2_field_1.0}), the deterministic flow is dominated by oscillatory perturbation, which further increases the chaotic nature of the solving trajectories and the boundaries between the gyres and the meandering jet are no longer distinguishable \citep{Crocker_2021_LagrangianCoherentData}.
+Rotational eddies begin to dominate the flow and we see this reflected in the stochastic sensitivity field in \Cref{fig:s2_field_1.0}: the eddies exhibit a smaller stochastic sensitivity, as even under stochasticity trajectories are inclined to remain within them.
+The resulting robust sets highlight these eddies.\lb{Don't love this analysis, but almost there. Reconsider on next read through.}
 
-\begin{figure}
-	\begin{center}
-		\begin{subfigure}{0.49\textwidth}
-			\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/rossby/S2_robust_0.3.pdf}
-			\caption{\(\oldepsilon_{\mathrm{mj}} = 0.3\), \(R = 10\)}
-		\end{subfigure}
-		\begin{subfigure}{0.49\textwidth}
-			\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/rossby/S2_robust_1.0.pdf}
-			\caption{\(\oldepsilon_{\mathrm{mj}} = 1.0\), \(R = 10\)}
-		\end{subfigure}
-		\caption{Robust sets extracted from the stochastic sensitivity fields in \Cref{fig:ex_jet_s2_field}, by taking the initial conditions with a stochastic sensitivity value above a specified threshold \(R\). }
-\td{Use cyan for robust sets, to be consistent with later results.}
-		\label{fig:ex_jet_robust}
-	\end{center}
-\end{figure}
+% \begin{figure}
+% 	\begin{center}
+% 		\begin{subfigure}{0.49\textwidth}
+% 			\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/rossby/S2_robust_0.3.pdf}
+% 			\caption{\(\oldepsilon_{\mathrm{mj}} = 0.3\), \(R = 10\)}
+% 		\end{subfigure}
+% 		\begin{subfigure}{0.49\textwidth}
+% 			\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/rossby/S2_robust_1.0.pdf}
+% 			\caption{\(\oldepsilon_{\mathrm{mj}} = 1.0\), \(R = 10\)}
+% 		\end{subfigure}
+% 		\caption{Robust sets extracted from the stochastic sensitivity fields in \Cref{fig:ex_jet_s2_field}, by taking the initial conditions with a stochastic sensitivity value above a specified threshold \(R\). }
+% \td{Use cyan for robust sets, to be consistent with later results.}
+% 		\label{fig:ex_jet_robust}
+% 	\end{center}
+% \end{figure}
 
-The stochastic sensitivity field can highlight Lagrangian coherent structures within the flow, by identifying regions of the flow with a relatively small uncertainty, as measured by a \emph{single} number for each initial condition.
-Subsets of the spatial domain corresponding to coherent structures can be extracted, e.g. by taking a threshold on \(S^2\) as described in the original work \citep{Balasuriya_2020_StochasticSensitivityComputable}; further examples of coherent structure extraction with stochastic sensitivity on both toy models and real data can be found in \citet{Balasuriya_2020_StochasticSensitivityComputable} and \citet{BadzaEtAl_2023_HowSensitiveAre}.
-Here, we demonstrate the extraction of coherent structures.
-\td{Interpret the sets}
-
+% The stochastic sensitivity field can highlight Lagrangian coherent structures within the flow, by identifying regions of the flow with a relatively small uncertainty, as measured by a \emph{single} number for each initial condition.
+% Subsets of the spatial domain corresponding to coherent structures can be extracted, e.g.\ by taking a threshold on \(S^2\) as described in the original work \citep{Balasuriya_2020_StochasticSensitivityComputable}; further examples of coherent structure extraction with stochastic sensitivity on both toy models and real data can be found in \citet{Balasuriya_2020_StochasticSensitivityComputable} and \citet{BadzaEtAl_2023_HowSensitiveAre}.
+% Here, we demonstrate the extraction of coherent structures in \Cref{fig:ex_jet_robust} using a threshold of \(R\).
+% The resulting subsets of the domain in cyan reflect our conclusions from the stochastic sensitivity field itself; when \(\epsilon_{\mathrm{mj}} = 0.3\) the meandering jet
 
 
 
@@ -577,9 +581,11 @@ The flow is spatially periodic in \([0,2\pi] \times [0,2\pi] \times [0,2\pi]\) a
 \end{figure}
 
 To introduce 3-dimensional noise to the system, we set \(\sigma \equiv I\), the \(3 \times 3\) identity matrix, and compute stochastic sensitivity for a \(200\times 200\) grid of initial conditions on each face of the cube \([0,2\pi] \times [0,2\pi] \times [0,2\pi]\).
-The spatial periodicity and symmetry of the dynamics means that these three faces are sufficient to describe the entire structure of the field within the region \citep{DombreEtAl_1986_ChaoticStreamlinesABC}\lb{Still not 100\% sure about this - take a look at the interval structure with plots of slices}.
-As with the two-dimensional example, for each initial condition we compute the \(3\times 3\) covariance matrix using the Mazzoni method.
-The stochastic sensitivity value is then computed by taking the operator norm of the covariance matrix.
+The spatial periodicity and symmetry of the dynamics means that these three faces are sufficient to describe the entire structure of the field within the region \citep{DombreEtAl_1986_ChaoticStreamlinesABC}.
+As with the two-dimensional example, for each initial condition we compute the \(3 \times 3\) covariance matrix using the Mazzoni method.
+The stochastic sensitivity value is then computed by taking the operator norm of this covariance matrix.
 \Cref{fig:gabc_S2} plots the stochastic sensitivity on the three faces of the cube, at two different times.
-At \(t = 1\), as in \Cref{fig:gabc_S2_1}, the vortex structures are highlighted by the stochastic sensitivity field, in that these regions have a higher uncertainty due to the ??
+At \(t = 1\) (\Cref{fig:gabc_S2_1}), the vortex structures are highlighted by the stochastic sensitivity field, in that these regions have a higher uncertainty due to the ??
 \td{Interpret - looks like the vortex structures are hilighted by the field?}
+When \(t = 3\) (\Cref{fig:gabc_S2_3}), the flow is domainated by chaotic mixing, but we nonetheless see structures highlighted by the stochastic sensitivity...!!!
+In fact, these narrow ridge-like structures correspond to the unstable manifolds within the flow \citep{DombreEtAl_1986_ChaoticStreamlinesABC}: the repelling nature of these regions results in a `larger' stochasticity.

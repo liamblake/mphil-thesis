@@ -1,6 +1,6 @@
 \documentclass[12pt, a4paper, twoside]{book}
 
-\title{Computable characterisations of stochastic uncertainty in dynamical systems}
+\title{Computable characterisations of stochastic uncertainty in differential equations}
 \author{Liam Blake}
 \date{\today}
 \def\degree{Master of Philosophy}
@@ -9,18 +9,69 @@
 
 \usepackage{thesis}
 
+% \RequirePackage[authoryear,sort,comma]{natbib}
+% \setcitestyle{authoryear,aysep={}}
+% TODO: Need to ensure that all names are written out fully, so don't have to set uniquename.
+% e.g. if the bibliography includes A. Stuart and Andrew Stuart, the two names will be written out in FULL when citing.
+\RequirePackage[
+	backend=biber,
+	natbib,
+	style=authoryear-comp,
+	maxcitenames=2,
+	mincitenames=1,
+	maxbibnames=4,
+	minbibnames=3,
+	giveninits=true,
+	uniquename=init,
+	sorting=ynt,
+	date=year
+]{biblatex}
+
+% Ensure initials are always listed first
+\DeclareNameAlias{sortname}{first-last}
+
+% Fix to link the name as well in citations - https://tex.stackexchange.com/questions/15951/hyperlink-name-with-biblatex-authoryear-biblatex-1-4b/27107#27107
+\DeclareFieldFormat{citehyperref}{%
+  \DeclareFieldAlias{bibhyperref}{noformat}% Avoid nested links
+  \bibhyperref{#1}}
+
+\DeclareFieldFormat{textcitehyperref}{%
+  \DeclareFieldAlias{bibhyperref}{noformat}% Avoid nested links
+  \bibhyperref{%
+    #1%
+    \ifbool{cbx:parens}
+      {\bibcloseparen\global\boolfalse{cbx:parens}}
+      {}}}
+
+\savebibmacro{cite}
+\savebibmacro{textcite}
+
+\renewbibmacro*{cite}{%
+  \printtext[citehyperref]{%
+    \restorebibmacro{cite}%
+    \usebibmacro{cite}}}
+
+\renewbibmacro*{textcite}{%
+  \ifboolexpr{
+    ( not test {\iffieldundef{prenote}} and
+      test {\ifnumequal{\value{citecount}}{1}} )
+    or
+    ( not test {\iffieldundef{postnote}} and
+      test {\ifnumequal{\value{citecount}}{\value{citetotal}}} )
+  }
+    {\DeclareFieldAlias{textcitehyperref}{noformat}}
+    {}%
+  \printtext[textcitehyperref]{%
+    \restorebibmacro{textcite}%
+    \usebibmacro{textcite}}}
 \bibliography{thesis}
 
-% % Big line spacing
-% \linespread{1.5}
 
-% % Line numbering
-% \RequirePackage{lineno}
-% \linenumbers
-
-% \includeonly{chp02_background/background}
+\includeonly{chp07_outlook/outlook,appendix/epidemiology}
 
 \begin{document}
+% \emergencystretch 3em
+
 \include{frontmatter}
 
 % Frontmatter
@@ -44,18 +95,16 @@
 \appendix
 \include{appendix/sde_theory}
 \include{appendix/bene_calculations}
-% \include{appendix/sde_solutions.tex}
-% \include{appendix/fp_discretisation}
-% \include{appendix/more_plots}
+\include{appendix/epidemiology}
 
 
 \backmatter
 % Add the bibliography to the table of contents
-\addcontentsline{toc}{chapter}{Bibliography}
+% \addcontentsline{toc}{chapter}{Bibliography}
 
 % What style to use and what file to use for the bibliography
-% \bibliographystyle{plainnat}
+% \bibliographystyle{abbrvnat}
 % \bibliography{thesis}
-\printbibliography
+\printbibliography[heading=bibintoc]
 
 \end{document}

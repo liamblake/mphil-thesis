@@ -1,0 +1,154 @@
+\chapter{Details of population process models}\label{app:epi}
+In this appendix, we supplement the discussion on population processes and continuous time Markov chains in \Cref{sec:epi_disc} by providing further details on the theoretical results by \citet{Kurtz_1970_SolutionsOrdinaryDifferential,Kurtz_1971_LimitTheoremsSequences}, the method for simulating from CTMCs, and the details of the 5-dimensional Ebola model by \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola}.
+
+\section{Coefficients of the fluid and diffusion limits}\label{app:epi_kurtz}
+Let \(X_t\) denote the unscaled \(n\)-dimensional continuous-time Markov chain with state space \(\mathcal{S} \subseteq \set{0, 1, \dotsc, M}^n\), so that the process is evolving with a fixed population size \(M\).
+Let \(q\colon \mathcal{S}\times\mathcal{S} \to [0,\infty)\) denote the transition rates between two states of the Markov chain
+The process \(X_t\) is termed \emph{density dependent} (in the sense of \citet{Kurtz_1970_SolutionsOrdinaryDifferential}) if
+\begin{equation}
+	q\!\left(n, n+l\right) = Mf\!\left(\frac{n}{M}, l\right),
+	\label{eqn:ctmc_dens_dep}
+\end{equation}
+where \(f\) is a suitable function and \(n, n+l \in \mathcal{S}\).
+% Typically, \(N\) is related to the size of the system and \(n / N\) is a population density.
+% \section{Overview of the fluid and diffusion limits}\label{app:epi_diffusion}
+% A population process is \emph{density dependent} (in the sense of \citet{Kurtz_1970_SolutionsOrdinaryDifferential}) if there is a parameter \(N\) such that
+% \begin{equation}
+% 	q\!\left(n, n+l\right) = Nf\!\left(\frac{n}{N}, l\right),
+% 	\label{eqn:ctmc_dens_dep}
+% \end{equation}
+% where \(f\) is a suitable function and \(n, n+l \in \mathcal{S}\).
+% Typically, \(N\) is related to the size of the system and \(n / N\) is a population density.
+% The condition in \cref{eqn:ctmc_dens_dep} states that the transition rates of the process \(X_t\) depends on \(X_t\) itself only through the density \(X_t / N\).
+Let \(Y_t^{(N)}\) describe the \(n\)-dimensional density process, i.e.\ with \(i\)th element \(X_t^{(i)} / M\).
+Theorem 3.1 of \citet{Kurtz_1970_SolutionsOrdinaryDifferential} establishes that in the large population limit \(M \to \infty\), the density process \(Y_t^{(N)}\) converges in probability to a deterministic trajectory \(Y_t^{(\infty)}\) solving the ODE
+\begin{equation}
+	\dod{Y_t^{(\infty)}}{t} = Q\!\left(Y_t^{(\infty)}\right), \quad Y_0^{(\infty)} = X_0 / M,
+	\label{eqn:ctmc_dens_dep_ode}
+\end{equation}
+where
+\[
+	Q\!\left(y\right) = \sum_{\substack{l \in \R^n \\ l \neq 0,\, y + l \in \mathcal{S}}}{l f\!\left(y, l\right)}.
+\]
+For large \(M\), the density process has small variation and is ``close'' to the deterministic solution to \cref{eqn:ctmc_dens_dep_ode}.
+% This result is analogous to that for small noise SDEs; the solution to a stochastic differential equation formally converges to that of a deterministic system (involving only the drift term) in the limit of small noise, which is a result established by large deviations principles \citep[e.g]{FreidlinWentzell_1998_RandomPerturbationsDynamical}.
+\citet{Kurtz_1971_LimitTheoremsSequences} then established a stronger result, showing that the variation of the density process about this deterministic limit is captured by an It\^o diffusion.
+Define the scaled process
+\[
+	Z_t^{(M)} = \sqrt{M}\left(Y_t^{(M)} - Y_{t}^{(\infty)}\right),
+\]
+then Theorem 3.5 of \citet{Kurtz_1971_LimitTheoremsSequences} proves that \(Z_t^{(M)}\) converges in distribution (weakly) to an It\^o diffusion \(Z_t^{(\infty)}\) solving
+\begin{equation}
+	\dif Z_t^{(\infty)} = \nabla Q\!\left(Y_t^{(\infty)}\right) Z_t^{(\infty)}\dif t + G\!\left(Y_t^{(\infty)}\right)\dif W_t, \quad Z_0^{(\infty)} = 0,
+	\label{eqn:ctmc_dens_dep_sde}
+\end{equation}
+where \(W_t\) is an \(n\)-dimensional Wiener process and the \(n \times n\) diffusion matrix \(G\) is such that
+\begin{equation}
+	\left[G\!\left(y\right)G\!\left(y\right)^{\T}\right]_{ij} = \sum_{\substack{l \in \R^n \\ l \neq 0,\, y + l \in \mathcal{S}}}{l_i l_j f\!\left(y,l\right)}
+	\label{eqn:ctmc_dens_dep_sde_diff_cond}
+\end{equation}
+Any choice of diffusion matrix \(G\) such that \cref{eqn:ctmc_dens_dep_sde_diff_cond} is satisfied will result in a statistically identical stochastic process \(Z_0^{(\infty)}\).
+
+
+\section{Simulating from a continuous-time Markov chain}\label{app:ctmc_sim}
+A single sample \(X\) from the population process at time \(T\) can be simulated with the following procedure \citep{Gillespie_1977_ExactStochasticSimulation}:
+\begin{enumerate}
+	\item Initialise \(X = X_0\), the initial state of the process.
+	      If the initial state is uncertain, sample \(X\) from the initial state distribution.
+
+	\item Sample the time \(\tau\) to the next event as
+	      \[
+		      \tau \isExp{\sum_{\substack{l \in \R^n \\ l \neq 0,\, y + l \in \mathcal{S}}}{q\!\left(X, X + l\right)}},
+	      \]
+	      and set \(t = t + \tau\).
+
+	\item If \(t > T\), terminate.
+	      Otherwise, sample the next state from the set of possible transitions \(\setc{l \in \R^n}{l \neq 0,\, y + l \in \mathcal{S}}\), where the probability of transitioning from \(X\) to \(X + l\) is given by
+	      \[
+		      \frac{q\!\left(X, X + l\right)}{\sum_{\substack{k \in \R^n \\ k \neq 0,\, y + k \in \mathcal{S}}}{q\!\left(X, X + k\right)}}.
+	      \]
+	      Set \(X\) to this state.
+
+	\item Repeat Steps 2 and 3 until the sample path is terminated.
+
+\end{enumerate}
+The result is a single sample \(X\) of the population process at time \(T\).
+The sum is taken across all the possible transitions from the current state.
+Note that typically most of these rates are zero, so the sum does not need to be taken over the entire state space.
+
+
+\section{Details of 5-dimensional Ebola model}\label{app:ebola}
+	\begin{figure}
+		\begin{center}
+			\begin{tabular}{|p{5cm}|c|p{5cm}|}
+				\hline
+				Parameter                                                               & Value               & Source                                                                                                                                 \\ \hhline{|=|=|=|}
+				Population size \(M\)                                                   & 200000              & \citet{DowellEtAl_1999_TransmissionEbolaHemorrhagic}                                                                                   \\ \hline
+				Initial cases \(I_0\)                                                   & 3                   & \citet{KhanEtAl_1999_ReemergenceEbolaHemorrhagic}                                                                                      \\ \hline
+				Mean duration of incubation	\(\alpha\)                                  & \(1 / 7\) per day   & \citet{DowellEtAl_1999_TransmissionEbolaHemorrhagic,BwakaEtAl_1999_EbolaHemorrhagicFever,NdambiEtAl_1999_EpidemiologicClinicalAspects} \\ \hline
+				Mean time to hospitalisation \(\gamma_h\)                               & \(1 / 9.6\) per day & \citet{KhanEtAl_1999_ReemergenceEbolaHemorrhagic}                                                                                      \\ \hline
+				Mean duration of infectious period \(\gamma_i\)                         & \(1 / 10\) per day  & \citet{DowellEtAl_1999_TransmissionEbolaHemorrhagic,RoweEtAl_1999_ClinicalVirologicImmunologic}                                        \\
+				Mean time to death \(\gamma_d\)                                         & \(1 / 2\) per day   & \citet{KhanEtAl_1999_ReemergenceEbolaHemorrhagic}                                                                                      \\ \hline
+				Proportion of hospitalised cases \(\theta_1\)                           & \(0.67\)            & \citet{KhanEtAl_1999_ReemergenceEbolaHemorrhagic}                                                                                      \\ \hline
+				Unhospitalised Case-fatality ratio (with burial) \(\delta_1\)           & \(0.8\)             & \citet{KhanEtAl_1999_ReemergenceEbolaHemorrhagic}                                                                                      \\ \hline
+				Hospitalised case-fatality ratio (with burial)\(\delta_2\)              & \(0.8\)             & \citet{KhanEtAl_1999_ReemergenceEbolaHemorrhagic}                                                                                      \\ \hline
+				Transmission rate in the community \(\beta_I\)                          & \(0.588\) per week  & \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola}                                                                                    \\ \hline
+				Transmission rate at the hospital \(\beta_H\)                           & \(0.794\) per week  & \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola}                                                                                    \\ \hline
+				Transmission rate during funerals \(\beta_F\)                           & \(7.653\) per week  & \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola}                                                                                    \\ \hline
+				Mean time from hospitalisation to death \(\gamma_{dh}\)                 & per week            & \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola}                                                                                    \\ \hline
+				Mean time from hospitalisation to end of infectiousness \(\gamma_{ih}\) & per week            & \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola}                                                                                    \\ \hline
+			\end{tabular}
+		\end{center}
+		\caption{Parameter values for the Ebola model, estimated from the 1995 outbreak in the Democratic Republic of Congo.
+			This table is adapted from Tables 3 and 4 of \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola}, where values sourced directly from \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola} have been estimated from morbidity data.}
+		\td{Descriptions of variables not quite right}
+		\label{tab:ebola_param_vals}
+	\end{figure}
+
+To conclude the discussion on population processes in \Cref{sec:epi_disc}, we considered the 5-dimensional model by \citep{LegrandEtAl_2007_UnderstandingDynamicsEbola} of the 1995 outbreak of Ebola in the Democratic
+In this appendix, we provide further details on the model.
+\Cref{tab:ebola_param_vals} provides parameter values for the model, including the physical interpretations of each parameter.
+These parameter values are taken from a combination of previous studies \citep{DowellEtAl_1999_TransmissionEbolaHemorrhagic,KhanEtAl_1999_ReemergenceEbolaHemorrhagic,BwakaEtAl_1999_EbolaHemorrhagicFever,NdambiEtAl_1999_EpidemiologicClinicalAspects} and estimates provided by \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola}.
+The estimates of \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola} are maximum likelihood estimates fitted on morbidity data from the 1995 outbreak.
+
+Let \(Y_t^{(M)} = \left(S_t / M, E_t / M, I_t / M, H_t / M, F_t / M\right)^{\T}\) denote the proportion of individuals in each compartment after \(t\) weeks.
+The population process is also density dependent, with
+\[
+	f\!\left(\left(s, e, i, h, d\right), l\right) = \begin{cases}
+		\beta_I s i + \beta_H sh + \beta_F sd,                        & \text{if } l = \left(-1, 1, 0, 0, 0\right), \\
+		\alpha e,                                                     & \text{if } l = \left(0, -1, 1, 0, 0\right), \\
+		\gamma_h \theta_1 i,                                          & \text{if } l = \left(0, 0, -1, 1, 0\right), \\
+		\gamma_{dh}\delta_2 h,                                        & \text{if } l = \left(0, 0, 0, -1, 1\right), \\
+		\gamma_f d,                                                   & \text{if } l = \left(0, 0, 0, 0, -1\right), \\
+		\gamma_i\left(1 - \theta_1\right)\left(1 - \delta_1\right) i, & \text{if } l = \left(0,0,-1,0,0\right),     \\
+		\delta_1\left(1 - \theta_1\right)\gamma_d i,                  & \text{if } l = \left(0,0,-1,0,1\right),     \\
+		\gamma_{ih}\left(1 - \delta_2\right)h,                        & \text{if } l = \left(0,0,0,-1,0\right),     \\
+		0,                                                            & \text{otherwise}.
+	\end{cases}
+\]
+The deterministic differential equation is
+\[
+	\dod{Y_t^{(\infty)}}{t} = \begin{bmatrix}
+		-\beta_I Y_t^{(\infty, 1)}Y_t^{(\infty, 3)} - \beta_H Y_t^{(\infty, 1)}Y_t^{(\infty, 4)} - \beta_F Y_t^{(\infty, 1)}Y_t^{(\infty,5)}                                                \\
+		\beta_I Y_t^{(\infty, 1)}Y_t^{(\infty, 3)} + \beta_H Y_t^{(\infty, 1)}Y_t^{(\infty, 4)} + \beta_F Y_t^{(\infty, 1)}Y_t^{(\infty,5)} - \alpha Y_t^{(\infty, 2)}                      \\
+		\alpha Y_t^{(\infty, 2)} - \left(\gamma_h\theta_1 + \gamma_i\left(1 - \theta_1\right)\left(1 - \delta_1\right) + \delta_1\left(1 - \theta_1\right)\gamma_d\right) Y_t^{(\infty, 3)} \\
+		\gamma_h\theta_1 Y_t^{(\infty, 3)} - \left(\gamma_{dh}\delta_2 + \gamma_{ih}\left(1 - \delta_2\right) \right) Y_t^{(\infty, 4)}                                                     \\
+		\gamma_{dh}\delta_2 Y_t^{(\infty, 4)} + \delta_1\left(1 - \theta_1\right)\gamma_d Y_t^{(\infty, 3)} - \gamma_f Y_t^{(\infty, 5)}
+	\end{bmatrix}.
+\]
+The \(5\times 5\) diffusion matrix \(g\) satisfies
+
+\begin{scriptaligned}
+	\left[g\!\left(Y_t^{(\infty)}\right)g\!\left(Y_t^{(\infty)}\right)^{\T}\right]_{11} & =	\beta_I Y_t^{(\infty, 1)} Y_t^{(\infty, 3)} + \beta_H Y_t^{(\infty, 1)} Y_t^{(\infty, 4)} + \beta_F Y_t^{(\infty, 1)} Y_t^{(\infty, 5)} \\
+	\left[g\!\left(Y_t^{(\infty)}\right)g\!\left(Y_t^{(\infty)}\right)^{\T}\right]_{12} & = \left[g\!\left(Y_t^{(\infty)}\right)g\!\left(Y_t^{(\infty)}\right)^{\T}\right]_{21} =  -\beta_I Y_t^{(\infty, 1)} Y_t^{(\infty, 3)} - \beta_H Y_t^{(\infty, 1)} Y_t^{(\infty, 4)} - \beta_F Y_t^{(\infty, 1)} Y_t^{(\infty, 5)} \\
+	\left[g\!\left(Y_t^{(\infty)}\right)g\!\left(Y_t^{(\infty)}\right)^{\T}\right]_{22} & = \beta_I Y_t^{(\infty, 1)} Y_t^{(\infty, 3)} + \beta_H Y_t^{(\infty, 1)} Y_t^{(\infty, 4)} + \beta_F Y_t^{(\infty, 1)} Y_t^{(\infty, 5)} +  \alpha Y_t^{(\infty, 2)} \\
+	\left[g\!\left(Y_t^{(\infty)}\right)g\!\left(Y_t^{(\infty)}\right)^{\T}\right]_{23} & = \left[g\!\left(Y_t^{(\infty)}\right)g\!\left(Y_t^{(\infty)}\right)^{\T}\right]_{32} = -\alpha Y_t^{(\infty, 2)} \\
+	\left[g\!\left(Y_t^{(\infty)}\right)g\!\left(Y_t^{(\infty)}\right)^{\T}\right]_{33} & = \alpha Y_t^{(\infty, 2)} + \left(\gamma_H \theta_1  + \gamma_i(	1 - \theta_1)(1 - \delta_1) + \delta_1(1 - \theta_1)\gamma_d\right)Y_t^{(\infty, 1)} \\
+	\left[g\!\left(Y_t^{(\infty)}\right)g\!\left(Y_t^{(\infty)}\right)^{\T}\right]_{34} & = \left[g\!\left(Y_t^{(\infty)}\right)g\!\left(Y_t^{(\infty)}\right)^{\T}\right]_{43} = - \gamma_H \theta_1 Y_t^{(\infty, 1)}\\
+	\left[g\!\left(Y_t^{(\infty)}\right)g\!\left(Y_t^{(\infty)}\right)^{\T}\right]_{35} & = \left[g\!\left(Y_t^{(\infty)}\right)g\!\left(Y_t^{(\infty)}\right)^{\T}\right]_{53} = - \delta_1(1 - \theta_1)\gamma_d Y_t^{(\infty, 1)}\\
+	\left[g\!\left(Y_t^{(\infty)}\right)g\!\left(Y_t^{(\infty)}\right)^{\T}\right]_{44} & = \gamma_H \theta_1 Y_t^{(\infty, 1)} + \left(\gamma_{dh}\delta_2  + \gamma_{ih}(1 - \delta_2)\right)Y_t^{(\infty, 4)} \\
+	\left[g\!\left(Y_t^{(\infty)}\right)g\!\left(Y_t^{(\infty)}\right)^{\T}\right]_{45} & = \left[g\!\left(Y_t^{(\infty)}\right)g\!\left(Y_t^{(\infty)}\right)^{\T}\right]_{54} = -\gamma_{dh}\delta_2 Y_t^{(\infty, 4)} \\
+	\left[g\!\left(Y_t^{(\infty)}\right)g\!\left(Y_t^{(\infty)}\right)^{\T}\right]_{55} & = \delta_1(1 - \theta_1)\gamma_d Y_t^{(\infty, 1)} + \gamma_{dh}\delta_2 Y_t^{(\infty, 4)} + \gamma_f Y_t^{(\infty, 5)}
+\end{scriptaligned}
+with all other entries zero.
+There are many choices of \(g\) such that the product \(gg^{\T}\) has these entries, but to compute the Gaussian approximation with Mazzoni's method, we only need to evaluate \(g\!\left(Y_t^{(\infty)}\right)g\!\left(X_t^{(\infty)}\right)\) and therefore no not need to make such a choice.

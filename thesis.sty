@@ -24,51 +24,21 @@
 % % but avoid all capitals
 \let\MakeUppercase%\textsf
 
+\RequirePackage[T1]{fontenc}
+% \RequirePackage[activate={true,nocompatibility},final,tracking=true,kerning=true,factor=1100,stretch=10,shrink=10]{microtype}
+
 \RequirePackage{graphicx}
 \RequirePackage[dvipsnames]{xcolor}
 
-% \RequirePackage[authoryear,sort,comma]{natbib}
-% \setcitestyle{authoryear,aysep={}}
-% TODO: Need to ensure that all names are written out fully, so don't have to set uniquename.
-% e.g. if the bibliography includes A. Stuart and Andrew Stuart, the two names will be written out in FULL when citing.
-\RequirePackage[natbib, style=authoryear, maxcitenames=2, maxbibnames=4, uniquename=false]{biblatex}
-
-% Fix to link the name as well in citations - https://tex.stackexchange.com/questions/15951/hyperlink-name-with-biblatex-authoryear-biblatex-1-4b/27107#27107
-\DeclareFieldFormat{citehyperref}{%
-  \DeclareFieldAlias{bibhyperref}{noformat}% Avoid nested links
-  \bibhyperref{#1}}
-
-\DeclareFieldFormat{textcitehyperref}{%
-  \DeclareFieldAlias{bibhyperref}{noformat}% Avoid nested links
-  \bibhyperref{%
-    #1%
-    \ifbool{cbx:parens}
-      {\bibcloseparen\global\boolfalse{cbx:parens}}
-      {}}}
-
-\savebibmacro{cite}
-\savebibmacro{textcite}
-
-\renewbibmacro*{cite}{%
-  \printtext[citehyperref]{%
-    \restorebibmacro{cite}%
-    \usebibmacro{cite}}}
-
-\renewbibmacro*{textcite}{%
-  \ifboolexpr{
-    ( not test {\iffieldundef{prenote}} and
-      test {\ifnumequal{\value{citecount}}{1}} )
-    or
-    ( not test {\iffieldundef{postnote}} and
-      test {\ifnumequal{\value{citecount}}{\value{citetotal}}} )
-  }
-    {\DeclareFieldAlias{textcitehyperref}{noformat}}
-    {}%
-  \printtext[textcitehyperref]{%
-    \restorebibmacro{textcite}%
-    \usebibmacro{textcite}}}
-
 \RequirePackage[twoside,left=2cm,right=2cm,bindingoffset=1cm]{geometry}
+
+% % Big line spacing
+% \linespread{1.5}
+
+% % % Line numbering
+% \RequirePackage{lineno}
+% \linenumbers
+
 \RequirePackage{bibentry}
 
 % TikZ
@@ -114,23 +84,25 @@
 \DTMsetstyle{ddmmyyyy}
 
 % Provides warnings if labels are unused
-\RequirePackage{refcheck}
-\norefnames
-\nocitenames
+% \RequirePackage{refcheck}
 
-% Tell refcheck about cleveref. From:
-% https://tex.stackexchange.com/questions/87610/making-refcheck-work-with-cleveref
-\makeatletter
-\newcommand{\refcheckize}[1]{%
-	\expandafter\let\csname @@\string#1\endcsname#1%
-	\expandafter\DeclareRobustCommand\csname relax\string#1\endcsname[1]{%
-		\csname @@\string#1\endcsname{##1}\wrtusdrf{##1}}%
-	\expandafter\let\expandafter#1\csname relax\string#1\endcsname
-}
-\makeatother
+% % Tell refcheck about cleveref. From:
+% % https://tex.stackexchange.com/questions/87610/making-refcheck-work-with-cleveref
+% \makeatletter
+% \newcommand{\refcheckize}[1]{%
+% 	\expandafter\let\csname @@\string#1\endcsname#1%
+% 	\expandafter\DeclareRobustCommand\csname relax\string#1\endcsname[1]{%
+% 		\csname @@\string#1\endcsname{##1}\wrtusdrf{##1}}%
+% 	\expandafter\let\expandafter#1\csname relax\string#1\endcsname
+% }
+% \makeatother
 
-\refcheckize{\cref}
-\refcheckize{\Cref}
+% \refcheckize{\cref}
+% \refcheckize{\Cref}
+% \norefnames
+% \nocitenames
+
+\RequirePackage{hhline}
 
 % Extra stuff when draft is on
 \RequirePackage{ifdraft}
@@ -139,8 +111,8 @@
 	% \linespread{1.5}
 
 	% Line numbering
-	\RequirePackage{lineno}
-	\linenumbers
+	% \RequirePackage{lineno}
+	% \linenumbers
 
 }{}
 

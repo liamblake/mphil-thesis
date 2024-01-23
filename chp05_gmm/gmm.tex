@@ -50,17 +50,17 @@ When the noise scale is larger, we see non-Gaussianity emerge---the numerical so
 Non-Gaussianity is also often observed in statistical measurements in practice, such as in atmospheric regimes \citep{SuraEtAl_2005_MultiplicativeNoiseNonGaussianity}, experimental fluid flows \citep{del-Castillo-Negrete_1998_AsymmetricTransportNonGaussian}, and oceanic flows \citep{BraccoEtAl_2000_VelocityProbabilityDensity}.
 Although the Gaussian approximation can still provide qualitative insight into the behaviour of these solutions (see stochastic sensitivity, for instance), to produce a reasonable approximation we need a method that can capture these departures from Gaussianity.
 
-% \section{An example: Ben\^e's SDE}
+% \section{An example: the Bene\v{s} SDE}
 \begin{figure}
 	\centering
 	\includegraphics[width=0.9\textwidth]{chp05_gmm/figures/bene_final_gauss_5.0.pdf}
-	\caption{The probability density function \cref{eqn:bene_sde_pdf} of the solution \(x_5\) (in black) to Ben\^e's SDE \cref{eqn:bene_sde}, with fixed initial condition \(x_0 = 1/2\).
+	\caption{The probability density function \cref{eqn:bene_sde_pdf} of the solution \(x_5\) (in black) to the Bene\v{s} SDE \cref{eqn:bene_sde}, with fixed initial condition \(x_0 = 1/2\).
 		The density function of the Gaussian solution to the corresponding linearisation is overlaid in dashed red.}
 	\label{fig:bene_gauss}
 \end{figure}
 
 To further illustrate this point, we consider another example of a 1-dimensional stochastic differential equation.
-Ben\^e's SDE \citep{SarkkaSolin_2019_AppliedStochasticDifferential} is
+the Bene\v{s} SDE \citep{SarkkaSolin_2019_AppliedStochasticDifferential} is
 \begin{equation}
 	\dif x_t = \tanh\!\left(x_t\right)\dif t + \dif W_t.
 	\label{eqn:bene_sde}
@@ -78,35 +78,33 @@ The solution to \cref{eqn:bene_ode} over the time interval \((s,t)\) is
 	F_s^t\!\left(x\right) = \arcsinh\!\left(e^{t-s}\sinh\!\left(x\right)\right).
 	\label{eqn:bene_ode_sol}
 \end{equation}
-We consider the solution to \cref{eqn:bene_sde} subject to the fixed initial condition \(x_0 = 1/2\) and at time \(t = 5\).
-The probability density function of the weak solution to \cref{eqn:bene_sde} can be derived using an appropriate change of measure with Girsanov's theorem (see Section 7.3 of \citet{SarkkaSolin_2019_AppliedStochasticDifferential}.
-The probability density function for the solution \(x_t\) at time \(t = 5\) is given by
+The probability density function of the weak solution to \cref{eqn:bene_sde} can be derived using an appropriate change of measure with Girsanov's theorem (see Section 7.3 of \citet{SarkkaSolin_2019_AppliedStochasticDifferential}).
+The solution \(x_t\) at time \(t\) has the probability density function
 \begin{equation}\label{eqn:bene_sde_pdf}
-	p(x) = \frac{1}{\sqrt{10\pi}}\frac{\cosh\left(x\right)}{\cosh\!\left(\frac12\right)}\exp\left[-\frac{5}{2} - \frac{1}{10}\left(x - \frac12\right)^2\right],
+	p(x,t) = \frac{1}{\sqrt{2\pi t}}\frac{\cosh\!\left(x\right)}{\cosh\!\left(x_0\right)}\exp\left[-\frac{t}{2} - \frac{1}{2t}\left(x - x_0\right)^2\right],
 \end{equation}
-and is plotted in black in \Cref{fig:bene_gauss}.
+where \(x_0\) is the fixed initial condition.
+In this example, we consider the solution to \cref{eqn:bene_sde} subject to the fixed initial condition \(x_0 = 1/2\) and at time \(t = 5\), and plot the resulting PDF of the solution \cref{eqn:bene_sde_pdf} in black in \Cref{fig:bene_gauss}.
 The density is not symmetric with two distinct modes that result from the unstable fixed point of \cref{eqn:bene_ode} at \(x = 0\).
 Many stochastic trajectories are driven away from zero, resulting in the predominant mode centred at \(x = 5.5\).
 However, when the stochastic perturbations force a trajectory through the fixed point and into negative values, they are pushed further in the negative direction, leading to the second mode at \(x = -4.5\).
 Nonetheless, we can linearise \cref{eqn:bene_sde} about the deterministic trajectory \(F_0^t\!\left(1/2\right)\) solving \cref{eqn:bene_ode} to obtain a Gaussian approximation.
-In general, ...
+In general, if we linearise \cref{eqn:bene_sde} over the time interval \([s,t]\) about the trajectory \(F_s^t\!\left(x_s\right)\), we are considering the equation
 \[
-	\dif l_t = \left(\tanh\!\left(F_s^t\!\left(x_0\right)\right) + \arcsech\!\left(F_0^t\!\left(x_0\right)\right)\left[l_t - F_s^t\!\left(x_0\right)\right]\right)\dif t + \dif W_t
+	\dif l_t = \left(\tanh\!\left(F_s^t\!\left(x_s\right)\right) + \arcsech\!\left(F_0^t\!\left(x_s\right)\right)\left[l_t - F_s^t\!\left(x_0\right)\right]\right)\dif t + \dif W_t,
 \]
-with the deterministic flow map \(F_s^t\) given by \cref{eqn:bene_ode_sol}.
-
+where the deterministic flow map \(F_s^t\) given by \cref{eqn:bene_ode_sol}.
 Since the deterministic flow map is available analytically in \cref{eqn:bene_ode_sol}, we can determine the variance \(\var{l_t}\) of the solution to the linearised SDE exactly by evaluating \cref{eqn:pi_expl_eqn}.
-More generally, when the SDE is linearised over the time interval \([s,t]\) about the trajectory \(F_s^t\!\left(x_s\right)\), the variance is
+This computation gives
 \[
-	\var{l_t} = \frac{2\sinh^2\!\left(x_0\right)\left(t - s\right) + e^{2t - 2s} - 1}{2\sinh^2\!\left(x_0\right) + 2e^{2s - 2t}}
+	\var{l_t} = \frac{2\sinh^2\!\left(x_s\right)\left(t - s\right) + e^{2t - 2s} - 1}{2\sinh^2\!\left(x_0\right) + 2e^{2s - 2t}},
 \]
-The details of this computation are provided in \Cref{app:bene_calculations}.
-\td{A sentence explaining the approximation to this specific initial condition}
+with details provided in \Cref{app:bene_calculations}.
 The solution to \cref{eqn:bene_sde} at time \(t\) is then approximated by the Gaussian distribution
 \[
-	\mathcal{N}\!\left(\arcsinh\!\left(e^t \sinh\!\left(1/2\right)\right),\, \frac{2\sinh^2\!\left(1/2\right)t + e^{2t} - 1}{2\sinh^2\!\left(1/2\right) + 2e^{-2t}}\right)
+	l_t \sim \mathcal{N}\!\left(\arcsinh\!\left(e^t \sinh\!\left(x_0\right)\right),\, \frac{2\sinh^2\!\left(x_0\right)t + e^{2t} - 1}{2\sinh^2\!\left(x_0\right) + 2e^{-2t}}\right).
 \]
-We plot the density of this Gaussian approximation in dashed red in \Cref{fig:bene_gauss}.
+Returning to our specific example (\(x_0 = 1/2\), \(s = 0\), and \(t = 5\)), we plot the density of the Gaussian approximation \(l_5\) in dashed red in \Cref{fig:bene_gauss}.
 The Gaussian approximation cannot capture the bimodality of the true solution, and so only a single mode is captured.
 This is a significant limitation of using a single linearisation approximation, which cannot possibly capture any multimodality.
 % However, to compensate for the additional negative mode, the mean of the Gaussian approximation is less than that of the positive mode, and the variance is larger.\lb{Again, need to be more precise here. Have a look at the conditional probabilities and compare - the deterministic trajectory would have no idea about the fixed point. Otherwise could omit this sentence - keep it simple, the main point is the bimodality}
@@ -153,7 +151,7 @@ This is a significant limitation of using a single linearisation approximation, 
 % 			\label{fig:bene_7.5}
 % 		\end{subfigure}
 % 	\end{center}
-% 	\caption{The probability density function \cref{eqn:bene_sde_pdf} for the time-marginal solution of Ben\^e's SDE \cref{eqn:bene_sde}, for the initial condition \(x_0 = 1/2\) at various times.
+% 	\caption{The probability density function \cref{eqn:bene_sde_pdf} for the time-marginal solution of the Bene\v{s} SDE \cref{eqn:bene_sde}, for the initial condition \(x_0 = 1/2\) at various times.
 % 		The density function consists of two distinct modes that move further apart as \(t\) increases.}
 % 	\label{fig:bene_pdf}
 % \end{figure}
@@ -206,44 +204,13 @@ With sufficient components, a Gaussian mixture model can recreate any probabilit
 \Cref{fig:mixture_model} shows two examples of Gaussian mixture models in 1-dimension, where departures from Gaussianity such as multimodality and skewness can be captured with an appropriate combination of components.
 
 
-\td{Show more of the computations}
-% \begin{figure}
-% 	\begin{center}
-% 		\begin{tikzpicture}
-% 			\draw[scale=2, domain=-3:4, smooth, variable=\x, dashed] plot ({\x}, {exp(-(\x + 0.5) * (\x + 0.5))});
-% 			\draw[scale=2, domain=-3:4, smooth, variable=\x, dashed] plot ({\x}, {1 / (sqrt(2 * pi * 0.8))*exp(-(\x - 1.5) * (\x - 1.5) / 0.8)});
-% 			\draw[scale=2, domain=-3:4, smooth, variable=\x, thick] plot ({\x}, {0.5 * exp(-(\x + 0.5) * (\x + 0.5)) + 0.5 * 1 / (sqrt(2 * pi * 0.8))*exp(-(\x - 1.5) * (\x - 1.5) / 0.8)});
-% 			\draw[->,thick] (-6,0)--(8,0) node[right]{\(x\)};
-% 		\end{tikzpicture}
-% 		\caption{An example of the probability density function of a Gaussian mixture model with two weighted components.
-% 		The two individual components (dashed) are combined to produce the non-Gaussian mixture density (solid).}
-% 		\label{fig:mixture_model}
-% 	\end{center}
-% \end{figure}
-
-
-% We have a ``local'' approximation for the SDE \cref{eqn:sde_no_eps}, in that solutions to the linearised equation capture the solution behaviour nearby a given deterministic trajectory.
-% In practice, the solution to stochastic differential equations are non-Gaussian.
-% A key observation of \Cref{sec:theory_gauss} is that the solution to the linearised SDE is Gaussian when the initial condition is Gaussian.
-% Through a mixture model, we can capture this non-Gaussianity (leading to a better approximation) while still taking advantage of the computationally efficiency of the Gaussian approximation.
-
-
-
 
 \section{The GMM algorithm}\label{sec:gmm_alg}
-Let us now return to the original aim of this chapter: to approximate the SDE solution with a Gaussian mixture model while taking advantage of the computationally efficiency of the Gaussian linearisation approximation.
+We will now outline our algorithm to approximate the SDE solution with a Gaussian mixture model while taking advantage of the computationally efficiency of the Gaussian linearisation approximation.
 Given a Gaussian component at a time \(s\), we can `propagate' the component forward to a later time \(t\) by solving \Cref{eqn:gauss_de} initialised with the component mean and covariance matrix.
 That is, we are updating the mean and covariance of the Gaussian component by approximating the solution to the original SDE \cref{eqn:sde_y_gmm} over \((s,t)\) with a linearisation about the deterministic trajectory initialised from the component mean.
 Given a mixture model with multiple Gaussian components, we can propagate each component separately to update the full model through time in a computationally efficient manner.
 
-\begin{figure}
-	\centering
-	\begin{tikzpicture}
-
-	\end{tikzpicture}
-	\caption{The splitting of a mean \(x\) and covariance matrix \(\Sigma\) into sigma points.}
-	\label{fig:sigma_points_ex}
-\end{figure}
 
 Our proposed method is ad-hoc and based on a simple intuition: the Gaussian solution provides a reasonable approximation for the local behaviour of the true SDE solution over a short timeframe, but once this is no longer the case, we can capture departures from Gaussianity by introducing more components into the mixture model.
 We expect heuristically that as the number of components increase, the full mixture model should provide a closer approximation of the SDE solution density, provided that the components are appropriately placed.
@@ -281,7 +248,7 @@ The canonical set of sigma points originally proposed by \citet{Uhlmann_1995_Dyn
 	\end{align}
 \end{subequations}
 for \(i = 1,\dotsc, n\), where \(\sqrt{\Sigma}\) denotes the symmetric square root of \(\Sigma\), and \(\left[\sqrt{\Sigma}\right]_{\cdot i}\) denotes the \(i\)th column of \(\sqrt{\Sigma}\).
-The points are uniformly weighted, i.e. \(\hat{w}_k = 1 / (2n + 1)\).
+The points are uniformly weighted, i.e.\ \(\hat{w}_k = 1 / (2n + 1)\).
 \Cref{fig:sigma_points_ex} depicts the splitting of a covariance and mean into 5 sigma points in 2-dimensions, using the canonical set \cref{eqn:uhlman_sigma}.
 By perturbing the mean by the columns of the square root of the covariance matrix, the sigma points are placed at the vertices of the ellipse representing the matrix.
 However, we do not enforce a particular approach for selecting these points and leave this to be investigated further as future work.
@@ -318,23 +285,25 @@ In \Cref{sec:gmm_split_disc}, we do provide a brief discussion of some options f
 The mixture model algorithm is then as follows:
 \begin{enumerate}
 	\item Initialise a Gaussian mixture model with \(N\) components, setting \(t^{(1)} = 0\), \(x^{(1)},\dotsc, x^{(N)}\) to be the component means, \(\Sigma^{(1)}, \dotsc, \Sigma^{(N)}\) to be the component covariance matrices, and \(w^{(1)}, \dotsc, w^{(N)}\) to be the component weights.
+	      For a fixed initial condition \(x\), set \(N = 1\), \(x^{(1)} = x_0\), \(\Sigma^{(1)} = O\) and \(\omega^{(1)}\).
+	      Otherwise, the components and weights are represent the random initial distribution.
 
-	\item While \(t^{(i)} < T\) for any \(i = 1,\dotsc, N\), iterate the following;
+	\item While \(\tau^{(i)} < t\) for any \(i = 1,\dotsc, N\), iterate the following;
 
 	      \begin{enumerate}
-		      \item Set \(j\) to be any \(i\) for which \(t^{(i)} < T\).
+		      \item Set \(j\) to be any \(i\) for which \(\tau^{(i)} < T\).
 
 		      \item Update \(x^{(j)}\) and \(\Sigma^{(j)}\) by solving the joint system \cref{eqn:gauss_de} with initial state \(x^{(j)}\) and covariance \(\Sigma^{(j)}\), terminating when a split condition is met or the final time \(T\) is reached.
-		            Denote the time at which this solution terminates as \(t^{(i)}\).
+		            Denote the time at which this solution terminates as \(\tau^{(i)}\).
 
-		      \item If \(t = T\), then complete this branch of the algorithm and continue along another branch, if any are still incomplete.
+		      \item If \(\tau^{(i)} = t\), then complete this branch of the algorithm and continue along another branch, if any are still incomplete.
 
-					\item Otherwise, if \(t < T\), construct \(K\) points \(\hat{x}^{(1)},\dotsc,\hat{x}^{(K)}\) with weights \(\hat{w}^{(1)}, \dotsc, \hat{w}^{(K)}\) that preserve the propagated mean and covariance (i.e. satisfying \cref{eqn:cov_split_points}).
-						Set \(x^{(j)} = \hat{x}^{(1)}\) and \(\Sigma^{(j)} = O\), and
+		      \item Otherwise, if \(\tau^{(i)} < t\), construct \(K\) points \(\hat{x}^{(1)},\dotsc,\hat{x}^{(K)}\) with weights \(\hat{w}^{(1)}, \dotsc, \hat{w}^{(K)}\) that preserve the propagated mean and covariance (i.e.\ satisfying \cref{eqn:cov_split_points}).
+		            Set \(x^{(j)} = \hat{x}^{(1)}\) and \(\Sigma^{(j)} = O\), and
 		            \[
-									\Sigma^{(N + k - 1)} = O, \quad \text{and} \quad w^{(N + k - 1)} = \hat{w}^{(k)} w^{(j)} \quad \text{for each } k = 1,\dotsc,K
+			            \Sigma^{(N + k - 1)} = O, \quad \text{and} \quad w^{(N + k - 1)} = \hat{w}^{(k)} w^{(j)} \quad \text{for each } k = 1,\dotsc,K
 		            \]
-						Update the weight of the first sigma point as \(w^{(j)} = \hat{w}^{(1)} w^{(j)}\), and set \(N = N + K - 1\).
+		            Update the weight of the first sigma point as \(w^{(j)} = \hat{w}^{(1)} w^{(j)}\), and set \(N = N + K - 1\).
 	      \end{enumerate}
 
 	\item Construct the mixture model with density function
@@ -346,112 +315,111 @@ The mixture model algorithm is then as follows:
 
 \begin{figure}
 	\captionsetup{singlelinecheck=off}
-	\begin{center}
-		\begin{tikzpicture}
-			\draw (-1,4) node {1)};
-			% STEP 0: INITIAL
-			% Initial position
-			\fill[black] (1,1.5) circle[radius=1pt] node[anchor = east] {\(x\)};
+	\centering
+	\begin{tikzpicture}
+		\draw (-1,4) node {1)};
+		% % STEP 0: INITIAL
+		% % Initial position
+		% \fill[black] (1,1.5) circle[radius=1pt] node[anchor = east] {\(x\)};
 
-			% Initial covariance
-			\draw[dashed, rotate around = {58: (1, 1.5)}, blue] (1,1.5) ellipse (14pt and 22pt);
-			\node[blue] at ($(1,1.5)+(90:14pt and 22pt)$) {\(\Sigma_0\)};
+		% % Initial covariance
+		% \draw[dashed, rotate around = {58: (1, 1.5)}, blue] (1,1.5) ellipse (14pt and 22pt);
+		% \node[blue] at ($(1,1.5)+(90:14pt and 22pt)$) {\(\Sigma_0\)};
 
-			% STEP 1: PROPAGATE
-			\draw (6,4) node {2)};
-			% Trajectory
-			\draw (7,1.5) .. controls (9,3.5) and (11,-1.5) .. (13,1.5);
+		% STEP 1: PROPAGATE
+		\draw (-1,4) node {1)};
+		% Trajectory
+		\draw (1,1.5) .. controls (3,3.5) and (5,-1.5) .. (7,1.5);
 
-			% Initial position
-			\fill[black] (7,1.5) circle[radius=1pt] node[anchor = east] {\(x\)};
+		% Initial position
+		\fill[black] (1,1.5) circle[radius=1pt] node[anchor = east] {\(x\)};
 
-			% Initial covariance
-			\draw[dashed, rotate around = {58: (7, 1.5)}, gray] (7,1.5) ellipse (14pt and 22pt);
+		% Initial covariance
+		\draw[dashed, rotate around = {58: (1, 1.5)}, blue] (1,1.5) ellipse (14pt and 22pt);
+		\node[blue] at ($(1,1.5)+(90:14pt and 22pt)$) {\(\Sigma\)};
 
-			% Mapped position
-			\fill[black] (13,1.5) circle[radius=1pt] node[anchor = south] {\(F_0^t\!\left(x\right)\)};
+		% Mapped position
+		\fill[black] (7,1.5) circle[radius=1pt] node[anchor = south] {\(w_t\)};
+		\node[blue] at ($(1,1.5)+(90:14pt and 22pt)$) {\(\Sigma\)};
 
-			% Covariance ellipse
-			\draw[dashed, rotate around = {30: (13,1.5)}, red] (13,1.5) ellipse (30pt and 70pt);
-			% \draw[dashed, rotate around = {30: (8,0)}, red] (8,0) ellipse (20pt and 50pt);
-			% \draw[dashed, rotate around = {30: (8,0)}, red] (8,0) ellipse (10pt and 30pt);
-			\node[red] at ($(13,1.5)+(75:30pt and 70pt)$) {\(\Sigma_0^t\!\left(x\right)\)};
+		% Covariance ellipse
+		\draw[dashed, rotate around = {30: (7,1.5)}, red] (7,1.5) ellipse (30pt and 70pt);
+		\node[red] at ($(7,1.5)+(75:30pt and 70pt)$) {\(\Pi_t\)};
 
-			% STEP 2: Splitting
-			\draw (-1, -1) node {3)};
-			% Trajectory
-			\draw[gray] (1,-4) .. controls (3,-2) and (5,-7) .. (7,-4);
+		% STEP 2: Splitting
+		\draw (-1, -1) node {2)};
+		% Trajectory
+		\draw[gray] (1,-4) .. controls (3,-2) and (5,-7) .. (7,-4);
 
-			% Initial position
-			\fill[gray] (1,-4) circle[radius=1pt] node[anchor = east] {\(x\)};
+		% Initial position
+		\fill[gray] (1,-4) circle[radius=1pt] node[anchor = east] {\(x\)};
 
-			% Mapped position
-			\fill[blue] (7,-4) circle[radius=1pt];
+		% Mapped position
+		\fill[blue] (7,-4) circle[radius=1pt];
 
-			% Covariance ellipse
-			\draw[dashed, rotate around = {30: (7,-4)}, gray] (7,-4) ellipse (30pt and 70pt);
+		% Covariance ellipse
+		\draw[dashed, rotate around = {30: (7,-4)}, gray] (7,-4) ellipse (30pt and 70pt);
 
-			% Additional sigma points
-			\fill[blue, rotate around = {30: (7,-4)}] ($(7, -4)+(0:30pt and 70pt)$) circle[radius=1pt];
-			\fill[blue, rotate around = {30: (7,-4)}] ($(7, -4)+(90:30pt and 70pt)$) circle[radius=1pt];
-			\fill[blue, rotate around = {30: (7,-4)}] ($(7, -4)+(180:30pt and 70pt)$) circle[radius=1pt];
-			\fill[blue, rotate around = {30: (7,-4)}] ($(7, -4)+(270:30pt and 70pt)$) circle[radius=1pt];
+		% Additional sigma points
+		\fill[blue, rotate around = {30: (7,-4)}] ($(7, -4)+(0:30pt and 70pt)$) circle[radius=1pt];
+		\fill[blue, rotate around = {30: (7,-4)}] ($(7, -4)+(90:30pt and 70pt)$) circle[radius=1pt];
+		\fill[blue, rotate around = {30: (7,-4)}] ($(7, -4)+(180:30pt and 70pt)$) circle[radius=1pt];
+		\fill[blue, rotate around = {30: (7,-4)}] ($(7, -4)+(270:30pt and 70pt)$) circle[radius=1pt];
 
-			% Covariances for each sigma point
-			\draw[dashed, rotate around = {30: (7,-4)}, blue] (7, -4) ellipse (12pt and 28pt);
-			\draw[dashed, rotate around = {30: (7,-4)}, blue] ($(7, -4)+(0:30pt and 70pt)$) ellipse (12pt and 28pt);
-			\draw[dashed, rotate around = {30: (7,-4)}, blue] ($(7, -4)+(90:30pt and 70pt)$) ellipse (12pt and 28pt);
-			\draw[dashed, rotate around = {30: (7,-4)}, blue] ($(7, -4)+(180:30pt and 70pt)$) ellipse (12pt and 28pt);
-			\draw[dashed, rotate around = {30: (7,-4)}, blue] ($(7, -4)+(270:30pt and 70pt)$) ellipse (12pt and 28pt);
+		% Covariances for each sigma point
+		\draw[dashed, rotate around = {30: (7,-4)}, blue] (7, -4) ellipse (12pt and 28pt);
+		\draw[dashed, rotate around = {30: (7,-4)}, blue] ($(7, -4)+(0:30pt and 70pt)$) ellipse (12pt and 28pt);
+		\draw[dashed, rotate around = {30: (7,-4)}, blue] ($(7, -4)+(90:30pt and 70pt)$) ellipse (12pt and 28pt);
+		\draw[dashed, rotate around = {30: (7,-4)}, blue] ($(7, -4)+(180:30pt and 70pt)$) ellipse (12pt and 28pt);
+		\draw[dashed, rotate around = {30: (7,-4)}, blue] ($(7, -4)+(270:30pt and 70pt)$) ellipse (12pt and 28pt);
 
-			% STEP 3: Continued propagation
-			\draw (-1, -8) node {4)};
+		% STEP 3: Continued propagation
+		\draw (-1, -8) node {3)};
 
-			% Additional sigma points
-			\fill[blue] (3,-13) circle[radius=1pt];
-			\fill[blue, rotate around = {30: (3,-13)}] ($(3,-13)+(0:30pt and 70pt)$) circle[radius=1pt];
-			\fill[blue, rotate around = {30: (3,-13)}] ($(3,-13)+(90:30pt and 70pt)$) circle[radius=1pt];
-			\fill[blue, rotate around = {30: (3,-13)}] ($(3,-13)+(180:30pt and 70pt)$) circle[radius=1pt];
-			\fill[blue, rotate around = {30: (3,-13)}] ($(3,-13)+(270:30pt and 70pt)$) circle[radius=1pt];
+		% Additional sigma points
+		\fill[blue] (3,-13) circle[radius=1pt];
+		\fill[blue, rotate around = {30: (3,-13)}] ($(3,-13)+(0:30pt and 70pt)$) circle[radius=1pt];
+		\fill[blue, rotate around = {30: (3,-13)}] ($(3,-13)+(90:30pt and 70pt)$) circle[radius=1pt];
+		\fill[blue, rotate around = {30: (3,-13)}] ($(3,-13)+(180:30pt and 70pt)$) circle[radius=1pt];
+		\fill[blue, rotate around = {30: (3,-13)}] ($(3,-13)+(270:30pt and 70pt)$) circle[radius=1pt];
 
-			% Covariances for each sigma point
-			\draw[dashed, rotate around = {30: (3,-13)}, gray] (3,-13) ellipse (12pt and 28pt);
-			\draw[dashed, rotate around = {30: (3,-13)}, gray] ($(3,-13)+(0:30pt and 70pt)$) ellipse (12pt and 28pt);
-			\draw[dashed, rotate around = {30: (3,-13)}, gray] ($(3,-13)+(90:30pt and 70pt)$) ellipse (12pt and 28pt);
-			\draw[dashed, rotate around = {30: (3,-13)}, gray] ($(3,-13)+(180:30pt and 70pt)$) ellipse (12pt and 28pt);
-			\draw[dashed, rotate around = {30: (3,-13)}, gray] ($(3,-13)+(270:30pt and 70pt)$) ellipse (12pt and 28pt);
+		% Covariances for each sigma point
+		\draw[dashed, rotate around = {30: (3,-13)}, gray] (3,-13) ellipse (12pt and 28pt);
+		\draw[dashed, rotate around = {30: (3,-13)}, gray] ($(3,-13)+(0:30pt and 70pt)$) ellipse (12pt and 28pt);
+		\draw[dashed, rotate around = {30: (3,-13)}, gray] ($(3,-13)+(90:30pt and 70pt)$) ellipse (12pt and 28pt);
+		\draw[dashed, rotate around = {30: (3,-13)}, gray] ($(3,-13)+(180:30pt and 70pt)$) ellipse (12pt and 28pt);
+		\draw[dashed, rotate around = {30: (3,-13)}, gray] ($(3,-13)+(270:30pt and 70pt)$) ellipse (12pt and 28pt);
 
-			% New trajectories
-			\draw[black] (3,-13) .. controls (5,-15) and (8, -12) .. (10, -11.5);
-			\draw[black,  rotate around = {30: (3,-13)}] ($(3,-13)+(0:30pt and 70pt)$) .. controls (5,-15) and (8, -12) .. (10, -14.5);
-			\draw[black,  rotate around = {30: (3,-13)}] ($(3,-13)+(90:30pt and 70pt)$) .. controls (5,-14) and (8, -12) .. (10, -13);
-			\draw[black,  rotate around = {30: (3,-13)}] ($(3,-13)+(180:30pt and 70pt)$) .. controls (5,-17) and (7, -15) .. (8, -17);
-			\draw[black,  rotate around = {30: (3,-13)}] ($(3,-13)+(270:30pt and 70pt)$) .. controls (5,-17) and (7, -15) .. (8, -18);
+		% New trajectories
+		\draw[black,  rotate around = {30: (3,-13)}] ($(3,-13)+(90:30pt and 70pt)$) .. controls (5,-14) and (8, -12) .. (10, -13);
+		\draw[black,  rotate around = {30: (3,-13)}] ($(3,-13)+(0:30pt and 70pt)$) .. controls (5,-15) and (8, -12) .. (10, -14.5);
+		\draw[black] (3,-13) .. controls (5,-15) and (8, -10) .. (12, -11.75);
+		\draw[black,  rotate around = {30: (3,-13)}] ($(3,-13)+(180:30pt and 70pt)$) .. controls (5,-17) and (7, -15) .. (10, -18);
+		\draw[black,  rotate around = {30: (3,-13)}] ($(3,-13)+(270:30pt and 70pt)$) .. controls (5,-17) and (7, -15) .. (8, -18);
 
-			% Mapped points
-			\fill[black] (10,-11.5) circle[radius=1pt];
-			\fill[black, rotate around = {30: (3,-13)}] ($(10,-14.5)$) circle[radius=1pt];
-			\fill[black, rotate around = {30: (3,-13)}] ($(10,-13)$) circle[radius=1pt];
-			\fill[black, rotate around = {30: (3,-13)}] ($(8,-17)$) circle[radius=1pt];
-			\fill[black, rotate around = {30: (3,-13)}] ($(8,-18)$) circle[radius=1pt];
+		% Mapped points
+		\fill[black, rotate around = {30: (3,-13)}] ($(10,-13)$) circle[radius=1pt];
+		\fill[black, rotate around = {30: (3,-13)}] ($(10,-14.5)$) circle[radius=1pt];
+		\fill[black] (12,-11.75) circle[radius=1pt];
+		\fill[black, rotate around = {30: (3,-13)}] ($(10,-18)$) circle[radius=1pt];
+		\fill[black, rotate around = {30: (3,-13)}] ($(8,-18)$) circle[radius=1pt];
 
-			% Updated ellipses
-			\draw[dashed, red] (10,-11.5) ellipse[x radius=10pt, y radius=50pt, rotate=70];
-			\draw[dashed, rotate around = {30: (3, -13)}, red] (10,-14.5) ellipse[x radius=20pt, y radius=70pt, rotate=68];
-			\draw[dashed, rotate around = {30: (3, -13)}, red] (10,-13) ellipse[x radius=30pt, y radius=70pt, rotate=75];
-			\draw[dashed, rotate around = {30: (3, -13)}, red] (8,-17) ellipse[x radius=15pt, y radius=70pt];
-			\draw[dashed, rotate around = {30: (3, -13)}, red] (8,-18) ellipse[x radius=10pt, y radius=50pt, rotate=15];
+		% Updated ellipses
+		\draw[dashed, rotate around = {30: (3, -13)}, red] (10,-13) ellipse[x radius=30pt, y radius=70pt, rotate=75];
+		\draw[dashed, rotate around = {30: (3, -13)}, red] (10,-14.5) ellipse[x radius=20pt, y radius=70pt, rotate=68];
+		\draw[dashed, red] (12,-11.75) ellipse[x radius=10pt, y radius=50pt, rotate=70];
+		\draw[dashed, rotate around = {30: (3, -13)}, red] (10,-18) ellipse[x radius=21pt, y radius=70pt];
+		\draw[dashed, rotate around = {30: (3, -13)}, red] (8,-18) ellipse[x radius=10pt, y radius=50pt, rotate=15];
 
-		\end{tikzpicture}
-		\caption[The propagation and splitting of a component in the Gaussian mixture model:]{The propagation and splitting of a component in the Gaussian mixture model:
-			\begin{enumerate*}
-				\item Start with the mean \(x\) and covariance matrix \(\Sigma_0\) for a component of the mixture model.
-				\item The mean \(x\) and covariance matrix \(\Sigma_0\) of the component are propagated forward through the linearised SDE, by solving \cref{eqn:gauss_de}.
-				\item Once the splitting criterion is met, the covariance matrix is split into \(K\) smaller covariance matrices, with corresponding means so that the mean and covariance of the propagated point is preserved.
-				\item Each new component is propagated forward with \cref{eqn:gauss_de} and the process is repeated for each component \emph{individually} until the final time is reached.
-			\end{enumerate*}}
-		\label{fig:gmm_steps}
-	\end{center}
+	\end{tikzpicture}
+	\caption[The propagation and splitting of a component in the Gaussian mixture model:]{The propagation and splitting of a component in the Gaussian mixture model:
+		\begin{enumerate*}
+			% \item Start with the mean \(x\) and covariance matrix \(\Sigma_0\) for a component of the mixture model.
+			\item The mean \(x\) and covariance matrix \(\Sigma\) of a component is propagated forward through the linearised SDE, by solving \cref{eqn:gauss_de} to obtained \(w_t\) and \(\Pi_t\) respectively.
+			\item Once the splitting criterion is met, the covariance matrix is split into \(K\) smaller covariance matrices, with corresponding means so that the mean and covariance of the propagated point is preserved.
+			\item Each new component is propagated forward with \cref{eqn:gauss_de} and the process is repeated for each component \emph{individually} until the final time is reached.
+		\end{enumerate*}}
+	\label{fig:gmm_steps}
 \end{figure}
 
 \Cref{fig:gmm_steps} provides a pictorial representation of the propagation and splitting of a single component in the mixture model.
@@ -464,23 +432,23 @@ Thus, the algorithm would present a significant computational improvement over b
 	\begin{tikzpicture}[node distance=70pt]
 		\tikzstyle{arrow} = [->,>=stealth]
 
-		\node (s) [rectangle, rounded corners, draw=black, align=center] {\textbf{Start} \\ Given \(x_0, T\) };
+		\node (s) [rectangle, rounded corners, draw=black, align=center] {\textbf{Start} \\ Given \(x_0, t\) };
 
-		\node (a) [rectangle, below of=s, draw=black, align=center, yshift=-10pt] {Set \(K = 1\) \\ Set \(t^{(1)} = 0\) \\ Set \(x^{(1)} = x_0\) \\ Set \(\Sigma^{(1)} = O\) \\ Set \(w^{(1)} = 1\)};
+		\node (a) [rectangle, below of=s, draw=black, align=center, yshift=-10pt] {Set \(K = 1\) \\ Set \(\tau^{(1)} = 0\) \\ Set \(x^{(1)} = x_0\) \\ Set \(\Sigma^{(1)} = O\) \\ Set \(w^{(1)} = 1\)};
 
-		\node (b) [diamond, below of=a, draw=black, align=center, yshift=-70pt] {Any \(i\) for \\ which \(t^{(i)} < T\)?};
+		\node (b) [diamond, below of=a, draw=black, align=center, yshift=-70pt] {Any \(i\) for \\ which \(\tau^{(i)} < t\)?};
 
-		\node (c) [rectangle, below of=b, draw=black, align=center, yshift=-70pt] {\textbf{Propagate} \\ Update \(x^{(i)}, \Sigma^{(i)}\) by solving \\ \cref{eqn:gauss_de} from time \(t^{(i)}\) until \\ time \(T\) \textbf{or} the splitting \\ criterion is reached. \\
-			Update \(t^{(i)}\) to the propagated time};
+		\node (c) [rectangle, below of=b, draw=black, align=center, yshift=-70pt] {\textbf{Propagate} \\ Update \(x^{(i)}, \Sigma^{(i)}\) by solving \\ \cref{eqn:gauss_de} from time \(\tau^{(i)}\) until \\ time \(t\) \textbf{or} the splitting \\ criterion is reached. \\
+			Update \(\tau^{(i)}\) to the propagated time};
 
-		\node (d) [diamond, right of=c, draw=black, align=center, xshift = 90pt] {\(t^{(i)} = T\)?};
+		\node (d) [diamond, right of=c, draw=black, align=center, xshift = 90pt] {\(\tau^{(i)} = t\)?};
 
-		\node (e) [rectangle, below of = c, draw=black, align=center, yshift = -80pt] {\textbf{Split} \\ Use the splitting method (i.e. \cref{eqn:cov_split_points}) \\
-		to set \(x^{(i)}\) and \(x^{(N + 1)}, \dotsc, x^{(N + K - 1)}\) \\
-		and the corresponding weights \(w^{(i)}\) \\
-		and \(w^{(N+1)}, \dotsc x^{(N + K - 1)}\). \\
+		\node (e) [rectangle, below of = c, draw=black, align=center, yshift = -80pt] {\textbf{Split} \\ Use the splitting method (i.e.\ \cref{eqn:cov_split_points}) \\
+			to set \(x^{(i)}\) and \(x^{(N + 1)}, \dotsc, x^{(N + K - 1)}\) \\
+			and the corresponding weights \(w^{(i)}\) \\
+			and \(w^{(N+1)}, \dotsc x^{(N + K - 1)}\). \\
 			Set \(\Sigma^{(i)} = \Sigma^{(N + 1)} = \dotsb = \Sigma^{(N + K - 1)}\) \\
-			Set \(t^{(N + 1)} = \dotsb = t^{(N + K - 1)} = t^{(i)}\) \\
+			Set \(\tau^{(N + 1)} = \dotsb = \tau^{(N + K - 1)} = \tau^{(i)}\) \\
 			Set \(N = N + K - 1\)};
 
 		\node (f) [rectangle, rounded corners, left of=b, draw=black, align = center, xshift = -90pt] {\textbf{Stop}};
@@ -501,54 +469,37 @@ Thus, the algorithm would present a significant computational improvement over b
 		\draw (e.-10) -| (g.center);
 		\draw (g.center) |- (b);
 
-
 		% Outline!
 		\node[inner sep=10pt, draw=red,fit = (b) (c) (d) (e) (g), rounded corners] (fit) {};
 
-		% \draw [arrow] (s) -- (a);
-
-		% \draw [arrow] (a) -- (b);
-		% \draw [arrow] (b) -- (d);
-
-		% \draw [arrow] (d) -- node[anchor=south] {no} (c);
-		% \draw [arrow] (d) -- node[anchor=east] {yes} (e);
-
-		% \draw [arrow] (c) |- (b);
-
-		% \draw [arrow] (e) -- (f);
-
-		% \draw [arrow] (f) -- node[anchor=south] {yes} (g);
-		% \draw [arrow] (f) -- node[anchor=south] {no} (h);
-
-		% \draw [arrow] (h) |- (b);
 	\end{tikzpicture}
 	\caption{An algorithm flow chart of one particular implementation of the Gaussian mixture model with a certain initial condition.
 		The main propagation-splitting loop is contained within the outlined area.}
 	\label{fig:gmm_alg_diag}
 \end{figure}
 
-\td{Need to rewrite this bit}
 There are several options for initialising the mixture model, depending on the initial condition at time \(0\).
-For a fixed initial condition \(x_0\), we can take the degenerate mixture model with a single component and zero variance, i.e.
-\[
-	N = 1, \quad x^{(1)} = x_0, \quad \Sigma^{(1)} = O, \quad w^{(1)} = 1.
-\]
-This implementation is summarised with an algorithm flow chart in \Cref{fig:gmm_alg_diag}, which also describes the main propagation-splitting loop (indicated by red).
+For a fixed initial condition, we can take the degenerate mixture model with a single component and zero variance; this implementation is summarised with an algorithm flow chart in \Cref{fig:gmm_alg_diag}, which also describes the main propagation-splitting loop (indicated by red).
 If the initial condition is Gaussian, this can be used as a single component mixture model and propagated forward with \cref{eqn:gauss_de} by including the initial covariance matrix as the initial condition for the covariance equation.
 For a non-Gaussian initial condition, if this distribution can be represented, at least approximately, with a Gaussian mixture model, then this can be used immediately in the algorithm.
 The components and weights of the initial condition are updated in Step 2 of the algorithm.
 
+The number of components in the final mixture is determined by the splitting procedure and in general may not be known in advance.
+This may lead to computational difficulties: many splits can result in an exponential increase in the number of components.
+Each component requires the computation of a mean and covariance matrix to propagate forward in time, and so it would be ideal to keep the number of components low.
+One can easily enforce an upper limit on the number of components, by preventing any further splitting once this threshold is reached.
+
 \begin{figure}
 	\centering
 	\includegraphics[width=\textwidth]{chp05_gmm/figures/bene_final_gmm}
-	\caption{The mixture model algorithm implemented on Ben\^e's SDE \cref{eqn:bene_sde} with fixed initial condition \(x_0 = 0.5\) and over the time interval \((0,5)\).
+	\caption{The mixture model algorithm implemented on the Bene\v{s} SDE \cref{eqn:bene_sde} with fixed initial condition \(x_0 = 0.5\) and over the time interval \((0,5)\).
 		The probability density function of the true solution is shown in solid black and the corresponding linearisation solution in dashed red.
 		The Gaussian mixture model density is overlaid in blue.
-		A single split into three canonical sigma points (using \cref{eqn:uhlman_sigma} occurs at \(t = 0.8\)).}
+		A single split into three canonical sigma points (using \cref{eqn:uhlman_sigma} at time \(\tau = 0.8\)).}
 	\label{fig:bene_gmm}
 \end{figure}
 
-As a simple example, we apply the algorithm to Ben\^e's SDE \cref{eqn:bene_sde}, subject again to the initial condition \(x_0 = 1/2\) and considered at the final time of \(t = 5\).
+As a simple example, we apply the algorithm to the Bene\v{s} SDE \cref{eqn:bene_sde}, subject again to the initial condition \(x_0 = 1/2\) and considered at the final time of \(t = 5\).
 Recall from \cref{eqn:bene_sde_pdf} and \Cref{fig:bene_gauss} that the true solution has a bimodal density, which the Gaussian distribution resulting from a single linearisation is unable to capture.
 We implement the Gaussian mixture model with a single split, manually chosen to be at time \(t = 0.8\), with the resulting mixture density shown in \Cref{fig:bene_gmm}.
 The algorithm is initialised with \(x^{(1)} = 1/2\), \(\Sigma^{(1)} = 0\) and \(w^{(1)}\).
@@ -564,13 +515,22 @@ This would be particularly advantageous in a situation where the true solution i
 
 We can take this example further to attain a better fit, by adjusting the way in which the first Gaussian component is split.
 
+However, rather than comparing the full mixture model to the solution we are after, we can focus our attention
+We cap the number of components at 10: if this number is reached then no more components are split and each is propagated until the final time \(t = 5\).
+
+This was a highly contrived example, in which we had access to the solution of the
+\td{Get this example working, or otherwise adjust}
+
+
+
+
 % \td{Splitting}
 % Similar algorithms combining linearisations and mixture models have been proposed, such as that by \citet{DeMarsEtAl_2013_EntropyBasedApproachUncertainty} for propagating an initial uncertainty through a non-linear model, which we compare to.
 % However, such algorithms have seen little use in practice, particularly in the oceanography and climate modelling circles.
 % In the following chapter (\Cref{ch:appls}), we will demonstrate the mixture model algorithm on examples from these domains.\lb{careful with this paragraph}
 
 \section{The splitting criterion}\label{sec:gmm_split_disc}
-In the implementation of our algorithm on Ben\^e's SDE, we manually chose a single split time.
+In the implementation of our algorithm on the Bene\v{s} SDE, we manually chose a single split time.
 However, in general the algorithm requires a choice of criterion for when to split a Gaussian component, for which there are several choices.
 A given Gaussian component should be split when the linearised SDE is no longer a reasonable approximation for the original SDE about the deterministic trajectory corresponding to the component.
 This requires an ongoing evaluation of the error in using the approximation.

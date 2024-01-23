@@ -3,15 +3,15 @@ This appendix states several theoretical results from deterministic dynamical sy
 These results are included for completeness, so we do not include proofs and instead refer the reader to other sources.
 
 \section{Deterministic results}
-The flow map satisfies the following properties, under ASSUMPTIONS?
-For any \(r, s, t \in [0,T]\) and points \(x,w \in \R^n\),
-\begin{enumerate}
-	\item \(F_{s}^{t}\) is invertible with inverse
-	      \[
-		      \left[F_{s}^{t}\right]^{-1}\left(w\right) = F_{t}^{s}\left(w\right).
-	      \]
-	\item \(F_s^{t}\left(F_{r}^{s}(x)\right) = F_{r}^{t}\left(x\right)\)
-\end{enumerate}
+% The flow map satisfies the following properties, under ASSUMPTIONS?
+% For any \(r, s, t \in [0,T]\) and points \(x,w \in \R^n\),
+% \begin{enumerate}
+% 	\item \(F_{s}^{t}\) is invertible with inverse
+% 	      \[
+% 		      \left[F_{s}^{t}\right]^{-1}\left(w\right) = F_{t}^{s}\left(w\right).
+% 	      \]
+% 	\item \(F_s^{t}\left(F_{r}^{s}(x)\right) = F_{r}^{t}\left(x\right)\)
+% \end{enumerate}
 
 
 An important result for establishing bounds on a function given an integral inequality is Gr\"onwall's inequality.
@@ -38,13 +38,25 @@ An important result for establishing bounds on a function given an integral ineq
 
 \section{Analytical tools for It\^o calculus}\label{app:ito_tools}
 There are several tools available for the analytic treatment of It\^o integrals and solutions to stochastic differential equations, which we make particular use of in the proofs presented in \Cref{ch:linear_theory}.
-The first is It\^o's isometry, which relates the expectation of an It\^o integral to that of a deterministic one and is useful for computing moments.
+Let \(\left(\Omega, \mathcal{F}, P\right)\) denote the probability space on which the Wiener process \(W_t\) is defined---the sample space \(\Omega\) is typically the space of all continuous real-valued functions defined on \([0,T]\) \citep{KallianpurSundar_2014_StochasticAnalysisDiffusion}.
+The Wiener process \(W_t\) has an associated natural filtration of \(\left(\Omega, \mathcal{F}, P\right)\), which we denote \(\mathcal{F}_t\).
+Let \(\mathfrak{B}\!\left(A\right)\) generically denotes the Borel \(\sigma\)-algebra on the set \(A \subseteq \R^q\).
+A random function \(f\colon \Omega \times [0,T] \to \R\) is \emph{It\^o integrable} over the interval \([s,t] \subseteq [0,T]\) if \citep{Oksendal_2003_StochasticDifferentialEquations,KallianpurSundar_2014_StochasticAnalysisDiffusion}
+\begin{romanate}
+	\item \(f\) is \(\mathcal{F} \times \mathfrak{B}\!\left([0,T]\right)\)-measurable,
+	\item \(f\) is \(\mathcal{F}_t\)-adapted, and
+	\item \[
+		\avg{\int_s^t{f\!\left(\omega, \tau\right)\dif\tau}} < \infty.
+	\]
+\end{romanate}
+
+The first tool is It\^o's isometry, which relates the expectation of an It\^o integral to that of a deterministic one and is useful for computing moments.
 
 \begin{theorem}[It\^o's Isometry]\label{thm:ito_isom}
-	Let \(f: \Omega \times [0,T] \to \R\) be an It\^o integrable stochastic process.
+	Let \(f\colon \Omega \times [0,T] \to \R\) be an It\^o integrable stochastic process.
 	Then, for any \(t \in [0,T]\)
 	\[
-		\avg{\left(\int_0^t{f\left(\omega, \tau\right)\dif W_\tau}\right)^2} = \avg{\int_0^t{f\left(\omega, \tau\right)^2\dif\tau}}
+		\avg{\left(\int_0^t{f\!\left(\omega, \tau\right)\dif W_\tau}\right)^2} = \avg{\int_0^t{f\!\left(\omega, \tau\right)^2\dif\tau}}
 	\]
 \end{theorem}
 
@@ -86,54 +98,54 @@ Our third and final result is the Burkholder-Davis-Gundy inequality, which when 
 	This result is stated and proven as Theorem 5.6.3 of \citet{KallianpurSundar_2014_StochasticAnalysisDiffusion}.
 \end{proof}
 
-As with ordinary differential equations, we are interested in knowing when a given stochastic differential equation has solutions, and when those solutions are unique.
-Since we are now dealing with random processes, the notion of uniqueness is no longer well-defined.
+% As with ordinary differential equations, we are interested in knowing when a given stochastic differential equation has solutions, and when those solutions are unique.
+% Since we are now dealing with random processes, the notion of uniqueness is no longer well-defined.
 
-The main distinction are that strong solutions are defined on the \emph{same} probability space as the given driving Wiener process, whereas weak solutions are defined on \emph{any} probability space with a possibly different Wiener process.
-This leads to two different notion of uniqueness; a strong solution \(y_t\) is strongly (or pathwise) unique if for any other strong solution \(x_t\),
-\[
-	P\left(y_t = x_t \, \forall t \in [0,T]\right) = 1.
-\]
-If \(x_t\) was not defined on the same probability space as \(y_t\), then the probability of equality would not make sense.
+% The main distinction are that strong solutions are defined on the \emph{same} probability space as the given driving Wiener process, whereas weak solutions are defined on \emph{any} probability space with a possibly different Wiener process.
+% This leads to two different notion of uniqueness; a strong solution \(y_t\) is strongly (or pathwise) unique if for any other strong solution \(x_t\),
+% \[
+% 	P\left(y_t = x_t \, \forall t \in [0,T]\right) = 1.
+% \]
+% If \(x_t\) was not defined on the same probability space as \(y_t\), then the probability of equality would not make sense.
 
-For our purposes, the distinction between strong and weak solutions
+% For our purposes, the distinction between strong and weak solutions
 
-We can now state the requirements for the existence of unique strong solutions to \eqref{eqn:gen_sde}, in the following theorem.
+% We can now state the requirements for the existence of unique strong solutions to \eqref{eqn:gen_sde}, in the following theorem.
 
-\begin{theorem}[Existence and Uniqueness of SDE Solutions]\label{thm:sde_exist_unique}
-	Let \(W_t\) be a standard \(m\)-dimensional Wiener process over a time interval \([0,T]\), and let \(\xi\) be a \(n\)-dimensional random vector defined on the same probability space as \(W_t\) and independent of \(W_t\).
-	Consider the following stochastic differential equation evolving in \(\R^n\):
-	\begin{equation}\label{eqn:sde_exist}
-		\dif x_t = b\!\left(x_t, t\right)\dif t + \sigma\!\left(x_t, t\right)\dif W_t,
-	\end{equation}
-	subject to the initial condition \(x_0 = \xi\), with coefficients \(b\colon \R^n \times [0,T] \to \R^n\) and \(\sigma \colon \R^n \times [0,T] \to \R^{n \times m}\).
-	Let \(\mathfrak{B}\!\left(A\right)\) generically denotes the Borel \(\sigma\)-algebra on the set \(A \subseteq \R^q\).
-	Suppose that the coefficients \(b\) and \(\sigma\) are such that
-	\begin{romanate}
-		\item each component \(b_j\colon \R^n \times [0,T] \to \R^n\) of \(b\) is measurable with respect to \(\mathfrak{B}\!\left([0,T]\right) \times \mathfrak{B}\!\left(\R^n\right)\).
+% \begin{theorem}[Existence and Uniqueness of SDE Solutions]\label{thm:sde_exist_unique}
+% 	Let \(W_t\) be a standard \(m\)-dimensional Wiener process over a time interval \([0,T]\), and let \(\xi\) be a \(n\)-dimensional random vector defined on the same probability space as \(W_t\) and independent of \(W_t\).
+% 	Consider the following stochastic differential equation evolving in \(\R^n\):
+% 	\begin{equation}\label{eqn:sde_exist}
+% 		\dif x_t = b\!\left(x_t, t\right)\dif t + \sigma\!\left(x_t, t\right)\dif W_t,
+% 	\end{equation}
+% 	subject to the initial condition \(x_0 = \xi\), with coefficients \(b\colon \R^n \times [0,T] \to \R^n\) and \(\sigma \colon \R^n \times [0,T] \to \R^{n \times m}\).
+% 	Let \(\mathfrak{B}\!\left(A\right)\) generically denotes the Borel \(\sigma\)-algebra on the set \(A \subseteq \R^q\).
+% 	Suppose that the coefficients \(b\) and \(\sigma\) are such that
+% 	\begin{romanate}
+% 		\item each component \(b_j\colon \R^n \times [0,T] \to \R^n\) of \(b\) is measurable with respect to \(\mathfrak{B}\!\left([0,T]\right) \times \mathfrak{B}\!\left(\R^n\right)\).
 
-		\item For each \(t \in [0,T]\), the restriction \(b_j\!\left(t, \cdot\right)\) is measurable with respect to \(\mathfrak{B}\!\left(\R^n\right)\).
+% 		\item For each \(t \in [0,T]\), the restriction \(b_j\!\left(t, \cdot\right)\) is measurable with respect to \(\mathfrak{B}\!\left(\R^n\right)\).
 
-		\item each component \(\sigma_{ij}\colon \R^n \times [0,T] \to \R^n\) of \(\sigma\) is  \(\mathfrak{B}\!\left([0,T]\right) \times \mathfrak{B}\!\left(\R^n\right)\) measurable.
+% 		\item each component \(\sigma_{ij}\colon \R^n \times [0,T] \to \R^n\) of \(\sigma\) is  \(\mathfrak{B}\!\left([0,T]\right) \times \mathfrak{B}\!\left(\R^n\right)\) measurable.
 
-		\item For each \(t \in [0,T]\), the restriction \(\sigma_{ij}\!\left(t, \cdot\right)\) is measurable with respect to \(\mathfrak{B}\!\left(\R^n\right)\).
+% 		\item For each \(t \in [0,T]\), the restriction \(\sigma_{ij}\!\left(t, \cdot\right)\) is measurable with respect to \(\mathfrak{B}\!\left(\R^n\right)\).
 
-		\item (linear growth) there exists a constant \(K_G\) such that for all \(t \in [0,T]\) and \(x \in \R^n\),
-		\[
-			\norm{b\!\left(x,t\right)}^2 + \norm{\sigma\!\left(x,t\right)} \leq K_G\left(1 + \norm{x}^2\right).
-		\]
+% 		\item (linear growth) there exists a constant \(K_G\) such that for all \(t \in [0,T]\) and \(x \in \R^n\),
+% 		\[
+% 			\norm{b\!\left(x,t\right)}^2 + \norm{\sigma\!\left(x,t\right)} \leq K_G\left(1 + \norm{x}^2\right).
+% 		\]
 
-		\item (Lipschitz continuity) these exists a constant \(K_L\) such that for all \(t \in [0,T]\) and \(x,y \in \R^n\),
-		\[
-			\norm{b\!\left(x,t\right) - b\!\left(y,t\right)}^2 + \norm{\sigma\!\left(x,t\right) - \sigma\!\left(y,t\right)}^2 \leq K_L\norm{x - y}^2.
-		\]
+% 		\item (Lipschitz continuity) these exists a constant \(K_L\) such that for all \(t \in [0,T]\) and \(x,y \in \R^n\),
+% 		\[
+% 			\norm{b\!\left(x,t\right) - b\!\left(y,t\right)}^2 + \norm{\sigma\!\left(x,t\right) - \sigma\!\left(y,t\right)}^2 \leq K_L\norm{x - y}^2.
+% 		\]
 
-	\end{romanate}
-	Then, \eqref{eqn:sde_exist} has a unique strong solution.
-\end{theorem}
-\begin{proof}
-	A proof is available in any standard textbook on It\^o calculus, e.g. in the proof of Theorem 6.2.1 in \citet{KallianpurSundar_2014_StochasticAnalysisDiffusion}.
-\end{proof}
+% 	\end{romanate}
+% 	Then, \eqref{eqn:sde_exist} has a unique strong solution.
+% \end{theorem}
+% \begin{proof}
+% 	A proof is available in any standard textbook on It\^o calculus, e.g. in the proof of Theorem 6.2.1 in \citet{KallianpurSundar_2014_StochasticAnalysisDiffusion}.
+% \end{proof}
 
 
 

@@ -1,6 +1,5 @@
 \chapter{Characterising SDE linearisations: the theory}\label{ch:linear_theory}
-In general, stochastic differential equations cannot be solved analytically and instead require numerical simulations.
-However, as we highlighted in \Cref{sec:bkg_sim_limits} there are limitations to relying upon these bulk simulations, such as computational expense.
+In general, stochastic differential equations cannot be solved analytically and instead require numerical simulations, which is significantly limited by the computational expense.
 An alternative approach is to approximate the SDE by a simplified one, which can be solved analytically.
 A linearisation procedure is one such approach when the noise is small, which replaces the coefficients of the SDE with first-order Taylor expansions.
 This linearisation scheme is accordingly used across a range of literature and applications \citep{Jazwinski_2014_StochasticProcessesFiltering,SarkkaSolin_2019_AppliedStochasticDifferential,KaszasHaller_2020_UniversalUpperEstimate,ArchambeauEtAl_2007_GaussianProcessApproximations,Sanz-AlonsoStuart_2017_GaussianApproximationsSmall,LawEtAl_2015_DataAssimilationMathematical,ReichCotter_2015_ProbabilisticForecastingBayesian,BudhirajaEtAl_2019_AssimilatingDataModels,LeGlandWang_2002_AsymptoticNormalityPartially}.
@@ -35,7 +34,7 @@ The noise in \cref{eqn:sde_y} is multiplicative, in that the diffusion matrix \(
 We assume that \(\sigma\) is specified \textit{a priori}, or if no such information is known, then \(\sigma \equiv I\), the \(n \times m\) identity matrix, is a default modelling choice.
 We consider \cref{eqn:sde_y} subject to the \emph{general} uncertain initial condition \(y_0^{(\epsilon)} = x\), where \(x\) is an \(n\)-dimensional random vector with some given distribution. The two sources of randomness, $ x $ and $ W_t $, are assumed independent from each other.
 
-In the absence of any uncertainty (i.e. \(\epsilon = 0\) and the initial condition is a known deterministic quantity), \cref{eqn:sde_y} reduces to the ordinary differential equation
+In the absence of any uncertainty (i.e.\ \(\epsilon = 0\) and the initial condition is a known deterministic quantity), \cref{eqn:sde_y} reduces to the ordinary differential equation
 \begin{equation}
 	\dod{y_t^{(0)}}{t} = u\!\left(y_t^{(0)}, t\right), \quad y_0^{(0)} = x_0.
 	\label{eqn:ode_det}
@@ -43,9 +42,9 @@ In the absence of any uncertainty (i.e. \(\epsilon = 0\) and the initial conditi
 where the initial condition \(x_0 \in \R^n\) is fixed.
 The formal convergence of the stochastic solution \(y_t^{(\epsilon)}\) (under certain conditions on the initial condition) to the deterministic \(y_{t}^{(0)}\) in the limit as \(\epsilon \to 0\) is well-established using the large deviations principle \citep[e.g]{FreidlinWentzell_1998_RandomPerturbationsDynamical}.
 We refer to \cref{eqn:ode_det} as the \emph{reference} deterministic model associated with \cref{eqn:sde_y}.
-Solutions to the reference deterministic model are more readily available, e.g. in terms of computational efficiency when solving numerically, than those of the stochastic model, but do not account for inevitable uncertainty.
+Solutions to the reference deterministic model are more readily available, e.g.\ in terms of computational efficiency when solving numerically, than those of the stochastic model, but do not account for inevitable uncertainty.
 
-Let the flow map \(F_{0}^{t}\colon \R^n \to \R^n\) be the function which evolves an initial condition from time \(0\) to time \(t\) according to the flow of \cref{eqn:ode_det}, i.e. \(F_0^t\!\left(x_0\right) = y_t^{(0)}\).
+Let the flow map \(F_{0}^{t}\colon \R^n \to \R^n\) be the function which evolves an initial condition from time \(0\) to time \(t\) according to the flow of \cref{eqn:ode_det}, i.e.\ \(F_0^t\!\left(x_0\right) = y_t^{(0)}\).
 
 We assume certain smoothness and boundedness conditions on the various terms outlined, which are stated explicitly in \Cref{hyp:smooth}.
 Throughout this article, we use the norm symbol \(\norm{\cdot}\) to denote (i) for a vector, the standard Euclidean vector norm, (ii) for a matrix, the spectral norm induced by the Euclidean norm, and (iii) for a 3rd-order tensor, the spectral norm induced by the matrix norm.
@@ -65,7 +64,7 @@ The gradient symbol \(\nabla\) generically refers to derivatives with respect to
 		\end{equation*}
 		Equivalently, for all \(t \in [0,T]\), the function \(u\!\left(\cdot, t\right)\) is Lipschitz continuous with Lipschitz constant \(K_{\nabla u}\).
 
-		\item\label{hyp:coef_meas} For each \(x \in \R^n\), the function \(u(x,\cdot) \coloneqq [0,T] \to \R^n\) and each component of the function \(\sigma(x,\cdot) \coloneqq [0,T] \to \R^{n\times m}\) are Borel-measurable on \([0,T]\).
+		\item\label{hyp:coef_meas} For each \(x \in \R^n\), the function \(u(x,\cdot) \colon [0,T] \to \R^n\) and each component of the function \(\sigma(x,\cdot) \colon [0,T] \to \R^{n\times m}\) are Borel-measurable on \([0,T]\).
 
 		\item\label{hyp:linear_growth} There exists a constant \(K_L\) such that for any \(t \in [0,T]\) and \(x \in \R^n\),
 		\[
@@ -115,7 +114,7 @@ In order to quantify the error arising from the choice of reference point \(x_0\
 \[
 	\delta_r \coloneqq \avg{\norm{x - x_0}^r}^{1/r},
 \]
-i.e. \(\delta_r\) is the \(L_r\) distance between \(x\) and the deterministic point \(x_0\).
+i.e.\ \(\delta_r\) is the \(L_r\) distance between \(x\) and the deterministic point \(x_0\).
 We can think of \(\delta_r\) as a scalar measure of the uncertainty in the initial condition, relative to the choice of reference point \(x_0\).
 Alternatively, the limit as \(\delta_r\) approaches zero is equivalent to convergence in \(r\)th mean of \(x\) to the fixed point \(x_0\).
 We can therefore distinguish two sources of uncertainty in our model; that arising from the initial condition, quantified by \(\delta_r\), and the ongoing uncertainty driven by the Wiener process \(W_t\) as measured by \(\epsilon\).
@@ -156,7 +155,7 @@ By explicitly identifying the dependence of the bound on \(K_{\nabla\nabla u}\) 
 \end{remark}
 
 \begin{remark}[Additive noise]\label{rem:bound_additive}
-	When the noise in \cref{eqn:sde_y} is additive (non-multiplicative), we set \(K_{\nabla\sigma} = 0\) and \cref{eqn:main_ineq} becomes
+	When the noise in \cref{eqn:sde_y} is additive, we set \(K_{\nabla\sigma} = 0\) and \cref{eqn:main_ineq} becomes
 	\[
 		\avg{\norm{y_t^{(\epsilon)} - l_t^{(\epsilon)}}^r} \leq   K_{\nabla\nabla u}^r D_1\!\left(r,t, K_{\nabla u}, K_\sigma\right)\, \epsilon^{2r} + K_{\nabla\nabla u}^r D_2\!\left(r,t, K_{\nabla u}\right)\delta_{2r}^{2r}.
 	\]
@@ -229,7 +228,7 @@ In both these cases, the linearised solution also follows a Gaussian distributio
 We also relate these results directly to other literature \citep{Jazwinski_2014_StochasticProcessesFiltering,FreidlinWentzell_1998_RandomPerturbationsDynamical,Blagoveshchenskii_1962_DiffusionProcessesDepending,Balasuriya_2020_StochasticSensitivityComputable,Sanz-AlonsoStuart_2017_GaussianApproximationsSmall,SarkkaSolin_2019_AppliedStochasticDifferential} which uses linearisation procedures and Gaussian process approximations for nonlinear SDEs in these situations.
 
 Next, we establish the ordinary differential equation satisfied by the covariance matrix, which is an expression consistent with linearisations schemes described elsewhere \citep{ArchambeauEtAl_2007_GaussianProcessApproximations,SarkkaSolin_2019_AppliedStochasticDifferential,Jazwinski_2014_StochasticProcessesFiltering,Sanz-AlonsoStuart_2017_GaussianApproximationsSmall}.
-This ODE enables rapid computation of the mean and covariance of the linearised solutions by solving a system of ODEs, i.e. \cref{eqn:ode_det} and \cref{eqn:pi_ode}.
+This ODE enables rapid computation of the mean and covariance of the linearised solutions by solving a system of ODEs, i.e.\ \cref{eqn:ode_det} and \cref{eqn:pi_ode}.
 
 \begin{remark}\label{rem:cov_ode}
 	The \(n\times n\) covariance matrix \(\var{l_t^{(\epsilon)}}\) of the linearised solution is the symmetric positive-semidefinite \(n \times n\) matrix solution to the ordinary differential equation
@@ -287,11 +286,11 @@ The results in  \citet{Sanz-AlonsoStuart_2017_GaussianApproximationsSmall} on th
 
 
 \subsection{Gaussian initial condition}\label{sec:theory_gauss}
-We now briefly consider the case when the initial condition follows a Gaussian distribution, i.e. \(x \isGauss{\mu_0, \Sigma_0}\), where \(\mu_0 \in \R^n\) and \(\Sigma_0 \in \R^{n \times n}\) are fixed and specified.
+We now briefly consider the case when the initial condition follows a Gaussian distribution, i.e.\ \(x \isGauss{\mu_0, \Sigma_0}\), where \(\mu_0 \in \R^n\) and \(\Sigma_0 \in \R^{n \times n}\) are fixed and specified.
 The linearisation then follows a Gaussian distribution itself, which is entirely characterised by the mean and covariance matrix described in \Cref{cor:limit_moments}.
 Alternatively, these moments can be conveniently computed by simultaneously solving \cref{eqn:ode_det} for the state variable and \cref{eqn:pi_ode} for the linearised covariance.
 
-A natural choice of reference point \(x_0\) is the mean of the initial Gaussian density, i.e. \(x_0 = \mu_0\).
+A natural choice of reference point \(x_0\) is the mean of the initial Gaussian density, i.e.\ \(x_0 = \mu_0\).
 The \(L_r\) distance between \(x\) and the mean \(\mu_0\) can be bounded by the trace of \(\Sigma_0\); for example, one such bound is
 \begin{equation}\label{eqn:gauss_dist_bound}
 	\delta_r^{r} \leq n^{3r/2 - 1} M_r \mathrm{tr}\left(\Sigma_0\right)^{r/2}, \quad M_r \coloneqq \frac{2^{r/2}\Gamma\!\left(\frac{r + 1}{2}\right)}{\sqrt{\pi}},
@@ -418,14 +417,14 @@ A theoretically pleasing and computable expression for the stochastic sensitivit
 	This result uses \Cref{thm:main} to establish the convergence of the covariance matrices, and then the properties of the spectral norm to establish \cref{eqn:s2_calculation}.
 \end{proof}
 
-Independent of the fluid mechanics context, \Cref{thm:s2_calculation} indicates that even for general systems, the matrix norm of \(\Sigma_0^t(x)\), i.e., the stochastic sensitivity \(S^2(x,t)\), can be used as {\em one} number which encapsulates the uncertainty of an initial state \(x\) after \(t\) time units.
+Independent of the fluid mechanics context, \Cref{thm:s2_calculation} indicates that even for general systems, the matrix norm of \(\Sigma_0^t(x)\), i.e.\ the stochastic sensitivity \(S^2(x,t)\), can be used as {\em one} number which encapsulates the uncertainty of an initial state \(x\) after \(t\) time units.
 The significance of this result is that the stochastic sensitivity has here been recovered as the maximal eigenvalue of a covariance matrix that is ubiquitous in the literature.
 Stochastic sensitivity was formerly defined by \citet{Balasuriya_2020_StochasticSensitivityComputable} as the maximal value of the anisotropic uncertainty of a particular stochastic flow, and the connection to a linearisation was not apparent.
 
 The stochastic sensitivity field can be calculated given any velocity data \(u\), and through the explicit expression \cref{eqn:sigma_def} for \(\Sigma_0^t\) can even be computed from only flow map data.
 Computation does not require knowledge of the noise scale \(\epsilon\), so the \(S^2\) field is intrinsic in capturing the impact of the model dynamics on uncertainty, and any specified non-uniform diffusivity.
 It has already been shown that, in the fluid flow context, stochastic sensitivity can identify coherent regions in two-dimensions \citep{BadzaEtAl_2023_HowSensitiveAre, Balasuriya_2020_StochasticSensitivityComputable}.
-A simple approach is to define robust sets, which are those initial conditions for which the corresponding \(S^2\) value, i.e., the uncertainty in eventual location, are below some specified threshold.
+A simple approach is to define robust sets, which are those initial conditions for which the corresponding \(S^2\) value, i.e.\ the uncertainty in eventual location, are below some specified threshold.
 This threshold can be defined precisely in terms of a spatial lengthscale of interest and the advective and diffusive characteristics of the flow, as Definition 2.9 of \citet{Balasuriya_2020_StochasticSensitivityComputable}.
 Such a definition extends to the \(n\)-dimensional case as presented here, moreover establishing an easily computable method for determining coherent sets from the covariance matrix \(\Sigma_0^t\).
 
@@ -478,7 +477,7 @@ By maximising the projection of this variance over all directions, as in \cref{e
 The finite-time Lyapunov exponent (FTLE) quantifies the sensitivity of a dynamical system to initial conditions \citep{ShaddenEtAl_2005_DefinitionPropertiesLagrangian}, and can be equivalently considered a measure of the impact of an uncertain initial condition on the \emph{deterministic} evolution of trajectories.
 There has been recent interest in extending the FTLE for systems with ongoing uncertainty \citep{Balasuriya_2020_UncertaintyFinitetimeLyapunov,YouLeung_2021_ComputingFiniteTime,GuoEtAl_2016_FiniteTimeLyapunovExponents}, but no established approach as of yet.
 A framework that computes stochastic sensitivity with uncertain initial conditions can be seen as such an extension of the FTLE, in the sense that the measure would characterise the sensitivity of a dynamical system to \emph{both} initial conditions and ongoing uncertainty.
-Formalising this connection (e.g. by considering the appropriate limits) is a matter for future work.
+Formalising this connection (e.g.\ by considering the appropriate limits) is a matter for future work.
 In \Cref{sec:comput_s2}, we provide some preliminary numerical results that illustrate these connections.
 
 % However, we postulate that the FTLE and stochastic sensitivity can be related directly to each other, by considering stochastic sensitivity with the addition of uncertainty in the initial state.
@@ -598,7 +597,7 @@ To prove the main result, we first require a lemma establishing a bound on the t
 	\[
 		\left[\int_0^t{\sigma\!\left(y_\tau^{(\epsilon)}, \tau\right)\dif W_\tau}\right]_i = \int_0^t{M_\tau^{(i)}\dif W_\tau}.
 	\]
-	Since \(y_t^{(\epsilon)}\) is a strong solution to \cref{eqn:sde_y}, we have that (e.g. see Definition 6.1.1 of \citet{KallianpurSundar_2014_StochasticAnalysisDiffusion})
+	Since \(y_t^{(\epsilon)}\) is a strong solution to \cref{eqn:sde_y}, we have that (e.g.\ see Definition 6.1.1 of \citet{KallianpurSundar_2014_StochasticAnalysisDiffusion})
 	\[
 		\int_0^t{\norm{M_\tau^{(i)}}^2\dif\tau} \leq \int_0^t{nK_\sigma^2\dif\tau} < \infty, \quad \text{almost surely},
 	\]
@@ -622,7 +621,7 @@ To prove the main result, we first require a lemma establishing a bound on the t
 			+ 3^{q-1}t^{q-1}\avg{\int_0^{t}{\norm{u\!\left(y_\tau^{(\epsilon)}, \tau\right) - u\!\left(F_0^{\tau}\!\left(x_0\right), \tau\right)}}^q\dif\tau}.
 		\end{multlined}
 	\end{equation}
-	We note that \(\avg{\norm{y_t^{(\epsilon)} - F_0^t\!\left(x\right)}^q} < \infty\) from \ref{hyp:u_bounds}, so by Tonelli's theorem (e.g. \citet[Thm. 2.3.9]{Bremaud_2020_ProbabilityTheoryStochastic}),
+	We note that \(\avg{\norm{y_t^{(\epsilon)} - F_0^t\!\left(x\right)}^q} < \infty\) from \ref{hyp:u_bounds}, so by Tonelli's theorem (e.g.\ \citet[Thm. 2.3.9]{Bremaud_2020_ProbabilityTheoryStochastic}),
 	\begin{equation*}
 		\avg{\int_0^{t}{\norm{y_\tau^{(\epsilon)} - F_0^\tau\!\left(x_0\right)}^q\dif\tau}} = \int_0^{t}{\avg{\norm{y_\tau^{(\epsilon)} - F_0^\tau\!\left(x_0\right)}^q}\dif\tau}.
 		\label{eqn:y_tonelli}
@@ -678,7 +677,7 @@ Then, using \cref{eqn:trinomial} and taking expectation,
 	\label{eqn:diff_decomp}
 \end{equation}
 First consider \(A(t)\), for which the integrand is the expected difference between the drift \(u\) evaluated along SDE solution and the first-order Taylor expansion of \(u\) about the reference deterministic trajectory.
-Since for any \(t \in [0,T]\), \(u\left(\cdot, t\right)\) is twice continuously differentiable under \ref{hyp:coef_cont}, for each \(i = 1,\hdots,n\) there exists by Taylor's theorem (e.g. see \citet[Cor. A9.3.]{HubbardHubbard_2009_VectorCalculusLinear}) a function \(R_i: \R^n \times [0,T] \to \R\) such that
+Since for any \(t \in [0,T]\), \(u\left(\cdot, t\right)\) is twice continuously differentiable under \ref{hyp:coef_cont}, for each \(i = 1,\hdots,n\) there exists by Taylor's theorem (e.g.\ see \citet[Cor. A9.3.]{HubbardHubbard_2009_VectorCalculusLinear}) a function \(R_i: \R^n \times [0,T] \to \R\) such that
 \begin{equation}
 	u_i\!\left(z, \tau\right) = u_i\!\left(F_0^\tau\!\left(x_0\right), \tau\right) + \left[\nabla u_i\left(F_0^\tau\!\left(x_0\right), \tau\right)\right]\left(z - F_0^\tau\!\left(x_0\right)\right) + R_i\!\left(z, \tau\right)
 	\label{eqn:taylor_expan}
@@ -850,7 +849,7 @@ This is a well-known result in the scalar case, and the extension to our case is
 	\[
 		\mathcal{I}[g]_i = \sum_{j = 1}^n{\mathcal{I}\left[g_{ij}\right]}.
 	\]
-	Each \(\mathcal{I}[g_{ij}]\) is an It\^o integral of a deterministic, scalar-valued function with respect to a one-dimensional Brownian motion, which is well-known to be a Gaussian process (e.g. see \citet[Lem. 4.3.11]{Applebaum_2004_LevyProcessesStochastic}).
+	Each \(\mathcal{I}[g_{ij}]\) is an It\^o integral of a deterministic, scalar-valued function with respect to a one-dimensional Brownian motion, which is well-known to be a Gaussian process (e.g.\ see Lemma 4.3. of \citet{Applebaum_2004_LevyProcessesStochastic}).
 	Moreover, each element of \(\mathcal{I}[g]\) is the sum of independent Gaussian random variables and is therefore itself Gaussian.
 	Hence, \(\mathcal{I}[g]\) follows a multivariate Gaussian distribution.
 \end{proof}
@@ -900,7 +899,7 @@ Since the two summands in \cref{eqn:linear_sol} are independent, the variance of
 \end{align*}
 where the variance of the It\^o integral was established in \Cref{app:limit_sol_proof}.
 
-Finally, we show \Cref{rem:cov_ode}, i.e. that \(\var{l_t^{(\epsilon)}}\) is the solution to the matrix differential equation \cref{eqn:pi_ode}.
+Finally, we show \Cref{rem:cov_ode}, i.e.\ that \(\var{l_t^{(\epsilon)}}\) is the solution to the matrix differential equation \cref{eqn:pi_ode}.
 Directly differentiating the expression \cref{eqn:pi_expl_eqn}
 \begin{align*}
 	\dod{\var{l_t^{(\epsilon)}}}{t} & = \begin{multlined}[t]
@@ -909,9 +908,9 @@ Directly differentiating the expression \cref{eqn:pi_expl_eqn}
 		                                    + \epsilon^2\nabla F_0^t\!\left(x_0\right)L\!\left(x_0, t\right) L\!\left(x_0, t\right)^{\T}\left[\nabla F_0^t\!\left(x_0\right)\right]^{\T}
 	                                    \end{multlined}                                                             \\
 	                                & = \begin{multlined}[t]
-		                                    \nabla u\!\left(F_0^t\!\left(x_0\right), t\right)\nabla F_0^t\!\left(x_0\right)\left(\var{x} + \epsilon^2 \int_0^t{L\!\left(x_0, \tau\right)L\!\left(x_0, \tau\right)^{\T}\dif\tau} \right)\left[\nabla F_0^t\!\left(x_0\right)\right]^{\T} \\
-		                                    + \nabla F_0^t\!\left(x_0\right)\left(\var{x} + \epsilon^2 \int_0^t{L\!\left(x_0, \tau\right)L\!\left(x_0, \tau\right)^{\T}\dif\tau} \right)\left[\nabla F_0^t\!\left(x_0\right)\right]^{\T}\left[\nabla u\!\left(F_0^t\!\left(x_0\right), t\right)\right]^{\T} \\
-		                                    + \epsilon^2\sigma\!\left(F_0^t\!\left(x_0\right), t\right)\sigma\!\left(F_0^t\!\left(x_0\right), t\right)^{\T}
+		                                    \nabla u\!\left(F_0^t\!\left(x_0\right), t\right)\nabla F_0^t\!\left(x_0\right)\left(\var{x} + \epsilon^2\!\int_0^t{L\!\left(x_0, \tau\right)L\!\left(x_0, \tau\right)^{\T}\dif\tau} \right)\left[\nabla F_0^t\!\left(x_0\right)\right]^{\T} \\
+		                                    +\nabla F_0^t\!\left(x_0\right)\!\left(\var{x} + \epsilon^2\!\int_0^t{L\!\left(x_0, \tau\right)L\!\left(x_0, \tau\right)^{\T}\dif\tau} \right)\!\left[\nabla F_0^t\!\left(x_0\right)\right]^{\T}\!\left[\nabla u\!\left(F_0^t\!\left(x_0\right), t\right)\right]^{\T} \\
+		                                    + \epsilon^2\sigma\!\left(F_0^t\!\left(x_0\right), t\right)\!\sigma\!\left(F_0^t\!\left(x_0\right), t\right)^{\T}
 	                                    \end{multlined} \\
 	                                & = \begin{multlined}[t]
 		                                    \nabla u\!\left(F_0^t\!\left(x_0\right), t\right) \var{l_t^{(\epsilon)}} + \var{l_t^{(\epsilon)}}\left[\nabla u\!\left(F_0^t\!\left(x_0\right), t\right)\right]^{\T} \\

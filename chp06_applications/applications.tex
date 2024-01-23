@@ -16,7 +16,7 @@ For two continuous probability distributions in \(\R^n\) with respective probabi
 We previously discussed (in \Cref{sec:comparison}) the Kullback-Leibler divergence---this measure was used by \citet{Sanz-AlonsoStuart_2017_GaussianApproximationsSmall} to quantify the performance of Gaussian approximations to SDE solutions---but opt to use the Hellinger distance.
 There are several attractive properties of the Hellinger distance: the Hellinger distance is defines a metric on the space of probability measures and always takes values in the interval \([0,1]\), unlike the KL-divergence which is not a formal metric and can become infinite.
 
-Since the models we will be working with cannot be solved exactly, we will use stochastic samples as our ground `truth`, obtained either via a numerical solver (in the case of SDEs) or Gillespie simulation (in the case of population processes).
+Since the models we will be working with cannot be solved exactly, we will use stochastic samples as our ground `truth`, obtained by numerically solving the SDE. %either via a numerical solver (in the case of SDEs) or Gillespie simulation (in the case of population processes).
 That is, without access to the true solutions to our model, we instead take a large number of stochastic samples and compare our approximations to those.
 This fits in with the philosophy of our aims; the stochastic sampling approach is the standard in practice, and we seek approximations that give the same conclusions without the computational expense.
 
@@ -34,7 +34,7 @@ where \(\Gamma\) denotes the Gamma function, and \(r_k\!\left(\hat{x}_i\right)\)
 The parameter \(k\) is the number of neighbouring points used to construct a \(k\)-nearest-neighbour density estimate as an intermediate step in the calculation.
 The value of \(k\) is specified in advance, and we take \(k = 5\) throughout to ensure a reasonable computation time.
 This provides a consistent (in the sense of almost sure convergence in the limit of infinite sample size \(N\)) estimator of the squared Hellinger distance \citep{DingMullhaupt_2023_EmpiricalSquaredHellinger}.
-However, \cref{eqn:hell_emp_Ha} is not symmetric in \(p\) and \(q\), i.e. \(\hat{H}_a^2\!\left(p,q\right) \neq \hat{H}_a^2\!\left(q,p\right)\) with the asymmetry arising in the distances \(r_k\) and \(s_k\).
+However, \cref{eqn:hell_emp_Ha} is not symmetric in \(p\) and \(q\), i.e.\ \(\hat{H}_a^2\!\left(p,q\right) \neq \hat{H}_a^2\!\left(q,p\right)\) with the asymmetry arising in the distances \(r_k\) and \(s_k\).
 In practice, one direction can provide a more accurate estimator depending on the nature of the underlying distributions from which the samples are taken.
 To ensure symmetry in the final estimate and find a `middle ground` between the two asymmetric estimators, \citet{DingMullhaupt_2023_EmpiricalSquaredHellinger} propose taking the average:
 \begin{equation}\label{eqn:hell_emp}
@@ -105,7 +105,7 @@ We therefore take multiple realisations of \(\hat{H}\), each using a new set of 
 \section{Model setup}\label{sec:appl_ocean}
 % For our first application, we consider a oceanographic model derived from satellite-observed velocity data of part of the Gulf Stream.
 The Gulf Stream is a warm water current that originates in the Gulf of Mexico and travels through the North Atlantic, and plays a vital role in climate patterns in the Northern and Western hemispheres \citep{Palter_2015_RoleGulfStream}.
-The stream itself consists of a rapidly-moving jet which varies dramatically with time, and small eddies of warm water that are formed and shed from the stream \citep{KangCurchitser_2013_GulfStreamEddy}.
+The stream itself consists of a rapidly-moving jet which varies dramatically with time, and small eddies of warm and cold water that are formed and shed from the stream \citep{KangCurchitser_2013_GulfStreamEddy}.
 The Gulf Stream is a well-studied region of the ocean, due to the climatic importance and the interesting dynamical behaviour exhibited by the flow.
 
 Consider tracking the longitudinal and latitudinal position of a drifter travelling on the surface of the ocean.
@@ -126,7 +126,7 @@ We use the World Geodesic System 84, which gives the values \citep{Capderou_2014
 \[
 	a = 6378137\,\unit{\metre}, \quad f = 1 / 298.257223563.
 \]
-Although the dataset provides global coverage, we focus our attention on the longitudes between \(-66^\circ\)E and \(-52^\circ\) and \(34^\circ\)N and \(46^\circ\), and measurements starting from midnight \DTMdisplaydate{2020}{01}{01}{-1}.
+Although the dataset provides global coverage, we focus our attention on longitudes between \(-66^\circ\)E and \(-52^\circ\) and latitude between \(34^\circ\)N and \(46^\circ\), and measurements starting from midnight \DTMdisplaydate{2020}{01}{01}{-1}.
 We use a larger spatial subset for calculations, however, to prevent issues at the boundaries of the spatial domain.
 There is a region of land---a small part of the south-east coast of Canada---in the dataset, where velocity data is missing.
 We set the velocity to zero in this region, as we know from physical considerations that the drifter could not travel on land, and in all following figures indicate this region with black.
@@ -179,8 +179,9 @@ We set the velocity to zero in this region, as we know from physical considerati
 \begin{figure}
 	\centering
 	\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/det_trajs}
-	\caption{Several trajectories that solve \cref{eqn:natl_ode} and describe the motion of drifters on the surface of the Gulf Stream.
-		Each trajectory is initialised at a coloured point at \(t = 0\) (midnight \DTMdisplaydate{2020}{1}{1}{}), and evolved by numerically solving \cref{eqn:natl_ode} up to midnight \(t = 7\) (midnight \DTMdisplaydate{2020}{1}{8}{}).}
+	\caption{Several trajectories (in heavy black) that solve \cref{eqn:natl_ode} and describe the motion of drifters on the surface of the Gulf Stream.
+		Each trajectory is initialised at a coloured point at \(t = 0\) (midnight \DTMdisplaydate{2020}{1}{1}{}), and evolved by numerically solving \cref{eqn:natl_ode} up to midnight \(t = 7\) (midnight \DTMdisplaydate{2020}{1}{8}{}).
+		Instantaneous streamlines at the final time \(t = 7\) are displayed in grey.}
 	\label{fig:natl_ode_sols}
 \end{figure}
 
@@ -198,7 +199,7 @@ The deterministic model for \(x_t\), constructed purely from the interpolated ve
 where \(\tilde{u}\) and \(\tilde{v}\) are the interpolated zonal and meridional velocities respectively.
 \Cref{fig:natl_ode_sols} shows some example trajectories that solve \cref{eqn:natl_ode}, evolving over the span of a week.
 Contours of the sea surface height at \(t = 8\) are also shown in grey, which correspond to those of the instantaneous streamfunction and provide an indication of the flow structure.
-The stream itself is fast-moving and a prominent feature of the flow, and consequently drifters starting (e.g. the blue and red points) within the stream are transported along it.
+The stream itself is fast-moving and a prominent feature of the flow, and consequently drifters starting (i.e.\ the blue and red points) within the stream are transported along it.
 Along the stream, eddies form and break off (roughly indicated by the circular regions in the sea-surface height contour map), and trajectories that start within eddy (orange and purple points) typically remain there.
 Away from the stream and the eddies, the flow is relatively isotropic and slow-moving, resulting in the short and fairly unremarkable trajectory from the green point.
 
@@ -238,10 +239,10 @@ To account for measurement error, we use the following stochastic model:
 where \(\tilde{u}_{\mathrm{err}}\) and \(\tilde{v}_{\mathrm{err}}\) are the interpolated error estimates for the zonal and meridional velocities (converted to degrees per day using the same transformation \cref{eqn:natl_vel_conv} as was done on the velocity data), and \(L_r = 0.25^\circ\) is the spatial resolution of the data.
 Our choice for the diffusion matrix \(\sigma\) comes from the intuition that \(L_r\sigma\sigma^{\T}\) represents the instantaneous variance of the noise in our stochastic differential equation and to ensure that the units in \cref{eqn:natl_sde} are consistent with the convention that \(\dif W_t \sim \sqrt{\mathrm{days}}\) \citep{Oksendal_2003_StochasticDifferentialEquations}.
 Both coefficients depend on time and the noise is multiplicative, making \cref{eqn:natl_sde} the most general type of SDE that our theory is equipped to handle.
-In our framework of a small noise SDE \cref{eqn:sde_y}, we have set \(\epsilon = 0.25\) and treat this value as being fixed by the data and model.
+In our framework of a small noise SDE \cref{eqn:sde_y}, we have set \(\epsilon = \sqrt{L_r} = \sqrt{0.25^\circ}\) and treat this value as being fixed by the data and model.
 The introduction of noise in \cref{eqn:natl_sde} can improve over \cref{eqn:natl_ode} by accounting for both the data-informed measurement error and unresolved behaviours between gridpoints, in the fashion of stochastic parameterisation.
 This is, however, only one choice for such a model, and a simple one for the purposes of our work.
-The same analysis and we are about to conduct could be applied to a better informed stochastic model.
+The same analysis we are about to conduct could be applied to a better informed stochastic model.
 
 
 
@@ -331,7 +332,7 @@ A similar example of computing the stochastic sensitivity field for a similar se
 	\end{subfigure}
 	\caption{The stochastic sensitivity fields (left) computed from the linearisation covariance matrix on a grid of initial conditions, at two different resolutions.
 		% Note that values near the boundaries of the data and the land are not trustworthy, as the Gaussian approximations do not account for these boundaries.
-		From each field, robust sets are extracted with a threshold of \(R = 2^\circ\) and shown on in cyan (right).
+		From each field, robust sets are extracted with a threshold of \(R = 2^\circ\) and shown in cyan (right).
 		In all four figures, the regions of land for which there is no velocity data is indicated in black.}
 	\label{fig:na_s2}
 \end{figure}
@@ -419,7 +420,7 @@ By increasing the resolution, we are therefore able to identify regions of low u
 
 
 We now move our focus to a fixed initial condition for the drifter. % and explore the time-evolution of the resulting probability distribution arising from \cref{eqn:natl_sde}, to which we can apply the tools we have developed in \Cref{ch:linear_theory,ch:gmm}.
-Suppose that at midnight \DTMdisplaydate{2021}{01}{01}{-1}, the drifter is located within the stream at longitude \(60.5^\circ\) west and \(39^\circ\) north.
+Suppose that at midnight \DTMdisplaydate{2021}{01}{01}{-1}, the drifter is located within the stream at longitude \(60.5^\circ\) west and latitude \(39^\circ\) north.
 We accordingly consider the evolution of the models \cref{eqn:natl_ode} and \cref{eqn:natl_sde} with the initial condition \(x_0 = (-60.5, 39)^{\T}\).
 By solving the deterministic model \cref{eqn:natl_ode} numerically, we predict the position of the drifter after \(t = 7\) days (at midnight \DTMdisplaydate{2021}{01}{08}{-1}) and show the time-evolution of the solution trajectory in \Cref{fig:natl_det_traj}.
 The drifter is transported by the jet stream.
@@ -427,7 +428,7 @@ This is the prediction of the deterministic model \cref{eqn:natl_ode}, but when 
 \Cref{fig:natl_stoch_rels} shows the result of \(2500\) numerical realisations (obtained via Euler-Maruyama integration with a step size of \(1/24\) days) of the stochastic model \cref{eqn:natl_sde}, starting from the fixed initial condition \(x_0\) and evolved over the same week-long timeframe.
 Each red point corresponds to a single realisation of the stochastic solution at midnight \DTMdisplaydate{2021}{01}{08}{-1}.
 Although a large number of the realisations have been transported along the stream, many break off in eddies, resulting in several clusters of realisations.
-Thus, with uncertainty in the model, the drifter may end up following different qualtiative behaviour, e.g. remaining the stream itself or breaking off with an eddy.
+Thus, with uncertainty in the model, the drifter may end up following different qualtiative behaviour, e.g.\ remaining the stream itself or breaking off with an eddy.
 This example highlights the importance of stochastic models; the deterministic model provides a single prediction, but the dynamic behaviour of the flow means that any stochasticity can result in vastly different predictions of the future state of the system.
 
 \begin{figure}
@@ -614,7 +615,7 @@ After the first split at time \(t_{s,1}\), we will split each new trajectory at 
 For simplicity, each of the five trajectories are split at the \emph{same} time \(t_{s,2}\), but in general the algorithm allows for each trajectory to be split at different times as some regions may exhibit more Gaussianity than others.
 Each component pair is split at time \(t_{s,2}\) into four additional points, again using the canonical sigma points \cref{eqn:uhlman_sigma} to preserve the mean and covariance.
 We consider a range of times for \(t_{s,1}\) and \(t_{s,2}\), construct the mixture model using each pair of times, and compute the empirical Hellinger distance (again averaged over 100 calculations) between the mixture density and the EM samples to find the best configuration.
-The resulting Hellinger distances are shown in \Cref{fig:na_2split_best}.
+The resulting Hellinger distances are shown in \Cref{fig:na_2split_hell}.
 The optimal configuration with two splits has the first at \(t_{s,1} = 3/4\) (at 6pm \DTMdisplaydate{2021}{01}{01}{-1}) and the second at \(t_{s,2} = 43/24\) (at 7pm \DTMdisplaydate{2021}{01}{02}{-1}), and results in a Hellinger distance of approximately 0.14684.
 This distance is a substantial improvement over both the single Gaussian component and the mixture model with a single split.
 In \Cref{fig:na_2split_best}, we compare this mixture density against the stochastic samples.
@@ -631,7 +632,7 @@ Nonetheless, the results of this section are encouraging and motivate further de
 % There are clear splitting times in \Cref{fig:na_1split_hell,fig:na_2split_hell} for which the mixture model results in an optimal (with respect to the Hellinger distance) fit.\td{Need to articulate this better.}
 Once equipped with an appropriate splitting criterion, the mixture model algorithm could become a highly effective method for circumventing bulk simulation in stochastic systems.
 Even in lieu of this splitting criterion, the mixture model provides an explicit form for the probability density function, which may lend itself to further applications.
-We discuss this in \Cref{sec:gmm_extensions}.
+% We discuss this in \Cref{sec:gmm_extensions}.
 
 
 

@@ -1,5 +1,7 @@
 # Do not upload the compiled files - will automatically build this later
 build/
+compiled_chapters/
+
 
 
 *.bak*

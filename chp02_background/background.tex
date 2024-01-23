@@ -20,7 +20,7 @@ We adopt several notational conventions throughout this thesis, which are summar
 The set of \(n \times m\) matrices with real-valued entries is denoted as \(\R^{n\times m}\).
 % In general, the \(i\)th component of a vector \(x\) is denoted by \(x_{i}\), except where there is already a subscript, in which case we write \(x_t^{(i)}\) to denote the \(i\)th component of \(x_t\), for instance.
 % For a matrix \(A\), \(\left[A\right]_{\cdot i}\) typically refers to the \(i\)th column, and \(\left[A\right]_{i\cdot}\) the \(i\) the row of \(A\).
-The norm symbol \(\norm{\cdot}\) without any additional qualifiers denotes the standard Euclidean norm for a vector, and the spectral (operator) norm induced by the Euclidean norm, i.e. for an \(n \times n\) matrix \(A\)
+The norm symbol \(\norm{\cdot}\) without any additional qualifiers denotes the standard Euclidean norm for a vector, and the spectral (operator) norm induced by the Euclidean norm, i.e.\ for an \(n \times n\) matrix \(A\)
 \[
 	\norm{A} = \sup\left\{\frac{\norm{Av}}{\norm{v}}\,\middle|\,v \in \R^n, \, \norm{v} \neq 0\right\}.
 \]
@@ -33,7 +33,11 @@ That is, \(\var{Y}\) is the symmetric \(n\times n\) matrix with \((i,j)\)th comp
 		\cov{Y_i, Y_j}, & \text{otherwise},
 	\end{cases}
 \]
-where \(\cov{Y_i, Y_j} = \avg{\left(Y_i - \avg{Y_i}\right)\left(Y_j - \avg{Y_j}\right)}\) denotes the (scalar) covariance between \(Y_i\) and \(Y_j\).
+where
+\[
+	\cov{Y_i, Y_j} = \avg{\left(Y_i - \avg{Y_i}\right)\left(Y_j - \avg{Y_j}\right)}
+\]
+denotes the (scalar) covariance between \(Y_i\) and \(Y_j\).
 
 \usetikzlibrary{positioning}
 \begin{figure}
@@ -107,7 +111,7 @@ These implications are summarised in \Cref{fig:rv_conv_impl}.
 
 We often work with stochastic processes that evolve through time, for example the Wiener process or the solution to a stochastic differential equation.
 We generically use the notation \(y_t\), for instance, to denote the stochastic process, where \(t\) refers to time and \(y\) is a label.
-The index set of the process is always a finite time interval, typically initiated at \(0\).
+The index set of the process is always a finite time interval, typically initialised at \(0\).
 In almost all cases where we are working with \(y_t\) mathematically, \(y_t\) refers to the state of the process at the \emph{fixed} time \(t\).
 When discussing a stochastic process in our prose, we also use \(y_t\) to refer to the \emph{full} solution path (where the range of \(t\) is known in context); this is an abuse of notation, but has no impact on the rigour of our mathematical results.
 
@@ -135,9 +139,9 @@ Formally, the flow map \(F_{s}^{t}: \R^n \to \R^n\) from time \(s\) to \(t\) ass
 solved up to time \(\tau = t\).
 That is, the flow map is the operator mapping initial conditions at time \(t\) to their corresponding positions at time \(s\), under the continuous-time evolution of \cref{eqn:det_ode}.
 Equivalently, the flow map satisfies the integral form of \cref{eqn:det_ode}:
-\begin{equation}\label{eqn:flow_map_int}
+\begin{equation*}
 	F_s^t\!\left(x\right) = x + \int_s^t{u\!\left(F_s^{\tau}\!\left(x\right), \tau\right)\dif \tau}.
-\end{equation}
+\end{equation*}
 We use the flow map to represent all solutions of the deterministic differential equation \cref{eqn:det_ode}, with the understanding that for any relevant initial condition, the flow map at that point can be readily computed by solving the ODE either analytically or numerically.
 For a well-defined flow, the flow map \(F_s^t\) is reversible, in that we could have \(t < s\), with the property
 \[
@@ -169,9 +173,9 @@ When working in a continuous-time and continuous-state modelling scenario, a nat
 Although an SDE is an ``improvement'' over the deterministic ODE, in the sense that uncertainty can be encoded in the model itself, the compromise is that solutions are no longer straightforward to obtain or even analyse.
 In fact, the formal treatment of SDEs requires an entirely new notion of integration, as we shall discuss.\lb{This repeats what the introduction said - probably need to remove}
 Nonetheless, SDEs provide a rich framework for modelling and are used as predictive tools in a range of applications and fields. % \citep{Balasuriya_2020_StochasticApproachesLagrangian,SarkkaSolin_2019_AppliedStochasticDifferential,Oksendal_2003_StochasticDifferentialEquations,Jazwinski_2014_StochasticProcessesFiltering}.
-There are several different ways to construct stochastic differential equations from deterministic dynamics; the following motivation of stochastic differential equations loosely follows a similar one available in \citet{Oksendal_2003_StochasticDifferentialEquations}, but other formulations of SDEs are available, e.g. using rough path theory \citep{FrizVictoir_2010_MultidimensionalStochasticProcesses} or by average the `fast' dynamics in a multiscale system \citep{MelbourneStuart_2011_NoteDiffusionLimits,GottwaldMelbourne_2013_HomogenizationDeterministicMaps,PavliotisStuart_2008_MultiscaleMethods}.
+There are several different ways to construct stochastic differential equations from deterministic dynamics; the following motivation of stochastic differential equations loosely follows a similar one available in \citet{Oksendal_2003_StochasticDifferentialEquations}, but other formulations of SDEs are available, e.g.\ using rough path theory \citep{FrizVictoir_2010_MultidimensionalStochasticProcesses} or by averaging the `fast' dynamics in a multiscale system \citep{MelbourneStuart_2011_NoteDiffusionLimits,GottwaldMelbourne_2013_HomogenizationDeterministicMaps,PavliotisStuart_2008_MultiscaleMethods}.
 
-Suppose that we have a deterministic ordinary differential equation, i.e. \cref{eqn:ode_det}, and aim to account for uncertainty in the vector field \(u\).
+Suppose that we have a deterministic ordinary differential equation, i.e.\ \cref{eqn:ode_det}, and aim to account for uncertainty in the vector field \(u\).
 In lieu of any additional understanding of this uncertainty, we model it as a stochastic noise.
 Ideally, we would parameterise the uncertainty with some continuous-time stochastic process \(\xi_t\), and write
 \begin{equation}\label{eqn:fake_sde}
@@ -195,16 +199,16 @@ This complication requires an alternative formulation, which leads to an entirel
 
 \subsection{The Wiener process}
 In the absence of any additional knowledge about the nature of the noise (such as skew), the canonical Wiener process is the standard choice as the driving stochastic process.
-The Wiener process is the definite integral of a white noise process, and is therefore an appropriate choice to ensure that the ``solution'' (the result after integration through time) of \cref{eqn:fake_sde} involves the idealised noise process \(\xi_t\) that we were initially after\lb{I don't think this makes any sense to the reader, but it's difficult to explain this intuitively. I believe that the idea is that this white noise process is the `derivative' of the Wiener process (in the sense that \(W_t\) is the integral of \(\xi_t\)).}.
-Defined formally, the (one-dimensional) canonical \emph{Wiener process} is a stochastic process \(B_t\) taking values in \(\R\) and satisfying the following properties:
+The Wiener process is the definite integral of a white noise process, and is therefore an appropriate choice to ensure that the ``solution'' (the result after integration through time) of \cref{eqn:fake_sde} involves the idealised noise process \(\xi_t\) that we were initially after. %\lb{I don't think this makes any sense to the reader, but it's difficult to explain this intuitively. I believe that the idea is that this white noise process is the `derivative' of the Wiener process (in the sense that \(W_t\) is the integral of \(\xi_t\)).}.
+Defined formally, the (one-dimensional) canonical \emph{Wiener process} is a stochastic process \(B_t\) taking values in \(\R\) and satisfying the following properties \citep{KallianpurSundar_2014_StochasticAnalysisDiffusion}:
 \begin{romanate}
-	\item \(B_0 = 0\),
+	\item \(B_0 = 0\) almost surely,
 	\item for every \(s > 0\), the increments \(B_{s + t} - B_{s}\) for \(t \geq 0\) are independent of \(B_r\) for all \(r < s\),
 	\item \(B_{s + t} - B_t \isGauss{0, s}\) for all \(s,t > 0\), and
 	\item \(B_t\) is continuous in \(t\) almost surely.
 \end{romanate}
 Remarkably, these properties \emph{uniquely} define the Wiener process, with the additional result that for any \(t > 0\), \(B_t \sim \mathcal{N}\left(0, t\right)\), a Gaussian distribution with mean zero and variance \(t\).
-The \emph{\(n\)-dimensional Wiener process} is a stochastic process \(W_t\) taking values in \(R^n\) such that each component of \(W_t\) is a one-dimensional Wiener process and the components of \(W_t\) are mutually independent.
+The \emph{\(n\)-dimensional Wiener process} is a stochastic process \(W_t\) taking values in \(\R^n\) such that each component of \(W_t\) is a one-dimensional Wiener process and the components of \(W_t\) are mutually independent.
 It follows that for the \(n\)-dimensional Wiener process \(W_t\), at any time \(t > 0\), \(W_t \sim \mathcal{N}\left(0, tI\right)\), an \(n\)-dimensional Gaussian distribution with mean zero and covariance matrix \(tI\).
 \Cref{fig:wiener_rels} plots realisations of a one-dimensional and two-dimensional Wiener process.
 
@@ -247,7 +251,7 @@ Then, we define the It\^o integral of \(g\) with respect to the \(m\)-dimensiona
 		\mathcal{I}_{i} = \sum_{j=1}^m{\int_a^b{g_{ij}\left(t\right) \dif W_t^{(j)}}},
 	\end{equation}
 \end{subequations}
-for \(i = 1,\dotsc, n\) and where \(g_{ij}\) denotes the \((i,j)\)th element of \(g\).
+for \(i = 1,\dotsc, n\) and where \(g_{ij}\) denotes the \((i,j)\)th element of \(g\) and \(W_t^{(j)}\) is the \(j\)th component of \(W_t\).
 
 In many ways, the It\^o integral behaves like other classical notions of the integral, including acting as a linear operator.
 For any It\^o-integrable functions \(f,g \colon [a,b] \to \R\) and values \(\alpha,\beta \in \R\), which may be random but are constant with respect to \(t\):
@@ -280,17 +284,16 @@ The differential form of an \(n\)-dimensional It\^o stochastic differential equa
 \end{equation}
 where the solution \(y_t\) is a stochastic process taking values in \(\R^n\), \(u\colon \R^n \times \R \to \R^n\) is the drift and \(\sigma\colon \R^n \times \R \to \R^{n\times m}\) is the diffusivity matrix.
 The driving process \(W_t\) is the \(m\)-dimensional Wiener process.
-There is a heuristic interpretation of \cref{eqn:gen_sde}: over a small time interval \(\left(t, t + \delta t\right)\), the value of \(y_t\) changes by a Gaussian increment with expected value \(u\!\left(y_t, t\right)\delta t\) and variance \(\sigma\!\left(y_t, t\right)\sigma\!\left(y_t, t\right)^{\T}\).
+There is a heuristic interpretation of \cref{eqn:gen_sde}: over a small time interval \(\left(t, t + \delta t\right)\), the value of \(y_t\) changes by a Gaussian increment with expected value \(u\!\left(y_t, t\right)\delta t\) and variance \(\sigma\!\left(y_t, t\right)\sigma\!\left(y_t, t\right)^{\T}\delta t\).
 The product \(\sigma\sigma^{\T}\) can therefore be informally seen as the variance of the noise term.
-In the most general case, the drift \(u\) and diffusivity \(\sigma\) are permitted to themselves be random function \citep{KallianpurSundar_2014_StochasticAnalysisDiffusion}, but in this thesis we assume that both are deterministic.
+In the most general case, the drift~\(u\) and diffusivity~\(\sigma\) are permitted to themselves be random function \citep{KallianpurSundar_2014_StochasticAnalysisDiffusion}, but in this thesis we assume that both are deterministic.
 The notation in \cref{eqn:gen_sde} is not rigorously defined, but rather taken as equivalent to the integral form
-\begin{equation}
+\begin{equation}\label{eqn:gen_sde_int}
 	y_t = y_0 + \int_0^t{u\left(y_\tau, \tau\right)\dif\tau} + \int_0^t{\sigma\left(y_\tau, \tau\right)\dif W_\tau}.
-	\label{eqn:gen_sde_int}
 \end{equation}
 where \(y_0\) is the possibly random initial condition.
-The integral form \cref{eqn:gen_sde_init} provides the rigorous foundation of the stochastic differential equation, overcoming the difficulties of working with Wiener processes by introducing the It\^o integral to compute the ongoing contributions from the stochastic terms in the equation.
-As with ordinary differential equations, under certain conditions on the drift \(u\) and diffusivity \(\sigma\) there exist solutions to the SDE \cref{eqn:gen_sde} that are unique in some sense.
+The integral form \cref{eqn:gen_sde_int} provides the rigorous foundation of the stochastic differential equation, overcoming the difficulties of working with Wiener processes by introducing the It\^o integral to compute the ongoing contributions from the stochastic terms in the equation.
+As with ordinary differential equations, under certain conditions on the drift~\(u\) and diffusivity~\(\sigma\) there exist solutions to the SDE \cref{eqn:gen_sde} that are unique in some sense.
 We provide one statement of an existence and uniqueness theorem for It\^o SDEs in \Cref{thm:sde_exist_unique} in \Cref{app:theory}.
 % The solution \(y_t\) to \cref{eqn:gen_sde} is also known as a (It\^o) \emph{diffusion} process.
 
@@ -313,7 +316,7 @@ SDEs with additive noise are typically easier to solve and analyse than those wi
 
 As an example, in \Cref{fig:sde_sol_sample} we show 10 realisations of the solution to the SDE \(\dif x_t = \sin\!\left(x_t\right)\dif t + \dif W_t\).
 At any given time \(t\), the solution \(x_t\) follows a probability distribution over \(\R\), the (numerically estimated---see \Cref{sec:numeric_sdes}) probability density function of which is shown at \(t = \pi\) on the right-hand side of \Cref{fig:sde_sol_sample}.
-Although the deterministic dynamics can give a loose indication of the behaviour of the stochastic samples, even additive noise can result in when the drift is nonlinear, evidenced by the trajectory (in orange) that clearly deviates from the deterministic one.
+Although the deterministic dynamics can give a loose indication of the behaviour of the stochastic samples, even additive noise can result in complicated behaviour in the stochastic system and departures from the deterministic solutions when the drift is nonlinear, evidenced by the trajectory (in orange) that clearly deviates from the deterministic one.
 
 
 % Stochastic differential equations also arise as the limit of deterministic slow-fast systems, where the average behaviour of the `fast' dynamics can be shown to converge to the solution of a stochastic differential equation \citep[e.g.]{WongZakai_1965_ConvergenceOrdinaryIntegrals,MelbourneStuart_2011_NoteDiffusionLimits,GottwaldMelbourne_2013_HomogenizationDeterministicMaps}\lb{Maybe some better citations out there.}.
@@ -337,7 +340,7 @@ The stochastic sampling approach is the gold-standard in many applications, most
 The simplest scheme for numerically solving SDEs is the Euler-Maruyama (EM) method, which is analogous to the Euler method for ODEs \citep{KloedenPlaten_1992_NumericalSolutionStochastic}.
 The update step of the EM scheme, with step size \(\delta t\), is
 \begin{equation}
-	\hat{x}_{t + \delta t} = \hat{x}_{t} + \Delta t u\!\left(\hat{x}_t, t\right) + \delta t \sigma\!\left(\hat{x}_t, t\right) Z_t,
+	\hat{x}_{t + \delta t} = \hat{x}_{t} + \delta t u\!\left(\hat{x}_t, t\right) + \sqrt{\delta t} \sigma\!\left(\hat{x}_t, t\right) Z_t,
 	\label{eqn:em_step}
 \end{equation}
 where \(Z_t\) is sampled from the standard Gaussian \(\Gauss{0,I}\), and the scheme is initialised as \(\hat{x}_0 = x_0\).
@@ -484,13 +487,14 @@ For instance, in \Cref{fig:lcs_deepwater,fig:lcs_phyto} the observed patterns of
 In a steady system (that is, the vector field \(u\) in \cref{eqn:det_ode} is independent of time), we can gain this insight by using classical methods in dynamical systems, such as phase portrait analysis and identifying unstable and stable manifolds.
 For example, unstable and stable manifolds cannot be intersected by solution trajectories, and so can act as barriers for the transport of material within a flow.
 However, when the system is non-autonomous (that is, the vector field explicitly depends on time \(t\)), these structures can themselves vary with time and the problem of identifying them is far more non-trivial.
+Another complication is that in practice the data driving a system is only available over a finite time-frame, whereas classical dynamical systems techniques often tell us about the long-term (in the infinite time limit) behaviour of solutions.
 Lagrangian coherent structure theory provides a mathematical framework for defining and identifying such structures within a given flow \citep{BalasuriyaEtAl_2018_GeneralizedLagrangianCoherent}.
 There are many procedures and heuristics for extracting these regions from a given flow, which draw upon different mathematical techniques, including classical dynamical system theory, variational calculus, transfer-operators, and statistical clustering.
 Detailed reviews of approaches to Lagrangian coherent structure extraction are provided by \citet{PeacockDabiri_2010_IntroductionFocusIssue}, \citet{HadjighasemEtAl_2017_CriticalComparisonLagrangian}, and \citet{BalasuriyaEtAl_2018_GeneralizedLagrangianCoherent}.
 
 Coherent structures can provide valuable qualitative insight into the behaviour of a flow, by providing an outline of the transport properties and underlying dynamics.
 An example is in the study of the spread of the oil slick resulting from the 2010 Deepwater Horizon disaster in the Gulf of Mexico (see \Cref{fig:lcs_deepwater}).
-Investigations into showed that the behaviour of the slick, including a sudden and unexpected extension of the slick, could be understood and therefore predicted in future cases by using Lagrangian coherent structures and the insight they provide \citep{OlascoagaEtAl_2013_DrifterMotionGulf,OlascoagaHaller_2012_ForecastingSuddenChanges}.
+Investigations into showed that the behaviour of the slick, including a sudden and unexpected extension of the slick, could be understood and therefore predicted in future cases by using Lagrangian coherent structures and the insight they provide \citep{OlascoagaEtAl_2013_DrifterMotionGulf,OlascoagaHaller_2012_ForecastingSuddenChanges,MezicEtAl_2010_NewMixingDiagnostic}.
 This approach explained dynamics that were otherwise poorly understood due to the time-varying and complex nature of the flow.
 
 One of the most well-studied and frequently used procedures for extracting Lagrangian coherent structures is via the finite-time Lyapunov exponent (FTLE), which is a measure quantifying the stretching of infinitesimal regions of the flow over a time period.
@@ -595,9 +599,9 @@ To directly account for these unresolved sources of uncertainty, the ``true'' La
 	\label{eqn:s2_sde},
 \end{equation}
 where \(0 < \epsilon \ll 1\) is a parameter quantifying the scale of the noise, \(\sigma\colon	\R^2\times[0,T] \to \R^{2\times 2}\) is the \(2\times 2\) diffusion matrix, and \(W_t\) is the canonical two-dimensional Wiener process.
-In the original formulation \citep{Balasuriya_2020_StochasticSensitivityComputable}, \(\epsilon\) is a dimensionless parameter and \(\sigma\) is dimensional, but an alternative scaling technique relates \(\epsilon\) to spatial and velocity uncertainty scales in the data (see the follow-up work by \citet{Balasuriya_2020_UncertaintyFinitetimeLyapunov}, \citet{FangEtAl_2020_DisentanglingResolutionPrecision}, and \citet{BadzaEtAl_2023_HowSensitiveAre} for examples).
+In the original formulation \citep{Balasuriya_2020_StochasticSensitivityComputable}, \(\epsilon\) is a dimensionless parameter and \(\sigma\) is dimensional, but an alternative scaling technique relates \(\epsilon\) to spatial and velocity uncertainty scales in the data (see the follow-up work by \citet{Balasuriya_2020_UncertaintyFinitetimeLyapunov}, \citet{FangEtAl_2020_DisentanglingResolutionPrecision}, and \citet{BadzaEtAl_2023_HowSensitiveAre} for example).
 Since \(\sigma\) can vary by both space and time, the noise is permitted to be multiplicative.
-The diffusion matrix \(\sigma\) is specified \emph{a priori}, based on any knowledge of how uncertainty varies with space and time, e.g. from experimental considerations, observation error estimates, physics-informed models, etc.
+The diffusion matrix \(\sigma\) is specified \emph{a priori}, based on any knowledge of how uncertainty varies with space and time, e.g.\ from experimental considerations, observation error estimates, physics-informed models, etc.
 If no such prior information is known, then \(\sigma \equiv I\), the \(2 \times 2\) identity matrix is the default choice.
 
 Next, to quantify uncertainty at a time \(t\), \citet{Balasuriya_2020_StochasticSensitivityComputable} defined the random variable \(z_\epsilon\left(x_0\right)\) as
@@ -723,7 +727,7 @@ Given a threshold \(R\), a robust set is defined as
 where \(\Omega_0 \subset \R^2\) is the domain of initial conditions of interest.
 Numerical experiments by \citet{Balasuriya_2020_StochasticSensitivityComputable}, and \citet{BadzaEtAl_2023_HowSensitiveAre} suggest that such sets can correspond to coherent structures within the flow.
 Unlike a majority of previous methods for identifying LCSs which treat the dynamical system as fully deterministic and ignore any uncertainty, stochastic sensitivity, and therefore the extracted robust sets, explicitly accounts for stochasticity and is therefore highly novel within the LCS community.
-The threshold \(R\) can be informed by lengthscales from the resolution (e.g. the resolution of the underlying velocity data, if the noise in \cref{eqn:s2_sde} is thought of as accounting for subgrid effects) and advective and diffusivity properties of the flow (such as the P\'eclet number)---see \citet{Balasuriya_2020_StochasticSensitivityComputable} for details on this.
+The threshold \(R\) can be informed by lengthscales from the resolution (e.g.\ the resolution of the underlying velocity data, if the noise in \cref{eqn:s2_sde} is thought of as accounting for subgrid effects) and advective and diffusivity properties of the flow (such as the P\'eclet number)---see \citet{Balasuriya_2020_StochasticSensitivityComputable} for details on this.
 However, when we later use a similar idea to extract robust sets, we select \(R\) without any prior knowledge and instead choose a value that results in coherent structures that match our qualitative expectations.
 
 
@@ -749,6 +753,6 @@ However, as stochastic sensitivity has only been defined in two-dimensions, thes
 This is a significant limitation of the original work, and one we will overcome; in \Cref{ch:linear_theory}, our primary theoretical chapter, we will present a new definition of stochastic sensitivity in \(n\)-dimensions that maintains the computability of the measure.
 Extending stochastic sensitivity to \(n\)-dimensions will enable application to a much broader class of models beyond the fluid flow context, including high-dimensional climate models, and accordingly the extension of all the aforementioned studies and applications.
 Moreover, \citet{Balasuriya_2020_StochasticSensitivityComputable} only computes the expectation and variance of the projections \(P_\epsilon(x,\theta)\), which does not describe the full  distribution under the \(\epsilon\downarrow 0\) limit.
-The computational formula for the anisotropic uncertainty and stochastic sensitivity, in \Cref{thm:orig_s2_calculation}, requires knowledge of the divergence \(\nabla\cdot u\) of the velocity field, and computation of four integrals.
+The computational formula for the anisotropic uncertainty and stochastic sensitivity, in \Cref{thm:orig_s2_calculation}, requires knowledge of the divergence \(\nabla\cdot u\) of the velocity field, and computation of several integrals.
 While these expressions are computable given only velocity data, they are cumbersome.
 We also address these difficulties by directly relating stochastic sensitivity to the theory of stochastic differential equation linearisations and provide a computation for the value that only requires taking the operator norm of the matrix solution to an ordinary differential equation.
