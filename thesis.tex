@@ -9,61 +9,6 @@
 
 \usepackage{thesis}
 
-% \RequirePackage[authoryear,sort,comma]{natbib}
-% \setcitestyle{authoryear,aysep={}}
-% TODO: Need to ensure that all names are written out fully, so don't have to set uniquename.
-% e.g. if the bibliography includes A. Stuart and Andrew Stuart, the two names will be written out in FULL when citing.
-\RequirePackage[
-	backend=biber,
-	natbib,
-	style=authoryear-comp,
-	maxcitenames=2,
-	mincitenames=1,
-	maxbibnames=4,
-	minbibnames=3,
-	giveninits=true,
-	uniquename=init,
-	date=year
-]{biblatex}
-
-% Ensure initials are always listed first
-\DeclareNameAlias{sortname}{first-last}
-
-% Fix to link the name as well in citations - https://tex.stackexchange.com/questions/15951/hyperlink-name-with-biblatex-authoryear-biblatex-1-4b/27107#27107
-% \DeclareFieldFormat{citehyperref}{%
-%   \DeclareFieldAlias{bibhyperref}{noformat}% Avoid nested links
-%   \bibhyperref{#1}}
-
-% \DeclareFieldFormat{textcitehyperref}{%
-%   \DeclareFieldAlias{bibhyperref}{noformat}% Avoid nested links
-%   \bibhyperref{%
-%     #1%
-%     \ifbool{cbx:parens}
-%       {\bibcloseparen\global\boolfalse{cbx:parens}}
-%       {}}}
-
-% \savebibmacro{cite}
-% \savebibmacro{textcite}
-
-% \renewbibmacro*{cite}{%
-%   \printtext[citehyperref]{%
-%     \restorebibmacro{cite}%
-%     \usebibmacro{cite}}}
-
-% \renewbibmacro*{textcite}{%
-%   \ifboolexpr{
-%     ( not test {\iffieldundef{prenote}} and
-%       test {\ifnumequal{\value{citecount}}{1}} )
-%     or
-%     ( not test {\iffieldundef{postnote}} and
-%       test {\ifnumequal{\value{citecount}}{\value{citetotal}}} )
-%   }
-%     {\DeclareFieldAlias{textcitehyperref}{noformat}}
-%     {}%
-%   \printtext[textcitehyperref]{%
-%     \restorebibmacro{textcite}%
-%     \usebibmacro{textcite}}}
-
 \bibliography{thesis}
 
 
@@ -103,12 +48,6 @@
 
 
 \backmatter
-% Add the bibliography to the table of contents
-% \addcontentsline{toc}{chapter}{Bibliography}
-
-% What style to use and what file to use for the bibliography
-% \bibliographystyle{abbrvnat}
-% \bibliography{thesis}
 \printbibliography[heading=bibintoc]
 
 \end{document}

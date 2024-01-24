@@ -39,8 +39,6 @@
 % \RequirePackage{lineno}
 % \linenumbers
 
-\RequirePackage{bibentry}
-
 % TikZ
 \RequirePackage{pgfplots}
 \usetikzlibrary{calc, shapes.geometric, arrows, positioning, arrows.meta}
@@ -54,6 +52,29 @@
 % Default to using \varepsilon
 \let\oldepsilon\epsilon
 \renewcommand\epsilon\varepsilon
+
+% BibLaTeX setup
+\RequirePackage[
+	backend=biber,
+	natbib,
+	style=authoryear-comp,
+	maxcitenames=2,
+	mincitenames=1,
+	maxbibnames=4,
+	minbibnames=3,
+	giveninits=true,
+	uniquename=init,
+	date=year
+]{biblatex}
+
+% Ensure initials are always listed first
+\DeclareNameAlias{sortname}{first-last}
+
+% Ensure inline citations are ordered by date: https://tex.stackexchange.com/a/361042
+\AtBeginRefsection{\GenRefcontextData{sorting=ynt}}
+\AtEveryCite{\localrefcontext[sorting=ynt]}
+
+\RequirePackage{bibentry}
 
 % Relevant contents of my style files
 % Packages which I almost always find useful
@@ -103,18 +124,6 @@
 % \nocitenames
 
 \RequirePackage{hhline}
-
-% Extra stuff when draft is on
-\RequirePackage{ifdraft}
-\ifdraft{
-	% % Big line spacing
-	% \linespread{1.5}
-
-	% Line numbering
-	% \RequirePackage{lineno}
-	% \linenumbers
-
-}{}
 
 \RequirePackage[colorlinks,linkcolor=magenta,citecolor=cyan,urlcolor=red,filecolor=red,breaklinks,bookmarks,bookmarksopen]{hyperref}
 \RequirePackage[capitalise,nameinlink,noabbrev]{cleveref}
@@ -354,33 +363,12 @@
 \newtheorem{hypo}{Hypothesis}[section]
 \newtheorem{remark}{Remark}[section]
 
-% Wrap each theorem-like environment in a minipage, to prevent splitting across multiple pages. Should only be a couple of places where this comes into effect.
-% \RequirePackage{etoolbox}
-% \AtBeginEnvironment{theorem}{\noindent\begin{minipage}{\textwidth}}
-% \AtEndEnvironment{theorem}{\end{minipage}}
-% \AtBeginEnvironment{definition}{\noindent\begin{minipage}{\textwidth}}
-% \AtEndEnvironment{definition}{\end{minipage}}
-% \AtBeginEnvironment{corollary}{\noindent\begin{minipage}{\textwidth}}
-% \AtEndEnvironment{corollary}{\end{minipage}}
-% \AtBeginEnvironment{example}{\noindent\begin{minipage}{\textwidth}}
-% \AtEndEnvironment{example}{\end{minipage}}
-% \AtBeginEnvironment{lemma}{\noindent\begin{minipage}{\textwidth}}
-% \AtEndEnvironment{lemma}{\end{minipage}}
-% \AtBeginEnvironment{result}{\noindent\begin{minipage}{\textwidth}}
-% \AtEndEnvironment{result}{\end{minipage}}
-% \AtBeginEnvironment{hypo}{\noindent\begin{minipage}{\textwidth}}
-% \AtEndEnvironment{hypo}{\end{minipage}}
-% \AtBeginEnvironment{remark}{\noindent\begin{minipage}{\textwidth}}
-% \AtEndEnvironment{remark}{\end{minipage}}
-
-
 % Slightly weird bug - if not explicitly defined then cleveref is using \MakeUppercase, but this results in a linebreak before the link.
 \Crefname{hypo}{Hypothesis}{}
 
 % Proof environment, ended with box
 \newenvironment{proof}{%
-	\noindent{\bfseries Proof.}\hspace{0.5em}
-}{%
+	\noindent{\it Proof}. \ignorespaces}{%
 	\ \null  \hfill $\square$ \par
 }
 
