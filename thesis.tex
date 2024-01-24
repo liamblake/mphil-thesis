@@ -23,7 +23,6 @@
 	minbibnames=3,
 	giveninits=true,
 	uniquename=init,
-	sorting=ynt,
 	date=year
 ]{biblatex}
 
@@ -68,14 +67,18 @@
 \bibliography{thesis}
 
 
-% \includeonly{chp07_outlook/outlook,appendix/epidemiology}
+% \includeonly{chp01_introduction/introduction}
 
 \begin{document}
 % \emergencystretch 3em
 
-\include{frontmatter}
 
 % Frontmatter
+\include{frontmatter}
+
+% List of todos. Ugly but need to get them done!
+\listoftodos
+
 \include{front/abstract}
 \include{front/statement}
 \include{front/acknowledgements}
