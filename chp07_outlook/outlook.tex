@@ -1,5 +1,17 @@
 \chapter{Discussion and future outlook}\label{ch:outlook}
-% To conclude this thesis, we shall summarise the results we have presented, discuss possible applications, and highlight several avenues for further theoretical extension.
+To conclude this thesis, we shall summarise the results we have presented and raise several discussion points on the possible implications and extensions of our work.
+This is by no means an exhaustive list; since we have provided results for a general class of stochastic differential equations, our results have the potential to be applied across a wide range of fields, well beyond the scope of this thesis.
+The remaining sections of this chapter cover:
+\begin{itemize}
+	\item In \Cref{sec:disc_sigma}, we discuss approaches to selecting the diffusivity matrix \(\sigma\).
+	\item In \Cref{sec:disc_bc}, we discuss the difficulties that boundary conditions can present to our methods.
+	\item In \Cref{sec:disc_fp}, we introduce the Fokker-Planck equation, which provides an alternative view on the solution of a stochastic differential equation, and discuss how this perspective can further our theoretical understanding.
+	\item In \Cref{sec:disc_levy}, we discuss the possibility of replacing the Wiener process in the driving stochastic differential equation with a more general L\'evy processes.
+	\item In \Cref{sec:disc_higher}, we discuss the extension of our theory in \Cref{ch:linear_theory} to include higher-order terms in the small-noise expansion of the SDE.
+	\item In \Cref{sec:s2_disc}, we discuss the implications of our extension to stochastic sensitivity and the applications thereof.
+	\item In \Cref{sec:epi_disc}, we draw analogies between our theoretical work and results for the limits of population processes, a class of stochastic models evolving on a stochastic model.
+	      This culminates in a 5-dimensional implementation of the Gaussian computation outlined in \Cref{ch:linear_numerics} and suggestions of how stochastic sensitivity and the mixture model algorithm can be employed on these models.
+\end{itemize}
 
 We began the main contribution of this thesis in \Cref{ch:linear_theory}, where we provided and justified a framework for computing linearisations of stochastic differential equations.
 We provided an \emph{explicit} bound (\Cref{thm:main}) on the error between the solution of a small-noise nonlinear stochastic differential equation and an easily computable linearisation approximation, building upon previous studies \citep{Blagoveshchenskii_1962_DiffusionProcessesDepending,FreidlinWentzell_1998_RandomPerturbationsDynamical,Sanz-AlonsoStuart_2017_GaussianApproximationsSmall}.
@@ -44,13 +56,12 @@ Motivated by this, we explored two simple implementations of the mixture model a
 The mixture model showed highly promising results on this example trajectory; with only 2 splits and 25 components, the algorithm was able to closely recreate the highly non-Gaussian distribution (in \Cref{fig:na_2split_best}).
 % \td{Make sure you emphasise that we only demonstrated the mixture model on contrived examples and cheated}
 
-In the remainder of this chapter, we raise several discussion points on the possible implications and extensions of our work.
-This is by no means an exhaustive list; since we have provided results for a general class of stochastic differential equations, our results have the potential to be applied across a wide range of fields, well beyond the scope of this thesis.
+\td{Find a place for this little paragraph}
 Broadly speaking, our theoretical work (namely the error bound in \Cref{thm:main}) may be useful to investigate the validity of SDE linearisations in application domains such as Stochastic Parameterisation \citep{BernerEtAl_2017_StochasticParameterizationNew,Palmer_2019_StochasticWeatherClimate,LeutbecherEtAl_2017_StochasticRepresentationsModel} or Data Assimilation \citep{BudhirajaEtAl_2019_AssimilatingDataModels,ReichCotter_2015_ProbabilisticForecastingBayesian,LawEtAl_2015_DataAssimilationMathematical}, or to improve such linearisations by monitoring the skew or kurtosis.
 
 
 
-\section{Selecting the diffusion matrix \(\sigma\)}
+\section{Selecting the diffusion matrix \(\sigma\)}\label{sec:disc_sigma}
 A powerful advantage of our framework is that the diffusivity matrix \(\sigma\) is permitted to vary spatiotemporally, allowing for multiplicative noise.
 Multiplicative noise is often ignored in practice, due to difficulties in working with analytically \citep{SanchoEtAl_1982_AnalyticalNumericalStudies} and generating numerical realisations efficiently (e.g.\ the review by \cite{MoraEtAl_2017_StableNumericalScheme}).
 Despite these challenges, multiplicative noise is often necessary in practice \citep[e.g.]{Sura_2003_StochasticAnalysisSouthern,KamenkovichEtAl_2015_PropertiesOriginsAnisotropic}.
@@ -158,9 +169,9 @@ subject to some initial density \(\rho\!\left(x,0\right)\) given by the distribu
 % 	\end{align}
 % \end{subequations}
 Solving the Fokker-Planck equation provides an alternative method for finding the solution to a stochastic differential equation; rather than working directly with the stochastic trajectories that solve \cref{eqn:fp_sde}, we instead seek solutions to a partial differential equation.
-There are a few ways in which our work can contribute to understanding the Fokker-Planck equation, and conversely in which we can make use this alternative view on SDEs.
+There are a few ways in which our work can contribute to understanding the Fokker-Planck equation, and conversely in which we can make use of this alternative view on SDEs.
 Firstly, our theoretical work on SDE linearisations could be extended to consider the corresponding Fokker-Planck equations.
-We presented the solution to the linearised SDE in \Cref{thm:limit_sol}, for which we can derive an expression for the probability density function---the PDF is either the Gaussian density or can be otherwise compuited as the convolution between a Gaussian and the initial condition PDF.
+We presented the solution to the linearised SDE in \Cref{thm:limit_sol}, for which we can derive an expression for the probability density function---the PDF is either the Gaussian density or can be otherwise computed as the convolution between a Gaussian and the initial condition PDF.
 Therefore, we have solutions available to the Fokker-Planck equation corresponding to the linearised SDE.
 % The linearised stochastic differential equation has a corresponding Fokker-Planck equation, for which the solution is available---the probability density function of the linearisation solution, which is Gaussian for a fixed initial condition or can otherwise be computed as a convolution between a Gaussian and the initial condition PDF, is the solution to the corresponding Fokker-Planck equation.
 If we could understand the relationship between the FP equation of the original SDE and the linearisation, in terms of how the two are related in the limit of small noise, this would offer insight into the relationship between the probability density functions of the respective SDE solutions, which cannot be inferred from our bounds on the expectation in \Cref{thm:main}.
@@ -194,20 +205,21 @@ The aim of the mixture model is to approximate the probability density function 
 Throughout this thesis, we have considered It\^o stochastic differential equations driven by the canonical Wiener process, and so we are assuming that the noise in our system is white (zero temporal correlation) and Gaussian.
 However, when modelling physical systems there is observational evidence to suggest the underlying noise process may be better formulated as a more general L\'evy process \citep{Ditlevsen_1999_ObservationAstableNoise, Viecelli_1998_PossibilitySingularLowFrequency}.
 A L\'evy process satisfies the same properties as the Wiener process but without Gaussian increments and can therefore capture departures from Gaussianity, such as skew and heavy-tailedness, in the ongoing noise process.
-A majority of the theoretical results for stochastic differential equations hold for when the Wiener process is replaced by a L\'evy process \citep{Applebaum_2004_LevyProcessesStochastic}.
+Many of the theoretical results for stochastic differential equations hold for when the Wiener process is replaced by a L\'evy process \citep{Applebaum_2004_LevyProcessesStochastic}.
 Without Gaussian increments, a L\'evy process is not guaranteed to have paths that are continuous in time, any L\'evy process that does not, which presents some difficulties in practice and may not be appropriate in all modelling scenarios.
 % \citet{GottwaldMelbourne_2013_HomogenizationDeterministicMaps} show that stochastic differential equations driven by L\'evy processes arises as the limit of \td{quickly summarise this paper}
 % \citet{PenlandEwald_2008_ModellingPhysicalSystems} provide \td{Summarise}
 
 Nevertheless, there is scope to determine whether the theory presented in \Cref{ch:linear_theory}, and importantly the computability of the linearisation solution, can be generalised to stochastic differential equations driven by arbitrary L\'evy processes.
-If we replace the Wiener process in \Cref{thm:main}, the proofs in \Cref{sec:paper_proofs} will still hold as they rely on results for general It\^o integrals and square-integrable stochastic processes.
+If we replace the Wiener process in \Cref{thm:main}, the proof of \Cref{thm:main} will still hold as it rely on results for general It\^o integrals and square-integrable stochastic processes.
 This would show that such a solution, for small noise, can be approximated by an It\^o integral of a deterministic function (i.e.\ \cref{eqn:linear_sol}) with respect to the driving process.
 The applicability of this approximation then depends upon how easily this integral can be evaluated, without having to numerically solve the original stochastic differential equation.
+When the Wiener process is replaced, however, It\^o's isometry does not hold and we will need a different characterisation of the linearisation solution.\lb{Rephrase}
 Regardless, a theoretical understanding of the linearisation of SDEs driven by L\'evy processes would be a significant contribution to the literature.
 
 
 
-\section{Pursuing higher order terms}
+\section{Pursuing higher order terms}\label{sec:disc_higher}
 The linearisation approximation introduced in \Cref{ch:linear_theory} that underpins the work in this thesis equivalently arises by considering a formal power-series expansion of the SDE solution.
 That is, given the solution \(y_t^{(\epsilon)}\) to a small-noise SDE
 \begin{equation}\label{eqn:y_sde_outlook}
@@ -220,20 +232,20 @@ one can consider a power-series expansion in \(\epsilon\)
 where the coefficients \(z_t^{(0)}, z_t^{(1)}, z_t^{(2)}, \dotsc\) are themselves stochastic processes independent of \(\epsilon\).
 Such expansions are considered by \citet{Blagoveshchenskii_1962_DiffusionProcessesDepending}, who proved the existence of the series and found generic bounds for the expected distance between the solution to \cref{eqn:y_sde_outlook} and truncations of \cref{eqn:y_sde_expans}.
 The linearised SDE we consider corresponds to truncating \cref{eqn:y_sde_expans} to the \(m = 1\) term.
-In finding the solution \(l_t^{(\epsilon)}\) we implicitly established that \(z_t^{(0)} = F_0^t\!\left(x_0\right)\), the deterministic flow map, and \(z_t^{(1)}\) can be expressed as the It\^o integral of a deterministic function (i.e.\ compare \(z_t^{(0)} + \epsilon z_t^{(1)}\) with \cref{eqn:linear_sol}).%\lb{Just need to check that I'm consistent with previous notation. Initial condition?}.
+In finding the linearisation solution \(l_t^{(\epsilon)}\) we implicitly established that \(z_t^{(0)} = F_0^t\!\left(x_0\right)\), the deterministic flow map, and \(z_t^{(1)}\) can be expressed as the It\^o integral of a deterministic function (i.e.\ compare \(z_t^{(0)} + \epsilon z_t^{(1)}\) with \cref{eqn:linear_sol}).%\lb{Just need to check that I'm consistent with previous notation. Initial condition?}.
 We expect that including more terms when truncating \cref{eqn:y_sde_expans} will result in a `better' approximation of the original SDE solution, in the same fashion as a Taylor expansion of a deterministic function.
 % It is worth noting that this is not immediately apparent from the results of \citet{Blagoveshchenskii_1962_DiffusionProcessesDepending} and \citet{FreidlinWentzell_1998_RandomPerturbationsDynamical}\lb{check that this is actually the case before claiming it. Probably not actually the case - think about scaling with \(\epsilon\)}.
 An obvious extension to our theoretical results would therefore be to higher order expansion, where we look to continue building upon \citet{Blagoveshchenskii_1962_DiffusionProcessesDepending,FreidlinWentzell_1998_RandomPerturbationsDynamical} to provide explicit bounds on the distance between the SDE solution and truncations of \cref{eqn:y_sde_expans}.
 From a practical perspective, this also raises a question of whether the higher-order terms can be computed to provide a more accurate approximation of nonlinear SDE solutions.
-However, the higher order coefficients obey nonlinear stochastic differential equations which cannot in general be solved analytically.
+However, the higher order coefficients obey stochastic differential equations which cannot in general be solved analytically.
 For instance, by performing Taylor expansions of the coefficients of \cref{eqn:y_sde_outlook} and rearranging, the second-order term \(z_t^{(2)}\) is shown to solve
 \[
 	\dif z_t^{(2)} = \begin{multlined}[t]
 		\left[\frac12 \left[z_t^{(1)}\right]^{\T} \nabla\nabla u\!\left(z_t^{(0)}, t\right) z_t^{(1)} + \nabla u\!\left(z_t^{(0)}, t\right) z_t^{(2)}\right]\dif t + \nabla \sigma\!\left(z_t^{(0)}, t\right) z_t^{(1)}\dif W_t
 	\end{multlined}
 \]
-This equation must be viewed jointly with that satisfied by \(z_t^{(1)}\), cannot be solved analytically and is even difficult to solve numerically, due to the nonlinearity and dependence on the second derivatives of \(u\).
-Thus, while there is potential to extend our \emph{theoretical} results to higher-order expansions, we expect that there would not be the sane \emph{practicality} of computation that we relied upon later in the thesis.
+This equation must be viewed jointly with that satisfied by \(z_t^{(1)}\), cannot be solved analytically and is even difficult to solve numerically due to the dependence on the second derivatives of \(u\).
+Thus, while there is potential to extend our \emph{theoretical} results to higher-order expansions, we expect that there would not be the same \emph{practicality} of computation that we relied upon later in the thesis.
 It remains to be seen, however, if qualitative measures can be computed from the higher order terms, in the fashion in which stochastic sensitivity was shown to be the variance of the first order term \(z_t^{(1)}\).
 
 
@@ -244,14 +256,14 @@ Equipped with this extension, one can now investigate stochastic sensitivity as 
 Similarly, the work by \citet{FangEtAl_2020_DisentanglingResolutionPrecision} and \citet{FangOuellette_2021_AssessingInformationContent}, which use stochastic sensitivity as a dynamic lengthscale, can now immediately be extended to dynamical systems of arbitrary dimension.
 
 % \td{Establishing connectiosn between stochastic sensitivity and the FP equation - implications related to \citet{Froyland_2013_AnalyticFrameworkIdentifying,DennerEtAl_2016_ComputingCoherentSets}}
-\citet{BalasuriyaEtAl_2018_GeneralizedLagrangianCoherent} provide a framework that extends the notion of a Lagrangian coherent structure to capture spatial ``regions of interset'' in the time-evolution of other quantities that are transported by, but not fully locked to, a flow.
+\citet{BalasuriyaEtAl_2018_GeneralizedLagrangianCoherent} provide a framework that extends the notion of a Lagrangian coherent structure to capture spatial ``regions of interest'' in the time-evolution of other quantities that are transported by, but not fully locked to, a flow.
 Examples of these quantities include the concentration of pollutants, the density of an organism such as phytoplankton, temperature, and salinity in the fluid context.
 The Fokker-Planck equation is a generalisation of the classical advection-diffusion equation that allows for a spatiotemporally varying diffusivity tensor.
 The spread of a tracer under the advection-diffusion equation can, through the Fokker-Planck formulation, be equivalently captured by the solution to a stochastic differential equation.
 The spread of ``uncertainty'' in the stochastic formulation corresponds to the movement and dispersion of the tracer, in the sense that the probability density function of the stochastic solution is exactly the (normalised) tracer concentration.
 In capturing this uncertainty and extracting spatial regions from the resulting field, stochastic sensitivity can offer insight into the spread of such tracers, and potentially be used to extract generalised Lagrangian coherent structures in a broader framework.
 Hence, stochastic sensitivity is a far more general framework that can be applied to systems beyond the tracking of particles, particularly with the developments into arbitrary dimension provided by this thesis.
-Establishing a theoretical connection between between stochastic sensitivity and the Fokker-Planck equation would also be valuable (see the discussion in \citet{Balasuriya_2020_StochasticApproachesLagrangian}) and nmay now be viable as we have established that stochastic sensitivity is associated with a density function (the Gaussian solution to the linearised SDE) that itself solves a Fokker-Planck equation.
+Establishing a theoretical connection between between stochastic sensitivity and the Fokker-Planck equation would also be valuable (see the discussion in \citet{Balasuriya_2020_StochasticApproachesLagrangian}) and many now be viable as we have established that stochastic sensitivity is associated with a density function (the Gaussian solution to the linearised SDE) that itself solves a Fokker-Planck equation.
 
 
 Beyond these applications, stochastic sensitivity also has the potential as a \emph{theoretical} quantity, as a characterisation of Lagrangian trajectory uncertainty.
@@ -312,7 +324,7 @@ A classic example is as a model of the spread of an infectious disease in a popu
 For a well-mixed and homogeneous population, a continuous time Markov chain (CTMC) is a natural choice a mathematical framework for the evolution of a population process.
 A CTMC is a stochastic process evolving over a discrete state space in continuous time where the process moves from one state to another at a specified rate.
 The dynamics of the process are characterised by these transition rates, which give the instantaneous probability per unit time of the process transitioning from one state to another at a specified rate.
-The term ``Markov'' refers to the assumption that the behaviour of the process at a given time only depends on the current state and nopt any of the preceding history.
+The term ``Markov'' refers to the assumption that the behaviour of the process at a given time only depends on the current state and not any of the preceding history.
 For a detailed introduction to CTMCs, see \citet{Anderson_1991_ContinuousTimeMarkovChains}—--the key properties for our purposes are that a CTMC is fully described by its state space and transition rates, can be simulated from numerically to generate realisations, and is consequently used across many different applications to model the evolution of a population.
 
 \usetikzlibrary{automata,positioning,arrows}
@@ -388,7 +400,7 @@ which is then a linearisation of the nonlinear SDE
 	\label{eqn:ctmc_sde_lim_nonlin}
 \end{equation}
 about the deterministic limit \(Y_t^{(\infty)}\).
-The diffusion limit \cref{eqn:ctmc_sde} (or \cref{eqn:ctmc_sde_lin_lim}) can be solved, and in the case of a fixed initial condition \(X_0\), follow a Gaussian distribution at any fixed time.
+The diffusion limit \cref{eqn:ctmc_sde} (or \cref{eqn:ctmc_sde_lin_lim}) can be solved, and in the case of a fixed initial condition \(X_0\) follows a Gaussian distribution at any fixed time.
 For large populations, the diffusion limit is used as an approximation to the population process that avoids the need for bulk simulation and has been shown to work remarkably well \citep{PollettEtAl_2010_ModellingPopulationProcesses}.
 
 To illustrate the equations with an example, the SIR model is a density-dependent process.
@@ -450,8 +462,8 @@ In particular, we expect that the mixture model algorithm we have described may 
 			\label{fig:sir_gauss_rels_4}
 		\end{subfigure}
 		\caption{Histograms of Monte-Carlo simulations of the density process for the SIR model (with marginal plots on each axis), and the probability density function of the corresponding solution to the diffusion limit \cref{eqn:sir_diff_limit} plotted in red.
-		The parameters are \(\beta = 1.2\) and \(\gamma = 0.8\), and each sample path is initialised with 10\% of the population infected and simulated up to \(t = 5\).
-		The bins are chosen to reflect the state-space \(\set{0, 1/M, 2/M, \dotsc, 1}\) of the density process.}
+			The parameters are \(\beta = 1.2\) and \(\gamma = 0.8\), and each sample path is initialised with 10\% of the population infected and simulated up to \(t = 5\).
+			The bins are chosen to reflect the state-space \(\set{0, 1/M, 2/M, \dotsc, 1}\) of the density process.}
 		\label{fig:sir_gauss_rels}
 	\end{center}
 \end{figure}
@@ -561,8 +573,8 @@ By establishing connections between our results and those for discrete stochasti
 		\centering
 		\includegraphics[width=\textheight]{chp06_applications/figures/seihfr/seihfr_marginals_gaussian}
 		\caption{Histograms of 100000 realisations of the 5-dimensional Ebola model by \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola}, after 20 weeks.
-		Each row and column corresponds to one of the 5 components of the process, with the off-diagonal plots showing the joint bivariate histograms of each pair of components and the diagonal entries showing the single-component marginals.
-		Overlaid in red on each histogram are the contours (for the joint histograms) or probability density functions (for the single-component histograms) of the corresponding marginals of the Gaussian approximation that solves the diffusion limit.}
+			Each row and column corresponds to one of the 5 components of the process, with the off-diagonal plots showing the joint bivariate histograms of each pair of components and the diagonal entries showing the single-component marginals.
+			Overlaid in red on each histogram are the contours (for the joint histograms) or probability density functions (for the single-component histograms) of the corresponding marginals of the Gaussian approximation that solves the diffusion limit.}
 		\note{I will tweak this plot to include axis ticks next week; my first run through of the full thesis will be to bring all plots up to scratch and ensure that they are consistent.}
 		\label{fig:ebola_marginals}
 	\end{figure}

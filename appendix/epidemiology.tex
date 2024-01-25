@@ -68,7 +68,7 @@ A single sample \(X\) from the CTMC at time \(T\) can be simulated with the foll
 	\item If \(t > T\), terminate.
 	      Otherwise, sample the next state from the set of possible transitions, where the probability of transitioning from \(X\) to a different state \(Y \in \mathcal{S}\setminus \set{X}\) is given by
 	      \[
-		      \frac{q\!\left(X, Y\right)}{\sum_{\substack{Z \in \mathcal{S} \\ Z \neq X}}{q\!\left(X, Z\right)}}.
+					P\!\left(X \to Y\right) = \frac{q\!\left(X, Y\right)}{\sum_{\substack{Z \in \mathcal{S} \\ Z \neq X}}{q\!\left(X, Z\right)}}.
 	      \]
 	      Set \(X\) to this sampled state.
 

@@ -236,6 +236,8 @@ For our purposes, we can define an It\^o integral as the limit in probability of
 where \(\mathcal{P}_N\) is a partition of \(\left[a,b\right]\) with \(\lim_{N \to \infty}\mathcal{P}_N = [a,b]\), \emph{\`a la} the definition of the Riemann integral.
 The It\^o integral is itself a random variable.
 It can be shown \citep[e.g.]{KallianpurSundar_2014_StochasticAnalysisDiffusion,Oksendal_2003_StochasticDifferentialEquations} that this limit exists for a large class of both deterministic- and random-valued functions, by constructing appropriate approximations of the function \(f\).
+There are several other definitions of the stochastic integral, the most common alternative being the Stratonovich integral \citep{Stratonovich_1966_NewRepresentationStochastic}, which results from a different interpretation of the noise term in \cref{eqn:fake_sde} and is often used in physics.
+The Stratonovich integral in particular can be re-interpreted as an It\^o integral with an appropriate transformation of the integrad, so we focus our attention in this thesis solely on the It\^o formulation of stochastic calculus.
 % Such functions for which the integral exist are termed \emph{It\^o-integrable} and are those that are measurable with respect to the probability space on which the Wiener process is defined
 % \td{Should probably summarise what these functions look like}
 

@@ -2,8 +2,7 @@
 % Do not change without consultation - haha
 
 % add extra information to date so included on titlepage
-\let\my@date\@date
-\def\@date{\my@date
+\def\@date{\today
 	\\\vfil\vfil\em
 	Thesis submitted for the degree of\\
 	\ifx\degree\undefined Specify {\tt$\backslash$degree}%
@@ -73,6 +72,13 @@
 % Ensure inline citations are ordered by date: https://tex.stackexchange.com/a/361042
 \AtBeginRefsection{\GenRefcontextData{sorting=ynt}}
 \AtEveryCite{\localrefcontext[sorting=ynt]}
+
+\DeclareCiteCommand{\citejournal}
+{\usebibmacro{prenote}}
+{\usebibmacro{citeindex}%
+	\usebibmacro{journal}}
+{\multicitedelim}
+{\usebibmacro{postnote}}
 
 \RequirePackage{bibentry}
 
