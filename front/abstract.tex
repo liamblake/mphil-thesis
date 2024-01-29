@@ -2,16 +2,21 @@
 \chapter{Abstract}
 \label{ch:abstract}
 
-Differential equations are used ubiquitously across many different fields to predict and understand phenomena around us.
-These are inevitably subject to uncertainties arising from a range of source, including
-Accounting for these uncertainties leads to a better model, but are analytically challenging and often require expensive Monte-Carlo simulation.
-In this thesis, we are interested in stochastic differential equations, which are a natural extension of ordinary differential equations that parameterise uncertainty with a noise process that contributes to the ongoing evolution of solutions.
+Differential equations are used ubiquitously to predict and understand phenomena across many different field.
+These models are inevitably subject to uncertainties arising from a range of source, including measurement error, unresolved effects, and resolution limitations.
+Accounting for these uncertainties leads to better models, but this is analytically challenging and often requires expensive Monte-Carlo simulation.
+In this thesis, we are interested in stochastic differential equations, which are a natural extension of ordinary differential equations that include stochastic terms that contribute to the ongoing evolution of solutions.
 We look to address the need for computationally efficient methods that characterise uncertainty without resorting to the expensive alternative of bulk simulation.
 
+We first build upon previous small-noise studies to provide an explicit bound for the error between a general class of stochastic differential equations and corresponding linearisations written in terms of a deterministic system.
+Our framework accounts for non-autonomous coefficients, multiplicative noise, and uncertain initial conditions.
+These linearisations are explicitly solvable and efficient to compute, providing an approximate solution to the stochastic differential equation.
+We demonstrate the predictive power of our bound on diverse numerical case studies, providing for the first time a numerical validation of linearisation approximations of stochastic differential equations.
+In characterising this relationship, we are also able to provide theoretical and computational extension of stochastic sensitivity (Balasuriya, \emph{SIAM Review}, 2020:781-816), a recently developed tool for characterising the impact of uncertainty on differential equation solutions.
+Stochastic sensitivity was previously restricted to two-dimensional flows, which we are able to overcome to empower the use of these tools on any model of arbitrary dimension.
 
-In characterising this limit, we are also able to provide theoretical and computational extension of stochastic sensitivity (Balasuriya), a recently developed tool for characterising the impact of uncertainty on differential equation solution.
-Stochastic sensitivity was previously restricted to two-dimensions, which we are able to overcome.
-
-To further the linearisation framework, we also propose an \emph{ad hoc} algorithm for approximating the solution to an SDE
-
+To further the linearisation framework, we also propose an \emph{ad hoc} algorithm for approximating the solution to a stochastic differential equation with a Gaussian mixture model constructed from many different linearisations.
+Such an algorithm is computationally efficient but can capture non-Gaussian features in the SDE solution that a single linearisation cannot.
 Our initial investigation into this algorithm on predicting the position of a drifter in the Gulf Stream gave promising results, motivating future development and investigation.
+
+With many avenues for further theoretical development and applications across many different contexts, our work paves the way for future research.

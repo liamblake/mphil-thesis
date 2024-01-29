@@ -199,7 +199,7 @@ In general, a Gaussian mixture model with \(K\) components is a probability dens
 \[
 	p(z) = \sum_{k=1}^{K}{\omega_k \Gauss{z;\, \mu^{(k)}, \Sigma^{(k)}}},
 \]
-which consists of \(K\) Gaussian components \(\Gauss{\mu^{(k)}, \Sigma^{(k)}}\) with respective weights \(\omega_1, \dotsc, \omega_K \geq 0\) satisfying \(\sum_{k=1}^{K}\omega_k = 1\).
+consisting of \(K\) Gaussian components \(\Gauss{\mu^{(k)}, \Sigma^{(k)}}\) with respective weights \(\omega_1, \dotsc, \omega_K \geq 0\) that satisfy \(\sum_{k=1}^{K}\omega_k = 1\).
 With sufficient components, a Gaussian mixture model can recreate any probability distribution in \(\R^n\) while having many of the properties that make Gaussian distributions appealing in practice \citep{McLachlanEtAl_2019_FiniteMixtureModels}.
 \Cref{fig:mixture_model} shows two examples of Gaussian mixture models in 1-dimension, where departures from Gaussianity such as multimodality and skewness can be captured with an appropriate combination of components.
 
@@ -298,7 +298,7 @@ The mixture model algorithm is then as follows:
 
 		      \item If \(\tau^{(i)} = t\), then complete this branch of the algorithm and continue along another branch, if any are still incomplete.
 
-		      \item Otherwise, if \(\tau^{(i)} < t\), construct \(K\) points \(\hat{x}^{(1)},\dotsc,\hat{x}^{(K)}\) with weights \(\hat{w}^{(1)}, \dotsc, \hat{w}^{(K)}\) that preserve the propagated mean and covariance (i.e.\ satisfying \cref{eqn:cov_split_points}).
+		      \item Otherwise, if \(\tau^{(i)} < t\), construct \(K\) points \(\hat{x}^{(1)},\dotsc,\hat{x}^{(K)}\) with corresponding weights \(\hat{w}^{(1)}, \dotsc, \hat{w}^{(K)}\) that preserve the propagated mean and covariance (i.e.\ satisfying \cref{eqn:cov_split_points}).
 		            Set \(x^{(j)} = \hat{x}^{(1)}\) and \(\Sigma^{(j)} = O\), and
 		            \[
 			            \Sigma^{(N + k - 1)} = O, \quad \text{and} \quad w^{(N + k - 1)} = \hat{w}^{(k)} w^{(j)} \quad \text{for each } k = 1,\dotsc,K
@@ -518,8 +518,8 @@ We can take this example further to attain a better fit, by adjusting the way in
 However, rather than comparing the full mixture model to the solution we are after, we can focus our attention
 We cap the number of components at 10: if this number is reached then no more components are split and each is propagated until the final time \(t = 5\).
 
-This was a highly contrived example, in which we had access to the solution of the
-\td{Get this example working, or otherwise adjust}
+% This was a highly contrived example, in which we had access to the solution of the
+% \td{Get this example working, or otherwise adjust}
 
 
 

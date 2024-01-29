@@ -147,7 +147,7 @@ The three terms can be informally considered as: a contribution purely from the 
 By explicitly identifying the dependence of the bound on \(K_{\nabla\nabla u}\) and \(K_{\nabla \sigma}\), we note three special cases that are summarised by \Crefrange{rem:bound_linear}{rem:bound_exact}.
 
 \begin{remark}[Linear drift]\label{rem:bound_linear}
-	When the deterministic dynamics are linear, we set \(K_{\nabla\nabla u} = 0\) and \cref{eqn:main_ineq} becomes
+	When the deterministic dynamics are linear, we can set \(K_{\nabla\nabla u} = 0\) and \cref{eqn:main_ineq} becomes
 	\[
 		\avg{\norm{y_t^{(\epsilon)} - l_t^{(\epsilon)}}^r} \leq   K_{\nabla\sigma}^r D_1\!\left(r, t, K_{\nabla u}, K_\sigma\right)\, \epsilon^{2r} + K_{\nabla\sigma}^r D_3\!\left(r,t, K_{\nabla u}\right)\delta_r^r \epsilon^r.
 	\]
@@ -155,7 +155,7 @@ By explicitly identifying the dependence of the bound on \(K_{\nabla\nabla u}\) 
 \end{remark}
 
 \begin{remark}[Additive noise]\label{rem:bound_additive}
-	When the noise in \cref{eqn:sde_y} is additive, we set \(K_{\nabla\sigma} = 0\) and \cref{eqn:main_ineq} becomes
+	When the noise in \cref{eqn:sde_y} is additive, we can set \(K_{\nabla\sigma} = 0\) and \cref{eqn:main_ineq} becomes
 	\[
 		\avg{\norm{y_t^{(\epsilon)} - l_t^{(\epsilon)}}^r} \leq   K_{\nabla\nabla u}^r D_1\!\left(r,t, K_{\nabla u}, K_\sigma\right)\, \epsilon^{2r} + K_{\nabla\nabla u}^r D_2\!\left(r,t, K_{\nabla u}\right)\delta_{2r}^{2r}.
 	\]
@@ -164,7 +164,7 @@ By explicitly identifying the dependence of the bound on \(K_{\nabla\nabla u}\) 
 
 \begin{remark}[Exact linearisation]\label{rem:bound_exact}
 	When the deterministic dynamics are linear and the noise in \cref{eqn:sde_y} is additive (non-multiplicative), the linearisation \cref{eqn:linear_sde_inform} should be exact.
-	Accordingly, we set \(K_{\nabla\nabla u} = K_{\nabla\sigma} = 0\) and \cref{eqn:main_ineq} becomes
+	Accordingly, we can set \(K_{\nabla\nabla u} = K_{\nabla\sigma} = 0\) and \cref{eqn:main_ineq} becomes
 	\[
 		\avg{\norm{y_t^{(\epsilon)} - l_t^{(\epsilon)}}^r} = 0.
 	\]
@@ -172,12 +172,11 @@ By explicitly identifying the dependence of the bound on \(K_{\nabla\nabla u}\) 
 \end{remark}
 
 
-We postpone a discussion of an additional special case---where the initial condition is fixed or
-Gaussian---to a later section.  For the general situation,
-we next explicitly establish the solution to the linearisation \cref{eqn:linear_sde_inform}, in terms of the initial condition and the deterministic evolution of \cref{eqn:ode_det}.
+We postpone a discussion of an additional special case---where the initial condition is fixed or Gaussian---to a later section.
+For the general situation, we next explicitly establish the solution to the linearisation \cref{eqn:linear_sde_inform}, in terms of the initial condition and the deterministic evolution of \cref{eqn:ode_det}.
 
 \begin{theorem}[Solution of the linearised SDE]\label{thm:limit_sol}
-	The strong solution to the linearised SDE \cref{eqn:linear_sde_inform} is
+	The linearised SDE \cref{eqn:linear_sde_inform} has the strong solution
 	\begin{equation}
 		l_t^{(\epsilon)} = \nabla F_0^t\!\left(x_0\right)\left(x - x_0\right) + F_0^t\!\left(x_0\right) + \epsilon\nabla F_0^t\!\left(x_0\right)\int_0^t{L\!\left(x_0, \tau\right)\dif W_\tau}.
 		\label{eqn:linear_sol}
@@ -328,7 +327,7 @@ By rearranging and taking \(r = 1\) in \cref{eqn:main_ineq_fixed}, we therefore 
 \[
 	\frac{\avg{\norm{R_2\left(x,t,\epsilon\right)}}}{\epsilon^2} \leq \left(K_{\nabla \nabla u} + K_{\nabla\sigma}\right)D_1\!\left(1,t, K_{\nabla u}, K_\sigma\right),
 \]
-This result is consistent with the formulation of the linearisation error bounds by \citet{Blagoveshchenskii_1962_DiffusionProcessesDepending} and \citet{FreidlinWentzell_1998_RandomPerturbationsDynamical}, for instance.
+This result is consistent in formulation with the error bounds of \citet{Blagoveshchenskii_1962_DiffusionProcessesDepending} and \citet{FreidlinWentzell_1998_RandomPerturbationsDynamical}, for instance.
 Moreover, the distribution of the linearisation solution \cref{eqn:linear_sol} is Gaussian, which through \Cref{cor:limit_moments} we can again explicitly characterise in terms of the deterministic system, namely
 \begin{equation}
 	l_t^{(\epsilon)} \isGauss{F_0^t\!\left(x_0\right), \epsilon^2 \Sigma_0^t\!\left(x_0\right)},
@@ -824,7 +823,7 @@ It follows that
 \]
 is a strong solution to \cref{eqn:linear_sde_inform}.\ to \cref{eqn:linear_sol}.
 
-By \ref{hyp:init_indep}, \(x\) is independent of the Wiener process \(W_t\), and since independence is preserved under limits and linear transformations it follows that the It\^o integral \(\epsilon \nabla F_0^t\!\left(x_0\right)\int_0^t{L\!\left(x_0, \tau\right)\dif W_\tau}\) and \(\nabla F_0^t\!\left(x_0\right)\left(x - x_0\right)\) are independent.
+Under \ref{hyp:init_indep}, \(x\) is independent of the Wiener process \(W_t\), and since independence is preserved under limits and linear transformations it follows that the It\^o integral \(\epsilon \nabla F_0^t\!\left(x_0\right)\int_0^t{L\!\left(x_0, \tau\right)\dif W_\tau}\) and \(\nabla F_0^t\!\left(x_0\right)\left(x - x_0\right)\) are independent.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
