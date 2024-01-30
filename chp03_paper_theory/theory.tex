@@ -1,23 +1,22 @@
 \chapter{Characterising SDE linearisations: the theory}\label{ch:linear_theory}
-In general, stochastic differential equations cannot be solved analytically and instead require numerical simulations, which is significantly limited by the computational expense.
+In general, stochastic differential equations cannot be solved analytically and instead require computationally expensive numerical simulation.
 An alternative approach is to approximate the SDE by a simplified one, which can be solved analytically.
-A linearisation procedure is one such approach when the noise is small, which replaces the coefficients of the SDE with first-order Taylor expansions.
-This linearisation scheme is accordingly used across a range of literature and applications \citep{Jazwinski_2014_StochasticProcessesFiltering,SarkkaSolin_2019_AppliedStochasticDifferential,KaszasHaller_2020_UniversalUpperEstimate,ArchambeauEtAl_2007_GaussianProcessApproximations,Sanz-AlonsoStuart_2017_GaussianApproximationsSmall,LawEtAl_2015_DataAssimilationMathematical,ReichCotter_2015_ProbabilisticForecastingBayesian,BudhirajaEtAl_2019_AssimilatingDataModels,LeGlandWang_2002_AsymptoticNormalityPartially}.
-Much is already known about the theory of these linearisations: classical results in the context of small-noise series expansions \citep{Blagoveshchenskii_1962_DiffusionProcessesDepending} and large deviations theory \citep{FreidlinWentzell_1998_RandomPerturbationsDynamical} show that the strong error between SDE solution with a fixed initial condition and that of an appropriate linearisation is bounded.
-\citet{Sanz-AlonsoStuart_2017_GaussianApproximationsSmall} establish a strong result, bounding the Kullback-Leibler divergence between the solutions of autonomous SDEs with additive stationary noise and a linearised equivalent. Their result considers both an uncertain initial condition, and the evolving error due to the discrepancy between the models.
+A linearisation procedure is one such approach when the noise is small, in which the coefficients of the SDE are replaced with first-order Taylor expansions.
+As we highlighted in the introduction (\Cref{ch:intro}), this linearisation scheme provides a practical approach to using SDEs and is accordingly used across a range of literature and applications \citep{Jazwinski_2014_StochasticProcessesFiltering,SarkkaSolin_2019_AppliedStochasticDifferential,KaszasHaller_2020_UniversalUpperEstimate,ArchambeauEtAl_2007_GaussianProcessApproximations,Sanz-AlonsoStuart_2017_GaussianApproximationsSmall,LawEtAl_2015_DataAssimilationMathematical,ReichCotter_2015_ProbabilisticForecastingBayesian,BudhirajaEtAl_2019_AssimilatingDataModels,LeGlandWang_2002_AsymptoticNormalityPartially}.
+% Much is already known about the theory of these linearisations: classical results in the context of small-noise series expansions \citep{Blagoveshchenskii_1962_DiffusionProcessesDepending} and large deviations theory \citep{FreidlinWentzell_1998_RandomPerturbationsDynamical} show that the strong error between SDE solution with a fixed initial condition and that of an appropriate linearisation is bounded.
+% \citet{Sanz-AlonsoStuart_2017_GaussianApproximationsSmall} establish a strong result, bounding the Kullback-Leibler divergence between the solutions of autonomous SDEs with additive stationary noise and a linearised equivalent. Their result considers both an uncertain initial condition, and the evolving error due to the discrepancy between the models.
 
-In this chapter, we build upon these previous small-noise studies \citep{Blagoveshchenskii_1962_DiffusionProcessesDepending,FreidlinWentzell_1998_RandomPerturbationsDynamical,Sanz-AlonsoStuart_2017_GaussianApproximationsSmall} to provide an explicit bound for the error between a general class of stochastic differential equations and corresponding computable linearisations written in terms of a deterministic system.
-Our framework accounts for non-autonomous coefficients, multiplicative noise, and uncertain initial conditions in a stochastic differential equation of arbitrary dimension---a more general situation than that considered by \citet{Blagoveshchenskii_1962_DiffusionProcessesDepending} and \citet{FreidlinWentzell_1998_RandomPerturbationsDynamical}.
-In \Cref{sec:theory}, we state the bound, written in terms of both the initial and the ongoing uncertainty, and provide an explicit characterisation of the solution to the linearised SDE including computations for the first two moments.
-We directly compare our newly-derived bound to that on the KL-divergence by \citet{Sanz-AlonsoStuart_2017_GaussianApproximationsSmall}, and postulate that our bound is tighter.
+In this chapter, we build upon previous small-noise studies of SDE linearisations \citep{Blagoveshchenskii_1962_DiffusionProcessesDepending,FreidlinWentzell_1998_RandomPerturbationsDynamical,Sanz-AlonsoStuart_2017_GaussianApproximationsSmall} to provide an explicit bound for the error between a general class of stochastic differential equations and linearisations thereof about trajectories of a corresponding deterministic system.
+Our framework accounts for non-autonomous coefficients, multiplicative noise, and uncertain initial conditions in a stochastic differential equation of arbitrary dimension---a more general situation than that considered by any of \citet{Blagoveshchenskii_1962_DiffusionProcessesDepending}, \citet{FreidlinWentzell_1998_RandomPerturbationsDynamical}, or \citet{Sanz-AlonsoStuart_2017_GaussianApproximationsSmall}.
+In \Cref{sec:theory}, we state the bound, written in terms of scales of the initial and the ongoing uncertainty, and provide an explicit characterisation of the solution to the linearised SDE including computations for the first two moments.
+We directly compare our newly derived bound in \Cref{sec:comparison} to that on the KL-divergence by \citet{Sanz-AlonsoStuart_2017_GaussianApproximationsSmall} and postulate that our bound is tighter.
 
-The second contribution of this chapter is to provide theoretical and computational extension to the original formulation of stochastic sensitivity by \citet{Balasuriya_2020_StochasticSensitivityComputable}, in \Cref{sec:theory_s2}.
-We provide a definition of stochastic sensitivity for \(n\)-dimensions, and establish that the value can be computed from a linearised SDE.
-
+The second contribution of this chapter is to extend the original formulation of stochastic sensitivity by \citet{Balasuriya_2020_StochasticSensitivityComputable}, in \Cref{sec:theory_s2}.
+We provide a new definition of stochastic sensitivity for \(n\)-dimensions and establish that the value can be computed from the solution of a linearised SDE.
 
 Much of the content in this chapter and the following (\Cref{ch:linear_numerics}) has been submitted as a research article to \textit{Communications in Mathematical Sciences} \citep{BlakeEtAl_2023_ConvergenceStochasticDifferential}, and is currently under review.
 The preprint is available on arXiv at \href{https://arxiv.org/abs/2309.16334}{arXiv:2309.16334}.
-\Cref{sec:ftle_s2_connection}, which discusses the connections between stochastic sensitivity and the finite-time Lyapunov exponent, does not appear in the submitted article, and is instead a new contribution in this thesis.
+\Cref{sec:ftle_s2_connection}, which discusses the connections between stochastic sensitivity and the finite-time Lyapunov exponent, does not appear in the submitted article and is instead a new contribution in this thesis.
 
 
 \section{Convergence of a SDE to a linearisation}\label{sec:theory}
@@ -381,25 +380,27 @@ The natural restating of this original definition of stochastic sensitivity \cit
 		\filldraw [color=ForestGreen] (6.4, 2.1) circle (1pt) node [anchor=south] {\(y_t^{(\epsilon)}\)};
 
 	\end{tikzpicture}
-	\caption{The entities used in \Cref{def:ss_Rn} of stochastic sensitivity in arbitrary dimensions, which should be compared to \Cref{fig:s2_diag}.
+	\caption{The entities used in \Cref{def:ss_Rn} of stochastic sensitivity in arbitrary dimensions.
+		This diagram should be compared to \Cref{fig:s2_diag}.
 	}
 	\label{fig:s2_diag_Rn}
 \end{figure}
 
 \begin{definition}[Stochastic sensitivity in \(\R^n\)]\label{def:ss_Rn}
-	The \emph{stochastic sensitivity} is a scalar field \(S^2: \R^n \times [0,T] \to \left[0, \infty\right)\) given by
+	The \emph{stochastic sensitivity} is a scalar field \(S^2\colon \R^n \times [0,T] \to \left[0, \infty\right)\) given by
 	\begin{equation*}
 		S^2\!\left(x_0,t\right) \coloneqq \lim_{\epsilon\downarrow 0}\sup\set{\var{\frac{1}{\epsilon}p^{\T}\left(y_t^{(\epsilon)} - F_0^t\!\left(x_0\right)\right)} \,: \, p \in \R^n, \, \norm{p} = 1}.
 	\end{equation*}
 \end{definition}
 
 \Cref{fig:s2_diag_Rn} illustrates the quantities involved in \Cref{def:ss_Rn}, to be compared directly to \Cref{fig:s2_diag} which represented the original definition of stochastic sensitivity.
-The ray of angle \(\theta\) in the original definition has been replaced with a unit vector \(p\), we compute the projection (in red) of the deviation (in blue) between the deterministic (in black) and stochastic (in green) predictions, and then maximising this projection over all possible unit vectors \(p\).
+The ray of angle \(\theta\) in the original definition has been replaced with an arbitrary unit vector \(p\).
+We compute the projection (in red) of the deviation (in blue) between the deterministic (in black) and stochastic (in green) predictions and then maximise over all possible unit vectors \(p\) to obtain the stochastic sensitivity value.
 \Cref{def:ss_Rn} is in the spirit of principal components analysis \citep{Jolliffe_2002_PrincipalComponentAnalysis}, performing a dimension reduction by projecting onto the direction in which the variance is maximised, thus capturing the most uncertainty in the data with a scalar value.
-The anisotropic uncertainty in two-dimensions \citep{Balasuriya_2020_StochasticSensitivityComputable} is the direction-dependent projection (prior to optimising over all directions in \Cref{def:ss_Rn}).
+The anisotropic uncertainty in two-dimensions \citep{Balasuriya_2020_StochasticSensitivityComputable} is the direction-dependent projection (before optimising over all directions in \Cref{def:ss_Rn}).
 Explicit theoretical expressions for both the stochastic sensitivity and the anisotropic sensitivity in two dimensions were obtained by \citet{Balasuriya_2020_StochasticSensitivityComputable}; these allowed for quantifying certainty in eventual trajectory locations without having to perform stochastic simulations.
-We show here that our results in \(n\)-dimensions are a generalisation of the two-dimensional ones by \citet{Balasuriya_2020_StochasticSensitivityComputable}, which moreover establish Gaussianity as well as an explicit expression for the uncertainty measure.
-A theoretically pleasing and computable expression for the stochastic sensitivity is obtainable;
+We show here that our results in \(n\)-dimensions are a generalisation of the two-dimensional ones by \citet{Balasuriya_2020_StochasticSensitivityComputable}, which moreover establishes Gaussianity as well as an explicit expression for the uncertainty measure.
+A theoretically pleasing and computable expression for the stochastic sensitivity is obtainable:
 
 
 \begin{theorem}[Computation of \(S^2\)]\label{thm:s2_calculation}
@@ -436,73 +437,46 @@ Such a definition extends to the \(n\)-dimensional case as presented here, moreo
 
 
 
-\subsection{Connecting \(S^2\) to the finite-time Lyapunov exponent}\label{sec:ftle_s2_connection}
-We briefly consider the implications of our results on uncertain initial conditions from \Cref{sec:theory} on stochastic sensitivity, which suggest a connection between this measure and the finite-time Lyapunov exponent.
-The finite-time Lyapunov exponent (FTLE) was introduced in \Cref{sec:bkg_lcs} and is a commonly used tool for measuring the local stretching in a dynamical system.
-
-% To show that the computation of the finite-time Lyapunov exponent is, in some sense, analogous to the definition and calculation of stochastic sensitivity outlined in \Cref{def:ss_Rn} and \Cref{thm:s2_compute}, we provide an alternative derivation of the FTLE.
-% Consider a V
-In a particular direction \(w\) from \(x_0\), the stretching is measured as
+\subsection{Connections to the finite-time Lyapunov exponent}\label{sec:ftle_s2_connection}
+We briefly consider the implications of our results on uncertain initial conditions from \Cref{sec:theory} on stochastic sensitivity, which suggests a connection between this measure and the finite-time Lyapunov exponent.
+The finite-time Lyapunov exponent (FTLE) is a measure of the local stretching in a dynamical system and is one of the most commonly used tools for identifying Lagrangian coherent structures in fluid flow \citep{ShaddenEtAl_2005_DefinitionPropertiesLagrangian}.
+In a particular direction \(p\) from the initial condition \(x_0\), the stretching due to the evolution of the ODE \cref{eqn:det_ode} is measured as
 \[
-	s\!\left(x_0,w\right) = \frac{\norm{F_0^t\!\left(x_0 + w\right) - F_0^t\!\left(x_0\right)}}{\norm{x_0}} \approx \frac{\norm{F_0^t\!\left(x_0\right)w}}{\norm{w}}
+	s\!\left(x_0,p\right) = \frac{\norm{F_0^t\!\left(x_0 + p\right) - F_0^t\!\left(x_0\right)}}{\norm{x_0}} \approx \frac{\norm{F_0^t\!\left(x_0\right)p}}{\norm{p}}
 \]
-assuming the perturbation is small.
+assuming the perturbation \(p\) is small so that \(\mathcal{O}\!\left(\norm{p}^2\right)\) terms can be neglected.
 The FTLE is then computed by finding the direction in which the stretching is maximised, leading to the operator norm computation
 \[
-	\sup_{w \in \R^n, \, w \neq 0} s\!\left(x, w\right) = \norm{\nabla F_0^t\!\left(x_0\right)} = \sqrt{\norm{\left[\nabla F_0^t\!\left(x_0\right)\right]^{\T}\nabla F_0^t\!\left(x_0\right)}}.
+	\sup_{p \in \R^n, \, p \neq 0} s\!\left(x, p\right) = \norm{\nabla F_0^t\!\left(x_0\right)} = \sqrt{\norm{\left[\nabla F_0^t\!\left(x_0\right)\right]^{\T}\nabla F_0^t\!\left(x_0\right)}}.
 \]
 The stochastic sensitivity definition in \Cref{def:ss_Rn} is analogous to this formation of the FTLE.
 We consider a small stochastic perturbation (the solution to the SDE \cref{eqn:sde_y}) to a deterministic model (the corresponding deterministic system \cref{eqn:det_ode}).
-The size of the perturbation is parameterised by \(\epsilon\), and the notion that this perturbation is ``small'' is formalised by considering the limit as \(\epsilon\) approaches zero.
-Since we are now dealing with stochastic quantities, we take the direction in which the \emph{variance} of the mapped perturbation is maximised.
-\Cref{thm:s2_calculation} further establishes that stochastic sensitivity can be computed by taking the operator norm of the covariance matrix of the linearised SDE \emph{with a fixed initial condition}.
+The size of the perturbation is parameterised by \(\epsilon\), and the notion that this perturbation is `small' is formalised by considering the limit as \(\epsilon\) approaches zero.
+Since we are now dealing with stochastic quantities, we take the direction in which the variance of the mapped perturbation is maximised.
+\Cref{thm:s2_calculation} further establishes that stochastic sensitivity can be computed by taking the operator norm of the covariance matrix of the linearised SDE with a fixed initial condition.
 That is, stochastic sensitivity is the operator norm of
 \[
 	\frac{1}{\epsilon^2}\var{l_t^{(\epsilon)}} = \Sigma_0^t\!\left(x_0\right).
 \]
-This matrix captures (up to leading order in \(\epsilon\)) the impact of ongoing uncertainty
+This matrix captures (up to leading order in \(\epsilon\)) the impact of the ongoing uncertainty.
 However, the theory of \Cref{sec:theory} allows for uncertain initial conditions, so suppose that we instead consider the perturbation SDE \cref{eqn:sde_y} initial condition \(x\) with expectation \(\avg{x} = x_0\) and variance \(\var{x} = \epsilon^2 I\).
 If there was no ongoing uncertainty (\(\sigma \equiv O\)), then any uncertainty in the system arises purely from the initial condition \(x\).
-Then from \cref{eqn:pi_expl_eqn}, the variance of the small noise linearisation is then
+Then from \cref{eqn:pi_expl_eqn}, the variance of the small noise linearisation is
 \[
 	\frac{1}{\epsilon^2}\var{l_t^{(\epsilon)}} = \nabla F_0^t\!\left(x_0\right)\left[\nabla F_0^t\!\left(x_0\right)\right]^{\T},
 \]
 resulting only from the first term in \cref{eqn:pi_expl_eqn}.
-Thus,
+Thus, if we compute stochastic sensitivity in the same way as in \Cref{def:ss_Rn} and \Cref{thm:s2_calculation} we get
 \[
-	\tilde{S}^2\!\left(x_0, t\right) = \norm{\nabla F_0^t\!\left(x_0\right)\left[\nabla F_0^t\!\left(x_0\right)\right]^{\T}} = \sup_{w \in \R^n, \, w \neq 0}{s\!\left(x_0, \delta\right)^2}
+	\tilde{S}^2\!\left(x_0, t\right) = \norm{\nabla F_0^t\!\left(x_0\right)\left[\nabla F_0^t\!\left(x_0\right)\right]^{\T}} = \sup_{p \in \R^n, \, p \neq 0}{s\!\left(x_0, p\right)^2}
 \]
 By maximising the projection of this variance over all directions, as in \cref{eqn:s2_calculation} to compute stochastic sensitivity, we perform exactly the computation to determine the maximal stretching rate in the computation of the finite-time Lyapunov exponent.
 The finite-time Lyapunov exponent (FTLE) quantifies the sensitivity of a dynamical system to initial conditions \citep{ShaddenEtAl_2005_DefinitionPropertiesLagrangian}, and can be equivalently considered a measure of the impact of an uncertain initial condition on the \emph{deterministic} evolution of trajectories.
+The construction of \(\tilde{S}^2\) is completely consistent with this idea.
+Thus, while the original formulation of stochastic sensitivity with a fixed initial condition captures only the impact of ongoing uncertainty, by including an uncertain initial condition in the computation we can also account for the information on the impact of initial condition uncertainty provided by the FTLE.
 There has been recent interest in extending the FTLE for systems with ongoing uncertainty \citep{Balasuriya_2020_UncertaintyFinitetimeLyapunov,YouLeung_2021_ComputingFiniteTime,GuoEtAl_2016_FiniteTimeLyapunovExponents}, but no established approach as of yet.
 A framework that computes stochastic sensitivity with uncertain initial conditions can be seen as such an extension of the FTLE, in the sense that the measure would characterise the sensitivity of a dynamical system to \emph{both} initial conditions and ongoing uncertainty.
-Formalising this connection (e.g.\ by considering the appropriate limits) is a matter for future work.
-In \Cref{sec:comput_s2}, we provide some preliminary numerical results that illustrate these connections.
-
-% However, we postulate that the FTLE and stochastic sensitivity can be related directly to each other, by considering stochastic sensitivity with the addition of uncertainty in the initial state.
-% The original formulation of stochastic sensitivity \citep{Balasuriya_2020_StochasticSensitivityComputable} and our extension in \Cref{sec:theory_s2} do not account for any uncertainty about the initial point \(x_0\), but the theory in \Cref{sec:theory} enables us to.
-% The following is one such approach to relating the two measures, but may not be the ideal approach; establishing these connections in more details is a matter for future work.
-% Let \(0 < \rho \ll 1\) be a small scalar parameter that quantifies the scale of uncertainty in the (otherwise fixed) initial position \(x_0\).
-% The uncertain initial condition is \(x\), and suppose that \(\avg{x} = x_0\) and \(\var{x} = \rho^2 I\), so that
-% \[
-% 	\delta_2^2 = \avg{\norm{x - x_0}^2} = \rho^2,
-% \]
-% With this choice of mean and variance for the initial condition, we are considering a small, isotropic perturbation to the initial condition \(x_0\); with the theory in \Cref{sec:theory}, we are able to quantify the infinitesimal impact of this uncertainty.
-% We can then extend \Cref{def:ss_Rn} to
-% \begin{equation}\label{eqn:s2_init}
-% 	\tilde{S}\!\left(x_0, t\right) = \lim_{\rho \downarrow 0}\lim_{\epsilon\downarrow 0}\sup\set{\frac{1}{\epsilon\rho}
-% 	\var{p^{\T}\left(y_t^{(\epsilon)} - F_0^t\!\left(x_0\right)\right)} \, : \, p \in \R^n, \, \norm{p} = 1},
-% \end{equation}
-% where the SDE solution \(y_t^{(\epsilon)}\) is subject to the initial condition \(y_0^{(\epsilon)} = 0\).
-% In \cref{eqn:s2_init}, we have extended the original \Cref{def:ss_Rn} to include a scaling and zero-limit of the initial uncertainty \(\rho\) that matches the treatment of the ongoing uncertainty scale \(\epsilon\).
-
-% Following the same steps as in the proof of \Cref{thm:s2_calculation} (in \Cref{app:s2_calculation_proof}), we have that
-% \[
-% 	\lim_{\rho \downarrow 0}\lim_{\epsilon \downarrow 0}{\var{\frac{1}{\epsilon\rho}y_t^{(\epsilon)}}} = \lim_{\rho \downarrow 0}\lim_{\epsilon \downarrow 0}{\frac{1}{\epsilon^2\rho^2}\var{l_t^{(\epsilon)}}} = ,
-% \]
-% enabling us to compute \(\tilde{S}\!\left(x_0, t\right)\) as
-
-
+Formalising this connection (e.g.\ by considering the appropriate limits and justifying the choice of initial variance) is a matter for future work.
 
 
 
@@ -817,13 +791,13 @@ Thus,
 	    & = \frac{1}{\epsilon}\left(x - x_0\right) + \int_0^t{\left[\nabla F_0^\tau\!\left(x_0\right)\right]^{-1}\sigma\!\left(F_0^\tau\!\left(x_0\right), \tau\right)\dif W_\tau},
 \end{align*}
 where we reach the second line by using the equation of variations \cref{eqn:eqn_of_vars} satisfied by \(\nabla F_0^\tau\!\left(x_0\right)\).
-It follows that
+It follows that the expression \cref{eqn:linear_sol}, i.e.
 \[
-	l_t^{(\epsilon)} = \nabla F_0^t\!\left(x_0\right)\left(x - x_0\right) +  F_0^t\!\left(x_0\right) + \epsilon\int_0^t{\nabla F_0^t\!\left(x_0\right)\left[\nabla F_0^\tau\!\left(x_0\right)\right]^{-1} \sigma\!\left(F_0^\tau\!\left(x_0\right), \tau\right)\dif \tau}
+	l_t^{(\epsilon)} = \nabla F_0^t\!\left(x_0\right)\left(x - x_0\right) +  F_0^t\!\left(x_0\right) + \epsilon\int_0^t{\nabla F_0^t\!\left(x_0\right)\left[\nabla F_0^\tau\!\left(x_0\right)\right]^{-1} \sigma\!\left(F_0^\tau\!\left(x_0\right), \tau\right)\dif \tau},
 \]
-is a strong solution to \cref{eqn:linear_sde_inform}.\ to \cref{eqn:linear_sol}.
+is a strong solution to \cref{eqn:linear_sde_inform}.
 
-Under \ref{hyp:init_indep}, \(x\) is independent of the Wiener process \(W_t\), and since independence is preserved under limits and linear transformations it follows that the It\^o integral \(\epsilon \nabla F_0^t\!\left(x_0\right)\int_0^t{L\!\left(x_0, \tau\right)\dif W_\tau}\) and \(\nabla F_0^t\!\left(x_0\right)\left(x - x_0\right)\) are independent.
+Finally, under \ref{hyp:init_indep}, \(x\) is independent of the Wiener process \(W_t\), and since independence is preserved under limits and linear transformations, it follows that the two random terms in \cref{eqn:linear_sol} are independent.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

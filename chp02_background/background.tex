@@ -39,7 +39,6 @@ where
 \]
 denotes the (scalar) covariance between \(Y_i\) and \(Y_j\).
 
-\usetikzlibrary{positioning}
 \begin{figure}
 	\begin{center}
 		\begin{tikzpicture}
@@ -55,7 +54,7 @@ denotes the (scalar) covariance between \(Y_i\) and \(Y_j\).
 			(rm) edge (p);
 			% (rm) edge (rmom);
 		\end{tikzpicture}
-		\caption{The strength of each notion of convergence in probability, where each directed arrow corresponds to an implication.
+		\caption{The strength of each notion of convergence for random variables, where each directed arrow corresponds to an implication.
 			These results are stated and proven in \citet{Bremaud_2020_ProbabilityTheoryStochastic}, for instance.}
 		\label{fig:rv_conv_impl}
 	\end{center}
@@ -183,7 +182,7 @@ Ideally, we would parameterise the uncertainty with some continuous-time stochas
 \end{equation}
 where \(\sigma\) is a specified part of the model that modulates how the magnitude and structure of the uncertainty varies with state and time.
 Since we are modelling with a continuum, the noise process \(\xi_t\) should be (with probability \(1\)) continuous in time, and should, without any additional prior knowledge, evolve independently of itself through time, follow a probability distribution that does not depend on time, and have zero expectation.
-That is, \(xi_t\) should be a white noise process in the absence of any additional knowledge of the nature of the noise, beyond specification of \(\sigma\).
+That is, \(xi_t\) should be a white noise process in the absence of any additional knowledge of the nature of the noise, beyond the specification of \(\sigma\).
 However, there does not exist \emph{any} process \(x_t\) that satisfies all of these properties \citep{Oksendal_2003_StochasticDifferentialEquations}; continuity cannot be enforced.
 This complication requires an alternative formulation, which leads to an entirely new type of calculus built around the It\^o integral and It\^o stochastic differential equations, which we introduce in \Cref{sec:bkg_ito} and \Cref{sec:bkg_sde} respectively.
 
@@ -198,6 +197,17 @@ This complication requires an alternative formulation, which leads to an entirel
 % This leads to the It\^o integral, and It\^o stochastic differential equations, which we introduce in \Cref{sec:bkg_ito} and \Cref{sec:bkg_sde} respectively.
 
 \subsection{The Wiener process}
+
+\begin{figure}
+	\begin{center}
+		% \includegraphics[width=0.49\textwidth]{chp02_background/figures/wiener_realisations_1d.pdf}
+		% \includegraphics[width=0.49\textwidth]{chp02_background/figures/wiener_realisations_2d.pdf}
+		\includegraphics[width=\textwidth]{chp02_background/figures/wiener_realisations}
+		\caption{(Left) Several realisations of a one-dimensional Wiener process \(W_t\) evolving through time, and (right) a realisation of two-dimensional Wiener process \(\left(W_t^{(1)}, W_t^{(2)}\right)^{\T}\).}
+		\label{fig:wiener_rels}
+	\end{center}
+\end{figure}
+
 In the absence of any additional knowledge about the nature of the noise (such as skew), the canonical Wiener process is the standard choice as the driving stochastic process.
 The Wiener process is the definite integral of a white noise process, and is therefore an appropriate choice to ensure that the ``solution'' (the result after integration through time) of \cref{eqn:fake_sde} involves the idealised noise process \(\xi_t\) that we were initially after. %\lb{I don't think this makes any sense to the reader, but it's difficult to explain this intuitively. I believe that the idea is that this white noise process is the `derivative' of the Wiener process (in the sense that \(W_t\) is the integral of \(\xi_t\)).}.
 Defined formally, the (one-dimensional) canonical \emph{Wiener process} is a stochastic process \(B_t\) taking values in \(\R\) and satisfying the following properties \citep{KallianpurSundar_2014_StochasticAnalysisDiffusion}:
@@ -207,21 +217,10 @@ Defined formally, the (one-dimensional) canonical \emph{Wiener process} is a sto
 	\item \(B_{s + t} - B_t \isGauss{0, s}\) for all \(s,t > 0\), and
 	\item \(B_t\) is continuous in \(t\) almost surely.
 \end{romanate}
-Remarkably, these properties \emph{uniquely} define the Wiener process, with the additional result that for any \(t > 0\), \(B_t \sim \mathcal{N}\left(0, t\right)\), a Gaussian distribution with mean zero and variance \(t\).
+Remarkably, these properties \emph{uniquely} define the Wiener process, with the additional result that for any \(t > 0\), \(B_t\) is distributed as \(\mathcal{N}\left(0, t\right)\), a Gaussian distribution with mean zero and variance \(t\).
 The \emph{\(n\)-dimensional Wiener process} is a stochastic process \(W_t\) taking values in \(\R^n\) such that each component of \(W_t\) is a one-dimensional Wiener process and the components of \(W_t\) are mutually independent.
 It follows that for the \(n\)-dimensional Wiener process \(W_t\), at any time \(t > 0\), \(W_t \sim \mathcal{N}\left(0, tI\right)\), an \(n\)-dimensional Gaussian distribution with mean zero and covariance matrix \(tI\).
 \Cref{fig:wiener_rels} plots realisations of a one-dimensional and two-dimensional Wiener process.
-
-
-\begin{figure}
-	\begin{center}
-		\includegraphics[width=0.49\textwidth]{chp02_background/figures/wiener_realisations_1d.pdf}
-		\includegraphics[width=0.49\textwidth]{chp02_background/figures/wiener_realisations_2d.pdf}
-		\caption{(Left) Several realisations of a one-dimensional Wiener process \(W_t\) evolving through time, and (right) a realisation of two-dimensional Wiener process \(\left(W_t^{(1)}, W_t^{(2)}\right)\).}
-		\label{fig:wiener_rels}
-	\end{center}
-\end{figure}
-
 
 \subsection{The It\^o integral}\label{sec:bkg_ito}
 With probability \(1\), the path of a Wiener process is continuous, but differentiable nowhere, which means that standard deterministic calculus is not sufficient to introduce continuous-time uncertainty into a differential equation.
@@ -310,8 +309,8 @@ SDEs with additive noise are typically easier to solve and analyse than those wi
 	\begin{center}
 		\includegraphics[width=\textwidth]{chp02_background/figures/ou_solution.pdf}
 		\caption{(Left) Sample paths of the solution to the stochastic differential equation \(\dif x_t = \sin\!\left(x_t\right)\dif t + \dif W_t\), from the initial condition \(x_0 = 1\) and over the time interval \((0,\pi)\).
-			The solution to the corresponding deterministic system \(\dif w_t = \sin\!\left(w_t\right)\) with the same initial condition is in black.
-			(Right) The numerically estimated probability density function of the solution \(x_\pi\), this time using 10000 samples.}
+			The solution to the corresponding deterministic system \(\od{w_t}{t} = \sin\!\left(w_t\right)\) with the same initial condition is in black.
+			(Right) The numerically estimated probability density function of the solution \(x_\pi\), using 10000 samples.}
 		\label{fig:sde_sol_sample}
 	\end{center}
 \end{figure}
@@ -459,14 +458,14 @@ One of the primary aims of this thesis is to overcome this expense, by devising 
 		\end{subfigure}
 		\begin{subfigure}[t]{0.49\textwidth}
 			\includegraphics[width=\textwidth]{chp02_background/figures/photoplankton}
-			\caption{Phytoplankton blooms in the Baltic sea (NASA Earth Observatory, July 18, 2018).
+			\caption{Phytoplankton blooms in the Baltic Sea (NASA Earth Observatory, July 18, 2018).
 				The structure of these blooms reflect the underlying flow of the Sea.}
 			\label{fig:lcs_phyto}
 		\end{subfigure}
 		\begin{subfigure}[t]{\textwidth}
 			\includegraphics[width=\textwidth]{chp02_background/figures/red_spot.png}
-			\caption{Jupiter's Great Red Spot, as photographed by the Voyager probe in 1979 (NASA/JPL-Caltech).
-				The storm is an example of a vortex or eddy within the atmospheric flow of the planet.}
+			\caption{Jupiter's Great Red Spot, as photographed by the Voyager 1 probe (NASA/JPL-Caltech and processed by Bj\"{o}rn J\'{o}nsson, March 5, 1979).
+			The storm is an example of a vortex or eddy within the atmospheric flow of the planet.}
 		\end{subfigure}
 		% \begin{subfigure}[t]{0.49\textwidth}
 		% 	% \includegraphics[width=\textwidth]{chp02_background/figures/photoplankton}
@@ -478,31 +477,30 @@ One of the primary aims of this thesis is to overcome this expense, by devising 
 	\end{center}
 \end{figure}
 
-In this section, we take a brief sojourn into the field of Lagrangian coherent structures (LCSs), which provide qualitative insight into the behaviour of a dynamical system, particularly in context of the fluid flows.
+In this section, we take a brief sojourn into the field of Lagrangian coherent structures (LCSs), which provide qualitative insight into the behaviour of a dynamical system, particularly in the context of fluid flows.
 Although LCSs are not the primary focus of this work, the field provides potential applications for our uncertainty quantification, that builds upon preliminary work by \citet{Balasuriya_2020_StochasticSensitivityComputable,Balasuriya_2020_UncertaintyFinitetimeLyapunov} and \citet{BadzaEtAl_2023_HowSensitiveAre}.
 There is no universally accepted definition of a coherent structure, but typically these are structures within a flow that remain together over the time-evolution of the system and separate the spatial domain into regions with qualitatively different behaviour \citep{BalasuriyaEtAl_2018_GeneralizedLagrangianCoherent}.
 \Cref{fig:lcs_examples} show examples of coherent structures in observed fluid flows, which can be considered LCSs.
 These are structures such as vortices, eddies, and jets that influence the transport of material within the fluid.
 For instance, in \Cref{fig:lcs_deepwater,fig:lcs_phyto} the observed patterns of the oil slick and phytoplankton blooms respectively reflect the behaviour of the underlying ocean flow and are influenced by jet- and eddy-like structures.
 
-
 In a steady system (that is, the vector field \(u\) in \cref{eqn:det_ode} is independent of time), we can gain this insight by using classical methods in dynamical systems, such as phase portrait analysis and identifying unstable and stable manifolds.
 For example, unstable and stable manifolds cannot be intersected by solution trajectories, and so can act as barriers for the transport of material within a flow.
 However, when the system is non-autonomous (that is, the vector field explicitly depends on time \(t\)), these structures can themselves vary with time and the problem of identifying them is far more non-trivial.
-Another complication is that in practice the data driving a system is only available over a finite time-frame, whereas classical dynamical systems techniques often tell us about the long-term (in the infinite time limit) behaviour of solutions.
+Another complication is that in practice the data driving a system is only available over a finite timeframe, whereas classical dynamical systems techniques often tell us about the long-term (in the infinite time limit) behaviour of solutions.
 Lagrangian coherent structure theory provides a mathematical framework for defining and identifying such structures within a given flow \citep{BalasuriyaEtAl_2018_GeneralizedLagrangianCoherent}.
-There are many procedures and heuristics for extracting these regions from a given flow, which draw upon different mathematical techniques, including classical dynamical system theory, variational calculus, transfer-operators, and statistical clustering.
+There are many procedures and heuristics for extracting these regions from a given flow, which draw upon different mathematical techniques, including classical dynamical system theory, variational calculus, transfer operators, and statistical clustering.
 Detailed reviews of approaches to Lagrangian coherent structure extraction are provided by \citet{PeacockDabiri_2010_IntroductionFocusIssue}, \citet{HadjighasemEtAl_2017_CriticalComparisonLagrangian}, and \citet{BalasuriyaEtAl_2018_GeneralizedLagrangianCoherent}.
 
 Coherent structures can provide valuable qualitative insight into the behaviour of a flow, by providing an outline of the transport properties and underlying dynamics.
 An example is in the study of the spread of the oil slick resulting from the 2010 Deepwater Horizon disaster in the Gulf of Mexico (see \Cref{fig:lcs_deepwater}).
-Investigations into showed that the behaviour of the slick, including a sudden and unexpected extension of the slick, could be understood and therefore predicted in future cases by using Lagrangian coherent structures and the insight they provide \citep{OlascoagaEtAl_2013_DrifterMotionGulf,OlascoagaHaller_2012_ForecastingSuddenChanges,MezicEtAl_2010_NewMixingDiagnostic}.
+Investigations showed that the behaviour of the slick, including a sudden and unexpected extension of the slick, could be understood and therefore predicted in future cases by using Lagrangian coherent structures and the insight they provide \citep{OlascoagaEtAl_2013_DrifterMotionGulf,OlascoagaHaller_2012_ForecastingSuddenChanges,MezicEtAl_2010_NewMixingDiagnostic}.
 This approach explained dynamics that were otherwise poorly understood due to the time-varying and complex nature of the flow.
 
 One of the most well-studied and frequently used procedures for extracting Lagrangian coherent structures is via the finite-time Lyapunov exponent (FTLE), which is a measure quantifying the stretching of infinitesimal regions of the flow over a time period.
 The FTLE can be computed as a scalar field over a set of initial conditions, from which the maximising ridges can correspond to flow barriers \citep{ShaddenEtAl_2005_DefinitionPropertiesLagrangian}.
 Importantly, the finite-time Lyapunov exponent can be computed only using the gradients of the flow map, which ensures a highly practical and flexible procedure that can be used across many different contexts.
-The FTLE is an example of a common class of LCS methods that first compute a field over a set of initial conditions, and then extracts coherent structures based on that field.
+The FTLE is an example of a common class of LCS methods that first compute a field over a set of initial conditions and then extracts coherent structures based on that field.
 
 % One of the best known procedures for extracting LCSs is via the finite-time Lyapunov exponent (FTLE) \citep{ShaddenEtAl_2005_DefinitionPropertiesLagrangian}, which is a measure quantifying the stretching of infinitesimal regions of a flow over a finite time period.
 % Take an initial condition \(x\) and let \(F_0^t\) represent the flow map of our system over the time interval \([0,t]\).
@@ -553,17 +551,17 @@ The FTLE is an example of a common class of LCS methods that first compute a fie
 % \end{figure}
 
 
-Most well-established LCS frameworks and extraction procedures are purely deterministic, in that they are defined and compute solely in terms of the behaviour of the underlying ordinary differential equation.
+Most well-established LCS frameworks and extraction procedures are purely deterministic, in that they are defined and computed solely in terms of the behaviour of the underlying ordinary differential equation.
 However, uncertainty in such systems is inevitable in practice and these methods fail to explicitly account for this.
 Accordingly, there is an emerging interest \citep{Balasuriya_2020_StochasticApproachesLagrangian} in extending LCS theory to stochastic settings.
 There are two primary ways in which stochastic has been recently investigated in the LCS community:
 \begin{romanate}
 	\item in creating novel procedures that explicitly account for such ongoing uncertainty, such as by using properties of corresponding stochastic systems.
 	For example, see (in \Cref{sec:s2_summ}) stochastic sensitivity introduced by \citet{Balasuriya_2020_StochasticSensitivityComputable}, model sensitivity introduced by \citet{KaszasHaller_2020_UniversalUpperEstimate}, and the finite-time divergence rate by \citet{BranickiUda_2023_PathBasedDivergenceRates}.
-	These are scalar fields defined on initial conditions that measure the certainty in the corresponding deterministic trajectories, and can be used to extract coherent regions in similar ways to deterministic methods.
+	These are scalar fields defined on initial conditions that measure the certainty in the corresponding deterministic trajectories and can be used to extract coherent regions in similar ways to deterministic methods.
 	As another example, \citet{DennerEtAl_2016_ComputingCoherentSets} directly compute coherent sets by working with a discretised Fokker-Planck equation, which is a partial differential equation that governs the probability density function of an SDE solution (a brief overview is provided in \Cref{sec:disc_fp}).
-	This Fokker-Planck approach extends the transfer-operator method of \citet{Froyland_2013_AnalyticFrameworkIdentifying}, which is a popular method for LCS detection and extraction by encoding how densities are pushed forward by the flow.
-	Until recently the transfer-operator, at least in the context of Lagrangian analysis, has been viewed as purely deterministic, but provides a framework for naturally including velocity field uncertainties that is only recently being explored \citet{Balasuriya_2020_StochasticApproachesLagrangian}.
+	This Fokker-Planck approach extends the transfer operator method of \citet{Froyland_2013_AnalyticFrameworkIdentifying}, which is a popular method for LCS detection and extraction by encoding how densities are pushed forward by the flow.
+	Until recently the transfer-operator, at least in the context of Lagrangian analysis, has been viewed as purely deterministic but provides a framework for naturally including velocity field uncertainties that is only recently being explored \citet{Balasuriya_2020_StochasticApproachesLagrangian}.
 
 	\item in understanding the direct impact of velocity uncertainty on well-established deterministic LCS measures.
 	\citet{BadzaEtAl_2023_HowSensitiveAre} provide a systematic analysis, using Monte Carlo simulation and summary statistics to evaluate the robustness of several common LCS extraction schemes to velocity uncertainty.
@@ -571,7 +569,7 @@ There are two primary ways in which stochastic has been recently investigated in
 	The finite-time Lyapunov exponent has received particular attention, with recent studies aiming to quantify the impact of velocity field uncertainty on the FTLE computation: \citet{GuoEtAl_2016_FiniteTimeLyapunovExponents} use stochastic simulation and statistical analysis, \citet{Balasuriya_2020_UncertaintyFinitetimeLyapunov} provides theoretical error bounds on the FTLE computation, and \citet{YouLeung_2021_ComputingFiniteTime} propose an approach for computing the (statistically) expected FTLE field.
 
 \end{romanate}
-In this thesis, we are primarily interested point (i), by exploring how our characterisations of uncertainty can be applied to extract coherent structures.
+In this thesis, we are primarily interested in point (i), by exploring how our characterisations of uncertainty can be applied to extract coherent structures.
 This is directly extending the stochastic sensitivity of \citet{Balasuriya_2020_StochasticSensitivityComputable}, which is summarised in \Cref{sec:s2_summ}.
 We will also discuss (in \Cref{ch:outlook}) how we anticipate our work could be applied to point (ii), as a quantification of uncertainty in computations involving the flow map in other LCS schemes.
 
@@ -655,7 +653,7 @@ The statistics of \(z_\epsilon\!\left(x_0\right)\) and \(P_\epsilon\!\left(x_0,\
 		\def\vecl{sqrt(1.4^2 + 1.6^2)};
 		\def\projtheta{pi/7};
 		\def\projphi{atan(1.6 / 1.4) * pi / 180}
-		\path[red] (5,0.5) edge node[right, xshift=5pt] {\(\epsilon P_{\epsilon}\!\left(x,\theta\right)\)} ({5 +\vecl*cos((\projphi - \projtheta) r) * cos(\projtheta r)}, {0.5 + \vecl* cos((\projphi - \projtheta) r) * sin(\projtheta r)});
+		\path[red] (5,0.5) edge node[right, xshift=5pt] {\(\epsilon P_{\epsilon}\!\left(x_0,\theta\right)\)} ({5 +\vecl*cos((\projphi - \projtheta) r) * cos(\projtheta r)}, {0.5 + \vecl* cos((\projphi - \projtheta) r) * sin(\projtheta r)});
 
 		\path[dashed, gray] (6.4, 2.1) edge ({5 + \vecl * cos((\projphi - \projtheta) r) * cos(\projtheta r)}, {0.5 + \vecl * cos((\projphi - \projtheta) r) * sin(\projtheta r)});
 

@@ -273,7 +273,7 @@ However, we do not enforce a particular approach for selecting these points and 
 		\fill[blue] ($(0,0)+(-90:70pt and 40pt)$) circle[radius=1pt] node[anchor=north] {\(x^{(4)}\)};
 		\fill[blue] ($(0,0)+(180:70pt and 40pt)$) circle[radius=1pt] node[anchor=east] {\(x^{(5)}\)};
 	\end{tikzpicture}
-	\caption{The splitting of a \(2\)-dimensional mean \(x\) and \(2\times 2\) covariance matrix \(\Sigma\) (in black) into 5 sigma points \(x^{(1)}, \dotsc, x^{(4)}\) (in blue), using the canonical set \cref{eqn:uhlman_sigma}.
+	\caption{The splitting of a \(2\)-dimensional mean \(x\) and \(2\times 2\) covariance matrix \(\Sigma\) (in black) into 5 sigma points \(x^{(1)}, \dotsc, x^{(5)}\) (in blue), using the canonical set \cref{eqn:uhlman_sigma}.
 		The mean \(x\) is preserved as one of the points, and the four others are placed at the vertices and co-vertices of the first standard deviation ellipse of \(\Sigma\).}
 	\label{fig:sigma_points_ex}
 \end{figure}
@@ -412,7 +412,7 @@ The mixture model algorithm is then as follows:
 		\draw[dashed, rotate around = {30: (3, -13)}, red] (8,-18) ellipse[x radius=10pt, y radius=50pt, rotate=15];
 
 	\end{tikzpicture}
-	\caption[The propagation and splitting of a component in the Gaussian mixture model:]{The propagation and splitting of a component in the Gaussian mixture model:
+	\caption[The propagation and splitting of a component in the Gaussian mixture model.]{The propagation and splitting of a component in the Gaussian mixture model:
 		\begin{enumerate*}
 			% \item Start with the mean \(x\) and covariance matrix \(\Sigma_0\) for a component of the mixture model.
 			\item The mean \(x\) and covariance matrix \(\Sigma\) of a component is propagated forward through the linearised SDE, by solving \cref{eqn:gauss_de} to obtained \(w_t\) and \(\Pi_t\) respectively.
@@ -493,9 +493,8 @@ One can easily enforce an upper limit on the number of components, by preventing
 	\centering
 	\includegraphics[width=\textwidth]{chp05_gmm/figures/bene_final_gmm}
 	\caption{The mixture model algorithm implemented on the Bene\v{s} SDE \cref{eqn:bene_sde} with fixed initial condition \(x_0 = 0.5\) and over the time interval \((0,5)\).
-		The probability density function of the true solution is shown in solid black and the corresponding linearisation solution in dashed red.
-		The Gaussian mixture model density is overlaid in blue.
-		A single split into three canonical sigma points (using \cref{eqn:uhlman_sigma} at time \(\tau = 0.8\)).}
+		The probability density function of the true solution is shown in solid black and the corresponding linearisation solution in dashed red (as in \Cref{fig:bene_gauss}).
+		The Gaussian mixture model density is overlaid in blue, constructed using a single split into three canonical sigma points (using \cref{eqn:uhlman_sigma}) at time \(\tau = 0.8\)).}
 	\label{fig:bene_gmm}
 \end{figure}
 

@@ -4,6 +4,8 @@ using KernelDensity
 using StochasticDiffEq
 using PyPlot
 
+include("pyplot_setup.jl")
+
 Random.seed!(19999999995567)
 
 function u_sin(x, _, _)
@@ -24,10 +26,6 @@ rels = [sol[i].u for i in 1:N]
 # Solution without noise
 Fs = @. 2 * acot(exp(-ts) * cot(1 / 2))
 
-rcParams = PyPlot.PyDict(PyPlot.matplotlib."rcParams")
-rcParams["text.usetex"] = true
-rcParams["font.family"] = "serif"
-rcParams["font.size"] = "14"
 
 # Estimate the KDE
 k = InterpKDE(kde(getindex.(rels, length(ts)); bandwidth=0.5))
@@ -44,7 +42,7 @@ begin
 
     # Plot the first ten realisations
     for n in 1:5
-        ax1.plot(ts, rels[n], alpha=0.8)
+        ax1.plot(ts, rels[n], alpha=0.7, linewidth=0.5)
     end
 
     ax1.plot(ts, Fs, color="black")
@@ -58,7 +56,7 @@ begin
     xgrid = range(-7, stop=7, length=10000)
     ax2.plot(xgrid, pdf.(Ref(k), xgrid), "k-")
 
-    # fig.set_size_inches(6, 3)
-    fig.savefig("../../thesis/chp02_background/figures/ou_solution.pdf", bbox_inches="tight", dpi=600)
+    fig.subplots_adjust(wspace=0.1)
+    fig.savefig("ou_solution.pdf", bbox_inches="tight", dpi=600)
     close(fig)
 end

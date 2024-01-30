@@ -7,7 +7,7 @@ The remaining sections of this chapter cover:
 	\item In \Cref{sec:disc_sigma}, we discuss approaches to selecting the diffusivity matrix \(\sigma\).
 	\item In \Cref{sec:disc_bc}, we discuss the difficulties that boundary conditions can present to our methods.
 	\item In \Cref{sec:disc_fp}, we introduce the Fokker-Planck equation, which provides an alternative view on the solution of a stochastic differential equation, and discuss how this perspective can further our theoretical understanding.
-	\item In \Cref{sec:disc_levy}, we discuss the possibility of replacing the Wiener process in the driving stochastic differential equation with a more general L\'evy processes.
+	\item In \Cref{sec:disc_levy}, we discuss the possibility of replacing the Wiener process in the driving stochastic differential equation with a more general L\'evy process.
 	\item In \Cref{sec:disc_higher}, we discuss the extension of our theory in \Cref{ch:linear_theory} to include higher-order terms in the small-noise expansion of the SDE.
 	\item In \Cref{sec:s2_disc}, we discuss the implications of our extension to stochastic sensitivity and the applications thereof.
 	\item In \Cref{sec:epi_disc}, we draw analogies between our theoretical work and results for the limits of population processes, a class of stochastic models evolving on a stochastic model.
@@ -26,7 +26,7 @@ We also provided an explicit characterisation of the distribution of the solutio
 In \Cref{sec:theory_fixed} and \Cref{sec:theory_gauss} we highlighted two application-relevant special cases: when the initial condition is fixed and when it is Gaussian respectively.
 Coupled with an efficient computational scheme for computing the moments of the linearisation solution (the \citet{Mazzoni_2008_ComputationalAspectsContinuous} method, summarised in \Cref{sec:mazzoni}), we have provided a rigorous (in the sense of a bound and a limit) framework for approximating small-noise SDEs with linearisations about the solutions of their corresponding deterministic systems.
 
-Our next contribution was to provide theoretical and computational extension to the stochastic sensitivity tools introduced by \citet{Balasuriya_2020_StochasticSensitivityComputable}.
+Our next contribution was to extend the stochastic sensitivity tools introduced by \citet{Balasuriya_2020_StochasticSensitivityComputable}.
 Stochastic sensitivity was hitherto derived as the variance of an unknown limiting distribution and could only be computed in two spatial dimensions.
 We provided a new definition of stochastic sensitivity that extends the original to any number of dimensions and is computable as the operator norm of the covariance matrix of the linearised SDE (for which we outlined the computation of in \Cref{thm:limit_sol} and \Cref{cor:limit_moments}).
 We have also established that the limiting distribution in question is Gaussian (as the computation is related directly to a linearised SDE with a fixed initial condition), which may provide insight into properties of stochastic sensitivity as a means of uncertainty quantification in \emph{any} model (not just in the fluids context) where an \(n\)-dimensional state variable evolves according to a ``best available'' deterministic model.
@@ -38,22 +38,22 @@ In particular, we found that the strong error scales with the initial uncertaint
 We also demonstrated the new computation of stochastic sensitivity in two dimensions (in \Cref{sec:compute_s2_2d}) and, for the first time, in 3-dimensions (in \Cref{sec:comput_s2_3d}).
 
 Although linearisation approximations of SDEs have proven to be useful in both applications and as a theoretical tool (e.g.\ stochastic sensitivity), in \Cref{ch:gmm} we highlighted that there are limitations to using such approximations, particularly when the resulting linearisation solution is a Gaussian process.
-A Gaussian approximation cannot capture features such as skew and multimodality, despite these distinctly non-Gaussian attributes arising both in the solutions of nonlinear and multiplicative noise SDEs, and in observed statistics \citep{SuraEtAl_2005_MultiplicativeNoiseNonGaussianity,del-Castillo-Negrete_1998_AsymmetricTransportNonGaussian,BraccoEtAl_2000_VelocityProbabilityDensity}.
+A Gaussian approximation cannot capture features such as skew and multimodality, despite these distinctly non-Gaussian attributes arising both in the solutions of nonlinear and multiplicative noise SDEs and observed statistics \citep{SuraEtAl_2005_MultiplicativeNoiseNonGaussianity,del-Castillo-Negrete_1998_AsymmetricTransportNonGaussian,BraccoEtAl_2000_VelocityProbabilityDensity}.
 To overcome these limitations while still taking advantage of the computationally efficient linearisation approximation, we proposed an \emph{ad hoc} algorithm that uses a splitting process to approximate SDE solutions with a Gaussian mixture model.
-Each component of the mixture model arises from a solution of the SDE linearised about a \emph{different} deterministic trajectory, which can capture uncertainty in different regions of the state spoace.
-With a simple propagation-splitting procedure, the algorithm is able to capture multimodality, skewness, and other departures from Gaussianity to provide an approximation that improves upon a single Gaussian component but does not require the computational expense of bulk simulation.
+Each component of the mixture model arises from a solution of the SDE linearised about a \emph{different} deterministic trajectory, which can capture uncertainty in different regions of the state space.
+With a simple propagation-splitting procedure, the algorithm can capture multimodality, skewness, and other departures from Gaussianity to provide an approximation that improves upon a single Gaussian component but does not require the computational expense of bulk simulation.
 Another advantage of this algorithm is that it provides a probability density function that can be evaluated analytically, as opposed to stochastic samples which require an additional step to construct a density function estimate.
-Our aim throughout was to outline the algorithm and demonstrate the potential of it on several simple implementations, rather than explore the specifics of each step or analysing mathematically.
-Instead, we briefly discussed some suggestions for these specifics throughout \Cref{ch:gmm} but leave a thorough investigation further theoretical development as future work.
+Our aim throughout was to outline the algorithm and demonstrate its potential on several simple implementations, rather than explore the specifics of each step or perform a mathematical analysis.
+Instead, we briefly discussed some suggestions for these specifics throughout \Cref{ch:gmm} while leaving a thorough investigation further as future work.
 
 In \Cref{ch:appls}, we applied the developments of the previous chapters to a data-driven model.
-Using satellite-measured velocity data, we constructed two 2-dimensional models for them motion of a drifter on the surface of the Gulf Stream in the North Atlantic ocean.
+Using satellite-measured velocity data, we constructed two 2-dimensional models for the motion of a drifter on the surface of the Gulf Stream in the North Atlantic Ocean.
 The first was a purely deterministic ordinary differential equation, using only the interpolated velocity data.
 The second was a stochastic extension of the first, a stochastic differential equation that ``improved'' upon the ODE by accounting for measurement errors in the velocity data and unresolved effects due to the spatial resolution of the data.
 By computing stochastic sensitivity, we used the stochastic model to diagnose the reliability of the deterministic model over the spatial domain of the data.
 We then focussed our attention on a single solution trajectory, corresponding to the motion of the drifter starting from a fixed initial condition.
 The stochastic model produced a highly non-Gaussian distribution (estimated from Euler-Maruyama samples) for the position of the drifter at a given time.
-We compared to this empirical distribution the Gaussian approximation arising from a linearisation of the stochastic model about the deterministic trajectory, but found that the Gaussian density was limited in its ability to represent key features of this distribution.
+We compared to this empirical distribution the Gaussian approximation arising from a linearisation of the stochastic model about the deterministic trajectory but found that the Gaussian density was limited in its ability to represent key features of this distribution.
 Motivated by this, we explored two simple implementations of the mixture model algorithm, using the Hellinger distance to `tune' the implementation with reference to the stochastic samples.
 The mixture model showed highly promising results on this example trajectory; with only 2 splits and 25 components, the algorithm was able to closely recreate the highly non-Gaussian distribution (in \Cref{fig:na_2split_best}).
 % \td{Make sure you emphasise that we only demonstrated the mixture model on contrived examples and cheated}
