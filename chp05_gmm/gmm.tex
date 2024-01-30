@@ -31,13 +31,13 @@ By taking the mean \(x_s\) as the initial condition to \cref{eqn:det_ode_gmm}, w
 The solution to \cref{eqn:sde_linear_gmm} is then a Gaussian process characterised by the mean \(F_s^t\!\left(x_0\right)\) and covariance matrix \(\var{l_t}\), for which explicit expressions for are given in \Cref{cor:limit_moments}.
 For notational brevity, set \(w_t \equiv F_s^t\!\left(x_s\right)\) and \(\Pi_t \equiv \var{l_t}\).
 When the Jacobian \(\nabla u\) of the vector field \(u\) is available, or can approximated appropriately, the moments of the Gaussian solution can be obtained by the system of ordinary differential equations
-\begin{subequations}\label{eqn:gauss_de}
+\begin{subequations}\label{eqn:gauss_de_gmm}
 	\begin{align}
-		\dod{w_t}{t}   & = u\!\left(w_t, t\right), \quad w_s = x_0 \label{eqn:gauss_mean_de}                                                                                                           \\
+		\dod{w_t}{t}   & = u\!\left(w_t, t\right), \quad w_s = x_0 \label{eqn:gauss_mean_de_gmm}                                                                                                       \\
 		\dod{\Pi_t}{t} & = \begin{multlined}[t]
 			                   \nabla u\!\left(w_t, t\right) \Pi_t + \Pi_t\left[\nabla u\left(w_t, t\right)\right]^{\T} + \sigma\left(w_t, t \right)\sigma\left(w_t, t\right)^{\T}, \quad \Pi_s = \Sigma_s.
 		                   \end{multlined}
-		\label{eqn:gauss_cov_de}
+		\label{eqn:gauss_cov_de_gmm}
 	\end{align}
 \end{subequations}
 In practice, \cref{eqn:gauss_de} must be solved numerically, but can be more computationally efficient than the alternative of generating many realisations of \cref{eqn:sde_y_gmm}.

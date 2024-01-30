@@ -1,65 +1,45 @@
 %!TEX root = ../thesis.tex
 
 \chapter{Characterising SDE linearisations: the numerics}\label{ch:linear_numerics}
-In this chapter, we provide numerical validation of the results in \Cref{ch:linear_theory} on example stochastic differential equations.
-A majority of the context this chapter again appears in the submitted article \citep{BlakeEtAl_2023_ConvergenceStochasticDifferential}.
-The overview in \Cref{sec:mazzoni} of an algorithm for efficiently solving the mean-covariance equations for the linearisation approximation does not appear in the submitted article.
-\Cref{sec:comput_s2_3d} provides an example of stochastic sensitivity computed for a three-dimensional system, which also does not appear in the article.
+We now provide numerical validation of the results in \Cref{ch:linear_theory} on four different example stochastic differential equations in one-, two-, and three-dimensions.
+A majority of the content in this chapter again appears in the submitted article \citep{BlakeEtAl_2023_ConvergenceStochasticDifferential}.
+However, the overview in \Cref{sec:mazzoni} of an algorithm \citep{Mazzoni_2008_ComputationalAspectsContinuous} for efficiently solving the mean-covariance equations for the linearisation approximation and \Cref{sec:comput_s2_3d}, where we provide an example of stochastic sensitivity computed for a three-dimensional system, do not appear in the submitted article.
 
-\section{Mazzoni's method}\label{sec:mazzoni}
+\section{The Mazzoni method}\label{sec:mazzoni}
 \td{Update equation references! Relate to stuff in the paper, not the later chapter!!}
-\td{Comment on how the method only relies on matrix operations, efficient and scales well!}
+In \Cref{cor:limit_moments}, we established expressions for the first two moments of the solution \(l_t^{(\epsilon)}\) of the solution \(l_t^{(\epsilon)}\) to the linearisation \cref{eqn:linear_sde_inform} of the SDE \cref{eqn:sde_y}.
+When the initial condition of the SDE is fixed or Gaussian---a case often used in practice and one which we restrict ourselves to in this chapter---the linearisation solution \(l_t^{(\epsilon)}\) is also Gaussian and characterised entirely by those two moments.
+The mean is given by the deterministic trajectory \(F_0^t\!\left(x_0\right)\) about which \cref{eqn:sde_y} was linearised and the variance can be computed by solving the matrix differential equation \cref{eqn:pi_ode} in \Cref{rem:cov_ode}.
+The deterministic trajectory \(F_0^t\!\left(x_0\right)\) is obtained by solving the deterministic equation \cref{eqn:det_ode}, so we can re-frame the computation of \(l_t^{(\epsilon)}\) as the joint solving of a pair of differential equations.
+Suppose that the initial condition \(y_0^{(\epsilon)} = l_t^{(\epsilon)}\) is Gaussian with mean \(x_0\) and covariance matrix \(\Sigma_0\).
+For notational brevity, set \(w_t \equiv F_0^t\!\left(x_0\right)\) and \(\Pi_t \equiv \var{l_t}\), so that at any time \(t\)
+\[
+	l_t^{(\epsilon)} \isGauss{w_t, \, \Pi_t}.
+\]
+We can then compute \(w_t\) and \(\Pi_t\) by solving the system of ordinary differential equation
+\begin{subequations}\label{eqn:gauss_de}
+	\begin{align}
+		\dod{w_t}{t}   & = u\!\left(w_t, t\right), \quad w_0 = x_0 \label{eqn:gauss_mean_de}                                                                                                                    \\
+		\dod{\Pi_t}{t} & = \begin{multlined}[t]
+			                   \nabla u\!\left(w_t, t\right) \Pi_t + \Pi_t\left[\nabla u\left(w_t, t\right)\right]^{\T} + \epsilon \sigma\left(w_t, t \right)\sigma\left(w_t, t\right)^{\T}, \quad \Pi_0 = \Sigma_0.
+		                   \end{multlined}
+		\label{eqn:gauss_cov_de}
+	\end{align}
+\end{subequations}
+where \cref{eqn:gauss_mean_de} is \cref{eqn:det_ode} and \cref{eqn:gauss_cov_de} comes from \cref{eqn:pi_ode}.
+Solving \cref{eqn:gauss_de} jointly can provide a more convenient computation to obtain the distribution of the linearisation solution in practice than evaluating \cref{eqn:mean_expl_eqn} and \cref{eqn:pi_expl_eqn} directly.
+
 An important consideration  when solving \cref{eqn:gauss_de} numerically is that \(\Pi_t\) represents a covariance matrix and must remain symmetric and positive semi-definite.
 However, many standard numerical ODE schemes do not take this into account, so a specialised scheme is required.
 Similar equations of the form \cref{eqn:gauss_de} (although often without explicit dependence on both time and the state in the \(\sigma\) term) are solved numerically in other applications, notably when implementing the extended Kalman filter \citep{Jazwinski_2014_StochasticProcessesFiltering, KulikovaKulikov_2014_AdaptiveODESolvers}.
-\citet{KulikovaKulikov_2014_AdaptiveODESolvers} identify that that the two most significant sources of numerical error when solving \cref{eqn:gauss_de} are a) the estimate of the covariance matrix \(\Sigma_s^t\) violating the requirement of positive semi-definiteness, and b) local error propagation in the state equation.
-Moreover, a computationally efficient algorithm is critical to ensure that our approximate methods have an advantage over bulk Monte-Carlo simulation.
+\citet{KulikovaKulikov_2014_AdaptiveODESolvers} identify that that the two most significant sources of numerical error when solving equations of this form are a) the estimate of the covariance matrix \(\Sigma_s^t\) violating the requirement of positive semi-definiteness, and b) local error propagation in the state equation.
+Moreover, a computationally efficient algorithm is critical to ensure that the linearisation approximation has an advantage over bulk Monte-Carlo simulation.
 
-\citet{Mazzoni_2008_ComputationalAspectsContinuous} proposes an efficient hybrid method for solving \cref{eqn:gauss_de} which addresses both difficulties a) and b) and takes advantage of the availability of \(\nabla u\).
+\citet{Mazzoni_2008_ComputationalAspectsContinuous} proposes an efficient hybrid method for solving \cref{eqn:gauss_de} which addresses both difficulties a) and b) and takes advantage of the availability of the Jacobian \(\nabla u\).
 This method, which we shall term the Mazzoni method, combines a Taylor-Heun approximation for \cref{eqn:gauss_mean_de} and a Gauss-Legendre step for \cref{eqn:gauss_cov_de}.
-With a step size of \(\delta t\), integration for both the state variable and the covariance matrix are convergent with order \(\mathcal{O}\!\left(\delta t^2\right)\).
-Moreover, \citet{Mazzoni_2008_ComputationalAspectsContinuous} shows through numerical simulations that the algorithm is computationally efficient when compared to alternatives with moderate precision.
+With a step size of \(\delta \tau\), integration for both the state variable and the covariance matrix are convergent with order \(\mathcal{O}\!\left(\delta \tau^2\right)\).
+Moreover, \citet{Mazzoni_2008_ComputationalAspectsContinuous} shows through numerical simulations that the algorithm is computationally efficient when compared to alternatives with moderate precision, and since the algorithm relies on matrix operations, it scales well with the dimension of the model.
 We therefore employ the Mazzoni method for all subsequent computations of the linearisation solution.
-
-The Mazzoni algorithm is summarised in the following.
-Further details on the derivation of these equations is available in the original article \citep{Mazzoni_2008_ComputationalAspectsContinuous}.
-The Taylor-Heun formula for the update of the state over the interval \([t, t + \delta t]\) is
-\begin{subequations}\label{eqn:mazzoni_update}
-	\begin{equation}
-		w_{t + \delta t} \approx w_t + \left(I - \frac{\delta t}{2}\nabla u\left(w_t, t\right)\right)^{-1}.
-		\label{eqn:mazzoni_state_update}
-	\end{equation}
-	The Gauss-Legendre update of the covariance matrix is
-	\begin{equation}
-		\Pi_{t + \delta t} \approx M_\tau \Pi_t M_\tau^{\T} + \delta t K_\tau \sigma\left(w_\tau,\, t + \frac{\delta t}{2}\right)\sigma\left(w_\tau,\, t + \frac{\delta t}{2}\right)^{\T} K_\tau^{\T},
-		\label{eqn:mazzoni_cov_update}
-	\end{equation}
-	where
-	\begin{align}
-		w_\tau & = \frac12\left(w_t + w_{t + \delta t} - \frac{\delta t^2}{4}\nabla u\left(w_t, \, t\right) u\left(w_t, \, t\right)\right) \label{eqn:mazzoni_cov_terms1} \\
-		K_\tau & = \left[I - \frac{\delta t}{2}\nabla u\left(w_\tau,\, t + \frac{\delta t}{2}\right)\right]^{-1}                                                          \\
-		M_\tau & = K_\tau \left[I + \frac{\delta t}{2}\nabla u\left(w_\tau,\, t + \frac{\delta t}{2}\right)\right] \label{eqn:mazzoni_cov_terms3}.
-	\end{align}
-	The vector \(w_\tau\) serves as an interpolation between \(w_t\) and \(w_{t + \delta t}\) for the state at time \(t + \delta t / 2\), which is used to provide a more accurate approximation of the covariance matrix.
-	\citet{Mazzoni_2008_ComputationalAspectsContinuous} also provides the option of an adaptive time step to fix the numerical precision while ensuring a computationally efficient algorithm.
-	The step size is adjusted by monitoring the error in the estimation of the state variable, aiming to maintain a specified tolerance level \(\gamma > 0\).
-	Given the error vector \(\mathcal{E}\) for each component of the state approximation, the maximum total-relative error is
-	\begin{equation}\label{eqn:mazzoni_e}
-		\hat{\gamma} = \max_{i = 1,\dots,n}\frac{\abs{\mathcal{E}^{(i)}}}{\abs{w_{t + \delta t}^{(i)}} + 1}
-	\end{equation}
-	where \(\mathcal{E}^{(i)}\) and \(w_{t + \delta t}^{(i)}\) denote the respective \(i\)th elements of \(\mathcal{E}\) and \(w_{t + \delta t}\).
-	The resulting adjustment factor for the time step is
-	\begin{equation}\label{eqn:mazzoni_step}
-		\delta t_{\mathrm{new}} = \beta \delta t \sqrt{\frac{\gamma}{\hat{\gamma}}}.
-	\end{equation}
-	The factor \(\beta\) is a control parameter inserted to avoid frequent recalculations of the step size, and is specified prior.
-	\citet{Mazzoni_2008_ComputationalAspectsContinuous} suggests setting \(\beta = 0.8\).
-	By again taking advantage of the availability of the Jacobian \(\nabla u\), the error vector is approximated as
-	\begin{equation}\label{eqn:mazzoni_err}
-		\mathcal{E} \approx \frac{\delta t^2}{2}\left[\frac{1}{3\delta t}\left(\nabla u\!\left(w_{t + \delta t}, t + \delta t\right) - \nabla u\!\left(w_t, t\right)\right) - \frac{1}{6}\nabla u\!\left(w_t, t\right)^2\right] u\!\left(w_t, t\right).
-	\end{equation}
-\end{subequations}
-The set of equations \cref{eqn:mazzoni_update} describe the Mazzoni algorithm, and in \Cref{fig:mazzoni_alg} we summarise the full algorithm with an adaptive step size.
 
 \begin{figure}
 	\begin{center}
@@ -67,21 +47,21 @@ The set of equations \cref{eqn:mazzoni_update} describe the Mazzoni algorithm, a
 		\begin{tikzpicture}[node distance=70pt]
 			\tikzstyle{arrow} = [->,>=stealth]
 
-			\node (s) [rectangle, rounded corners, draw=black, align=center] {\textbf{Start} \\ Given \(s, T, x_s, \Sigma_s\) \\ Choose \(\delta t_{\mathrm{min}}, \beta, \gamma\)};
+			\node (s) [rectangle, rounded corners, draw=black, align=center] {\textbf{Start} \\ Given \(t, x_0, \Sigma_0\) \\ Specify \(\delta \tau_{\mathrm{min}}, \beta, \gamma\)};
 
-			\node (a) [rectangle, below of=s, draw=black, align=center, yshift=-10pt] {Set \(t_0 = s\) \\ Set \(w_{t_0} = x_s\) \\ Set \(\Pi_{t_0} = \Sigma_s\) Set \(\delta t = \delta t_{\mathrm{min}}\) \\ Set \(k = 0\)};
-			\node (b) [rectangle, below of=a, draw=black, align=center, yshift=-20pt] {Set \(t_{k+1} = t_k + \delta t\) \\ Compute \(w_{t_{k+1}}\) with \cref{eqn:mazzoni_state_update} \\
-				Compute \(e\) with \cref{eqn:mazzoni_e} \\ Set \(\delta t_{\mathrm{new}} = \max\left\{\delta t_{\mathrm{min}}, \beta \delta t \sqrt{\frac{\gamma}{\hat{\gamma}}}\right\}\)};
+			\node (a) [rectangle, below of=s, draw=black, align=center, yshift=-10pt] {Set \(\tau_0 = 0\) \\ Set \(w_{\tau_0} = x_0\) \\ Set \(\Pi_{\tau_0} = \Sigma_0\) Set \(\delta \tau = \delta \tau_{\mathrm{min}}\) \\ Set \(k = 0\)};
+			\node (b) [rectangle, below of=a, draw=black, align=center, yshift=-20pt] {Set \(\tau_{k+1} = \tau_k + \delta \tau\) \\ Compute \(w_{\tau_{k+1}}\) with \cref{eqn:mazzoni_state_update} \\
+				Compute \(e\) with \cref{eqn:mazzoni_e} \\ Set \(\delta \tau_{\mathrm{new}} = \max\left\{\delta \tau_{\mathrm{min}}, \beta \delta \tau \sqrt{\frac{\gamma}{\hat{\gamma}}}\right\}\)};
 
-			\node (d) [diamond, below of=b, draw=black, align=center, yshift=-40pt] {\(\hat{\gamma} \leq \gamma\) or \\ \(\delta t \leq \delta t_{\mathrm{min}}\)?};
-			\node (c) [rectangle, left of=d, draw=black, align=center, xshift=-75pt] {Set \(\delta_t = \delta_{\mathrm{new}}\)};
+			\node (d) [diamond, below of=b, draw=black, align=center, yshift=-40pt] {\(\hat{\gamma} \leq \gamma\) or \\ \(\delta \tau \leq \delta \tau_{\mathrm{min}}\)?};
+			\node (c) [rectangle, left of=d, draw=black, align=center, xshift=-75pt] {Set \(\delta\tau = \delta \tau_{\mathrm{new}}\)};
 
-			\node (e) [rectangle, below of=d, draw=black, align=center, yshift=-20pt] {Compute \(\Pi_{t_{k+1}}\) with \crefrange{eqn:mazzoni_cov_terms1}{eqn:mazzoni_cov_terms3} \\ Set \(k = k + 1\)};
+			\node (e) [rectangle, below of=d, draw=black, align=center, yshift=-20pt] {Compute \(\Pi_{\tau_{k+1}}\) with \crefrange{eqn:mazzoni_cov_terms1}{eqn:mazzoni_cov_terms3} \\ Set \(k = k + 1\)};
 
-			\node (f) [diamond, below of=e, draw=black, align=center] {\(t_k = T\)?};
+			\node (f) [diamond, below of=e, draw=black, align=center] {\(\tau_k = t\)?};
 
 			\node (g) [rectangle, rounded corners, left of=f, draw=black, align = center, xshift = -30pt] {\textbf{Stop}};
-			\node (h) [rectangle, right of=f, draw=black, align = center, xshift = 75pt] {\(\delta t = \min\left\{\delta t_{\mathrm{new}}, T - t_k\right\}\)};
+			\node (h) [rectangle, right of=f, draw=black, align = center, xshift = 75pt] {\(\delta \tau = \min\left\{\delta \tau_{\mathrm{new}}, t - \tau_k\right\}\)};
 
 			\draw [arrow] (s) -- (a);
 
@@ -100,19 +80,58 @@ The set of equations \cref{eqn:mazzoni_update} describe the Mazzoni algorithm, a
 
 			\draw [arrow] (h) |- (b);
 		\end{tikzpicture}
-		\caption{A flowchart of the Mazzoni algorithm with adaptive time stepping.
+		\caption{A flowchart of the Mazzoni algorithm with adaptive time stepping to solve \cref{eqn:gauss_de} over the time interval \([0,t]\).
+			The minimum step size \(\delta \tau_{\mathrm{min}}\) is specified and enforced to ensure that the step size does not become too small to compromise computationally efficiency.
 			Recreated from Figure 2 of \citet{Mazzoni_2008_ComputationalAspectsContinuous}.}
 		\label{fig:mazzoni_alg}
 	\end{center}
 \end{figure}
 
-
-
+We summarise the algorithm in the following and provide a diagram of the full implementation in \Cref{fig:mazzoni_alg}.
+Further details on the derivation of these equations are available in the original article \citep{Mazzoni_2008_ComputationalAspectsContinuous}.
+The Taylor-Heun formula for the update of the state over the interval \([\tau, \tau + \delta \tau]\) is
+\begin{subequations}\label{eqn:mazzoni_update}
+	\begin{equation}
+		w_{\tau + \delta \tau} \approx w_\tau + \left(I - \frac{\delta \tau}{2}\nabla u\!\left(w_\tau, \tau\right)\right)^{-1}.
+		\label{eqn:mazzoni_state_update}
+	\end{equation}
+	The Gauss-Legendre update of the covariance matrix is
+	\begin{equation}
+		\Pi_{\tau + \delta \tau} \approx M_\iota \Pi_\tau M_\iota^{\T} + \delta \tau K_\iota \sigma\!\left(w_\iota,\, \tau + \frac{\delta \tau}{2}\right)\sigma\!\left(w_\iota,\, \tau + \frac{\delta \tau}{2}\right)^{\T} K_\iota^{\T},
+		\label{eqn:mazzoni_cov_update}
+	\end{equation}
+	where
+	\begin{align}
+		w_\iota & = \frac12\left(w_\tau + w_{\tau + \delta \tau} - \frac{\delta \tau^2}{4}\nabla u\!\left(w_\tau, \, \tau\right) u\!\left(w_\tau, \, \tau\right)\right) \label{eqn:mazzoni_cov_terms1} \\
+		K_\iota & = \left[I - \frac{\delta \tau}{2}\nabla u\!\left(w_\iota,\, \tau + \frac{\delta \tau}{2}\right)\right]^{-1}                                                                          \\
+		M_\iota & = K_\iota \left[I + \frac{\delta \tau}{2}\nabla u\!\left(w_\iota,\, \tau + \frac{\delta \tau}{2}\right)\right] \label{eqn:mazzoni_cov_terms3}.
+	\end{align}
+	The vector \(w_\iota\) serves as an interpolation between \(w_\tau\) and \(w_{t + \delta \tau}\) for the state at time \(\tau + \delta \tau / 2\), which is used to provide a more accurate approximation of the covariance matrix.
+	\citet{Mazzoni_2008_ComputationalAspectsContinuous} also provides the option of an adaptive time step to fix the numerical precision while ensuring a computationally efficient algorithm.
+	The step size is adjusted by monitoring the error in the estimation of the state variable, aiming to maintain a specified tolerance level \(\gamma > 0\).
+	Given the error vector \(\mathcal{E}\) of the state approximation, the maximum total-relative error is
+	\begin{equation}\label{eqn:mazzoni_e}
+		\hat{\gamma} = \max_{i = 1,\dots,n}\frac{\abs{\mathcal{E}^{(i)}}}{\abs{w_{\tau + \delta \tau}^{(i)}} + 1}
+	\end{equation}
+	where \(\mathcal{E}^{(i)}\) and \(w_{\tau + \delta \tau}^{(i)}\) denote the respective \(i\)th elements of \(\mathcal{E}\) and \(w_{\tau + \delta \tau}\).
+	The resulting adjustment factor for the time step is
+	\begin{equation}\label{eqn:mazzoni_step}
+		\delta \tau_{\mathrm{new}} = \beta \delta \tau \sqrt{\frac{\gamma}{\hat{\gamma}}}.
+	\end{equation}
+	The factor \(\beta\) is a control parameter inserted to avoid frequent recalculations of the step size and is specified prior.
+	\citet{Mazzoni_2008_ComputationalAspectsContinuous} suggests setting \(\beta = 0.8\).
+	By again taking advantage of the availability of the Jacobian \(\nabla u\), the error vector is approximated as
+	\begin{equation}\label{eqn:mazzoni_err}
+		\mathcal{E} \approx \frac{\delta \tau^2}{2}\left[\frac{1}{3\delta t}\left(\nabla u\!\left(w_{\tau + \delta \tau}, \tau + \delta \tau\right) - \nabla u\!\left(w_\tau, \tau\right)\right) - \frac{1}{6}\nabla u\!\left(w_\tau, \tau\right)^2\right] u\!\left(w_\tau, \tau\right).
+	\end{equation}
+\end{subequations}
+The set of equations \cref{eqn:mazzoni_update} describe the Mazzoni algorithm with an adaptive step size.
 
 \section{Numerical validation \& examples}\label{sec:numerics}
-This section will validate the theory presented in \Cref{sec:theory,sec:theory_s2}, by considering three example SDEs each leading to a different form of the strong error bound \cref{eqn:main_ineq}.
-For each example, we first demonstrate heuristically that the solution converges to the limiting distribution described by \Cref{thm:limit_sol}, and then verify the error bound in \Cref{thm:main} directly by considering a range of values for the noise scale \(\epsilon\) and initial condition uncertainty \(\delta_r\).
-We demonstrate numerically the form of the bound on the linearisation error predicted by \Cref{thm:main} is sharp, in the sense that estimates of the error scale exactly with the initial uncertainty \(\delta_r\) and ongoing uncertainty \(\epsilon\) as predicted.
+This section will validate the theory presented in \Cref{sec:theory,sec:theory_s2}, by considering three example SDEs, each leading to a different form of the strong error bound \cref{eqn:main_ineq}.
+For each example, we first demonstrate heuristically that the solution converges to the limiting distribution described by \Cref{thm:limit_sol}.
+We then verify the error bound in \Cref{thm:main} directly by considering a range of values for the noise scale \(\epsilon\) and initial condition uncertainty \(\delta_r\).
+In doing so, we demonstrate numerically that the form of the bound on the linearisation error predicted by \Cref{thm:main} is sharp, in the sense that estimates of the error scale exactly with the initial uncertainty \(\delta_r\) and ongoing uncertainty \(\epsilon\) as predicted.
 
 
 All simulations in this section were generated using the Julia programming language \citep{BezansonEtAl_2017_JuliaFreshApproach}, with the implementations of numerical ODE and SDE solvers provided by the DifferentialEquations.jl package \citep{RackauckasNie_2017_DifferentialEquationsJlPerformant}.
@@ -181,14 +200,6 @@ To numerically validate this bound under the Gaussian initial condition \cref{eq
 \end{equation}
 which is a Monte-Carlo estimator of the right-hand side of \cref{eqn:main_ineq}, where \(\hat{y}_1^{(\epsilon)},\dotsc, \hat{y}_N^{(\epsilon)}\) and \(\hat{l}_1^{(\epsilon)},\dotsc, \hat{l}_N^{(\epsilon)}\) are \(N\) numerical samples of the solutions to SDE \cref{eqn:sde_y} and the linearisation \cref{eqn:linear_sde_inform} respectively.
 
-We directly validate the \emph{form} of the error bound (as a function of \(\epsilon\) and \(\rho\)) in \Cref{fig:sine_delta_eps_lines}, by computing \(E_1\) using samples for each pair of \(\epsilon\) and \(\rho\) values.
-In \Cref{fig:sine_eps_lines}, we demonstrate the relationship between \(E_1\) and the ongoing uncertainty \(\epsilon\) for several different fixed values of \(\rho\), each corresponding to a different colour.
-A least squares estimate of a line of best fit of the form \(E_1 = \beta_0 + \beta_1 \epsilon^2 \), for fixed coefficients \(\beta_0\) and \(\beta_1\), is fitted to the observed errors (in untransformed space) to verify the scaling of our bound in \Cref{thm:main}.
-We see that the line of best fit accurately matches the observed values of \(E_1\), verifying that \(E_1\) is in fact scaling with \(\epsilon^2\) as predicted.
-\Cref{fig:sine_delta_lines} provides a similar demonstration between \(E_1\) and the initial uncertainty \(\rho\), where now each colour corresponds to a different fixed value of \(\epsilon\).
-We again fit lines of the form \(E_1 = \beta_0 + \beta_1 \rho^2\) to verify the scaling of the bound, and see that the lines match the observed values of \(E_2\).
-Thus, we have also validated that \(E_1\) scales with \(\rho^2\), as expected from \Cref{thm:main}.
-
 \begin{figure}
 	\begin{center}
 		\begin{subfigure}{\textwidth}
@@ -209,6 +220,15 @@ Thus, we have also validated that \(E_1\) scales with \(\rho^2\), as expected fr
 		\label{fig:sine_delta_eps_lines}
 	\end{center}
 \end{figure}
+
+We directly validate the \emph{form} of the error bound (as a function of \(\epsilon\) and \(\rho\)) in \Cref{fig:sine_delta_eps_lines}, by computing \(E_1\) using samples for each pair of \(\epsilon\) and \(\rho\) values.
+In \Cref{fig:sine_eps_lines}, we demonstrate the relationship between \(E_1\) and the ongoing uncertainty \(\epsilon\) for several different fixed values of \(\rho\), each corresponding to a different colour.
+A least squares estimate of a line of best fit of the form \(E_1 = \beta_0 + \beta_1 \epsilon^2 \), for fixed coefficients \(\beta_0\) and \(\beta_1\), is fitted to the observed errors (in untransformed space) to verify the scaling of our bound in \Cref{thm:main}.
+We see that the line of best fit accurately matches the observed values of \(E_1\), verifying that \(E_1\) is in fact scaling with \(\epsilon^2\) as predicted.
+\Cref{fig:sine_delta_lines} provides a similar demonstration between \(E_1\) and the initial uncertainty \(\rho\), where now each colour corresponds to a different fixed value of \(\epsilon\).
+We again fit lines of the form \(E_1 = \beta_0 + \beta_1 \rho^2\) to verify the scaling of the bound, and see that the lines match the observed values of \(E_2\).
+Thus, we have also validated that \(E_1\) scales with \(\rho^2\), as expected from \Cref{thm:main}.
+
 
 \subsection{Linear dynamics, multiplicative noise}\label{sec:numerics_multiplicative}
 Now consider the following SDE with multiplicative noise in 1D;
@@ -232,9 +252,6 @@ with Gaussian solution \cref{eqn:num_linear_sol}.
 We take the initial point \(\mu = 2\) and consider the solutions at time \(t = 1\).
 To generate numerical realisations of the solutions to \cref{eqn:1d_mult} and \cref{eqn:1d_mult_linear} with the same realisations of \(W_t\), we use the same set-up as in the previous example.
 
-In \Cref{fig:sine_hists}, we show histograms of \(N = 10000\) samples of the multiplicative noise SDE \cref{eqn:1d_mult} and the corresponding probability density function of the linearised solution, for different combinations of \(\epsilon\) and \(\rho\).
-We again see that in the limit of both small initial and small ongoing uncertainty (towards the bottom right), we see that the distribution of the samples approach the Gaussian density of the linearisation solution.
-
 \begin{figure}
 	\begin{center}
 		\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/multiplicative/selected_hists.pdf}
@@ -243,14 +260,9 @@ We again see that in the limit of both small initial and small ongoing uncertain
 	\end{center}
 \end{figure}
 
-Since the drift term is linear and the noise multiplicative in \cref{eqn:1d_mult}, the bound predicted by \Cref{thm:main} has the form
-\[
-	\avg{\norm{y_t^{(\epsilon)} - l_t^{(\epsilon)}}^r} \leq D_1\!\left(r,t, K_{\nabla u}, K_\sigma\right)\epsilon^{2r} + M_{r}D_3\!\left(r,t, K_{\nabla u}\right)\epsilon^r\rho^{r},
-\]
-where we have \(K_{\nabla\nabla u} = 0\) and \(K_{\nabla\sigma} = 1\).
-In \Cref{fig:multiplicative_delta_eps_lines}, we again validate the form of this bound (for \(r = 1\); results for additional values of \(r\) are provided in the supplementary material) by approximating the left-hand side with \(E_1\) computed from realisations of the solution to \cref{eqn:1d_mult} and the linearisation \cref{eqn:1d_mult_linear}.
-For each fixed value of the initial uncertainty \(\rho\), in \Cref{fig:multiplicative_eps_lines}, we fit a line of best fit of the form \(\beta_1 \epsilon + \beta_2 \epsilon^2\) to validate that the strong error scales as predicted.
-Similarly, in \Cref{fig:multiplicative_eps_lines} we fit a line of best fit of the form \(\beta_0 + \beta_1 \rho\) and confirm that the linearisation error follows this scaling.
+In \Cref{fig:1d_mult_hists}, we show histograms of \(N = 10000\) samples of the multiplicative noise SDE \cref{eqn:1d_mult} and the corresponding probability density function of the linearised solution, for different combinations of \(\epsilon\) and \(\rho\).
+We again see that in the limit of both small initial and small ongoing uncertainty (towards the bottom right), we see that the distribution of the samples approach the Gaussian density of the linearisation solution.
+
 
 \begin{figure}
 	\begin{center}
@@ -272,6 +284,16 @@ Similarly, in \Cref{fig:multiplicative_eps_lines} we fit a line of best fit of t
 		\label{fig:multiplicative_delta_eps_lines}
 	\end{center}
 \end{figure}
+
+Since the drift term is linear and the noise multiplicative in \cref{eqn:1d_mult}, the bound predicted by \Cref{thm:main} has the form
+\[
+	\avg{\norm{y_t^{(\epsilon)} - l_t^{(\epsilon)}}^r} \leq D_1\!\left(r,t, K_{\nabla u}, K_\sigma\right)\epsilon^{2r} + M_{r}D_3\!\left(r,t, K_{\nabla u}\right)\epsilon^r\rho^{r},
+\]
+where we have \(K_{\nabla\nabla u} = 0\) and \(K_{\nabla\sigma} = 1\).
+In \Cref{fig:multiplicative_delta_eps_lines}, we again validate the form of this bound (for \(r = 1\); results for additional values of \(r\) are provided in the supplementary material) by approximating the left-hand side with \(E_1\) computed from realisations of the solution to \cref{eqn:1d_mult} and the linearisation \cref{eqn:1d_mult_linear}.
+For each fixed value of the initial uncertainty \(\rho\), in \Cref{fig:multiplicative_eps_lines}, we fit a line of best fit of the form \(\beta_1 \epsilon + \beta_2 \epsilon^2\) to validate that the strong error scales as predicted.
+Similarly, in \Cref{fig:multiplicative_eps_lines} we fit a line of best fit of the form \(\beta_0 + \beta_1 \rho\) and confirm that the linearisation error follows this scaling.
+
 
 \subsection{Fixed initial condition}\label{sec:numerics_2d}
 In this example, we consider a two-dimensional model and a fixed initial condition, to validate the results presented in \Cref{sec:theory_fixed}.
@@ -307,13 +329,6 @@ To compute the Gaussian distribution \cref{eqn:linear_gauss_sol} of the linearis
 Specifically, \cref{eqn:pi_ode} is solved jointly with the deterministic state equation \cref{eqn:ode_det} using the hybrid method proposed by \citet{Mazzoni_2008_ComputationalAspectsContinuous}.
 This hybrid method combines a Taylor-Heun approximation with a Gauss-Legendre one and ensures that the numerical solution of the covariance equation is symmetric and positive semi-definite while maintaining both accuracy and computational efficiency.
 
-
-\Cref{fig:y_hists} shows the resulting simulations of \(y_t^{(\epsilon)}\) for four different values of \(\epsilon\).
-The realisations are binned as a histogram and bin counts are normalised, to provide an empirical estimate of the probability density function of \(y_t^{(\epsilon)}\).
-Superimposed (in solid black) are the first, second and third standard-deviation contours of the probability density function of the Gaussian distribution that solves the linearised equation.
-The first three standard-deviation levels of the \(2\times 2\) sample covariance matrix of the realisations of \(y_t^{(\epsilon)}\), are also overlaid (in dashed blue).
-As \(\epsilon\) decreases towards \(0\), the samples increasingly resemble a Gaussian distribution, and both the mean and covariance coincide with the corresponding limits.
-
 \begin{figure}
 	\begin{center}
 		\begin{subfigure}{0.49\textwidth}
@@ -344,17 +359,12 @@ As \(\epsilon\) decreases towards \(0\), the samples increasingly resemble a Gau
 	\end{center}
 \end{figure}
 
-For a fixed initial condition, \cref{eqn:main_ineq} predicts that the expected distance between the original SDE solution and that of a linearisation satisfies
-\[
-	\avg{\norm{y_t^{(\epsilon)} - l_t^{(\epsilon)}}^r} \leq \left(K_{\nabla\nabla u} + K_{\nabla\sigma}\right)D_1\!\left(r,t, K_{\nabla u}, K_\sigma\right)\epsilon^{2r}.
-\]
-To numerically estimate the left-hand side of \cref{eqn:main_ineq}, we again use a Monte-Carlo estimator;
-\[
-	E_r\!\left(\epsilon\right) \coloneqq \frac{1}{N}\sum_{i=1}^N{\norm{\hat{y}_i^{(\epsilon)} - \hat{l}_i^{(\epsilon)}}^r}.
-\]
-For \(r = 1,2,3,4\), \(E_r\!\left(\epsilon\right)\) is shown (in a logarithmic scale) for decreasing values of \(\epsilon\) in \Cref{fig:gamma_z_valid}.
-\Cref{thm:main} predicts that \(\log_{10}\left(E_r\!\left(\epsilon\right)\right)\) should decay linearly with a slope greater than \(2r\) as \(\epsilon\) decreases to zero.
-The least squares lines of best fit for each value of \(r\) in \Cref{fig:gamma_z_valid} show this behaviour, and are therefore consistent with \Cref{thm:main}.
+
+\Cref{fig:y_hists} shows the resulting simulations of \(y_t^{(\epsilon)}\) for four different values of \(\epsilon\).
+The realisations are binned as a histogram and bin counts are normalised, to provide an empirical estimate of the probability density function of \(y_t^{(\epsilon)}\).
+Superimposed (in solid black) are the first, second and third standard-deviation contours of the probability density function of the Gaussian distribution that solves the linearised equation.
+The first three standard-deviation levels of the \(2\times 2\) sample covariance matrix of the realisations of \(y_t^{(\epsilon)}\), are also overlaid (in dashed blue).
+As \(\epsilon\) decreases towards \(0\), the samples increasingly resemble a Gaussian distribution, and both the mean and covariance coincide with the corresponding limits.
 
 \begin{figure}
 	\begin{center}
@@ -385,9 +395,23 @@ The least squares lines of best fit for each value of \(r\) in \Cref{fig:gamma_z
 	\end{center}
 \end{figure}
 
+For a fixed initial condition, \cref{eqn:main_ineq} predicts that the expected distance between the original SDE solution and that of a linearisation satisfies
+\[
+	\avg{\norm{y_t^{(\epsilon)} - l_t^{(\epsilon)}}^r} \leq \left(K_{\nabla\nabla u} + K_{\nabla\sigma}\right)D_1\!\left(r,t, K_{\nabla u}, K_\sigma\right)\epsilon^{2r}.
+\]
+To numerically estimate the left-hand side of \cref{eqn:main_ineq}, we again use a Monte-Carlo estimator;
+\[
+	E_r\!\left(\epsilon\right) \coloneqq \frac{1}{N}\sum_{i=1}^N{\norm{\hat{y}_i^{(\epsilon)} - \hat{l}_i^{(\epsilon)}}^r}.
+\]
+For \(r = 1,2,3,4\), \(E_r\!\left(\epsilon\right)\) is shown (in a logarithmic scale) for decreasing values of \(\epsilon\) in \Cref{fig:gamma_z_valid}.
+\Cref{thm:main} predicts that \(\log_{10}\left(E_r\!\left(\epsilon\right)\right)\) should decay linearly with a slope greater than \(2r\) as \(\epsilon\) decreases to zero.
+The least squares lines of best fit for each value of \(r\) in \Cref{fig:gamma_z_valid} show this behaviour, and are therefore consistent with \Cref{thm:main}.
+
+
 
 \section{Computing stochastic sensitivity} \label{sec:comput_s2}
 In this section, we illustrate the computability of stochastic sensitivity as described in \Cref{thm:s2_calculation}.
+These computations are primarily demonstrative, so we keep the analysis of the results to a minimum and instead refer the reader to the works of \citet{Balasuriya_2020_StochasticSensitivityComputable,BadzaEtAl_2023_HowSensitiveAre,FangEtAl_2020_DisentanglingResolutionPrecision}, where stochastic sensitivity has been calculated and interpreted in context.
 
 \subsection{In 2-dimensions}\label{sec:compute_s2_2d}
 
@@ -406,22 +430,25 @@ In this section, we illustrate the computability of stochastic sensitivity as de
 			\label{fig:s2_field_1.0}
 		\end{subfigure}
 		\caption{(Left) The \(S^2\) field of the meandering jet flow \cref{eqn:jet_ex} over the time interval \([0,1]\), for two different sets of parameters with qualitatively different behaviour.
-			The \(S^2\) value for each initial condition is computed directly as the operator norm of the covariance matrix \(\Sigma_0^1\!\left(x_0\right)\), as per \cref{eqn:s2_calculation}.
-			(Right) Robust sets extracted from the stochastic sensitivity fields, by taking the initial conditions with a stochastic sensitivity value about a threshold of \(10\).}
+			% The \(S^2\) value for each initial condition is computed directly as the operator norm of the covariance matrix \(\Sigma_0^1\!\left(x_0\right)\), as per \cref{eqn:s2_calculation}.
+			(Right) Robust sets \(\mathrm{RS}\!\left(10\right)\) extracted from the stochastic sensitivity fields, by taking the initial conditions with a stochastic sensitivity value about a threshold of \(10\).}
 		\label{fig:ex_jet_s2_field}
 	\end{center}
 \end{figure}
 
-We again consider the meandering jet \cref{eqn:jet_ex} with multiplicative noise described by \cref{eqn:jet_ex_sigma}.
-We take the same choice of parameters as in \cref{sec:numerics_2d}, except for the perturbation amplitude \(\oldepsilon_{\mathrm{mj}}\) which is varied to obtain qualitatively different behaviour in the system.
-For each initial condition in a \(400 \times 400\) uniform grid on \(\left[0, \pi\right] \times \left[0, \pi\right]\), the \(S^2\) value is calculated using \cref{eqn:s2_calculation}.
+We again consider the meandering jet \cref{eqn:jet_ex} with multiplicative noise described by \cref{eqn:jet_ex_sigma} and take the same choice of parameters as in \cref{sec:numerics_2d}, except for the perturbation amplitude \(\oldepsilon_{\mathrm{mj}}\), which is varied to obtain qualitatively different behaviour in the system.
+For each initial condition \(x_0\) in a \(400 \times 400\) uniform grid on \(\left[0, \pi\right] \times \left[0, \pi\right]\), the \(S^2\) value is calculated by first computing (by solving \cref{eqn:gauss_cov_de}) the covariance matrix \(\Sigma_0^t\!\left(x_0\right)\) of the fixed initial condition linearisation and then taking the operator norm per \cref{eqn:s2_calculation}.
 \Cref{fig:ex_jet_s2_field} shows the resulting \(S^2\) field from time \(0\) to \(t = 1\), for two different values of \(\oldepsilon_{\mathrm{mj}}\).
-We also extract robust sets from each stochastic sensitivity field, by highlighting in cyan on the right side of \Cref{fig:ex_jet_s2_field} those initial conditions with a stochastic sensitivity value less than the specified threshold of 10.
+We also extract robust sets from each field, by highlighting in cyan on the right side of \Cref{fig:ex_jet_s2_field} those initial conditions with a stochastic sensitivity value less than the specified threshold of 10.
+That is, cyan corresponds to the set
+\[
+	\mathrm{RS}\!\left(10\right) = \setc{x_0 \in [0,\pi] \times [0,\pi]}{S^2\!\left(x_0, t\right) < 10}.
+\]
 When \(\oldepsilon_{\mathrm{mj}} = 0.3\) (\Cref{fig:s2_field_0.3}), the \(S^2\) field is largest in the elongated gyre regions outside of the meandering jet, where the flow exhibits chaotic behaviour \citep{Pierrehumbert_1991_ChaoticMixingTracer} and we accordingly expect larger uncertainty due to the model dynamics.
 As a region of small \(S^2\) value, the meandering jet emerges as a robust set, consisting of initial points whose eventual fate is significantly more certain than in other regions.
 When \(\oldepsilon_{\mathrm{mj}} = 1.0\) (\Cref{fig:s2_field_1.0}), the deterministic flow is dominated by oscillatory perturbation, which further increases the chaotic nature of the solving trajectories and the boundaries between the gyres and the meandering jet are no longer distinguishable \citep{Crocker_2021_LagrangianCoherentData}.
-Rotational eddies begin to dominate the flow and we see this reflected in the stochastic sensitivity field in \Cref{fig:s2_field_1.0}: the eddies exhibit a smaller stochastic sensitivity, as even under stochasticity trajectories are inclined to remain within them.
-The resulting robust sets highlight these eddies.\lb{Don't love this analysis, but almost there. Reconsider on next read through.}
+Rotational eddies begin to dominate the flow and we see this reflected in the stochastic sensitivity field in \Cref{fig:s2_field_1.0}: the eddies exhibit a smaller stochastic sensitivity, as even under stochasticity trajectories, are inclined to remain within them.
+The resulting robust sets consequently also highlight these eddies.
 
 % \begin{figure}
 % 	\begin{center}
@@ -547,8 +574,8 @@ The resulting robust sets highlight these eddies.\lb{Don't love this analysis, b
 %Moreover, this simple example demonstrates the claim in \Cref{sec:theory_s2} that the stochastic sensitivity field can be considered a generalisation of the finite-time Lyapunov exponent, in that features of the latter are captured while additionally accounting for ongoing uncertainties.
 
 \subsection{In 3-dimensions}\label{sec:comput_s2_3d}
-In \Cref{def:ss_Rn}, we have provided a new definition for stochastic sensitivity in arbitrary dimensions, whereas previously the definition and computation were limited to only two.
-This is the second main contribution of this thesis and so we shall demonstrate this extension on an example toy-model in three-dimensions.
+In \Cref{def:ss_Rn}, we have provided a new definition for stochastic sensitivity in arbitrary dimensions, whereas previously the definition and computation \citep{Balasuriya_2020_StochasticSensitivityComputable} were limited to only two.
+This is the second main contribution of this thesis and so we shall demonstrate this extension on an example toy model in three-dimensions.
 Consider the Gromeka-Arnold-Beltrami-Childress flow \citep{DombreEtAl_1986_ChaoticStreamlinesABC}:
 \begin{equation}\label{eqn:gabc}
 	u\!\left(y\right) = \begin{bmatrix}
@@ -557,35 +584,48 @@ Consider the Gromeka-Arnold-Beltrami-Childress flow \citep{DombreEtAl_1986_Chaot
 		C\sin\!\left(y_2\right) + B\cos\!\left(y_1\right)
 	\end{bmatrix},
 \end{equation}
-where \(A, B, C > 0\) are constants.
-The flow arises as an exact solution to Euler's equation and is often used as a testbed for Lagrangian analysis in 3-dimensions \citep[e.g.]{NelsonJacobs_2016_HighorderVisualizationThreedimensional,BruntonRowley_2010_FastComputationFinitetime,Haller_2001_DistinguishedMaterialSurfaces,SulmanEtAl_2013_LeavingFlatlandDiagnostics}.
-We take the parameters \(A = \sqrt{3}\), \(B = \sqrt{2}\), and \(C = 1\), which are values known to result in chaos \citep{DombreEtAl_1986_ChaoticStreamlinesABC}.
-The flow is spatially periodic in \([0,2\pi] \times [0,2\pi] \times [0,2\pi]\) and consists of intersecting vortex tubes.
+where \(A, B, C > 0\) are constants and \(y \equiv \left(y_1, y_2, y_3\right)^{\T}\).
+The flow arises as an exact solution to Euler's equation and is often used as a testbed for Lagrangian analysis in three-dimensions \citep[e.g.]{NelsonJacobs_2016_HighorderVisualizationThreedimensional,BruntonRowley_2010_FastComputationFinitetime,Haller_2001_DistinguishedMaterialSurfaces,SulmanEtAl_2013_LeavingFlatlandDiagnostics}.
+We fix the parameters \(A = \sqrt{3}\) and \(B = \sqrt{2}\), and consider two values of \(C\); \(C= 0\) which is a simplified case and \(C = 1\) which is known to result in chaos \citep{DombreEtAl_1986_ChaoticStreamlinesABC}.
+For both sets of parameter value, the flow is spatially periodic in \([0,2\pi] \times [0,2\pi] \times [0,2\pi]\).
 
 \begin{figure}
 	\centering
 	\begin{subfigure}[t]{0.49\textwidth}
-		\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/gabc/S2_box_1.0_cropped}
+		\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/gabc/S2_box_1.7320508075688772_1.4142135623730951_0_cropped}
 		% \includegraphics[width=0.49\textwidth]{chp04_paper_numerics/figures/gabc/robust_box_1}
-		\caption{\(t = 1\)}
-		\label{fig:gabc_S2_1}
+		\caption{\(C = 0\)}
+		\label{fig:gabc_S2_0}
 	\end{subfigure}
 	\begin{subfigure}[t]{0.49\textwidth}
-		\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/gabc/S2_box_3.0_cropped}
+		\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/gabc/S2_box_1.7320508075688772_1.4142135623730951_1_cropped}
 		% \includegraphics[width=0.49\textwidth]{chp04_paper_numerics/figures/gabc/robust_box_1}
-		\caption{\(t = 3\)}
-		\label{fig:gabc_S2_3}
+		\caption{\(C = 1\)}
+		\label{fig:gabc_S2_1}
 	\end{subfigure}
-	\caption{The stochastic sensitivity field for the GABC flow \cref{eqn:gabc} with identity diffusion, over the time interval \([0,t]\).}%, and robust sets (right) extracted with a threshold of \(R = 0.8\).}
+	\caption{The stochastic sensitivity field for the GABC flow \cref{eqn:gabc} with parameters \(A = \sqrt{3}\), \(B = \sqrt{2}\), and two different value of \(C\), computed over the time interval \([0,3]\).}
 	\label{fig:gabc_S2}
 \end{figure}
 
 To introduce 3-dimensional noise to the system, we set \(\sigma \equiv I\), the \(3 \times 3\) identity matrix, and compute stochastic sensitivity for a \(200\times 200\) grid of initial conditions on each face of the cube \([0,2\pi] \times [0,2\pi] \times [0,2\pi]\).
 The spatial periodicity and symmetry of the dynamics means that these three faces are sufficient to describe the entire structure of the field within the region \citep{DombreEtAl_1986_ChaoticStreamlinesABC}.
 As with the two-dimensional example, for each initial condition we compute the \(3 \times 3\) covariance matrix using the Mazzoni method.
-The stochastic sensitivity value is then computed by taking the operator norm of this covariance matrix.
-\Cref{fig:gabc_S2} plots the stochastic sensitivity on the three faces of the cube, at two different times.
-At \(t = 1\) (\Cref{fig:gabc_S2_1}), the vortex structures are highlighted by the stochastic sensitivity field, in that these regions have a higher uncertainty due to the ??
-\td{Interpret - looks like the vortex structures are hilighted by the field?}
-When \(t = 3\) (\Cref{fig:gabc_S2_3}), the flow is domainated by chaotic mixing, but we nonetheless see structures highlighted by the stochastic sensitivity...!!!
+The stochastic sensitivity value is then again computed by taking the operator norm of this covariance matrix.
+\Cref{fig:gabc_S2} plots the stochastic sensitivity on the three faces of the cube.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/gabc/streamlines_integrable}
+	\caption{The \((y_1,y_3)\)-projections of the streamlines of the deterministic GABC flow \cref{eqn:gabc} in the integrable case of\(A = \sqrt{3}\), \(B = \sqrt{2}\), and \(C = 0\).
+		The closed streamlines are indicated by solid black circles.
+		Adapted from Figure 3 of \citet{DombreEtAl_1986_ChaoticStreamlinesABC}.}
+	\label{fig:}
+\end{figure}
+
+\td{Interpret!}
+When \(C = 0\) (\Cref{fig:gabc_S2_0}), the deterministic flow is separable and analytically integrable, and consists of tessellated vortex-like regions; \Cref{fig:gabc_streamlines} plots projections of the flow streamlines onto the \((y_1,y_3)\)-plane.
+
+
+When \(C = 1\) (\Cref{fig:gabc_S2_1}), chaotic mixing occurs.
+\td{Interpret!}
 In fact, these narrow ridge-like structures correspond to the unstable manifolds within the flow \citep{DombreEtAl_1986_ChaoticStreamlinesABC}: the repelling nature of these regions results in a `larger' stochasticity.

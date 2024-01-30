@@ -579,7 +579,7 @@ We will also discuss (in \Cref{ch:outlook}) how we anticipate our work could be 
 \section{Stochastic sensitivity}\label{sec:s2_summ}
 To conclude our background and motivation, this section provides a brief summary of stochastic sensitivity, a measure of uncertainty in differential equation introduced by \citet{Balasuriya_2020_StochasticSensitivityComputable}.
 These tools are \emph{computable} given only velocity data, which enables an efficient quantification of uncertainty in a stochastic system without needing bulk simulation.
-Stochastic sensitivity was originally provided for 2-dimensional systems only, and the primary motivation was to understand the impact of velocity field uncertainty on fluid flows.
+Stochastic sensitivity (also termed \(S^2\) in both notation and prose) was originally provided for 2-dimensional systems only, and the primary motivation was to understand the impact of velocity field uncertainty on fluid flows.
 Given possibly time-dependent velocity data \(u\colon \R^2 \times [0,T] \to \R^2\), \citet{Balasuriya_2020_StochasticSensitivityComputable} considers the evolution of solutions to the ordinary differential equation
 \begin{equation}\label{eqn:s2_ode}
 	\dod{x_t}{t} = u\!\left(x_t, t\right),
