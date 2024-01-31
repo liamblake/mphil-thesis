@@ -1,8 +1,8 @@
 \chapter{A Gaussian mixture model}\label{ch:gmm}
-In \Cref{ch:linear_theory}, we described and justified a framework for computing approximations to the solutions of non-linear SDEs via linearisations about solutions to the corresponding deterministic system.
-A key advantage of this approximation is efficiency of computation; rather than having to generate a large number of realisations of the SDE solution to understand, either qualitatively or for the purposes of inference and estimation, the probability distribution of the solution, we can solve a smaller system of differential equations to obtain the first two moments.
-When the initial condition is fixed or Gaussian, the resulting linearisation solution is a Gaussian process, providing an approximation characterised \emph{entirely} by these two moments.
-A Gaussian approximation has further advantages, leading to its use across many different applications \citep{KaszasHaller_2020_UniversalUpperEstimate,ArchambeauEtAl_2007_GaussianProcessApproximations,Jazwinski_2014_StochasticProcessesFiltering,SarkkaSolin_2019_AppliedStochasticDifferential,Sanz-AlonsoStuart_2017_GaussianApproximationsSmall}.
+In \Cref{ch:linear_theory}, we described and justified a framework for computing approximations to the solutions of nonlinear SDEs via linearisations about solutions to the corresponding deterministic system.
+A key advantage of this approximation is the efficiency of computation; rather than having to generate a large number of realisations of the SDE solution we can solve a smaller system of differential equations to obtain the first two moments.
+When the initial condition is fixed or Gaussian, the resulting linearisation solution is a Gaussian process, providing an approximation characterised entirely by these two moments and an analytically available probability density function.
+A Gaussian approximation has further practical advantages, leading to its use across many different applications \citep{KaszasHaller_2020_UniversalUpperEstimate,ArchambeauEtAl_2007_GaussianProcessApproximations,Jazwinski_2014_StochasticProcessesFiltering,SarkkaSolin_2019_AppliedStochasticDifferential,Sanz-AlonsoStuart_2017_GaussianApproximationsSmall}.
 For example, even in inference requiring Monte-Carlo simulations, a Gaussian distribution with a specified mean and covariance is faster to sample from than generating numerical solutions of the nonlinear SDE.
 
 Recall that we are interested in approximating the solution at a time \(t\) to the nonlinear stochastic differential equation
@@ -10,27 +10,27 @@ Recall that we are interested in approximating the solution at a time \(t\) to t
 	\dif y_t = u\!\left(y_t, t\right)\dif t + \epsilon\sigma\!\left(y_t, t\right)\dif W_t,
 	\label{eqn:sde_y_gmm}
 \end{equation}
-subject to some random initial condition \(y_s = x\), by using solutions of the corresponding deterministic system
+subject to some random initial condition \(y_s = x\), by using linearisations about solutions of the corresponding deterministic system
 \begin{equation}
-	\dod{F_s^t\!\left(x_0\right)}{t} = u\!\left(F_s^t\!\left(x\right), t\right), \quad F_s^s\!\left(x\right) = x.
+	\dod{F_s^t\!\left(x_0\right)}{t} = u\!\left(F_s^t\!\left(x_0\right), t\right), \quad F_s^s\!\left(x_0\right) = x_0.
 	\label{eqn:det_ode_gmm}
 \end{equation}
-The behaviour of the solution \cref{eqn:sde_y_gmm} over the time interval \((s,t)\) for small \(\epsilon\) can be approximated by the linearised SDE
+The behaviour of the solution \cref{eqn:sde_y_gmm} over the time interval \([s,t]\) for small \(\epsilon\) can be approximated by the linearised SDE
 \begin{equation}
 	\dif l_t = \left(u\!\left(F_s^t\!\left(x\right), t\right) + \nabla u\!\left(F_s^t\!\left(x\right), t\right)\left[l_t - F_s^t\!\left(x\right)\right]\right)\dif t + \epsilon\sigma\!\left(F_s^t\!\left(x\right), t\right)\dif W_t,
 	\label{eqn:sde_linear_gmm}
 \end{equation}
 subject to the initial condition \(l_s = x\).
-The theory in \Cref{ch:linear_theory} considered the evolution of \cref{eqn:sde_y_gmm} over a time interval \((0,t)\) and subject to some initial condition at time \(0\).
-However, by using a simple time shift our theory can be applied to any finite time interval \((s,t)\), where the solution is specified at time \(s\) instead of \(0\), without loss of generality.
+\Cref{ch:linear_theory} considered the evolution of \cref{eqn:sde_y_gmm} over a time interval \([0,t]\) and subject to some initial condition at time \(0\).
+However, by using a simple time shift our theory can be applied to any finite time interval \([s,t]\), where the solution is specified at time \(s\) instead of \(0\), without loss of generality.
 Note that we have now also dropped the dependence of \(\epsilon\) in the notation \(y_t\) and \(l_t\), as \(\epsilon\) is now treated as a fixed value specified as part of the model.
-Suppose that the initial condition \(x\) follows a Gaussian distribution with mean \(x_0\) and a specified covariance matrix \(\Sigma_s\).
-If the initial condition is fixed as \(x_s\), then we set \(\Sigma_s = O\), the \(n \times n\) zero matrix, so that the initial distribution is a Dirac delta.
+Suppose that the random initial condition \(x\) follows a Gaussian distribution with mean \(x_s\) and a specified covariance matrix \(\Sigma_s\).
+This also permits the initial condition to be fixed as \(x_s\): we then set \(\Sigma_s = O\), the \(n \times n\) zero matrix, and follow the convention that the resulting zero-variance Gaussian is a Dirac delta centred at the mean \(x_s\).
 We will focus our attention on this case for the remainder of this thesis, having already provided a general framework in \Cref{ch:linear_theory} for other initial conditions.
-By taking the mean \(x_s\) as the initial condition to \cref{eqn:det_ode_gmm}, we ensure that the initial uncertainty (measured by the \(L_r\)-norm as in \Cref{ch:linear_theory}) scales with the trace of \(\Sigma_s\).
-The solution to \cref{eqn:sde_linear_gmm} is then a Gaussian process characterised by the mean \(F_s^t\!\left(x_0\right)\) and covariance matrix \(\var{l_t}\), for which explicit expressions for are given in \Cref{cor:limit_moments}.
-For notational brevity, set \(w_t \equiv F_s^t\!\left(x_s\right)\) and \(\Pi_t \equiv \var{l_t}\).
-When the Jacobian \(\nabla u\) of the vector field \(u\) is available, or can approximated appropriately, the moments of the Gaussian solution can be obtained by the system of ordinary differential equations
+By taking the mean \(x_s\) as the initial condition to \cref{eqn:det_ode_gmm}, we ensure that the initial uncertainty (measured by the \(L_r\)-norm as in \Cref{ch:linear_theory}) scales with the trace of \(\Sigma_s\) (recall \cref{eqn:gauss_dist_bound}).
+The solution to \cref{eqn:sde_linear_gmm} is then a Gaussian process characterised by the mean \(F_s^t\!\left(x_0\right)\) and covariance matrix \(\var{l_t}\), for which explicit expressions are given in \Cref{cor:limit_moments}.
+To recall the notation used in \Cref{sec:mazzoni}, set \(w_t \equiv F_s^t\!\left(x_s\right)\) and \(\Pi_t \equiv \var{l_t}\).
+When the Jacobian \(\nabla u\) of the vector field \(u\) is available or can be approximated appropriately, the moments of the Gaussian solution can be obtained by the system of ordinary differential equations
 \begin{subequations}\label{eqn:gauss_de_gmm}
 	\begin{align}
 		\dod{w_t}{t}   & = u\!\left(w_t, t\right), \quad w_s = x_0 \label{eqn:gauss_mean_de_gmm}                                                                                                       \\
@@ -40,12 +40,12 @@ When the Jacobian \(\nabla u\) of the vector field \(u\) is available, or can ap
 		\label{eqn:gauss_cov_de_gmm}
 	\end{align}
 \end{subequations}
-In practice, \cref{eqn:gauss_de} must be solved numerically, but can be more computationally efficient than the alternative of generating many realisations of \cref{eqn:sde_y_gmm}.
-Thus, we can efficiently compute a Gaussian approximation \(\Gauss{w_t, \Sigma_t}\) to the solution to the nonlinear SDE \cref{eqn:sde_y_gmm} at time \(t\) by solving \cref{eqn:gauss_de} only.
-The \citet{Mazzoni_2008_ComputationalAspectsContinuous} method, outlined in \Cref{sec:mazzoni}, provides a computationally efficient algorithm for solving \Cref{eqn:gauss_de} jointly.
+In practice, \cref{eqn:gauss_de_gmm} must be solved numerically, but can be more computationally efficient than the alternative of generating many realisations of \cref{eqn:sde_y_gmm}.
+Thus, we can efficiently compute a Gaussian approximation \(\Gauss{w_t, \Sigma_t}\) to the solution to the nonlinear SDE \cref{eqn:sde_y_gmm} at time \(t\) by solving \cref{eqn:gauss_de_gmm} only.
+The \citet{Mazzoni_2008_ComputationalAspectsContinuous} method, outlined in \Cref{sec:mazzoni}, provides a computationally efficient algorithm for solving \Cref{eqn:gauss_de_gmm} jointly.
 
-Although computationally appealing, this Gaussian approximation is only `reasonable' in the limit of small initial and ongoing uncertainty, which we quantified exactly with the bound in \Cref{thm:main}, and demonstrated heuristically with examples in \Cref{fig:sine_hists,fig:1d_mult_hists,fig:y_hists}.
-In practice, the scale of the noise is an inherent part of a model and there is no guarantee that it is sufficiently small for Gaussian approximations to be reasonable.
+Despite the computational appeal, this Gaussian approximation is only `reasonable' in the limit of small initial and ongoing uncertainty, which we quantified precisely with the bound in \Cref{thm:main}, and demonstrated heuristically with examples in \Cref{fig:sine_hists,fig:1d_mult_hists,fig:y_hists}.
+In practice, the scale of the noise is an inherent part of a model and there is no guarantee that it is sufficiently small for this Gaussian approximation to be reasonable.
 When the noise scale is larger, we see non-Gaussianity emerge---the numerical solutions in \Cref{fig:sine_hists,fig:1d_mult_hists,fig:y_hists} exhibit skewness, bi-modality, and other departures from Gaussianity.
 Non-Gaussianity is also often observed in statistical measurements in practice, such as in atmospheric regimes \citep{SuraEtAl_2005_MultiplicativeNoiseNonGaussianity}, experimental fluid flows \citep{del-Castillo-Negrete_1998_AsymmetricTransportNonGaussian}, and oceanic flows \citep{BraccoEtAl_2000_VelocityProbabilityDensity}.
 Although the Gaussian approximation can still provide qualitative insight into the behaviour of these solutions (see stochastic sensitivity, for instance), to produce a reasonable approximation we need a method that can capture these departures from Gaussianity.
@@ -59,14 +59,14 @@ Although the Gaussian approximation can still provide qualitative insight into t
 	\label{fig:bene_gauss}
 \end{figure}
 
-To further illustrate this point, we consider another example of a 1-dimensional stochastic differential equation.
-the Bene\v{s} SDE \citep{SarkkaSolin_2019_AppliedStochasticDifferential} is
+To further illustrate this point, we consider another example of a one-dimensional stochastic differential equation.
+The Bene\v{s} SDE \citep{SarkkaSolin_2019_AppliedStochasticDifferential} is
 \begin{equation}
 	\dif x_t = \tanh\!\left(x_t\right)\dif t + \dif W_t.
 	\label{eqn:bene_sde}
 \end{equation}
-In this example we are implicitly taking \(\epsilon = 1\), which is a larger noise scale than we typically expect to apply our results to.
-However, this example is purely demonstrative to highlight a limitation of Gaussian approximations and show the potential of the algorithm we are about to propose; later examples will involve a smaller noise scale.
+We are implicitly taking \(\epsilon = 1\), which is a larger noise scale than we typically expect to apply our results to.
+However, this example is purely demonstrative to highlight a limitation of Gaussian approximations and show the potential of the algorithm we are about to propose; later examples will involve smaller values of \(\epsilon\).
 The deterministic system corresponding to \cref{eqn:bene_sde} is
 \begin{equation}
 	\dod{F_s^t\!\left(x\right)}{t} = \tanh\!\left(F_s^t\!\left(x\right)\right), \quad F_s^s\!\left(x\right) = x,
@@ -84,86 +84,37 @@ The solution \(x_t\) at time \(t\) has the probability density function
 	p(x,t) = \frac{1}{\sqrt{2\pi t}}\frac{\cosh\!\left(x\right)}{\cosh\!\left(x_0\right)}\exp\left[-\frac{t}{2} - \frac{1}{2t}\left(x - x_0\right)^2\right],
 \end{equation}
 where \(x_0\) is the fixed initial condition.
-In this example, we consider the solution to \cref{eqn:bene_sde} subject to the fixed initial condition \(x_0 = 1/2\) and at time \(t = 5\), and plot the resulting PDF of the solution \cref{eqn:bene_sde_pdf} in black in \Cref{fig:bene_gauss}.
+In this example, we consider the solution to \cref{eqn:bene_sde} subject to the fixed initial condition \(x_0 = 1/2\) and at time \(t = 5\) and plot the resulting PDF of the solution \cref{eqn:bene_sde_pdf} in black in \Cref{fig:bene_gauss}.
 The density is not symmetric with two distinct modes that result from the unstable fixed point of \cref{eqn:bene_ode} at \(x = 0\).
-Many stochastic trajectories are driven away from zero, resulting in the predominant mode centred at \(x = 5.5\).
-However, when the stochastic perturbations force a trajectory through the fixed point and into negative values, they are pushed further in the negative direction, leading to the second mode at \(x = -4.5\).
+Many stochastic trajectories are driven away from zero, resulting in the predominant mode centred at \(x = 11/2\).
+However, when the stochastic perturbations force a trajectory through the fixed point and into negative values, they are pushed further in the negative direction, leading to the second mode at \(x = -9/2\).
 Nonetheless, we can linearise \cref{eqn:bene_sde} about the deterministic trajectory \(F_0^t\!\left(1/2\right)\) solving \cref{eqn:bene_ode} to obtain a Gaussian approximation.
 In general, if we linearise \cref{eqn:bene_sde} over the time interval \([s,t]\) about the trajectory \(F_s^t\!\left(x_s\right)\), we are considering the equation
 \[
-	\dif l_t = \left(\tanh\!\left(F_s^t\!\left(x_s\right)\right) + \arcsech\!\left(F_0^t\!\left(x_s\right)\right)\left[l_t - F_s^t\!\left(x_0\right)\right]\right)\dif t + \dif W_t,
+	\dif l_t = \left(\tanh\!\left(F_s^t\!\left(x_s\right)\right) + \arcsech\!\left(F_0^t\!\left(x_s\right)\right)\left[l_t - F_s^t\!\left(x_s\right)\right]\right)\dif t + \dif W_t,
 \]
 where the deterministic flow map \(F_s^t\) given by \cref{eqn:bene_ode_sol}.
-Since the deterministic flow map is available analytically in \cref{eqn:bene_ode_sol}, we can determine the variance \(\var{l_t}\) of the solution to the linearised SDE exactly by evaluating \cref{eqn:pi_expl_eqn}.
-This computation gives
-\[
-	\var{l_t} = \frac{2\sinh^2\!\left(x_s\right)\left(t - s\right) + e^{2t - 2s} - 1}{2\sinh^2\!\left(x_0\right) + 2e^{2s - 2t}},
-\]
-with details provided in \Cref{app:bene_calculations}.
+Since the deterministic flow map is available analytically in \cref{eqn:bene_ode_sol}, we can determine the variance of the solution to the linearised SDE exactly by evaluating \cref{eqn:pi_expl_eqn}.
+% This computation gives
+% \[
+% 	\var{l_t} = \frac{2\sinh^2\!\left(x_s\right)\left(t - s\right) + e^{2t - 2s} - 1}{2\sinh^2\!\left(x_0\right) + 2e^{2s - 2t}},
+% \]
+% with details provided in \Cref{app:bene_calculations}.
 The solution to \cref{eqn:bene_sde} at time \(t\) is then approximated by the Gaussian distribution
 \[
-	l_t \sim \mathcal{N}\!\left(\arcsinh\!\left(e^t \sinh\!\left(x_0\right)\right),\, \frac{2\sinh^2\!\left(x_0\right)t + e^{2t} - 1}{2\sinh^2\!\left(x_0\right) + 2e^{-2t}}\right).
+	l_t \sim \mathcal{N}\!\left(\arcsinh\!\left(e^{t - s} \sinh\!\left(x_s\right)\right),\, \frac{2\sinh^2\!\left(x_s\right)t + e^{2t - 2s} - 1}{2\sinh^2\!\left(x_s\right) + 2e^{-2s-2t}}\right).
 \]
 Returning to our specific example (\(x_0 = 1/2\), \(s = 0\), and \(t = 5\)), we plot the density of the Gaussian approximation \(l_5\) in dashed red in \Cref{fig:bene_gauss}.
 The Gaussian approximation cannot capture the bimodality of the true solution, and so only a single mode is captured.
-This is a significant limitation of using a single linearisation approximation, which cannot possibly capture any multimodality.
-% However, to compensate for the additional negative mode, the mean of the Gaussian approximation is less than that of the positive mode, and the variance is larger.\lb{Again, need to be more precise here. Have a look at the conditional probabilities and compare - the deterministic trajectory would have no idea about the fixed point. Otherwise could omit this sentence - keep it simple, the main point is the bimodality}
+This is a significant limitation of using a single linearisation approximation.
 
 
-% \newcommand{\plotbenepdf}[2]{
-% 	\begin{tikzpicture}\begin{axis}[
-% 				ymin=0.0,
-% 				xmin=-10.0,
-% 				xmax=10.0,
-% 				axis lines=center,
-% 				axis on top=true,
-% 				domain=-10:10,
-% 				ylabel=$p$,
-% 				xlabel=$x$,
-% 				ytick=\empty,
-% 				yticklabels={},
-% 			]
-% 			\addplot [mark=none,draw=black,thick,samples=500] {cosh(\x)*exp(-#2/2-1/(2 * #2)*(\x-#1)^2)/((2 * pi * #2)^(1/2) * cosh(#1))};
-% 		\end{axis}
-% 	\end{tikzpicture}
-% }
-
-% \begin{figure}
-% 	\begin{center}
-% 		\begin{subfigure}{0.49\textwidth}
-% 			\plotbenepdf{1/2}{1}
-% 			\caption{\(t = 1\)}
-% 			\label{fig:bene_1}
-% 		\end{subfigure}
-% 		\begin{subfigure}{0.49\textwidth}
-% 			\plotbenepdf{1/2}{2.5}
-% 			\caption{\(t = 2.5\)}
-% 			\label{fig:bene_2.5}
-% 		\end{subfigure}
-% 		\begin{subfigure}{0.49\textwidth}
-% 			\plotbenepdf{1/2}{5}
-% 			\caption{\(t = 5\)}
-% 			\label{fig:bene_5}
-% 		\end{subfigure}
-% 		\begin{subfigure}{0.49\textwidth}
-% 			\plotbenepdf{1/2}{7.5}
-% 			\caption{\(t = 7.5\)}
-% 			\label{fig:bene_7.5}
-% 		\end{subfigure}
-% 	\end{center}
-% 	\caption{The probability density function \cref{eqn:bene_sde_pdf} for the time-marginal solution of the Bene\v{s} SDE \cref{eqn:bene_sde}, for the initial condition \(x_0 = 1/2\) at various times.
-% 		The density function consists of two distinct modes that move further apart as \(t\) increases.}
-% 	\label{fig:bene_pdf}
-% \end{figure}
-
-
-
-We seek a scheme that can capture departures from Gaussianity in the SDE solution, while still taking advantage of the efficient computation of the corresponding deterministic system and the linearisation approximation.
-An alternative perspective of the linearisation solution is that it captures the behaviour of stochastic fluctuations close to a deterministic trajectory, in a similar sense to how a Taylor polynomial captures local behaviour of a nonlinear function.
+To improve upon the single linearisation approximation, we  seek a scheme that can capture departures from Gaussianity in the SDE solution, while still taking advantage of the efficient computation of the linearisation solution.
+An alternative perspective is that the linearised SDE captures the behaviour of stochastic fluctuations close to a deterministic trajectory, in a similar sense to how a Taylor polynomial captures the local behaviour of a nonlinear function.
 By `piecing' together several of these approximations together we can capture the stochastic behaviour in different regions of the state space.
-A Gaussian mixture model (GMM) provides a framework for combining multiple Gaussian densities into a single distribution, and is therefore the obvious choice for constructing non-Gaussian densities out of our Gaussian approximations.
-In this chapter, we outline an algorithm that uses \emph{multiple} Gaussian approximations resulting from the linearised SDE in a mixture model to provide a non-Gaussian approximation to the nonlinear SDE solution.
-The algorithm itself is provided in \Cref{sec:gmm_alg}.
+A Gaussian mixture model (GMM) provides a framework for combining multiple Gaussian densities into a single distribution and is thus the obvious choice for constructing non-Gaussian densities out of our Gaussian approximations.
+In this chapter, we outline an algorithm that uses \emph{multiple} linearisation approximations to construct a Gaussian mixture model that approximates the nonlinear SDE solution.
+% The algorithm itself is provided in \Cref{sec:gmm_alg}.
 
 % Helper functions for TikZ pic
 \newcommand{\TikZGauss}[3]{1 / sqrt(2 * pi * #3) * exp(-(#1 - #2) * (#1 - #2) / #3)} % Args: variable, mean, variance
@@ -206,52 +157,40 @@ With sufficient components, a Gaussian mixture model can recreate any probabilit
 
 
 \section{The GMM algorithm}\label{sec:gmm_alg}
-We will now outline our algorithm to approximate the SDE solution with a Gaussian mixture model while taking advantage of the computationally efficiency of the Gaussian linearisation approximation.
-Given a Gaussian component at a time \(s\), we can `propagate' the component forward to a later time \(t\) by solving \Cref{eqn:gauss_de} initialised with the component mean and covariance matrix.
-That is, we are updating the mean and covariance of the Gaussian component by approximating the solution to the original SDE \cref{eqn:sde_y_gmm} over \((s,t)\) with a linearisation about the deterministic trajectory initialised from the component mean.
-Given a mixture model with multiple Gaussian components, we can propagate each component separately to update the full model through time in a computationally efficient manner.
+We will now outline our algorithm to approximate the SDE solution with a Gaussian mixture model while taking advantage of the computational efficiency of the Gaussian linearisation approximation.
+Given a Gaussian component at a time \(s\), we can `propagate' the component forward to a later time \(t\) by solving \Cref{eqn:gauss_de_gmm} initialised with the component mean and covariance matrix.
+% That is, we are updating the mean and covariance of the Gaussian component by approximating the solution to the original SDE \cref{eqn:sde_y_gmm} over \((s,t)\) with a linearisation about the deterministic trajectory initialised from the component mean.
+Given a mixture model with multiple Gaussian components, we can propagate each component \emph{separately} to update the full model through time in a computationally efficient manner.
+Each component is propagated by approximating the original SDE \cref{eqn:sde_y_gmm} with a different linearisation, about the deterministic trajectory resulting from the component mean.
 
-
-Our proposed method is ad-hoc and based on a simple intuition: the Gaussian solution provides a reasonable approximation for the local behaviour of the true SDE solution over a short timeframe, but once this is no longer the case, we can capture departures from Gaussianity by introducing more components into the mixture model.
-We expect heuristically that as the number of components increase, the full mixture model should provide a closer approximation of the SDE solution density, provided that the components are appropriately placed.
-However, our goal is to provide a numerically efficient algorithm, so we wish to minimise the number of components and use the Gaussian approximation whereever possible.
+Our proposed method is \emph{ad hoc} and based on an intuition: the Gaussian solution provides a reasonable approximation for the local behaviour of the true SDE solution over a short timeframe, but once this is no longer the case, we can capture departures from Gaussianity by introducing more components in the mixture model.
+We expect heuristically that as the number of components increases, the full mixture model should provide a closer approximation of the SDE solution density, provided that the components are appropriately placed.
+However, our goal is to provide a numerically efficient algorithm, so we wish to minimise the number of components and use the Gaussian approximation wherever possible.
 We therefore propose propagating Gaussian components forward through the linearisation model until are no longer reasonable approximations of the local solution behaviour.
-Then, we replace violating component with several smaller judiciously chosen components and propagate each new component individually.
+Then, we replace the violating component with several smaller judiciously chosen components and propagate each new component individually.
 We term this the \emph{splitting} step, where a Gaussian component is split into several smaller ones.
-The new components should be chosen in such a way as to preserve the original component, which can be achieved as follows.
+The new components should be chosen in such a way as to `preserve' the original component, which can be achieved in one sense as follows.
 Let \(\Xi\) follow a Gaussian mixture density with \(N\) components, with respective weights \(w^{(1)}, \dotsc, w^{(N)}\), means \(\mu^{(1)},\dotsc,\mu^{(N)}\), and covariance matrices \(\Sigma^{(1)},\dotsc,\Sigma^{(N)}\).
 The variance of the mixture model is then
 \begin{align*}
 	\var{\Xi} & = \sum_{i=1}^{N}{w^{(i)}\Sigma^{(i)}} + \sum_{i=1}^{N}{w^{(i)}\left(\mu^{(i)} - \bar{\mu}\right)\left(\mu^{(i)} - \bar{\mu}\right)^{\T}} \\
 	          & = \text{Mean of covariances} + \text{Covariance of means},
 \end{align*}
-where \(\bar{\mu} = \sum_{i=1}^{N}{w^{(i)}\mu^{(i)}}\).
+where \(\bar{\mu} = \avg{\Xi} = \sum_{i=1}^{N}{w^{(i)}\mu^{(i)}}\) is the overall mean.
 This decomposition suggests, at least heuristically, that we can include additional uncertainty (in the form of contributions to the overall variance) within the component means themselves.
-By replacing a single component with points, we can ``preserve'' the mean and covariance of the component while introducing additional components that can closer match the non-Gaussian distribution we are seeking to approximate.
-This leads to the following condition on how a component is split: the splitting points should be chosen so that
+By replacing a single component with points, we can preserve the mean and covariance of the component while introducing additional components that can closely match the non-Gaussian target distribution.
+This leads to the following condition: the \(K\) splitting points (the new component means) \(x^{(1)}, \dotsc, x^{(K)}\) that replace \(x\) should be chosen so that
 \begin{equation}
 	\sum_{i=1}^K{\hat{w}_k x^{(k)}} = x, \quad \sum_{i=1}^{K}{\hat{w}_k\left(x^{(k)} - x\right)\!\left(x^{(k)} - x\right)^{\T}} = \Sigma_0.
 	\label{eqn:cov_split_points}
 \end{equation}
 with weights \(\hat{w}_1,\dotsc,\hat{w}_K > 0\) satisfying \(\sum_{k=1}^{K}{\hat{w}_k} = 1\).
-This ensures that the mean and covariance of the original Gaussian is preserved within the (sample) mean and covariance of the new points themselves.
+Each new component is assigned a zero variance in this formulation, but with an appropriate adjustment of \cref{eqn:cov_split_points} each can have a specified variance.
+This ensures that the mean and covariance of the original Gaussian are preserved within the (sample) mean and covariance of the new points themselves.
 Note that at least \(K = n + 1\) points are necessary for \cref{eqn:cov_split_points} to be satisfied.
-The selection of splitting points are similar to the notion of `sigma points', employed in the unscented transform to encode an initial mean and covariance \citep{Uhlmann_1995_DynamicMapBuilding,JulierEtAl_2000_NewMethodNonlinear}.
+The selection of splitting points is similar to the notion of `sigma points', employed in the unscented transform to encode an initial mean and covariance \citep{Uhlmann_1995_DynamicMapBuilding,JulierEtAl_2000_NewMethodNonlinear}.
 Any such sigma points satisfy \cref{eqn:cov_split_points}---Table I in \citet{MenegazEtAl_2015_SystematizationUnscentedKalman} provides a list of sigma points and their weightings used across other literature (and reviewed in the context of Kalman filtering)---and therefore can be used in our algorithm.
 % However, we note a key difference between our proposed algorithm and the unscented transform; the unscented transform provides an \emph{exact} estimate of.
-The canonical set of sigma points originally proposed by \citet{Uhlmann_1995_DynamicMapBuilding}, which we use to apply the GMM algorithm in \Cref{ch:appls}, are
-\begin{subequations}\label{eqn:uhlman_sigma}
-	\begin{align}
-		x^{(1)}         & = x,                                                          \\
-		x^{(1 + i)}     & = x + \sqrt{n + \frac12}\left[\sqrt{\Sigma}\right]_{\cdot i}, \\
-		x^{(1 + n + i)} & = x - \sqrt{n + \frac12}\left[\sqrt{\Sigma}\right]_{\cdot i},
-	\end{align}
-\end{subequations}
-for \(i = 1,\dotsc, n\), where \(\sqrt{\Sigma}\) denotes the symmetric square root of \(\Sigma\), and \(\left[\sqrt{\Sigma}\right]_{\cdot i}\) denotes the \(i\)th column of \(\sqrt{\Sigma}\).
-The points are uniformly weighted, i.e.\ \(\hat{w}_k = 1 / (2n + 1)\).
-\Cref{fig:sigma_points_ex} depicts the splitting of a covariance and mean into 5 sigma points in 2-dimensions, using the canonical set \cref{eqn:uhlman_sigma}.
-By perturbing the mean by the columns of the square root of the covariance matrix, the sigma points are placed at the vertices of the ellipse representing the matrix.
-However, we do not enforce a particular approach for selecting these points and leave this to be investigated further as future work.
 
 \begin{figure}
 	\centering
@@ -273,152 +212,150 @@ However, we do not enforce a particular approach for selecting these points and 
 		\fill[blue] ($(0,0)+(-90:70pt and 40pt)$) circle[radius=1pt] node[anchor=north] {\(x^{(4)}\)};
 		\fill[blue] ($(0,0)+(180:70pt and 40pt)$) circle[radius=1pt] node[anchor=east] {\(x^{(5)}\)};
 	\end{tikzpicture}
-	\caption{The splitting of a \(2\)-dimensional mean \(x\) and \(2\times 2\) covariance matrix \(\Sigma\) (in black) into 5 sigma points \(x^{(1)}, \dotsc, x^{(5)}\) (in blue), using the canonical set \cref{eqn:uhlman_sigma}.
+	\caption{The splitting of a two-dimensional mean \(x\) and \(2\times 2\) covariance matrix \(\Sigma\) (in black) into 5 sigma points \(x^{(1)}, \dotsc, x^{(5)}\) (in blue), using the canonical set \cref{eqn:uhlman_sigma}.
 		The mean \(x\) is preserved as one of the points, and the four others are placed at the vertices and co-vertices of the first standard deviation ellipse of \(\Sigma\).}
 	\label{fig:sigma_points_ex}
 \end{figure}
 
+The canonical set of sigma points originally proposed by \citet{Uhlmann_1995_DynamicMapBuilding}, which we use to apply the GMM algorithm in \Cref{ch:appls}, are
+\begin{subequations}\label{eqn:uhlman_sigma}
+	\begin{align}
+		x^{(1)}         & = x,                                                          \\
+		x^{(1 + i)}     & = x + \sqrt{n + \frac12}\left[\sqrt{\Sigma}\right]_{\cdot i}, \\
+		x^{(1 + n + i)} & = x - \sqrt{n + \frac12}\left[\sqrt{\Sigma}\right]_{\cdot i},
+	\end{align}
+\end{subequations}
+for \(i = 1,\dotsc, n\), where \(\sqrt{\Sigma}\) denotes the symmetric square root of \(\Sigma\), and \(\left[\sqrt{\Sigma}\right]_{\cdot i}\) denotes the \(i\)th column of \(\sqrt{\Sigma}\).
+The points are uniformly weighted, i.e.\ \(\hat{w}_k = 1 / (2n + 1)\).
+\Cref{fig:sigma_points_ex} depicts the splitting of a mean and covariance matrix pair into 5 sigma points in two-dimensions, using the canonical set \cref{eqn:uhlman_sigma}.
+By perturbing the mean by the columns of the square root of the covariance matrix, the sigma points are placed at the vertices of the ellipse representing the matrix.
+However, we do not enforce a particular approach for selecting these points and leave this to be investigated further as future work.
 
-The two critical steps of algorithm is \emph{when} to split, a criterion which should decide when the Gaussian approximation is no longer a reasonable representation of the nearby solution behaviour, and \emph{how} to split, with the appropriate method that ensures the new components satisfy \cref{eqn:cov_split_points}.
+The two critical steps of the algorithm are \emph{when} to split, a criterion that should decide when the Gaussian approximation is no longer a reasonable representation of the nearby solution behaviour, and \emph{how} to split, with the appropriate method that ensures the new components satisfy \cref{eqn:cov_split_points}.
 We do not provide specific choices for either step and save a thorough investigation for future work.
-In \Cref{sec:gmm_split_disc}, we do provide a brief discussion of some options for the splitting criterion.
-The mixture model algorithm is then as follows:
+In \Cref{sec:gmm_split_disc}, we do however include a brief discussion of some options for the splitting criterion.
+
+The mixture model algorithm is as follows:
 \begin{enumerate}
-	\item Initialise a Gaussian mixture model with \(N\) components, setting \(t^{(1)} = 0\), \(x^{(1)},\dotsc, x^{(N)}\) to be the component means, \(\Sigma^{(1)}, \dotsc, \Sigma^{(N)}\) to be the component covariance matrices, and \(w^{(1)}, \dotsc, w^{(N)}\) to be the component weights.
-	      For a fixed initial condition \(x\), set \(N = 1\), \(x^{(1)} = x_0\), \(\Sigma^{(1)} = O\) and \(\omega^{(1)}\).
+	\item Initialise a Gaussian mixture model with \(N\) components, setting \(x^{(1)},\dotsc, x^{(N)}\) to be the component means, \(\Sigma^{(1)}, \dotsc, \Sigma^{(N)}\) to be the component covariance matrices, and \(w^{(1)}, \dotsc, w^{(N)}\) to be the component weights.
+	      For a fixed initial condition \(x_0\), set \(N = 1\), \(x^{(1)} = x_0\), \(\Sigma^{(1)} = O\) and \(\omega^{(1)}\).
 	      Otherwise, the components and weights are represent the random initial distribution.
+	      Set \(\tau^{(1)} = \dotsb = \tau^{(N)}\).
 
 	\item While \(\tau^{(i)} < t\) for any \(i = 1,\dotsc, N\), iterate the following;
 
 	      \begin{enumerate}
 		      \item Set \(j\) to be any \(i\) for which \(\tau^{(i)} < T\).
 
-		      \item Update \(x^{(j)}\) and \(\Sigma^{(j)}\) by solving the joint system \cref{eqn:gauss_de} with initial state \(x^{(j)}\) and covariance \(\Sigma^{(j)}\), terminating when a split condition is met or the final time \(T\) is reached.
-		            Denote the time at which this solution terminates as \(\tau^{(i)}\).
+		      \item Update \(x^{(j)}\) and \(\Sigma^{(j)}\) by solving the joint system \cref{eqn:gauss_de_gmm} with initial state \(x^{(j)}\) and covariance \(\Sigma^{(j)}\), terminating when a split condition is met or the final time \(T\) is reached.
+		            Set \(\tau^{(j)}\) to the time at which this solution terminates.
 
-		      \item If \(\tau^{(i)} = t\), then complete this branch of the algorithm and continue along another branch, if any are still incomplete.
+		      \item If \(\tau^{(j)} = t\), then complete this branch of the algorithm.
 
-		      \item Otherwise, if \(\tau^{(i)} < t\), construct \(K\) points \(\hat{x}^{(1)},\dotsc,\hat{x}^{(K)}\) with corresponding weights \(\hat{w}^{(1)}, \dotsc, \hat{w}^{(K)}\) that preserve the propagated mean and covariance (i.e.\ satisfying \cref{eqn:cov_split_points}).
-		            Set \(x^{(j)} = \hat{x}^{(1)}\) and \(\Sigma^{(j)} = O\), and
-		            \[
-			            \Sigma^{(N + k - 1)} = O, \quad \text{and} \quad w^{(N + k - 1)} = \hat{w}^{(k)} w^{(j)} \quad \text{for each } k = 1,\dotsc,K
-		            \]
+		      \item Otherwise, if \(\tau^{(j)} < t\), construct \(K\) points \(\hat{x}^{(1)},\dotsc,\hat{x}^{(K)}\) with corresponding weights \(\hat{w}^{(1)}, \dotsc, \hat{w}^{(K)}\) that preserve the propagated mean and covariance (i.e.\ satisfying \cref{eqn:cov_split_points}).
+		            Set \(x^{(j)} = \hat{x}^{(1)}\) and \(\Sigma^{(j)} = O\), and for each \(k = 2,\dotsc,K\):
+		            \begin{align*}
+			            \Sigma^{(N + k - 1)} & = O                     \\
+			            w^{(N + k - 1)}      & = \hat{w}^{(k)} w^{(j)} \\
+			            \tau^{(N + k - 1)}   & = \tau^{(j)}.
+		            \end{align*}
 		            Update the weight of the first sigma point as \(w^{(j)} = \hat{w}^{(1)} w^{(j)}\), and set \(N = N + K - 1\).
 	      \end{enumerate}
 
-	\item Construct the mixture model with density function
+	\item Construct the final mixture model with density function
 	      \[
-		      G\left(x\right) = \frac{1}{\sum_{l=1}^{N}w^{(l)}}\sum_{i=1}^{N}{w^{(i)}\Gauss{x; \, x^{(i)}, \Sigma^{(i)}}}.
+		      G\!\left(x\right) = \sum_{i=1}^{N}{w^{(i)}\Gauss{x; \, x^{(i)}, \Sigma^{(i)}}}.
 	      \]
 
 \end{enumerate}
 
 \begin{figure}
-	\captionsetup{singlelinecheck=off}
 	\centering
-	\begin{tikzpicture}
-		\draw (-1,4) node {1)};
-		% % STEP 0: INITIAL
-		% % Initial position
-		% \fill[black] (1,1.5) circle[radius=1pt] node[anchor = east] {\(x\)};
+	\begin{subfigure}{\textwidth}
+		\begin{tikzpicture}
+			\draw (1,1.5) .. controls (3,3.5) and (5,-1.5) .. (7,1.5);
 
-		% % Initial covariance
-		% \draw[dashed, rotate around = {58: (1, 1.5)}, blue] (1,1.5) ellipse (14pt and 22pt);
-		% \node[blue] at ($(1,1.5)+(90:14pt and 22pt)$) {\(\Sigma_0\)};
+			% Initial position
+			\fill[black] (1,1.5) circle[radius=1pt] node[anchor = east] {\(x\)};
 
-		% STEP 1: PROPAGATE
-		\draw (-1,4) node {1)};
-		% Trajectory
-		\draw (1,1.5) .. controls (3,3.5) and (5,-1.5) .. (7,1.5);
+			% Initial covariance
+			\draw[dashed, rotate around = {58: (1, 1.5)}, blue] (1,1.5) ellipse (14pt and 22pt);
+			\node[blue] at ($(1,1.5)+(90:14pt and 22pt)$) {\(\Sigma\)};
 
-		% Initial position
-		\fill[black] (1,1.5) circle[radius=1pt] node[anchor = east] {\(x\)};
+			% Mapped position
+			\fill[black] (7,1.5) circle[radius=1pt] node[anchor = south] {\(w_t\)};
+			\node[blue] at ($(1,1.5)+(90:14pt and 22pt)$) {\(\Sigma\)};
 
-		% Initial covariance
-		\draw[dashed, rotate around = {58: (1, 1.5)}, blue] (1,1.5) ellipse (14pt and 22pt);
-		\node[blue] at ($(1,1.5)+(90:14pt and 22pt)$) {\(\Sigma\)};
+			% Covariance ellipse
+			\draw[dashed, rotate around = {30: (7,1.5)}, red] (7,1.5) ellipse (30pt and 70pt);
+			\node[red] at ($(7,1.5)+(75:30pt and 70pt)$) {\(\Pi_t\)};
+		\end{tikzpicture}
 
-		% Mapped position
-		\fill[black] (7,1.5) circle[radius=1pt] node[anchor = south] {\(w_t\)};
-		\node[blue] at ($(1,1.5)+(90:14pt and 22pt)$) {\(\Sigma\)};
+		\caption{The mean \(x\) and covariance matrix \(\Sigma\) of the component is propagated forward by solving \cref{eqn:gauss_de_gmm} to obtained \(w_t\) and \(\Pi_t\) respectively.}
+	\end{subfigure}
+	\begin{subfigure}{\textwidth}
+		\begin{tikzpicture}
+			% Trajectory
+			\draw[gray] (1,-4) .. controls (3,-2) and (5,-7) .. (7,-4);
 
-		% Covariance ellipse
-		\draw[dashed, rotate around = {30: (7,1.5)}, red] (7,1.5) ellipse (30pt and 70pt);
-		\node[red] at ($(7,1.5)+(75:30pt and 70pt)$) {\(\Pi_t\)};
+			% Initial position
+			\fill[gray] (1,-4) circle[radius=1pt] node[anchor = east] {\(x\)};
 
-		% STEP 2: Splitting
-		\draw (-1, -1) node {2)};
-		% Trajectory
-		\draw[gray] (1,-4) .. controls (3,-2) and (5,-7) .. (7,-4);
+			% Mapped position
+			\fill[blue] (7,-4) circle[radius=1pt];
 
-		% Initial position
-		\fill[gray] (1,-4) circle[radius=1pt] node[anchor = east] {\(x\)};
+			% Covariance ellipse
+			\draw[dashed, rotate around = {30: (7,-4)}, gray] (7,-4) ellipse (30pt and 70pt);
 
-		% Mapped position
-		\fill[blue] (7,-4) circle[radius=1pt];
+			% Additional sigma points
+			\fill[blue, rotate around = {30: (7,-4)}] ($(7, -4)+(0:30pt and 70pt)$) circle[radius=1pt];
+			\fill[blue, rotate around = {30: (7,-4)}] ($(7, -4)+(90:30pt and 70pt)$) circle[radius=1pt];
+			\fill[blue, rotate around = {30: (7,-4)}] ($(7, -4)+(180:30pt and 70pt)$) circle[radius=1pt];
+			\fill[blue, rotate around = {30: (7,-4)}] ($(7, -4)+(270:30pt and 70pt)$) circle[radius=1pt];
 
-		% Covariance ellipse
-		\draw[dashed, rotate around = {30: (7,-4)}, gray] (7,-4) ellipse (30pt and 70pt);
+			\draw[dashed, gray, rotate around = {30: (7,-4)}] ($(7,-4)+(0:30pt and 70pt)$) -- (7,-4)
+			($(7, -4)+(90:30pt and 70pt)$) -- (7,-4)
+			($(7, -4)+(180:30pt and 70pt)$) -- (7,-4)
+			($(7, -4)+(270:30pt and 70pt)$) -- (7,-4);
+		\end{tikzpicture}
 
-		% Additional sigma points
-		\fill[blue, rotate around = {30: (7,-4)}] ($(7, -4)+(0:30pt and 70pt)$) circle[radius=1pt];
-		\fill[blue, rotate around = {30: (7,-4)}] ($(7, -4)+(90:30pt and 70pt)$) circle[radius=1pt];
-		\fill[blue, rotate around = {30: (7,-4)}] ($(7, -4)+(180:30pt and 70pt)$) circle[radius=1pt];
-		\fill[blue, rotate around = {30: (7,-4)}] ($(7, -4)+(270:30pt and 70pt)$) circle[radius=1pt];
+		\caption{Once the splitting criterion is met, the mapped component is split into \(K\) new components with corresponding means (in blue) satisfying \cref{eqn:cov_split_points}.}
+	\end{subfigure}
+	\begin{subfigure}{\textwidth}
+		\begin{tikzpicture}
+			\fill[blue] (3,-13) circle[radius=1pt];
+			\fill[blue, rotate around = {30: (3,-13)}] ($(3,-13)+(0:30pt and 70pt)$) circle[radius=1pt];
+			\fill[blue, rotate around = {30: (3,-13)}] ($(3,-13)+(90:30pt and 70pt)$) circle[radius=1pt];
+			\fill[blue, rotate around = {30: (3,-13)}] ($(3,-13)+(180:30pt and 70pt)$) circle[radius=1pt];
+			\fill[blue, rotate around = {30: (3,-13)}] ($(3,-13)+(270:30pt and 70pt)$) circle[radius=1pt];
 
-		% Covariances for each sigma point
-		\draw[dashed, rotate around = {30: (7,-4)}, blue] (7, -4) ellipse (12pt and 28pt);
-		\draw[dashed, rotate around = {30: (7,-4)}, blue] ($(7, -4)+(0:30pt and 70pt)$) ellipse (12pt and 28pt);
-		\draw[dashed, rotate around = {30: (7,-4)}, blue] ($(7, -4)+(90:30pt and 70pt)$) ellipse (12pt and 28pt);
-		\draw[dashed, rotate around = {30: (7,-4)}, blue] ($(7, -4)+(180:30pt and 70pt)$) ellipse (12pt and 28pt);
-		\draw[dashed, rotate around = {30: (7,-4)}, blue] ($(7, -4)+(270:30pt and 70pt)$) ellipse (12pt and 28pt);
+			% New trajectories
+			\draw[black,  rotate around = {30: (3,-13)}] ($(3,-13)+(90:30pt and 70pt)$) .. controls (5,-14) and (8, -12) .. (10, -13);
+			\draw[black,  rotate around = {30: (3,-13)}] ($(3,-13)+(0:30pt and 70pt)$) .. controls (5,-15) and (8, -12) .. (10, -14.5);
+			\draw[black] (3,-13) .. controls (5,-15) and (8, -10) .. (12, -11.75);
+			\draw[black,  rotate around = {30: (3,-13)}] ($(3,-13)+(180:30pt and 70pt)$) .. controls (5,-17) and (7, -15) .. (10, -18);
+			\draw[black,  rotate around = {30: (3,-13)}] ($(3,-13)+(270:30pt and 70pt)$) .. controls (5,-17) and (7, -15) .. (8, -18);
 
-		% STEP 3: Continued propagation
-		\draw (-1, -8) node {3)};
+			% Mapped points
+			\fill[black, rotate around = {30: (3,-13)}] ($(10,-13)$) circle[radius=1pt];
+			\fill[black, rotate around = {30: (3,-13)}] ($(10,-14.5)$) circle[radius=1pt];
+			\fill[black] (12,-11.75) circle[radius=1pt];
+			\fill[black, rotate around = {30: (3,-13)}] ($(10,-18)$) circle[radius=1pt];
+			\fill[black, rotate around = {30: (3,-13)}] ($(8,-18)$) circle[radius=1pt];
 
-		% Additional sigma points
-		\fill[blue] (3,-13) circle[radius=1pt];
-		\fill[blue, rotate around = {30: (3,-13)}] ($(3,-13)+(0:30pt and 70pt)$) circle[radius=1pt];
-		\fill[blue, rotate around = {30: (3,-13)}] ($(3,-13)+(90:30pt and 70pt)$) circle[radius=1pt];
-		\fill[blue, rotate around = {30: (3,-13)}] ($(3,-13)+(180:30pt and 70pt)$) circle[radius=1pt];
-		\fill[blue, rotate around = {30: (3,-13)}] ($(3,-13)+(270:30pt and 70pt)$) circle[radius=1pt];
+			% Updated ellipses
+			\draw[dashed, rotate around = {30: (3, -13)}, red] (10,-13) ellipse[x radius=30pt, y radius=70pt, rotate=75];
+			\draw[dashed, rotate around = {30: (3, -13)}, red] (10,-14.5) ellipse[x radius=20pt, y radius=70pt, rotate=68];
+			\draw[dashed, red] (12,-11.75) ellipse[x radius=10pt, y radius=50pt, rotate=70];
+			\draw[dashed, rotate around = {30: (3, -13)}, red] (10,-18) ellipse[x radius=21pt, y radius=70pt];
+			\draw[dashed, rotate around = {30: (3, -13)}, red] (8,-18) ellipse[x radius=10pt, y radius=50pt, rotate=15];
 
-		% Covariances for each sigma point
-		\draw[dashed, rotate around = {30: (3,-13)}, gray] (3,-13) ellipse (12pt and 28pt);
-		\draw[dashed, rotate around = {30: (3,-13)}, gray] ($(3,-13)+(0:30pt and 70pt)$) ellipse (12pt and 28pt);
-		\draw[dashed, rotate around = {30: (3,-13)}, gray] ($(3,-13)+(90:30pt and 70pt)$) ellipse (12pt and 28pt);
-		\draw[dashed, rotate around = {30: (3,-13)}, gray] ($(3,-13)+(180:30pt and 70pt)$) ellipse (12pt and 28pt);
-		\draw[dashed, rotate around = {30: (3,-13)}, gray] ($(3,-13)+(270:30pt and 70pt)$) ellipse (12pt and 28pt);
+		\end{tikzpicture}
 
-		% New trajectories
-		\draw[black,  rotate around = {30: (3,-13)}] ($(3,-13)+(90:30pt and 70pt)$) .. controls (5,-14) and (8, -12) .. (10, -13);
-		\draw[black,  rotate around = {30: (3,-13)}] ($(3,-13)+(0:30pt and 70pt)$) .. controls (5,-15) and (8, -12) .. (10, -14.5);
-		\draw[black] (3,-13) .. controls (5,-15) and (8, -10) .. (12, -11.75);
-		\draw[black,  rotate around = {30: (3,-13)}] ($(3,-13)+(180:30pt and 70pt)$) .. controls (5,-17) and (7, -15) .. (10, -18);
-		\draw[black,  rotate around = {30: (3,-13)}] ($(3,-13)+(270:30pt and 70pt)$) .. controls (5,-17) and (7, -15) .. (8, -18);
+		\caption{Each new component is propagated forward with \cref{eqn:gauss_de_gmm} and the process is repeated for each component \emph{individually} until the final time is reached.}
+	\end{subfigure}
 
-		% Mapped points
-		\fill[black, rotate around = {30: (3,-13)}] ($(10,-13)$) circle[radius=1pt];
-		\fill[black, rotate around = {30: (3,-13)}] ($(10,-14.5)$) circle[radius=1pt];
-		\fill[black] (12,-11.75) circle[radius=1pt];
-		\fill[black, rotate around = {30: (3,-13)}] ($(10,-18)$) circle[radius=1pt];
-		\fill[black, rotate around = {30: (3,-13)}] ($(8,-18)$) circle[radius=1pt];
-
-		% Updated ellipses
-		\draw[dashed, rotate around = {30: (3, -13)}, red] (10,-13) ellipse[x radius=30pt, y radius=70pt, rotate=75];
-		\draw[dashed, rotate around = {30: (3, -13)}, red] (10,-14.5) ellipse[x radius=20pt, y radius=70pt, rotate=68];
-		\draw[dashed, red] (12,-11.75) ellipse[x radius=10pt, y radius=50pt, rotate=70];
-		\draw[dashed, rotate around = {30: (3, -13)}, red] (10,-18) ellipse[x radius=21pt, y radius=70pt];
-		\draw[dashed, rotate around = {30: (3, -13)}, red] (8,-18) ellipse[x radius=10pt, y radius=50pt, rotate=15];
-
-	\end{tikzpicture}
-	\caption[The propagation and splitting of a component in the Gaussian mixture model.]{The propagation and splitting of a component in the Gaussian mixture model:
-		\begin{enumerate*}
-			% \item Start with the mean \(x\) and covariance matrix \(\Sigma_0\) for a component of the mixture model.
-			\item The mean \(x\) and covariance matrix \(\Sigma\) of a component is propagated forward through the linearised SDE, by solving \cref{eqn:gauss_de} to obtained \(w_t\) and \(\Pi_t\) respectively.
-			\item Once the splitting criterion is met, the covariance matrix is split into \(K\) smaller covariance matrices, with corresponding means so that the mean and covariance of the propagated point is preserved.
-			\item Each new component is propagated forward with \cref{eqn:gauss_de} and the process is repeated for each component \emph{individually} until the final time is reached.
-		\end{enumerate*}}
+	\caption{The propagation and splitting of a component in the Gaussian mixture model}
 	\label{fig:gmm_steps}
 \end{figure}
 
@@ -428,26 +365,25 @@ Thus, the algorithm would present a significant computational improvement over b
 
 \begin{figure}
 	\centering
-	\usetikzlibrary{fit}
 	\begin{tikzpicture}[node distance=70pt]
 		\tikzstyle{arrow} = [->,>=stealth]
 
 		\node (s) [rectangle, rounded corners, draw=black, align=center] {\textbf{Start} \\ Given \(x_0, t\) };
 
-		\node (a) [rectangle, below of=s, draw=black, align=center, yshift=-10pt] {Set \(K = 1\) \\ Set \(\tau^{(1)} = 0\) \\ Set \(x^{(1)} = x_0\) \\ Set \(\Sigma^{(1)} = O\) \\ Set \(w^{(1)} = 1\)};
+		\node (a) [rectangle, below of=s, draw=black, align=center, yshift=-10pt] {\textbf{Initialise} \\ Set \(K = 1\) \\ Set \(x^{(1)} = x_0\) \\ Set \(\Sigma^{(1)} = O\) \\ Set \(w^{(1)} = 1\) \\ Set \(\tau^{(1)} = 0\)};
 
 		\node (b) [diamond, below of=a, draw=black, align=center, yshift=-70pt] {Any \(i\) for \\ which \(\tau^{(i)} < t\)?};
 
-		\node (c) [rectangle, below of=b, draw=black, align=center, yshift=-70pt] {\textbf{Propagate} \\ Update \(x^{(i)}, \Sigma^{(i)}\) by solving \\ \cref{eqn:gauss_de} from time \(\tau^{(i)}\) until \\ time \(t\) \textbf{or} the splitting \\ criterion is reached. \\
-			Update \(\tau^{(i)}\) to the propagated time};
+		\node (c) [rectangle, below of=b, draw=black, align=center, yshift=-70pt] {\textbf{Propagate} \\ Update \(x^{(i)}, \Sigma^{(i)}\) by solving \\ \cref{eqn:gauss_de_gmm} from time \(\tau^{(i)}\) until \\ time \(t\) \textbf{or} the splitting \\ criterion is reached. \\
+			Set \(\tau^{(i)}\) to the propagated time};
 
 		\node (d) [diamond, right of=c, draw=black, align=center, xshift = 90pt] {\(\tau^{(i)} = t\)?};
 
 		\node (e) [rectangle, below of = c, draw=black, align=center, yshift = -80pt] {\textbf{Split} \\ Use the splitting method (i.e.\ \cref{eqn:cov_split_points}) \\
 			to set \(x^{(i)}\) and \(x^{(N + 1)}, \dotsc, x^{(N + K - 1)}\) \\
 			and the corresponding weights \(w^{(i)}\) \\
-			and \(w^{(N+1)}, \dotsc x^{(N + K - 1)}\). \\
-			Set \(\Sigma^{(i)} = \Sigma^{(N + 1)} = \dotsb = \Sigma^{(N + K - 1)}\) \\
+			and \(w^{(N+1)}, \dotsc w^{(N + K - 1)}\). \\
+			Set \(\Sigma^{(N + 1)} = \dotsb = \Sigma^{(N + K - 1)} = \Sigma^{(i)}\) \\
 			Set \(\tau^{(N + 1)} = \dotsb = \tau^{(N + K - 1)} = \tau^{(i)}\) \\
 			Set \(N = N + K - 1\)};
 
@@ -474,18 +410,18 @@ Thus, the algorithm would present a significant computational improvement over b
 
 	\end{tikzpicture}
 	\caption{An algorithm flow chart of one particular implementation of the Gaussian mixture model with a certain initial condition.
-		The main propagation-splitting loop is contained within the outlined area.}
+		The main propagation-splitting loop is highlighted by the outlined area.}
 	\label{fig:gmm_alg_diag}
 \end{figure}
 
 There are several options for initialising the mixture model, depending on the initial condition at time \(0\).
 For a fixed initial condition, we can take the degenerate mixture model with a single component and zero variance; this implementation is summarised with an algorithm flow chart in \Cref{fig:gmm_alg_diag}, which also describes the main propagation-splitting loop (indicated by red).
-If the initial condition is Gaussian, this can be used as a single component mixture model and propagated forward with \cref{eqn:gauss_de} by including the initial covariance matrix as the initial condition for the covariance equation.
+If the initial condition is Gaussian, this can be used as a single component mixture model and propagated forward with \cref{eqn:gauss_de_gmm} by including the initial covariance matrix as the initial condition to \cref{eqn:gauss_cov_de_gmm}.
 For a non-Gaussian initial condition, if this distribution can be represented, at least approximately, with a Gaussian mixture model, then this can be used immediately in the algorithm.
 The components and weights of the initial condition are updated in Step 2 of the algorithm.
 
 The number of components in the final mixture is determined by the splitting procedure and in general may not be known in advance.
-This may lead to computational difficulties: many splits can result in an exponential increase in the number of components.
+This may lead to computational difficulties: many splits can result in an unbounded increase in the number of components.
 Each component requires the computation of a mean and covariance matrix to propagate forward in time, and so it would be ideal to keep the number of components low.
 One can easily enforce an upper limit on the number of components, by preventing any further splitting once this threshold is reached.
 
@@ -504,33 +440,20 @@ We implement the Gaussian mixture model with a single split, manually chosen to 
 The algorithm is initialised with \(x^{(1)} = 1/2\), \(\Sigma^{(1)} = 0\) and \(w^{(1)}\).
 After propagating the initial condition by solving \cref{eqn:gauss_de} to the splitting time \(t = 0.8\), we use the canonical sigma points (\cref{eqn:uhlman_sigma}) to replace the Gaussian density with three points \(x^{(1)}, x^{(2)}, x^{(3)}\), preserving the mean and covariance.
 We then propagate these three points forward separately, in that for each one we take the deterministic trajectory \(F_{0.8}^{5}\!\left(x^{(i)}\right)\) and compute the solution to the SDE \cref{eqn:bene_sde} linearised about this trajectory.
-The result are three Gaussian distributions at \(t = 5\), which we then combine into a equally weighted sum to produce a Gaussian mixture model approximating the SDE solution.
+The result is three Gaussian distributions at \(t = 5\), which we then combine as an equally weighted sum to produce a Gaussian mixture model approximating the SDE solution.
 In \Cref{fig:bene_gmm}, we compare the probability density function of the resulting Gaussian mixture model to the true solution density and the Gaussian approximation from a single linearisation.
-Importantly, the mixture model density clearly includes two modes that resemble those of the true solution, which is an important feature of the solution that was not captured by the single linearisation.
-Further configuration of the algorithm may result in a better fit; this was a simple and contrived example implemented to demonstrate the \emph{potential} of the mixture model algorithm in overcoming limitations of a single Gaussian approximation.
-Computing the mixture model only required the propagation of 6 values---the three means and covariance values---by solving the pair \cref{eqn:gauss_de} of differential equations three times.
-We are able to capture the bimodality, an important feature of the solution, with only a small number of calculations.
+Importantly, the mixture model density includes two modes that resemble those of the true solution, which is an important feature of the solution that was not captured by the single linearisation.
+Further configuration of the algorithm may result in a better fit; this was a simple and contrived example implemented to demonstrate the \emph{potential} of the mixture model algorithm in overcoming the limitations of a single Gaussian approximation.
+Computing the mixture model only required the propagation of 6 values---the three means and covariance values---by solving the pair \cref{eqn:gauss_de_gmm} of differential equations three times.
+We can capture the bimodality, an important feature of the solution, with only a small number of calculations.
 This would be particularly advantageous in a situation where the true solution is not analytically available (as in a majority of practical scenarios) and we would have to otherwise rely on bulk simulation to observe these features.
 
-We can take this example further to attain a better fit, by adjusting the way in which the first Gaussian component is split.
-
-However, rather than comparing the full mixture model to the solution we are after, we can focus our attention
-We cap the number of components at 10: if this number is reached then no more components are split and each is propagated until the final time \(t = 5\).
-
-% This was a highly contrived example, in which we had access to the solution of the
-% \td{Get this example working, or otherwise adjust}
 
 
-
-
-% \td{Splitting}
-% Similar algorithms combining linearisations and mixture models have been proposed, such as that by \citet{DeMarsEtAl_2013_EntropyBasedApproachUncertainty} for propagating an initial uncertainty through a non-linear model, which we compare to.
-% However, such algorithms have seen little use in practice, particularly in the oceanography and climate modelling circles.
-% In the following chapter (\Cref{ch:appls}), we will demonstrate the mixture model algorithm on examples from these domains.\lb{careful with this paragraph}
 
 \section{The splitting criterion}\label{sec:gmm_split_disc}
 In the implementation of our algorithm on the Bene\v{s} SDE, we manually chose a single split time.
-However, in general the algorithm requires a choice of criterion for when to split a Gaussian component, for which there are several choices.
+However, in general, the algorithm requires a choice of criterion for when to split a Gaussian component, for which there are several choices.
 A given Gaussian component should be split when the linearised SDE is no longer a reasonable approximation for the original SDE about the deterministic trajectory corresponding to the component.
 This requires an ongoing evaluation of the error in using the approximation.
 Some possibilities include:
@@ -538,15 +461,15 @@ Some possibilities include:
 	\item Alongside the propagation of the mixture model, one can also compute a small number of stochastic samples that solve the original SDE \cref{eqn:sde_y_gmm}.
 	      These stochastic samples can be compared to the ongoing Gaussian evolutions, for instance using a probabilistic distance measure.
 	      However, this would increase the computational load of the algorithm and may require many samples to accurately quantify departures from Gaussianity.
-	      The Gaussian mixture model does provides an analytic probability density function that can lend itself to further inference, as opposed to solely stochastic samples that require an additional step to compute a density function.
-	      There may be a trade-off between the number of samples and the desired computationally efficiency.
+	      The Gaussian mixture model does provide an analytic probability density function that can lend itself to further inference, as opposed to solely stochastic samples that require an additional step to compute a density function.
+	      There may be a trade-off between the number of samples and the desired computational efficiency.
 
 	\item A diagnostic based purely on the deterministic model will be computationally efficient, not requiring any stochastic simulation.
-	      Stochastic sensitivity (introduced by \citet{Balasuriya_2020_StochasticSensitivityComputable} and extended in \Cref{sec:theory_s2}) is a scalar value that is computed directly from the covariance matrix of the Gaussian approximation, and quantifies the magnitude and direction of maximum uncertainty.
+	      Stochastic sensitivity (introduced by \citet{Balasuriya_2020_StochasticSensitivityComputable} and extended in \Cref{sec:theory_s2}) is a scalar value that is computed directly from the covariance matrix of the Gaussian approximation and quantifies the magnitude and direction of maximum uncertainty.
 	      In highly nonlinear systems, stochastic sensitivity may provide a measure for evaluating non-Gaussianity.
 	      This can be computed from each Gaussian component with minimal additional computational cost, by simply taking the operator norm of the component covariance matrix.
 	      However, in regions of linearity and non-multiplicative noise, the solution to the SDE can be Gaussian, but stochastic sensitivity, being the magnitude of the noise, can increase.
-	      A large value of stochastic sensitivity need to imply non-Gaussianity in these cases.
+	      A large value of stochastic sensitivity needs to imply non-Gaussianity in these cases.
 
 
 	\item \citet{DeMarsEtAl_2013_EntropyBasedApproachUncertainty} propose an algorithm for propagating an initial uncertainty through a nonlinear time-varying mapping, by using a Gaussian mixture model and a similar splitting algorithm.
@@ -554,7 +477,7 @@ Some possibilities include:
 	      A split occurs when nonlinearity in the mapping, which would result in non-Gaussianity, is detected via an entropy-based measure.
 	      This measure uses the sigma point method to evaluate the mapping of a covariance matrix, which is compared to the ongoing propagation of a Gaussian component.
 	      The sigma point method provides an \emph{exact} computation for the covariance matrix of a deterministic nonlinear transformation of a random variable, provided that the transformation can be evaluated exactly.
-	      In our case however, there is ongoing uncertainty from the multiplicative noise and the SDE cannot be solved exactly, so we cannot evaluate the mapping required for the sigma point method.
+	      In our case, however, there is ongoing uncertainty from the multiplicative noise and the SDE cannot be solved exactly, so we cannot evaluate the mapping required for the sigma point method.
 	      Nonetheless, this previous work may suggest a direction for further tuning the implementation of our method, including the selection of points when splitting a component.
 
 \end{itemize}
