@@ -63,7 +63,7 @@ Broadly speaking, our theoretical work (namely the error bound in \Cref{thm:main
 
 
 
-\section{Selecting the diffusion matrix \(\sigma\)}\label{sec:disc_sigma}
+\section{Selecting the diffusivity matrix}\label{sec:disc_sigma}
 A powerful advantage of our framework is that the diffusivity matrix \(\sigma\) is permitted to vary spatiotemporally, allowing for multiplicative noise.
 Multiplicative noise is often ignored in practice, due to difficulties in working with analytically \citep{SanchoEtAl_1982_AnalyticalNumericalStudies} and generating numerical realisations efficiently (e.g.\ the review by \cite{MoraEtAl_2017_StableNumericalScheme}).
 Despite these challenges, multiplicative noise is often necessary in practice \citep[e.g.]{Sura_2003_StochasticAnalysisSouthern,KamenkovichEtAl_2015_PropertiesOriginsAnisotropic}.
@@ -71,7 +71,7 @@ Despite these challenges, multiplicative noise is often necessary in practice \c
 We can also expect multiplicative noise to arise from capture experimental and observational considerations that are otherwise ignored in the deterministic model, such as cloud cover when using satellite measurements or nonuniform uncertain across the field of view of a camera.
 % In a theoretical setting, understanding the impact of multiplicative noise is critical in multidimensional stochastic differential equations
 This does raise the question of exactly \emph{how} to specify \(\sigma\), particular when the aim is to measure uncertainty in a model that is only initially specified deterministically.
-If there is no \emph{a priori} knowledge about the spatiotemporal structure of the noise, then the default choice of \(\sigma \equiv I\) addresses a generic situation in which noise is uniformly ascribed to each component of the state.
+If there is no \emph{a priori} knowledge about the spatiotemporal structure of the noise, then the default choice of \(\sigma = I\) addresses a generic situation in which noise is uniformly ascribed to each component of the state.
 In \Cref{ch:appls}, we took a n\"aive approach to include measurement error estimates in our model, by selecting \(\sigma\) so that \(\sigma\sigma^{\T}\) corresponded to a variance.
 However, there is potential for a more informed construction of \(\sigma\) that accounts for the many limitations of the deterministic model.
 For instance, the velocity field in the deterministic ODE was constructed by using a linear interpolant on the observed data, which was only available on a finite spatiotemporal grid.
@@ -445,21 +445,21 @@ In particular, we expect that the mixture model algorithm we have described may 
 \begin{figure}
 	\begin{center}
 		\begin{subfigure}{0.49\textwidth}
-			\includegraphics[width=\textwidth]{chp06_applications/figures/sir/sir_pairwise_50}
+			\includegraphics[width=\textwidth]{chp07_outlook/figures/sir/sir_pairwise_50}
 			\caption{\(M = 50\)}
 			\label{fig:sir_gauss_rels_1}
 		\end{subfigure}
 		\begin{subfigure}{0.49\textwidth}
-			\includegraphics[width=\textwidth]{chp06_applications/figures/sir/sir_pairwise_100}
+			\includegraphics[width=\textwidth]{chp07_outlook/figures/sir/sir_pairwise_100}
 			\caption{\(M = 100\)}
 			\label{fig:sir_gauss_rels_2}
 		\end{subfigure}
 		\begin{subfigure}{0.49\textwidth}
-			\includegraphics[width=\textwidth]{chp06_applications/figures/sir/sir_pairwise_1000}
+			\includegraphics[width=\textwidth]{chp07_outlook/figures/sir/sir_pairwise_1000}
 			\caption{\(M = 1000\)}
 			\label{fig:sir_gauss_rels_3}
 		\end{subfigure}\begin{subfigure}{0.49\textwidth}
-			\includegraphics[width=\textwidth]{chp06_applications/figures/sir/sir_pairwise_10000}
+			\includegraphics[width=\textwidth]{chp07_outlook/figures/sir/sir_pairwise_10000}
 			\caption{\(M = 10000\)}
 			\label{fig:sir_gauss_rels_4}
 		\end{subfigure}
@@ -484,7 +484,7 @@ Any developments to this end, whether that be a modification to the linearised S
 
 \begin{figure}
 	\begin{center}
-		\includegraphics[width=\textwidth]{chp06_applications/figures/sir/sir_s2_R0}
+		\includegraphics[width=\textwidth]{chp07_outlook/figures/sir/sir_s2_R0}
 		\caption{The stochastic sensitivity value (in black) of the SIR diffusion limit \cref{eqn:sir_diff_limit} at time \(t = 5\) and from the fixed initial condition of 10\% of the population infected, for \(\beta = 1\) and varying \(\gamma\).
 			The maximum projection of the sample covariance matrix (in various colours) for \(1000\) stochastic simulations of the discrete population process over the same time interval is included.}
 		\label{fig:sir_s2}
@@ -573,7 +573,7 @@ By establishing connections between our results and those for discrete stochasti
 \begin{landscape}
 	\begin{figure}
 		\centering
-		\includegraphics[width=\textheight]{chp06_applications/figures/seihfr/seihfr_marginals_gaussian}
+		\includegraphics[width=\textheight]{chp07_outlook/figures/seihfr/seihfr_marginals_gaussian}
 		\caption{Histograms of 100000 realisations of the 5-dimensional Ebola model by \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola}, after 20 weeks.
 			Each row and column corresponds to one of the 5 components of the process, with the off-diagonal plots showing the joint bivariate histograms of each pair of components and the diagonal entries showing the single-component marginals.
 			Overlaid in red on each histogram are the contours (for the joint histograms) or probability density functions (for the single-component histograms) of the corresponding marginals of the Gaussian approximation that solves the diffusion limit.}

@@ -12,7 +12,7 @@ When the initial condition of the SDE is fixed or Gaussian---a case often used i
 The mean is given by the deterministic trajectory \(F_0^t\!\left(x_0\right)\) about which \cref{eqn:sde_y} was linearised and the variance can be computed by solving the matrix differential equation \cref{eqn:pi_ode} in \Cref{rem:cov_ode}.
 The deterministic trajectory \(F_0^t\!\left(x_0\right)\) is obtained by solving the deterministic equation \cref{eqn:det_ode}, so we can re-frame the computation of \(l_t^{(\epsilon)}\) as the joint solving of a pair of differential equations.
 Suppose that the initial condition \(y_0^{(\epsilon)} = l_t^{(\epsilon)}\) is Gaussian with mean \(x_0\) and covariance matrix \(\Sigma_0\).
-For notational brevity, set \(w_t \equiv F_0^t\!\left(x_0\right)\) and \(\Pi_t \equiv \var{l_t}\), so that at any time \(t\)
+For notational brevity, set \(w_t \coloneqq F_0^t\!\left(x_0\right)\) and \(\Pi_t \coloneqq \var{l_t}\), so that at any time \(t\)
 \[
 	l_t^{(\epsilon)} \isGauss{w_t, \, \Pi_t}.
 \]
@@ -607,7 +607,7 @@ For both sets of parameter value, the flow is spatially periodic in \([0,2\pi] \
 	\label{fig:gabc_S2}
 \end{figure}
 
-To introduce 3-dimensional noise to the system, we set \(\sigma \equiv I\), the \(3 \times 3\) identity matrix, and compute stochastic sensitivity for a \(200\times 200\) grid of initial conditions on each face of the cube \([0,2\pi] \times [0,2\pi] \times [0,2\pi]\).
+To introduce 3-dimensional noise to the system, we set \(\sigma = I\), the \(3 \times 3\) identity matrix, and compute stochastic sensitivity for a \(200\times 200\) grid of initial conditions on each face of the cube \([0,2\pi] \times [0,2\pi] \times [0,2\pi]\).
 The spatial periodicity and symmetry of the dynamics means that these three faces are sufficient to describe the entire structure of the field within the region \citep{DombreEtAl_1986_ChaoticStreamlinesABC}.
 As with the two-dimensional example, for each initial condition we compute the \(3 \times 3\) covariance matrix using the Mazzoni method.
 The stochastic sensitivity value is then again computed by taking the operator norm of this covariance matrix.
