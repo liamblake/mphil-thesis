@@ -355,7 +355,7 @@ For a detailed introduction to CTMCs, see \citet{Anderson_1991_ContinuousTimeMar
 As a simple example, consider the susceptible-infected-recovered (SIR) model \citep{Allen_2017_PrimerStochasticEpidemic}, which is used to represent the spread of an infectious disease through a population where each individual is either susceptible (able to be infected), infected (and therefore infectious to susceptible individuals), or recovered (unable to be re-infected).
 The transition rates are listed in \Cref{fig:sir_transition}, with the diagram indicating how an individual in the population moves through the three possible stages.
 In the table, \(S\) denotes the number of susceptible individuals and \(I\) the number of infected individuals.
-For a fixed population size \(M\), the number of recovered individuals \(R\) is given by \(R = M - S - I\), so we can formulate the stochastic model as two-dimensional.
+For a fixed population size \(M\), the number of recovered individuals \(R\) is given by \(R = M - S - I\), so we can formulate the stochastic model as 2-dimensional.
 Let \(X_t \equiv \left(S_t,I_t\right)\) be the stochastic process, where \(S_t\) is the number of susceptible individuals and \(I_t\) the number of infected at time \(t\).
 The state space of the process is then \(S = \setc{(s,i)}{s,i\in\set{0,1,\dotsc,M}, \, s + i \leq M}\).
 There are two possible events that lead to a change in the state of the process: an infection of a susceptible individual, which occurs with a rate of \(\beta S_t I_t\) with \(S_t\) and \(I_t\) denoting the number of susceptible and infected individuals respectively at the time \(t\), and a recovery of an infected individual, which occurs with rate \(\gamma I_t\).

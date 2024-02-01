@@ -59,7 +59,7 @@ Although the Gaussian approximation can still provide qualitative insight into t
 	\label{fig:bene_gauss}
 \end{figure}
 
-To further illustrate this point, we consider another example of a one-dimensional stochastic differential equation.
+To further illustrate this point, we consider another example of a 1-dimensional stochastic differential equation.
 The Bene\v{s} SDE \citep{SarkkaSolin_2019_AppliedStochasticDifferential} is
 \begin{equation}
 	\dif x_t = \tanh\!\left(x_t\right)\dif t + \dif W_t.
@@ -212,7 +212,7 @@ Any such sigma points satisfy \cref{eqn:cov_split_points}---Table I in \citet{Me
 		\fill[blue] ($(0,0)+(-90:70pt and 40pt)$) circle[radius=1pt] node[anchor=north] {\(x^{(4)}\)};
 		\fill[blue] ($(0,0)+(180:70pt and 40pt)$) circle[radius=1pt] node[anchor=east] {\(x^{(5)}\)};
 	\end{tikzpicture}
-	\caption{The splitting of a two-dimensional mean \(x\) and \(2\times 2\) covariance matrix \(\Sigma\) (in black) into 5 sigma points \(x^{(1)}, \dotsc, x^{(5)}\) (in blue), using the canonical set \cref{eqn:uhlman_sigma}.
+	\caption{The splitting of a 2-dimensional mean \(x\) and \(2\times 2\) covariance matrix \(\Sigma\) (in black) into 5 sigma points \(x^{(1)}, \dotsc, x^{(5)}\) (in blue), using the canonical set \cref{eqn:uhlman_sigma}.
 		The mean \(x\) is preserved as one of the points, and the four others are placed at the vertices and co-vertices of the first standard deviation ellipse of \(\Sigma\).}
 	\label{fig:sigma_points_ex}
 \end{figure}
@@ -227,7 +227,7 @@ The canonical set of sigma points originally proposed by \citet{Uhlmann_1995_Dyn
 \end{subequations}
 for \(i = 1,\dotsc, n\), where \(\sqrt{\Sigma}\) denotes the symmetric square root of \(\Sigma\), and \(\left[\sqrt{\Sigma}\right]_{\cdot i}\) denotes the \(i\)th column of \(\sqrt{\Sigma}\).
 The points are uniformly weighted, i.e.\ \(\hat{w}_k = 1 / (2n + 1)\).
-\Cref{fig:sigma_points_ex} depicts the splitting of a mean and covariance matrix pair into 5 sigma points in two-dimensions, using the canonical set \cref{eqn:uhlman_sigma}.
+\Cref{fig:sigma_points_ex} depicts the splitting of a mean and covariance matrix pair into 5 sigma points in 2-dimensions, using the canonical set \cref{eqn:uhlman_sigma}.
 By perturbing the mean by the columns of the square root of the covariance matrix, the sigma points are placed at the vertices of the ellipse representing the matrix.
 However, we do not enforce a particular approach for selecting these points and leave this to be investigated further as future work.
 

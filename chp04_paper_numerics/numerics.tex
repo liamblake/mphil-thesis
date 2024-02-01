@@ -1,9 +1,9 @@
 %!TEX root = ../thesis.tex
 
 \chapter{Characterising SDE linearisations: the numerics}\label{ch:linear_numerics}
-We now provide numerical validation of the results in \Cref{ch:linear_theory} on four different example stochastic differential equations in one-, two-, and three-dimensions.
+We now provide numerical validation of the results in \Cref{ch:linear_theory} on four different example stochastic differential equations in 1-, 2-, and 3-dimensions.
 A majority of the content in this chapter again appears in the submitted article \citep{BlakeEtAl_2023_ConvergenceStochasticDifferential}.
-However, the overview in \Cref{sec:mazzoni} of an algorithm \citep{Mazzoni_2008_ComputationalAspectsContinuous} for efficiently solving the mean-covariance equations for the linearisation approximation and \Cref{sec:comput_s2_3d}, where we provide an example of stochastic sensitivity computed for a three-dimensional system, do not appear in the submitted article.
+However, the overview in \Cref{sec:mazzoni} of an algorithm \citep{Mazzoni_2008_ComputationalAspectsContinuous} for efficiently solving the mean-covariance equations for the linearisation approximation and \Cref{sec:comput_s2_3d}, where we provide an example of stochastic sensitivity computed for a 3-dimensional system, do not appear in the submitted article.
 
 \section{The Mazzoni method}\label{sec:mazzoni}
 \td{Update equation references! Relate to stuff in the paper, not the later chapter!!}
@@ -296,7 +296,7 @@ Similarly, in \Cref{fig:multiplicative_eps_lines} we fit a line of best fit of t
 
 
 \subsection{Fixed initial condition}\label{sec:numerics_2d}
-In this example, we consider a two-dimensional model and a fixed initial condition, to validate the results presented in \Cref{sec:theory_fixed}.
+In this example, we consider a 2-dimensional model and a fixed initial condition, to validate the results presented in \Cref{sec:theory_fixed}.
 Following the example in Chapter 5 of \citet{SamelsonWiggins_2006_LagrangianTransportGeophysical}, we consider an unsteady meandering jet in two dimensions, which may serve as an idealised model of geophysical Rossby waves \citep{Pierrehumbert_1991_ChaoticMixingTracer}.
 The velocity field for \(y \equiv \left(y_1, y_2\right)^{\T}\) is given by
 \begin{equation}
@@ -575,7 +575,7 @@ The resulting robust sets consequently also highlight these eddies.
 
 \subsection{In 3-dimensions}\label{sec:comput_s2_3d}
 In \Cref{def:ss_Rn}, we have provided a new definition for stochastic sensitivity in arbitrary dimensions, whereas previously the definition and computation \citep{Balasuriya_2020_StochasticSensitivityComputable} were limited to only two.
-This is the second main contribution of this thesis and so we shall demonstrate this extension on an example toy model in three-dimensions.
+This is the second main contribution of this thesis and so we shall demonstrate this extension on an example toy model in 3-dimensions.
 Consider the Gromeka-Arnold-Beltrami-Childress flow \citep{DombreEtAl_1986_ChaoticStreamlinesABC}:
 \begin{equation}\label{eqn:gabc}
 	u\!\left(y\right) = \begin{bmatrix}
@@ -585,7 +585,7 @@ Consider the Gromeka-Arnold-Beltrami-Childress flow \citep{DombreEtAl_1986_Chaot
 	\end{bmatrix},
 \end{equation}
 where \(A, B, C > 0\) are constants and \(y \equiv \left(y_1, y_2, y_3\right)^{\T}\).
-The flow arises as an exact solution to Euler's equation and is often used as a testbed for Lagrangian analysis in three-dimensions \citep[e.g.]{NelsonJacobs_2016_HighorderVisualizationThreedimensional,BruntonRowley_2010_FastComputationFinitetime,Haller_2001_DistinguishedMaterialSurfaces,SulmanEtAl_2013_LeavingFlatlandDiagnostics}.
+The flow arises as an exact solution to Euler's equation and is often used as a testbed for Lagrangian analysis in 3-dimensions \citep[e.g.]{NelsonJacobs_2016_HighorderVisualizationThreedimensional,BruntonRowley_2010_FastComputationFinitetime,Haller_2001_DistinguishedMaterialSurfaces,SulmanEtAl_2013_LeavingFlatlandDiagnostics}.
 We fix the parameters \(A = \sqrt{3}\) and \(B = \sqrt{2}\), and consider two values of \(C\); \(C= 0\) which is a simplified case and \(C = 1\) which is known to result in chaos \citep{DombreEtAl_1986_ChaoticStreamlinesABC}.
 For both sets of parameter value, the flow is spatially periodic in \([0,2\pi] \times [0,2\pi] \times [0,2\pi]\).
 
@@ -609,7 +609,7 @@ For both sets of parameter value, the flow is spatially periodic in \([0,2\pi] \
 
 To introduce 3-dimensional noise to the system, we set \(\sigma = I\), the \(3 \times 3\) identity matrix, and compute stochastic sensitivity for a \(200\times 200\) grid of initial conditions on each face of the cube \([0,2\pi] \times [0,2\pi] \times [0,2\pi]\).
 The spatial periodicity and symmetry of the dynamics means that these three faces are sufficient to describe the entire structure of the field within the region \citep{DombreEtAl_1986_ChaoticStreamlinesABC}.
-As with the two-dimensional example, for each initial condition we compute the \(3 \times 3\) covariance matrix using the Mazzoni method.
+As with the 2-dimensional example, for each initial condition we compute the \(3 \times 3\) covariance matrix using the Mazzoni method.
 The stochastic sensitivity value is then again computed by taking the operator norm of this covariance matrix.
 \Cref{fig:gabc_S2} plots the stochastic sensitivity on the three faces of the cube.
 

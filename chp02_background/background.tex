@@ -203,14 +203,14 @@ This complication requires an alternative formulation, which leads to an entirel
 		% \includegraphics[width=0.49\textwidth]{chp02_background/figures/wiener_realisations_1d.pdf}
 		% \includegraphics[width=0.49\textwidth]{chp02_background/figures/wiener_realisations_2d.pdf}
 		\includegraphics[width=\textwidth]{chp02_background/figures/wiener_realisations}
-		\caption{(Left) Several realisations of a one-dimensional Wiener process \(W_t\) evolving through time, and (right) a realisation of two-dimensional Wiener process \(\left(W_t^{(1)}, W_t^{(2)}\right)^{\T}\).}
+		\caption{(Left) Several realisations of a 1-dimensional Wiener process \(W_t\) evolving through time, and (right) a realisation of 2-dimensional Wiener process \(\left(W_t^{(1)}, W_t^{(2)}\right)^{\T}\).}
 		\label{fig:wiener_rels}
 	\end{center}
 \end{figure}
 
 In the absence of any additional knowledge about the nature of the noise (such as skew), the canonical Wiener process is the standard choice as the driving stochastic process.
 The Wiener process is the definite integral of a white noise process, and is therefore an appropriate choice to ensure that the ``solution'' (the result after integration through time) of \cref{eqn:fake_sde} involves the idealised noise process \(\xi_t\) that we were initially after. %\lb{I don't think this makes any sense to the reader, but it's difficult to explain this intuitively. I believe that the idea is that this white noise process is the `derivative' of the Wiener process (in the sense that \(W_t\) is the integral of \(\xi_t\)).}.
-Defined formally, the (one-dimensional) canonical \emph{Wiener process} is a stochastic process \(B_t\) taking values in \(\R\) and satisfying the following properties \citep{KallianpurSundar_2014_StochasticAnalysisDiffusion}:
+Defined formally, the (1-dimensional) canonical \emph{Wiener process} is a stochastic process \(B_t\) taking values in \(\R\) and satisfying the following properties \citep{KallianpurSundar_2014_StochasticAnalysisDiffusion}:
 \begin{romanate}
 	\item \(B_0 = 0\) almost surely,
 	\item for every \(s > 0\), the increments \(B_{s + t} - B_{s}\) for \(t \geq 0\) are independent of \(B_r\) for all \(r < s\),
@@ -218,9 +218,9 @@ Defined formally, the (one-dimensional) canonical \emph{Wiener process} is a sto
 	\item \(B_t\) is continuous in \(t\) almost surely.
 \end{romanate}
 Remarkably, these properties \emph{uniquely} define the Wiener process, with the additional result that for any \(t > 0\), \(B_t\) is distributed as \(\mathcal{N}\left(0, t\right)\), a Gaussian distribution with mean zero and variance \(t\).
-The \emph{\(n\)-dimensional Wiener process} is a stochastic process \(W_t\) taking values in \(\R^n\) such that each component of \(W_t\) is a one-dimensional Wiener process and the components of \(W_t\) are mutually independent.
+The \emph{\(n\)-dimensional Wiener process} is a stochastic process \(W_t\) taking values in \(\R^n\) such that each component of \(W_t\) is a 1-dimensional Wiener process and the components of \(W_t\) are mutually independent.
 It follows that for the \(n\)-dimensional Wiener process \(W_t\), at any time \(t > 0\), \(W_t \sim \mathcal{N}\left(0, tI\right)\), an \(n\)-dimensional Gaussian distribution with mean zero and covariance matrix \(tI\).
-\Cref{fig:wiener_rels} plots realisations of a one-dimensional and two-dimensional Wiener process.
+\Cref{fig:wiener_rels} plots realisations of a 1-dimensional and 2-dimensional Wiener process.
 
 \subsection{The It\^o integral}\label{sec:bkg_ito}
 With probability \(1\), the path of a Wiener process is continuous, but differentiable nowhere, which means that standard deterministic calculus is not sufficient to introduce continuous-time uncertainty into a differential equation.
@@ -598,7 +598,7 @@ To directly account for these unresolved sources of uncertainty, the ``true'' La
 	\sde{y_t}{u\!\left(y_t, t\right)}{\epsilon\sigma\!\left(y_t, t\right)}, \quad y_0 = x_0
 	\label{eqn:s2_sde},
 \end{equation}
-where \(0 < \epsilon \ll 1\) is a parameter quantifying the scale of the noise, \(\sigma\colon	\R^2\times[0,T] \to \R^{2\times 2}\) is the \(2\times 2\) diffusion matrix, and \(W_t\) is the canonical two-dimensional Wiener process.
+where \(0 < \epsilon \ll 1\) is a parameter quantifying the scale of the noise, \(\sigma\colon	\R^2\times[0,T] \to \R^{2\times 2}\) is the \(2\times 2\) diffusion matrix, and \(W_t\) is the canonical 2-dimensional Wiener process.
 In the original formulation \citep{Balasuriya_2020_StochasticSensitivityComputable}, \(\epsilon\) is a dimensionless parameter and \(\sigma\) is dimensional, but an alternative scaling technique relates \(\epsilon\) to spatial and velocity uncertainty scales in the data (see the follow-up work by \citet{Balasuriya_2020_UncertaintyFinitetimeLyapunov}, \citet{FangEtAl_2020_DisentanglingResolutionPrecision}, and \citet{BadzaEtAl_2023_HowSensitiveAre} for example).
 Since \(\sigma\) can vary by both space and time, the noise is permitted to be multiplicative.
 The diffusion matrix \(\sigma\) is specified \emph{a priori}, based on any knowledge of how uncertainty varies with space and time, e.g.\ from experimental considerations, observation error estimates, physics-informed models, etc.
@@ -749,7 +749,7 @@ Since stochastic sensitivity is only a recent development, it has only been appl
 
 \end{itemize}
 
-However, as stochastic sensitivity has only been defined in two-dimensions, these studies are also all restricted to two-dimensional systems.
+However, as stochastic sensitivity has only been defined in 2-dimensions, these studies are also all restricted to 2-dimensional systems.
 This is a significant limitation of the original work, and one we will overcome; in \Cref{ch:linear_theory}, our primary theoretical chapter, we will present a new definition of stochastic sensitivity in \(n\)-dimensions that maintains the computability of the measure.
 Extending stochastic sensitivity to \(n\)-dimensions will enable application to a much broader class of models beyond the fluid flow context, including high-dimensional climate models, and accordingly the extension of all the aforementioned studies and applications.
 Moreover, \citet{Balasuriya_2020_StochasticSensitivityComputable} only computes the expectation and variance of the projections \(P_\epsilon(x,\theta)\), which does not describe the full  distribution under the \(\epsilon\downarrow 0\) limit.

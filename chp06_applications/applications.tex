@@ -1,7 +1,7 @@
 \chapter{An application: drifter in the Gulf Stream}\label{ch:appls}
 We now apply the theoretical developments of \Cref{ch:linear_theory} and the mixture model algorithm of \Cref{ch:gmm} to a data-driven model.
 Using altimetry-derived velocity data, we model the motion of a drifter on the surface of the Gulf Stream, a climatically important part of the North Atlantic Ocean.
-We construct a pair of two-dimensional models: an ordinary differential equation treating the measurements as known exactly and an `improved' stochastic differential equation that accounts for measurement error and unresolved effects.
+We construct a pair of 2-dimensional models: an ordinary differential equation treating the measurements as known exactly and an `improved' stochastic differential equation that accounts for measurement error and unresolved effects.
 Our tools then provide both qualitative and quantitative insight into the behaviour of the stochastic model and, consequently, the impact of uncertainty on the predictions of the deterministic one.
 
 
@@ -112,7 +112,7 @@ The Gulf Stream is a well-studied region of the ocean, due to this climatic impo
 Consider tracking the longitudinal and latitudinal position of a drifter moving on the surface of the ocean.
 We first construct an ordinary differential equation for the time evolution of the drifter position from geostrophic velocity data inferred from altimetry (sea surface height) observations by satellite.
 The dataset is supplied by the \citet{E.U.CopernicusMarineServiceCMEMS_2020_GlobalOceanGridded} and has been processed by the Data Unification and Altimeter Combination System (DUACS).
-The sea surface height is proportional to the streamfunction of the surface flow, provided that the flow is treated as two-dimensional, with a constant of proportionality that varies with latitude \citep{Park_2004_DeterminationSurfaceGeostrophic,DoglioniEtAl_2021_SeaSurfaceHeight}.
+The sea surface height is proportional to the streamfunction of the surface flow, provided that the flow is treated as 2-dimensional, with a constant of proportionality that varies with latitude \citep{Park_2004_DeterminationSurfaceGeostrophic,DoglioniEtAl_2021_SeaSurfaceHeight}.
 This enables approximation of the zonal (eastwards) and meridional (northwards) geostrophic velocities, which are originally given in metres per second.
 These measurements are taken hourly and available on a \(0.25^\circ \times 0.25^\circ\) spatial grid.
 We convert the measured velocities to degrees per day via the following transformation: at longitude \(\lambda\) and latitude \(\phi\) (both in degrees), the components \(u_{\mathrm{m}}\) and \(v_{\mathrm{m}}\) in metres per second are transformed as \citep{Capderou_2014_HandbookSatelliteOrbits}
@@ -562,7 +562,7 @@ As discussed in \Cref{ch:gmm}, we expect that the mixture model approach will wo
 We take the same fixed initial condition \(x_0 = \left(-60.5, 39\right)^{\T}\) but consider the position of the drifter at \(t = 3\), so at midnight \DTMdisplaydate{2021}{01}{04}{-1}.
 The distribution of numerical samples at this time is given in \Cref{fig:natl_em_3}; the aim here is to use the mixture model algorithm to approximate this non-Gaussian distribution with a small number of Gaussian components, each constructed as solutions to the linearised SDE.
 The two marginal distributions (in the longitudinal and latitudinal directions) in \Cref{fig:natl_em_3} demonstrate the qualitative departures from Gaussianity mentioned previously: in the longitudinal direction, the distribution of samples is bimodal, whereas in the latitudinal direction we see skew in the southern direction.
-The distribution is two-dimensional, however, so there are aspects of the joint density that are not reflected by the two marginal distributions, such as the curved structure of the density function.
+The distribution is 2-dimensional, however, so there are aspects of the joint density that are not reflected by the two marginal distributions, such as the curved structure of the density function.
 This is a highly non-Gaussian distribution with distinct features that we would like to capture with a mixture model approximation.
 
 \begin{figure}

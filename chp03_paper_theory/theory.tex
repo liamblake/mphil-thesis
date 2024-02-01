@@ -343,7 +343,7 @@ The results of \Cref{sec:theory_fixed} for a fixed initial condition provide a d
 Here, the deterministic model \cref{eqn:ode_det} is seen as a ``best-available'' model for the evolution of Lagrangian trajectories, and the driving vector field \(u\) is the Eulerian velocity of the fluid.
 Stochastic sensitivity ascribes a scalar value to each deterministic trajectory by computing a maximum variance of projected deviation \citep{Balasuriya_2020_StochasticSensitivityComputable}.
 The aim is to provide a \emph{single} computable number for each deterministic trajectory quantifying the impact of uncertainty in the velocity, independent of the scale (\(\epsilon\)) of the noise.
-The natural restating of this original definition of stochastic sensitivity \citep{Balasuriya_2020_StochasticSensitivityComputable} in the $ n $-dimensional setting is as follows:
+The natural restating of this original definition of stochastic sensitivity \citep{Balasuriya_2020_StochasticSensitivityComputable} in the \(n\)-dimensional setting is as follows:
 
 \begin{figure}
 	\centering
@@ -397,9 +397,9 @@ The natural restating of this original definition of stochastic sensitivity \cit
 The ray of angle \(\theta\) in the original definition has been replaced with an arbitrary unit vector \(p\).
 We compute the projection (in red) of the deviation (in blue) between the deterministic (in black) and stochastic (in green) predictions and then maximise over all possible unit vectors \(p\) to obtain the stochastic sensitivity value.
 \Cref{def:ss_Rn} is in the spirit of principal components analysis \citep{Jolliffe_2002_PrincipalComponentAnalysis}, performing a dimension reduction by projecting onto the direction in which the variance is maximised, thus capturing the most uncertainty in the data with a scalar value.
-The anisotropic uncertainty in two-dimensions \citep{Balasuriya_2020_StochasticSensitivityComputable} is the direction-dependent projection (before optimising over all directions in \Cref{def:ss_Rn}).
+The anisotropic uncertainty in 2-dimensions \citep{Balasuriya_2020_StochasticSensitivityComputable} is the direction-dependent projection (before optimising over all directions in \Cref{def:ss_Rn}).
 Explicit theoretical expressions for both the stochastic sensitivity and the anisotropic sensitivity in two dimensions were obtained by \citet{Balasuriya_2020_StochasticSensitivityComputable}; these allowed for quantifying certainty in eventual trajectory locations without having to perform stochastic simulations.
-We show here that our results in \(n\)-dimensions are a generalisation of the two-dimensional ones by \citet{Balasuriya_2020_StochasticSensitivityComputable}, which moreover establishes Gaussianity as well as an explicit expression for the uncertainty measure.
+We show here that our results in \(n\)-dimensions are a generalisation of the 2-dimensional ones by \citet{Balasuriya_2020_StochasticSensitivityComputable}, which moreover establishes Gaussianity as well as an explicit expression for the uncertainty measure.
 A theoretically pleasing and computable expression for the stochastic sensitivity is obtainable:
 
 
@@ -423,7 +423,7 @@ Stochastic sensitivity was formerly defined by \citet{Balasuriya_2020_Stochastic
 
 The stochastic sensitivity field can be calculated given any velocity data \(u\), and through the explicit expression \cref{eqn:sigma_def} for \(\Sigma_0^t\) can even be computed from only flow map data.
 Computation does not require knowledge of the noise scale \(\epsilon\), so the \(S^2\) field is intrinsic in capturing the impact of the model dynamics on uncertainty, and any specified non-uniform diffusivity.
-It has already been shown that, in the fluid flow context, stochastic sensitivity can identify coherent regions in two-dimensions \citep{BadzaEtAl_2023_HowSensitiveAre, Balasuriya_2020_StochasticSensitivityComputable}.
+It has already been shown that, in the fluid flow context, stochastic sensitivity can identify coherent regions in 2-dimensions \citep{BadzaEtAl_2023_HowSensitiveAre, Balasuriya_2020_StochasticSensitivityComputable}.
 A simple approach is to define robust sets, which are those initial conditions for which the corresponding \(S^2\) value, i.e.\ the uncertainty in eventual location, are below some specified threshold.
 This threshold can be defined precisely in terms of a spatial lengthscale of interest and the advective and diffusive characteristics of the flow, as Definition 2.9 of \citet{Balasuriya_2020_StochasticSensitivityComputable}.
 Such a definition extends to the \(n\)-dimensional case as presented here, moreover establishing an easily computable method for determining coherent sets from the covariance matrix \(\Sigma_0^t\).
@@ -822,7 +822,7 @@ This is a well-known result in the scalar case, and the extension to our case is
 	\[
 		\mathcal{I}[g]_i = \sum_{j = 1}^n{\mathcal{I}\left[g_{ij}\right]}.
 	\]
-	Each \(\mathcal{I}[g_{ij}]\) is an It\^o integral of a deterministic, scalar-valued function with respect to a one-dimensional Brownian motion, which is well-known to be a Gaussian process (e.g.\ see Lemma 4.3. of \citet{Applebaum_2004_LevyProcessesStochastic}).
+	Each \(\mathcal{I}[g_{ij}]\) is an It\^o integral of a deterministic, scalar-valued function with respect to a 1-dimensional Brownian motion, which is well-known to be a Gaussian process (e.g.\ see Lemma 4.3. of \citet{Applebaum_2004_LevyProcessesStochastic}).
 	Moreover, each element of \(\mathcal{I}[g]\) is the sum of independent Gaussian random variables and is therefore itself Gaussian.
 	Hence, \(\mathcal{I}[g]\) follows a multivariate Gaussian distribution.
 \end{proof}
