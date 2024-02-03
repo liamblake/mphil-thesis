@@ -1,3 +1,25 @@
+%% DRAFTING
+% Provides warnings if labels are unused
+\RequirePackage{refcheck}
+
+% Tell refcheck about cleveref. From:
+% https://tex.stackexchange.com/questions/87610/making-refcheck-work-with-cleveref
+\makeatletter
+\newcommand{\refcheckize}[1]{%
+	\expandafter\let\csname @@\string#1\endcsname#1%
+	\expandafter\DeclareRobustCommand\csname relax\string#1\endcsname[1]{%
+		\csname @@\string#1\endcsname{##1}\wrtusdrf{##1}}%
+	\expandafter\let\expandafter#1\csname relax\string#1\endcsname
+}
+\makeatother
+\refcheckize{\cref}
+\refcheckize{\Cref}
+% \norefnames
+\nocitenames
+
+
+
+
 % thesis.sty created by AJR Jan 2016
 % Do not change without consultation - haha
 
@@ -112,24 +134,6 @@
 \RequirePackage[datesep=/]{datetime2}
 \DTMsetstyle{ddmmyyyy}
 
-% Provides warnings if labels are unused
-% \RequirePackage{refcheck}
-
-% % Tell refcheck about cleveref. From:
-% % https://tex.stackexchange.com/questions/87610/making-refcheck-work-with-cleveref
-% \makeatletter
-% \newcommand{\refcheckize}[1]{%
-% 	\expandafter\let\csname @@\string#1\endcsname#1%
-% 	\expandafter\DeclareRobustCommand\csname relax\string#1\endcsname[1]{%
-% 		\csname @@\string#1\endcsname{##1}\wrtusdrf{##1}}%
-% 	\expandafter\let\expandafter#1\csname relax\string#1\endcsname
-% }
-% \makeatother
-
-% \refcheckize{\cref}
-% \refcheckize{\Cref}
-% \norefnames
-% \nocitenames
 
 \RequirePackage{hhline}
 
@@ -362,14 +366,16 @@
 }
 
 % Theorem-like environments
-\newtheorem{theorem}{Theorem}[section]
-\newtheorem{definition}{Definition}[section]
-\newtheorem{corollary}{Corollary}[section]
-\newtheorem{example}{Example}[section]
-\newtheorem{lemma}{Lemma}[section]
-\newtheorem{result}{Result}[section]
-\newtheorem{hypo}{Hypothesis}[section]
-\newtheorem{remark}{Remark}[section]
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{definition}{Definition}[chapter]
+\newtheorem{corollary}{Corollary}[chapter]
+\newtheorem{example}{Example}[chapter]
+\newtheorem{lemma}{Lemma}[chapter]
+\newtheorem{result}{Result}[chapter]
+\newtheorem{hypo}{Hypothesis}[chapter]
+\newtheorem{remark}{Remark}[chapter]
+
+\numberwithin{corollary}{chapter}
 
 % Slightly weird bug - if not explicitly defined then cleveref is using \MakeUppercase, but this results in a linebreak before the link.
 \Crefname{hypo}{Hypothesis}{}

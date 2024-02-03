@@ -229,9 +229,9 @@ Here, we provide one definition of the It\^o integral, but do not go into techni
 See the textbooks by \citet{KallianpurSundar_2014_StochasticAnalysisDiffusion} and \citet{Oksendal_2003_StochasticDifferentialEquations}, for instance, for a detailed introduction to and construction of the It\^o integral and subsequent properties.
 We only consider integrals with respect to canonical Wiener processes, but more general theory is available \citep{Applebaum_2004_LevyProcessesStochastic}.
 For our purposes, we can define an It\^o integral as the limit in probability of a sequence of sums: for a scalar but possibly random-valued function \(f\colon [a,b] \to \R\), the \emph{It\^o integral} of \(f\) with respect to the Wiener process \(W_t\) is the limit
-\begin{equation}\label{eqn:ito_int_limit_defn}
+\begin{equation*}\label{eqn:ito_int_limit_defn}
 	\sum_{\left[t_i, t_{i+1}\right] \in \mathcal{P}_N}{f\left(t_{i}\right)\left(W_{t_{i+1}} - W_{t_i}\right)} \xlongrightarrow[\text{probability}]{} \int_a^b{f(t)\dif W_t}, \quad \text{as } N \to \infty
-\end{equation}
+\end{equation*}
 where \(\mathcal{P}_N\) is a partition of \(\left[a,b\right]\) with \(\lim_{N \to \infty}\mathcal{P}_N = [a,b]\), \emph{\`a la} the definition of the Riemann integral.
 The It\^o integral is itself a random variable.
 It can be shown \citep[e.g.]{KallianpurSundar_2014_StochasticAnalysisDiffusion,Oksendal_2003_StochasticDifferentialEquations} that this limit exists for a large class of both deterministic- and random-valued functions, by constructing appropriate approximations of the function \(f\).
@@ -242,15 +242,15 @@ The Stratonovich integral in particular can be re-interpreted as an It\^o integr
 
 The extension of the It\^o integral to vector- and matrix-valued functions is straightforward.
 Let \(g \colon [a,b] \to \R^{n \times m}\) be a function giving possibly random \(n \times m\) matrices (take \(m = 1\) to describe a vector-valued function).
-Then, we define the It\^o integral of \(g\) with respect to the \(m\)-dimensional Wiener process \(W_t\) over the time interval \([a,b]\) as the \(n\) dimension vector
+Then, we define the It\^o integral of \(g\) with respect to the \(m\)-dimensional Wiener process \(W_t\) over the time interval \([a,b]\) as the \(n\)-dimensional vector
 \begin{subequations}\label{eqn:mv_ito_defn}
-	\begin{equation}\label{eqn:mv_ito_defn_1}
+	\begin{equation*}\label{eqn:mv_ito_defn_1}
 		\int_a^b{g(t)\dif W_t} \coloneqq \left(\mathcal{I}_1, \dotsc, \mathcal{I}_n\right)^{\T},
-	\end{equation}
+	\end{equation*}
 	where
-	\begin{equation}\label{eqn:mv_ito_defn_2}
+	\begin{equation*}\label{eqn:mv_ito_defn_2}
 		\mathcal{I}_{i} = \sum_{j=1}^m{\int_a^b{g_{ij}\left(t\right) \dif W_t^{(j)}}},
-	\end{equation}
+	\end{equation*}
 \end{subequations}
 for \(i = 1,\dotsc, n\) and where \(g_{ij}\) denotes the \((i,j)\)th element of \(g\) and \(W_t^{(j)}\) is the \(j\)th component of \(W_t\).
 
