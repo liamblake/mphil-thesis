@@ -1,3 +1,23 @@
+% thesis.sty created by AJR Jan 2016
+% Do not change without consultation - haha
+
+% add extra information to date so included on titlepage
+\def\@date{\today
+	\\\vfil\vfil\em
+	Thesis submitted for the degree of\\
+	\ifx\degree\undefined Specify {\tt$\backslash$degree}%
+	\else\degree\fi\\
+	in\\
+	\ifx\discipline\undefined Specify {\tt$\backslash$discipline}%
+	\else\discipline\fi\\
+	at The University of Adelaide \\
+	Faculty of Sciences, Engineering and Technology \\
+	Discipline of Mathematical Sciences \\
+	School of Computer and Mathematical Sciences
+	\\\vfil
+	\includegraphics{UoA_logo_col_vert}
+}
+
 %% DRAFTING
 % Provides warnings if labels are unused
 \RequirePackage{refcheck}
@@ -18,27 +38,6 @@
 \nocitenames
 
 
-
-
-% thesis.sty created by AJR Jan 2016
-% Do not change without consultation - haha
-
-% add extra information to date so included on titlepage
-\def\@date{\today
-	\\\vfil\vfil\em
-	Thesis submitted for the degree of\\
-	\ifx\degree\undefined Specify {\tt$\backslash$degree}%
-	\else\degree\fi\\
-	in\\
-	\ifx\discipline\undefined Specify {\tt$\backslash$discipline}%
-	\else\discipline\fi\\
-	at The University of Adelaide \\
-	Faculty of Sciences, Engineering and Technology \\
-	Discipline of Mathematical Sciences \\
-	School of Computer and Mathematical Sciences
-	\\\vfil
-	\includegraphics{UoA_logo_col_vert}
-}
 
 % Have useful default headings
 \pagestyle{headings}
