@@ -624,20 +624,22 @@ As with the 2-dimensional example, for each initial condition we compute the \(3
 The stochastic sensitivity value is then again computed by taking the operator norm of this covariance matrix.
 To visualise the three-dimensional structure of the field, in \Cref{fig:gabc_S2} we plot the stochastic sensitivity field on slices of the cube \([0,2\pi] \times [0,2\pi] \times [0,2\pi]\) in the arrangement given in \Cref{fig:gabc_S2_key}.
 
-Within the vortices, the stochastic sensitivity value is smaller as there is a strong tendency for fluid trajectories to remain within each.
-\td{Write this better. Can I explain why the uncertainty is larger in the jet-like part of the flow?}
-The boundaries of the vortices are again highlighted by a sharp ridge of large stochastic sensitivity value.
-In fact, these narrow ridge-like structures correspond to the unstable manifolds within the flow \citep{DombreEtAl_1986_ChaoticStreamlinesABC}: the repelling nature of these regions results in a `larger' stochasticity.
-
+The stochastic sensitivity field highlights the 3-dimensional structure of the vortices---compare \Cref{fig:gabc_S2} to the Poincar\`e sections in Figure 7 of \citet{DombreEtAl_1986_ChaoticStreamlinesABC}, which indicate the structure of the vortices due to the \emph{deterministic dynamics}.
+The interior of the vortices are generally distinguished by a smaller stochastic sensitivity value, suggesting that even under small stochastic sensitivity these structures remain coherent.
+This matches conclusions from the deterministic flow, where there interior of the vortices are `ordered' rather than chaotic; the stochastic sensitivity field provides a similar qualitative insight.
+The boundaries of these vortices are also highlighted by sharp ridges of large stochastic sensitivity values.
+These narrow ridge-like structures correspond to the unstable manifolds within the flow \citep{DombreEtAl_1986_ChaoticStreamlinesABC}; the repelling nature of these regions results in a `larger' stochasticity.
 
 
 \begin{landscape}
 	\begin{figure}
 		\centering
-		\includegraphics[width=0.42\textheight]{chp04_paper_numerics/figures/gabc/S2_slices_yz}
-		\includegraphics[width=0.42\textheight]{chp04_paper_numerics/figures/gabc/S2_slices_xz}
-		\includegraphics[width=0.42\textheight]{chp04_paper_numerics/figures/gabc/S2_slices_xy}
-		\caption{The stochastic sensitivity field for slices of the GABC flow \cref{eqn:gabc}, following the order of \Cref{fig:gabc_S2_key}.}
+		\includegraphics[height=0.65\textwidth]{chp04_paper_numerics/figures/gabc/S2_slices_yz}
+		\includegraphics[height=0.65\textwidth]{chp04_paper_numerics/figures/gabc/S2_slices_xz}
+		\includegraphics[height=0.65\textwidth]{chp04_paper_numerics/figures/gabc/S2_slices_xy}
+		\includegraphics[height=0.65\textwidth]{chp04_paper_numerics/figures/gabc/S2_slices_colourbar}
+		\caption{The stochastic sensitivity field for slices of the GABC flow \cref{eqn:gabc}, following the order of \Cref{fig:gabc_S2_key}.
+			The colour bar applies to every individual figure.}
 		\label{fig:gabc_S2}
 	\end{figure}
 \end{landscape}
