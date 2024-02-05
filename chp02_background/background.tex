@@ -170,7 +170,7 @@ That is, we extend our deterministic model to a \emph{stochastic} one, where the
 There are several approaches to establishing such a framework, the most general of which is a random dynamical system \citep{Arnold_1998_RandomDynamicalSystems,NeckelRupp_2013_RandomDifferentialEquations}.
 When working in a continuous-time and continuous-state modelling scenario, a natural extension of an ordinary differential equation to account for this uncertainty is a stochastic differential equation (SDE) \citep{Oksendal_2003_StochasticDifferentialEquations,KallianpurSundar_2014_StochasticAnalysisDiffusion}, where the uncertainty is modelled with an additional term.
 Although an SDE is an ``improvement'' over the deterministic ODE, in the sense that uncertainty can be encoded in the model itself, the compromise is that solutions are no longer straightforward to obtain or even analyse.
-In fact, the formal treatment of SDEs requires an entirely new notion of integration, as we shall discuss.\lb{This repeats what the introduction said - probably need to remove}
+In fact, the formal treatment of SDEs requires an entirely new notion of integration, as we shall discuss.
 Nonetheless, SDEs provide a rich framework for modelling and are used as predictive tools in a range of applications and fields. % \citep{Balasuriya_2020_StochasticApproachesLagrangian,SarkkaSolin_2019_AppliedStochasticDifferential,Oksendal_2003_StochasticDifferentialEquations,Jazwinski_2014_StochasticProcessesFiltering}.
 There are several different ways to construct stochastic differential equations from deterministic dynamics; the following motivation of stochastic differential equations loosely follows a similar one available in \citet{Oksendal_2003_StochasticDifferentialEquations}, but other formulations of SDEs are available, e.g.\ using rough path theory \citep{FrizVictoir_2010_MultidimensionalStochasticProcesses} or by averaging the `fast' dynamics in a multiscale system \citep{MelbourneStuart_2011_NoteDiffusionLimits,GottwaldMelbourne_2013_HomogenizationDeterministicMaps,PavliotisStuart_2008_MultiscaleMethods}.
 
@@ -335,7 +335,7 @@ Although the deterministic dynamics can give a loose indication of the behaviour
 In general, solving a stochastic differential equation analytically is not possible, and so as with ordinary differential equations we instead look to use numerical schemes to approximate solutions.
 However, the solution to a stochastic differential equation is itself a random variable, so a single sample path is not sufficient.
 Instead, a numerical SDE scheme involves random sampling (typically of the driving noise process) and produces approximate \emph{realisations} of the solution.
-With a large number of these Monte-Carlo realisations, one can estimate statistical properties and approximate the distribution of the solution.
+With a large number of these Monte Carlo realisations, one can estimate statistical properties and approximate the distribution of the solution.
 The stochastic sampling approach is the gold-standard in many applications, most notably climate and weather modelling \citep{Collins_2007_EnsemblesProbabilitiesNew}.
 
 The simplest scheme for numerically solving SDEs is the Euler-Maruyama (EM) method, which is analogous to the Euler method for ODEs \citep{KloedenPlaten_1992_NumericalSolutionStochastic}.

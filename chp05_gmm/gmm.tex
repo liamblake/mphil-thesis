@@ -3,7 +3,7 @@ In \Cref{ch:linear_theory}, we described and justified a framework for computing
 A key advantage of this approximation is the efficiency of computation; rather than having to generate a large number of realisations of the SDE solution we can solve a smaller system of differential equations to obtain the first two moments.
 When the initial condition is fixed or Gaussian, the resulting linearisation solution is a Gaussian process, providing an approximation characterised entirely by these two moments and an analytically available probability density function.
 A Gaussian approximation has further practical advantages, leading to its use across many different applications \citep{KaszasHaller_2020_UniversalUpperEstimate,ArchambeauEtAl_2007_GaussianProcessApproximations,Jazwinski_2014_StochasticProcessesFiltering,SarkkaSolin_2019_AppliedStochasticDifferential,Sanz-AlonsoStuart_2017_GaussianApproximationsSmall}.
-For example, even in inference requiring Monte-Carlo simulations, a Gaussian distribution with a specified mean and covariance is faster to sample from than generating numerical solutions of the nonlinear SDE.
+For example, even in inference requiring Monte Carlo simulations, a Gaussian distribution with a specified mean and covariance is faster to sample from than generating numerical solutions of the nonlinear SDE.
 
 Recall that we are interested in approximating the solution at a time \(t\) to the nonlinear stochastic differential equation
 \begin{equation}

@@ -33,7 +33,7 @@ An important consideration  when solving \cref{eqn:gauss_de} numerically is that
 However, many standard numerical ODE schemes do not take this into account, so a specialised scheme is required.
 Similar equations of the form \cref{eqn:gauss_de} (although often without explicit dependence on both time and the state in the \(\sigma\) term) are solved numerically in other applications, notably when implementing the extended Kalman filter \citep{Jazwinski_2014_StochasticProcessesFiltering, KulikovaKulikov_2014_AdaptiveODESolvers}.
 \citet{KulikovaKulikov_2014_AdaptiveODESolvers} identify that that the two most significant sources of numerical error when solving equations of this form are a) the estimate of the covariance matrix \(\Sigma_s^t\) violating the requirement of positive semi-definiteness, and b) local error propagation in the state equation.
-Moreover, a computationally efficient algorithm is critical to ensure that the linearisation approximation has an advantage over bulk Monte-Carlo simulation.
+Moreover, a computationally efficient algorithm is critical to ensure that the linearisation approximation has an advantage over bulk Monte Carlo simulation.
 
 \citet{Mazzoni_2008_ComputationalAspectsContinuous} proposes an efficient hybrid method for solving \cref{eqn:gauss_de} which addresses both difficulties a) and b) and takes advantage of the availability of the Jacobian \(\nabla u\).
 This method, which we shall term the Mazzoni method, combines a Taylor-Heun approximation for \cref{eqn:gauss_mean_de} and a Gauss-Legendre step for \cref{eqn:gauss_cov_de}.
@@ -198,7 +198,7 @@ To numerically validate this bound under the Gaussian initial condition \cref{eq
 	E_r\!\left(\epsilon, \rho\right) \coloneqq \frac{1}{N}\sum_{i=1}^N{\norm{\hat{y}_{i}^{(\epsilon)} - \hat{l}_i^{(\epsilon)}}^r},
 	\label{eqn:strong_err_mc_estimate}
 \end{equation}
-which is a Monte-Carlo estimator of the right-hand side of \cref{eqn:main_ineq}, where \(\hat{y}_1^{(\epsilon)},\dotsc, \hat{y}_N^{(\epsilon)}\) and \(\hat{l}_1^{(\epsilon)},\dotsc, \hat{l}_N^{(\epsilon)}\) are \(N\) numerical samples of the solutions to SDE \cref{eqn:sde_y} and the linearisation \cref{eqn:linear_sde_inform} respectively.
+which is a Monte Carlo estimator of the right-hand side of \cref{eqn:main_ineq}, where \(\hat{y}_1^{(\epsilon)},\dotsc, \hat{y}_N^{(\epsilon)}\) and \(\hat{l}_1^{(\epsilon)},\dotsc, \hat{l}_N^{(\epsilon)}\) are \(N\) numerical samples of the solutions to SDE \cref{eqn:sde_y} and the linearisation \cref{eqn:linear_sde_inform} respectively.
 
 \begin{figure}
 	\begin{center}
@@ -399,7 +399,7 @@ For a fixed initial condition, \cref{eqn:main_ineq} predicts that the expected d
 \[
 	\avg{\norm{y_t^{(\epsilon)} - l_t^{(\epsilon)}}^r} \leq \left(K_{\nabla\nabla u} + K_{\nabla\sigma}\right)D_1\!\left(r,t, K_{\nabla u}, K_\sigma\right)\epsilon^{2r}.
 \]
-To numerically estimate the left-hand side of \cref{eqn:main_ineq}, we again use a Monte-Carlo estimator;
+To numerically estimate the left-hand side of \cref{eqn:main_ineq}, we again use a Monte Carlo estimator;
 \[
 	E_r\!\left(\epsilon\right) \coloneqq \frac{1}{N}\sum_{i=1}^N{\norm{\hat{y}_i^{(\epsilon)} - \hat{l}_i^{(\epsilon)}}^r}.
 \]
