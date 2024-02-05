@@ -18,27 +18,6 @@
 	\includegraphics{UoA_logo_col_vert}
 }
 
-%% DRAFTING
-% Provides warnings if labels are unused
-\RequirePackage{refcheck}
-
-% Tell refcheck about cleveref. From:
-% https://tex.stackexchange.com/questions/87610/making-refcheck-work-with-cleveref
-\makeatletter
-\newcommand{\refcheckize}[1]{%
-	\expandafter\let\csname @@\string#1\endcsname#1%
-	\expandafter\DeclareRobustCommand\csname relax\string#1\endcsname[1]{%
-		\csname @@\string#1\endcsname{##1}\wrtusdrf{##1}}%
-	\expandafter\let\expandafter#1\csname relax\string#1\endcsname
-}
-\makeatother
-\refcheckize{\cref}
-\refcheckize{\Cref}
-% \norefnames
-\nocitenames
-
-
-
 % Have useful default headings
 \pagestyle{headings}
 % % but avoid all capitals

@@ -574,7 +574,7 @@ The resulting robust sets consequently also highlight these eddies.
 %Moreover, this simple example demonstrates the claim in \Cref{sec:theory_s2} that the stochastic sensitivity field can be considered a generalisation of the finite-time Lyapunov exponent, in that features of the latter are captured while additionally accounting for ongoing uncertainties.
 
 \subsection{In 3-dimensions}\label{sec:comput_s2_3d}
-In \Cref{def:ss_Rn}, we have provided a new definition for stochastic sensitivity in arbitrary dimensions, whereas previously the definition and computation \citep{Balasuriya_2020_StochasticSensitivityComputable} were limited to only two.
+In \Cref{def:ss_Rn}, we have provided a new definition for stochastic sensitivity in arbitrary dimensions, whereas previously, the definition and computation \citep{Balasuriya_2020_StochasticSensitivityComputable} were limited to only two.
 This is the second main contribution of this thesis and so we shall demonstrate this extension on an example toy model in 3-dimensions.
 Consider the Gromeka-Arnold-Beltrami-Childress flow \citep{DombreEtAl_1986_ChaoticStreamlinesABC}:
 \begin{equation}\label{eqn:gabc}
@@ -586,8 +586,8 @@ Consider the Gromeka-Arnold-Beltrami-Childress flow \citep{DombreEtAl_1986_Chaot
 \end{equation}
 where \(A, B, C > 0\) are constants and \(y \equiv \left(y_1, y_2, y_3\right)^{\T}\).
 The flow arises as an exact solution to Euler's equation and is often used as a testbed for Lagrangian analysis in 3-dimensions \citep[e.g.]{NelsonJacobs_2016_HighorderVisualizationThreedimensional,BruntonRowley_2010_FastComputationFinitetime,Haller_2001_DistinguishedMaterialSurfaces,SulmanEtAl_2013_LeavingFlatlandDiagnostics}.
-We take the parameter values \(A = \sqrt{3}\), \(B = \sqrt{2}\), and \(C = 1\), for which the flow is spatially periodic in the cube \([0,2\pi] \times [0,2\pi] \times [0,2\pi]\)..
-The flow then consists of a network of vortex structures and homoclinic orbits that cause distinct regions of `order' and chaos to emerge \citep{DombreEtAl_1986_ChaoticStreamlinesABC}.
+We take the parameter values \(A = \sqrt{3}\), \(B = \sqrt{2}\), and \(C = 1\), for which the flow is spatially periodic in the cube \([0,2\pi] \times [0,2\pi] \times [0,2\pi]\).
+The flow then comprises a network of vortex structures and homoclinic orbits that cause distinct regions of `order' and chaos to emerge \citep{DombreEtAl_1986_ChaoticStreamlinesABC}.
 
 % \td{Only include one plot - analyse the 3D structure with slices}
 % \begin{figure}
@@ -617,16 +617,16 @@ The flow then consists of a network of vortex structures and homoclinic orbits t
 	\end{center}
 \end{figure}
 
-To introduce 3-dimensional noise to the system, we set \(\sigma = I\), the \(3 \times 3\) identity matrix, and compute stochastic sensitivity for a \(200\times 200\times 200\) grid of initial conditions on each face of the cube \([0,2\pi] \times [0,2\pi] \times [0,2\pi]\).
+To introduce 3-dimensional noise to the system, we set \(\sigma = I\), the \(3 \times 3\) identity matrix, and compute stochastic sensitivity for a \(200\times 200\times 200\) grid of initial conditions within the cube \([0,2\pi] \times [0,2\pi] \times [0,2\pi]\).
 % \td{Check this with actual computations!}
 % The spatial periodicity and symmetry of the dynamics means that these three faces are sufficient to describe the entire structure of the field within the region \citep{DombreEtAl_1986_ChaoticStreamlinesABC}.
-As with the 2-dimensional example, for each initial condition we compute the \(3 \times 3\) covariance matrix using the Mazzoni method.
-The stochastic sensitivity value is then again computed by taking the operator norm of this covariance matrix.
+As with the 2-dimensional example, for each initial condition, we compute the \(3 \times 3\) covariance matrix using the Mazzoni method.
+The stochastic sensitivity value is then computed by taking the operator norm of this covariance matrix.
 To visualise the three-dimensional structure of the field, in \Cref{fig:gabc_S2} we plot the stochastic sensitivity field on slices of the cube \([0,2\pi] \times [0,2\pi] \times [0,2\pi]\) in the arrangement given in \Cref{fig:gabc_S2_key}.
 
-The stochastic sensitivity field highlights the 3-dimensional structure of the vortices---compare \Cref{fig:gabc_S2} to the Poincar\`e sections in Figure 7 of \citet{DombreEtAl_1986_ChaoticStreamlinesABC}, which indicate the structure of the vortices due to the \emph{deterministic dynamics}.
-The interior of the vortices are generally distinguished by a smaller stochastic sensitivity value, suggesting that even under small stochastic sensitivity these structures remain coherent.
-This matches conclusions from the deterministic flow, where there interior of the vortices are `ordered' rather than chaotic; the stochastic sensitivity field provides a similar qualitative insight.
+The stochastic sensitivity field highlights the 3-dimensional structure of the vortices---compare \Cref{fig:gabc_S2} to the Poincar\`e sections in Figure 7 of \citet{DombreEtAl_1986_ChaoticStreamlinesABC}, which show the structure of the vortices because of the \emph{deterministic} dynamics.
+Smaller stochastic sensitivity values distinguish the interiors of most vortices, suggesting that even under small stochasticity, these structures remain coherent.
+This matches conclusions from the deterministic flow, where there interiors of the vortices are `ordered' rather than chaotic; the stochastic sensitivity field provides a similar qualitative insight.
 The boundaries of these vortices are also highlighted by sharp ridges of large stochastic sensitivity values.
 These narrow ridge-like structures correspond to the unstable manifolds within the flow \citep{DombreEtAl_1986_ChaoticStreamlinesABC}; the repelling nature of these regions results in a `larger' stochasticity.
 
@@ -638,7 +638,7 @@ These narrow ridge-like structures correspond to the unstable manifolds within t
 		\includegraphics[height=0.65\textwidth]{chp04_paper_numerics/figures/gabc/S2_slices_xz}
 		\includegraphics[height=0.65\textwidth]{chp04_paper_numerics/figures/gabc/S2_slices_xy}
 		\includegraphics[height=0.65\textwidth]{chp04_paper_numerics/figures/gabc/S2_slices_colourbar}
-		\caption{The stochastic sensitivity field for slices of the GABC flow \cref{eqn:gabc}, following the order of \Cref{fig:gabc_S2_key}.
+		\caption{The stochastic sensitivity field for slices of the GABC flow \cref{eqn:gabc} with identity diffusivity matrix, following the arrangement specified in \Cref{fig:gabc_S2_key}.
 			The colour bar applies to every individual figure.}
 		\label{fig:gabc_S2}
 	\end{figure}
