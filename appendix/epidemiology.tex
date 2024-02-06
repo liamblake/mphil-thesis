@@ -21,7 +21,7 @@ where \(f\) is a suitable function and \(x, x+l \in \mathcal{S}\) for \(l \in \R
 % Typically, \(N\) is related to the size of the system and \(n / N\) is a population density.
 % The condition in \cref{eqn:ctmc_dens_dep} states that the transition rates of the process \(X_t\) depends on \(X_t\) itself only through the density \(X_t / N\).
 Let \(Y_t^{(M)}\) describe the \(n\)-dimensional density process, i.e. \(Y_t^{(M)} = X_t^{(M)} / M\).
-Theorem 3.1 of \citet{Kurtz_1970_SolutionsOrdinaryDifferential} establishes that in the large population limit \(M \to \infty\), the density process \(Y_t^{(M)}\) converges in probability to a deterministic trajectory \(Y_t^{(\infty)}\) solving the ODE
+Theorem~3.1 of \citet{Kurtz_1970_SolutionsOrdinaryDifferential} establishes that in the large population limit \(M \to \infty\), the density process \(Y_t^{(M)}\) converges in probability to a deterministic trajectory \(Y_t^{(\infty)}\) solving the ODE
 \begin{equation}
 	\dod{Y_t^{(\infty)}}{t} = Q\!\left(Y_t^{(\infty)}\right), \quad Y_0^{(\infty)} = \lim_{M\to\infty}\frac1M X^{(M)}_0,
 	\label{eqn:ctmc_dens_dep_ode}
@@ -37,7 +37,7 @@ Define the scaled process
 \[
 	Z_t^{(M)} = \sqrt{M}\left(Y_t^{(M)} - Y_{t}^{(\infty)}\right),
 \]
-then Theorem 3.5 of \citet{Kurtz_1971_LimitTheoremsSequences} proves that \(Z_t^{(M)}\) converges in distribution (weakly) to an It\^o diffusion \(Z_t^{(\infty)}\) solving
+then Theorem~3.5 of \citet{Kurtz_1971_LimitTheoremsSequences} proves that \(Z_t^{(M)}\) converges in distribution (weakly) to an It\^o diffusion \(Z_t^{(\infty)}\) solving
 \begin{equation}
 	\dif Z_t^{(\infty)} = \nabla Q\!\left(Y_t^{(\infty)}\right) Z_t^{(\infty)}\dif t + G\!\left(Y_t^{(\infty)}\right)\dif W_t, \quad Z_0^{(\infty)} = 0,
 	\label{eqn:ctmc_dens_dep_sde}
@@ -68,7 +68,7 @@ A single sample \(X\) from the CTMC at time \(T\) can be simulated with the foll
 	\item If \(t > T\), terminate.
 	      Otherwise, sample the next state from the set of possible transitions, where the probability of transitioning from \(X\) to a different state \(Y \in \mathcal{S}\setminus \set{X}\) is given by
 	      \[
-					P\!\left(X \to Y\right) = \frac{q\!\left(X, Y\right)}{\sum_{\substack{Z \in \mathcal{S} \\ Z \neq X}}{q\!\left(X, Z\right)}}.
+		      P\!\left(X \to Y\right) = \frac{q\!\left(X, Y\right)}{\sum_{\substack{Z \in \mathcal{S} \\ Z \neq X}}{q\!\left(X, Z\right)}}.
 	      \]
 	      Set \(X\) to this sampled state.
 

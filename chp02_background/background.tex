@@ -152,7 +152,7 @@ Accordingly, the gradient \(\nabla F_s^t\) of the flow map (with respect to the 
 For any times \(s, t \in [0,T]\), this gradient	\(\nabla F_s^t\) satisfies a useful property:
 \begin{equation}
 	\dpd{\nabla F_{s}^{t}\!\left(x\right)}{t} = \nabla u\!\left(F_{s}^{t}\!\left(x\right), t\right) \nabla F_{s}^{t}\!\left(x\right),
-	\label{eqn:eqn_of_variations}
+	\label{eqn:eqn_of_vars}
 \end{equation}
 which is the equation of variations corresponding to \cref{eqn:det_ode}.
 This result can be shown by taking the gradient of both sides in \cref{eqn:flow_map_ode} and using the chain rule.
@@ -294,8 +294,8 @@ The notation in \cref{eqn:gen_sde} is not rigorously defined, but rather taken a
 \end{equation}
 where \(y_0\) is the possibly random initial condition.
 The integral form \cref{eqn:gen_sde_int} provides the rigorous foundation of the stochastic differential equation, overcoming the difficulties of working with Wiener processes by introducing the It\^o integral to compute the ongoing contributions from the stochastic terms in the equation.
-As with ordinary differential equations, under certain conditions on the drift~\(u\) and diffusivity~\(\sigma\) there exist solutions to the SDE \cref{eqn:gen_sde} that are unique in some sense.
-We provide one statement of an existence and uniqueness theorem for It\^o SDEs in \Cref{thm:sde_exist_unique} in \Cref{app:theory}.
+As with ordinary differential equations, under certain conditions on the drift~\(u\) and diffusivity~\(\sigma\) there exist solutions to the SDE \cref{eqn:gen_sde} that are unique in some sense---see Theorem~6.2.1 of \citet{KallianpurSundar_2014_StochasticAnalysisDiffusion}, for instance.
+% We provide one statement of an existence and uniqueness theorem for It\^o SDEs in \Cref{thm:sde_exist_unique} in \Cref{app:theory}.
 % The solution \(y_t\) to \cref{eqn:gen_sde} is also known as a (It\^o) \emph{diffusion} process.
 
 There are many analytic tools available for working with stochastic differential equations, such as It\^o's Lemma, an analogy of the chain rule.

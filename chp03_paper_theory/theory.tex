@@ -260,7 +260,7 @@ In this section, we apply our results to \cref{eqn:SAS_sde} to enable both bound
 Note that \(\epsilon\) in our article is written as \(\sqrt{\epsilon}\) in \citet{Sanz-AlonsoStuart_2017_GaussianApproximationsSmall}; we will translate results from \citet{Sanz-AlonsoStuart_2017_GaussianApproximationsSmall} to use our notation, so that all results in this article are directly comparable.
 In the following, \(c\) denotes an arbitrary finite and non-negative constant that can vary between inequalities.
 
-Theorem 2.2 of \citet{Sanz-AlonsoStuart_2017_GaussianApproximationsSmall}, summarised, is as follows.
+Theorem~2.2 of \citet{Sanz-AlonsoStuart_2017_GaussianApproximationsSmall}, summarised, is as follows.
 Let \(\xi_t^{(\epsilon)}\) be the probability measure associated with \(y_t^{(\epsilon)}\) (as defined in \cref{eqn:SAS_sde}), and let \(\nu_t^{(\epsilon)}\) be the probability measure associated with the corresponding linearisation \(l_t^{(\epsilon)}\) (as defined in \cref{sec:theory}).
 Then there exists a constant \(c\) such that the Kullback--Leibler (KL) divergence \(D_{\mathrm{KL}}\) between \(\xi_t^{(\epsilon)}\) and \(\nu_t^{(\epsilon)}\) is bounded;
 \begin{equation}
@@ -497,7 +497,7 @@ The flow map \(F_0^t: \R^n \to \R^n\) summarises solutions of the deterministic 
 	\label{eqn:flow_map_int}
 \end{equation}
 for an initial condition \(x \in \R^n\).
-The spatial gradient (with respect to the initial condition) of the flow map solves the equation of variations associated with \cref{eqn:ode_det}, i.e.\ recall \cref{eqn:eqn_of_variations}:
+The spatial gradient (with respect to the initial condition) of the flow map solves the equation of variations associated with \cref{eqn:ode_det}, i.e.\ recall \cref{eqn:eqn_of_vars}:
 \[
 	\dpd{}{t}\nabla F_0^t(x) = \nabla u\left(F_0^t(x), t\right)\nabla F_0^t(x).
 \]
@@ -824,7 +824,7 @@ This is a well-known result in the scalar case, and the extension to our case is
 	\[
 		\mathcal{I}[g]_i = \sum_{j = 1}^n{\mathcal{I}\left[g_{ij}\right]}.
 	\]
-	Each \(\mathcal{I}[g_{ij}]\) is an It\^o integral of a deterministic, scalar-valued function with respect to a 1-dimensional Brownian motion, which is well-known to be a Gaussian process (e.g.\ see Lemma 4.3. of \citet{Applebaum_2004_LevyProcessesStochastic}).
+	Each \(\mathcal{I}[g_{ij}]\) is an It\^o integral of a deterministic, scalar-valued function with respect to a 1-dimensional Brownian motion, which is well-known to be a Gaussian process (e.g.\ see Lemma~4.3 of \citet{Applebaum_2004_LevyProcessesStochastic}).
 	Moreover, each element of \(\mathcal{I}[g]\) is the sum of independent Gaussian random variables and is therefore itself Gaussian.
 	Hence, \(\mathcal{I}[g]\) follows a multivariate Gaussian distribution.
 \end{proof}
