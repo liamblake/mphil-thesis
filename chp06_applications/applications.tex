@@ -20,7 +20,7 @@ We cannot solve the stochastic model analytically, so we will use stochastic sam
 That is, without access to the true solutions to our model, we instead take many stochastic samples and compare our methods to those.
 This fits in with the philosophy of our approach; stochastic sampling is the standard in practical settings, and we seek approximations that give the same conclusions without the computational expense.
 
-However, using stochastic samples presents a complication when computing the Hellinger distance: the calculation of \cref{eqn:hell_dist} requires evaluating the probability density function from which these realisations were sampled.
+However, using stochastic samples presents a complication when using the Hellinger distance: the calculation of \cref{eqn:hell_dist} requires evaluating the probability density function from which these realisations were sampled.
 This would require a choice for how to approximate the density function and then compute the integral in \cref{eqn:hell_dist}.
 One option is to construct a kernel density estimator, where a certain known distribution (usually a Gaussian with a small variance) is placed at each realisation and then combined into a mixture density \citep{Silverman_2017_DensityEstimationStatistics}.
 To avoid the need to make such a choice here, we will instead use an \emph{empirical} estimator that approximates \cref{eqn:hell_dist} only using samples and without having to evaluate either probability density function directly.
@@ -177,7 +177,7 @@ We set the velocity to zero in this region, as we know from physical considerati
 % 	\end{center}
 % \end{figure}
 
-\begin{figure}
+\begin{figure}[t]
 	\centering
 	\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/det_trajs}
 	\caption{Several trajectories (in heavy black) that solve \cref{eqn:natl_ode} and describe the motion of drifters on the surface of the Gulf Stream.
@@ -565,7 +565,7 @@ The two marginal distributions (in the longitudinal and latitudinal directions) 
 The distribution is 2-dimensional, however, so there are aspects of the joint density that are not reflected by the two marginal distributions, such as the curved structure of the density function.
 This is a highly non-Gaussian distribution with distinct features that we would like to capture with a mixture model approximation.
 
-\begin{figure}
+\begin{figure}[t]
 	\centering
 	\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/hell_dist_split}
 	\caption{The Hellinger distance between the mixture model implemented with a single split at time \(t_s\) and 10000 Euler-Maruyama samples of the solution to \Cref{eqn:natl_sde} at \(t = 3\).
@@ -602,7 +602,7 @@ Comparing directly to the single Gaussian in \Cref{fig:natl_em_3}, the latitudin
 However, the mixture fails to capture the full scatter of samples in the southern direction, even though this only corresponds to a small proportion of the samples.
 Regardless, this result is promising, as with only a single split and four more components, we have improved over the single Gaussian approximation.
 
-\begin{figure}
+\begin{figure}[t]
 	\centering
 	\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/hell_dist_2split}
 	\caption{The Hellinger distance between the mixture model implemented with two splits---the first at \(t_{s,1}\) days, and the second at \(t_{s,2} > t_{s,1}\) days---and 10000 Euler-Maruyama samples of the solution to \cref{eqn:natl_sde} at \(t = 3\).

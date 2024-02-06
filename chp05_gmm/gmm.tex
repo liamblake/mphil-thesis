@@ -359,10 +359,6 @@ The mixture model algorithm is as follows:
 	\label{fig:gmm_steps}
 \end{figure}
 
-\Cref{fig:gmm_steps} provides a pictorial representation of the propagation and splitting of a single component in the mixture model.
-The algorithm is fully deterministic, up to the choices for criterion and splitting, and since each component evolves and is monitored independently of the others can be implemented in parallel.
-Thus, the algorithm would present a significant computational improvement over bulk stochastic simulation.
-
 \begin{figure}
 	\centering
 	\begin{tikzpicture}[node distance=70pt]
@@ -414,6 +410,11 @@ Thus, the algorithm would present a significant computational improvement over b
 	\label{fig:gmm_alg_diag}
 \end{figure}
 
+\Cref{fig:gmm_steps} provides a pictorial representation of the propagation and splitting of a single component in the mixture model.
+The algorithm is fully deterministic, up to the choices for criterion and splitting, and since each component evolves and is monitored independently of the others can be implemented in parallel.
+Thus, the algorithm would present a significant computational improvement over bulk stochastic simulation.
+
+
 There are several options for initialising the mixture model, depending on the initial condition at time \(0\).
 For a fixed initial condition, we can take the degenerate mixture model with a single component and zero variance; this implementation is summarised with an algorithm flow chart in \Cref{fig:gmm_alg_diag}, which also describes the main propagation-splitting loop (indicated by red).
 If the initial condition is Gaussian, this can be used as a single component mixture model and propagated forward with \cref{eqn:gauss_de_gmm} by including the initial covariance matrix as the initial condition to \cref{eqn:gauss_cov_de_gmm}.
@@ -425,7 +426,7 @@ This may lead to computational difficulties: many splits can result in an unboun
 Each component requires the computation of a mean and covariance matrix to propagate forward in time, and so it would be ideal to keep the number of components low.
 One can easily enforce an upper limit on the number of components, by preventing any further splitting once this threshold is reached.
 
-\begin{figure}
+\begin{figure}[t]
 	\centering
 	\includegraphics[width=\textwidth]{chp05_gmm/figures/bene_final_gmm}
 	\caption{The mixture model algorithm implemented on the Bene\v{s} SDE \cref{eqn:bene_sde} with fixed initial condition \(x_0 = 0.5\) and over the time interval \((0,5)\).

@@ -24,8 +24,7 @@
 \let\MakeUppercase%\textsf
 
 \RequirePackage[T1]{fontenc}
-\RequirePackage[activate={true,nocompatibility},final,tracking=true,kerning=true,spacing=true,factor=1100,stretch=10,shrink=10]{microtype}
-\microtypecontext{spacing=nonfrench}
+\RequirePackage[final]{microtype}
 
 \RequirePackage{graphicx}
 \RequirePackage[dvipsnames]{xcolor}
@@ -66,7 +65,8 @@
 	uniquename=init,
 	date=year,
 	hyperref=true,
-	url=false
+	url=false,
+	isbn=false
 ]{biblatex}
 
 % Ensure initials are always listed first

@@ -198,17 +198,17 @@ The representation of the linearised solution as an independent sum in \cref{eqn
 
 We can further show that the It\^o integral term follows a Gaussian random variable, which ensures that the independent sum in \cref{eqn:linear_sol} is a convenient expression for both theoretical analysis and numerical computation.
 We also provide explicit expressions for the mean and covariance matrix of the linearised solution, written in terms of the deterministic dynamics and \(\sigma\).
-\begin{corollary}[Distribution of the linearised solution]\label{cor:limit_moments}
-	The It\^o integral term in \cref{eqn:linear_sol} follows a Gaussian distribution independent of \(x\), namely
+\begin{corollary}[Distribution of the linearisation solution]\label{cor:limit_moments}
+	The It\^o integral term in the linearised solution \cref{eqn:linear_sol} follows a Gaussian distribution independently of \(x\), namely
 	\[
 		\int_0^t{L\!\left(x_0,\tau\right)\dif W_\tau} \isGauss{0, \int_0^t{L\!\left(x_0, \tau\right)L\!\left(x_0, \tau\right)^{\T}\dif\tau}}.
 	\]
-	The mean of the linearised solution is
+	The mean of the linearisation solution is
 	\begin{equation}
 		\avg{l_t^{(\epsilon)}} = F_0^t\!\left(x_0\right) + \nabla F_0^t\!\left(x_0\right) \avg{x - x_0}.
 		\label{eqn:mean_expl_eqn}
 	\end{equation}
-	The \(n\times n\) covariance matrix of the linearised solution is given explicitly by
+	The \(n\times n\) covariance matrix of the linearisation solution is given explicitly by
 	\begin{equation}
 		\var{l_t^{(\epsilon)}} = \nabla F_0^t\!\left(x_0\right)\left(\var{x} + \epsilon^2 \int_0^t{L\!\left(x_0,\tau\right)L\!\left(x_0,\tau\right)^{\T}\dif\tau}\right)\left[\nabla F_0^t\!\left(x_0\right)\right]^{\T}
 		\label{eqn:pi_expl_eqn}

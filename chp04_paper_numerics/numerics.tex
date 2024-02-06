@@ -175,12 +175,11 @@ In this example, we take \(\mu_0 = 0.5\) and consider the solutions of \cref{eqn
 We generate accurate samples of \cref{eqn:sine_sde} and \cref{eqn:sine_linear} jointly (i.e.\ using the same numerical realisations of the Wiener process \(W_t\)) using the stochastic Runge-Kutta scheme SRI \citep{Rossler_2010_RungeKuttaMethodsStrong} with an adaptive step size \citep{RackauckasNie_2017_AdaptiveMethodsStochastic}.
 
 \begin{figure}
-	\begin{center}
-		\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/sine/selected_hists.pdf}
-		\caption{Histograms of stochastic samples of \cref{eqn:sine_sde}, subject to the Gaussian initial condition \cref{eqn:num_gauss_init}, for varying initial uncertainty scale \(\rho\) and ongoing uncertainty scale \(\epsilon\).
-			The distribution of the corresponding solution \cref{eqn:num_linear_sol} to the linearised equation is overlaid in black.}
-		\label{fig:sine_hists}
-	\end{center}
+	\centering
+	\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/sine/selected_hists.pdf}
+	\caption{Histograms of stochastic samples of \cref{eqn:sine_sde}, subject to the Gaussian initial condition \cref{eqn:num_gauss_init}, for varying initial uncertainty scale \(\rho\) and ongoing uncertainty scale \(\epsilon\).
+		The distribution of the corresponding solution \cref{eqn:num_linear_sol} to the linearised equation is overlaid in black.}
+	\label{fig:sine_hists}
 \end{figure}
 
 In \Cref{fig:sine_hists}, we show histograms of \(N = 10000\) samples of the solution to nonlinear SDE \cref{eqn:sine_sde} and the corresponding probability density function of the linearised solution \cref{eqn:num_linear_sol}, for different combinations of \(\epsilon\) and \(\rho\).

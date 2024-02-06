@@ -305,19 +305,18 @@ The diffusivity matrix \(\sigma\) characterises the spatiotemporal structure of 
 When \(\sigma\) does not depend on the solution \(y_t\), the noise is termed \emph{additive}, whereas if \(\sigma\) depends on the solution, then the noise is \emph{multiplicative}.
 SDEs with additive noise are typically easier to solve and analyse than those with multiplicative noise \citep{SanchoEtAl_1982_AnalyticalNumericalStudies}, but multiplicative noise is often required in practice to capture uncertainty that varies with state.
 
-\begin{figure}
-	\begin{center}
-		\includegraphics[width=\textwidth]{chp02_background/figures/ou_solution.pdf}
-		\caption{(Left) Sample paths of the solution to the stochastic differential equation \(\dif x_t = \sin\!\left(x_t\right)\dif t + \dif W_t\), from the initial condition \(x_0 = 1\) and over the time interval \((0,\pi)\).
-			The solution to the corresponding deterministic system \(\od{w_t}{t} = \sin\!\left(w_t\right)\) with the same initial condition is in black.
-			(Right) The numerically estimated probability density function of the solution \(x_\pi\), using 10000 samples.}
-		\label{fig:sde_sol_sample}
-	\end{center}
-\end{figure}
-
 As an example, in \Cref{fig:sde_sol_sample} we show 10 realisations of the solution to the SDE \(\dif x_t = \sin\!\left(x_t\right)\dif t + \dif W_t\).
 At any fixed time \(t\), the solution \(x_t\) follows a probability distribution over \(\R\), the (numerically estimated---see \Cref{sec:numeric_sdes}) probability density function of which is shown at \(t = \pi\) on the right-hand side of \Cref{fig:sde_sol_sample}.
 Although the deterministic dynamics can give a loose indication of the behaviour of the stochastic samples, even additive noise can result in complicated behaviour in the stochastic system and departures from the deterministic solutions when the drift is nonlinear, evidenced by the trajectory (in orange) that deviates from the deterministic one.
+
+\begin{figure}[t]
+	\centering
+	\includegraphics[width=\textwidth]{chp02_background/figures/ou_solution.pdf}
+	\caption{(Left) Sample paths of the solution to the stochastic differential equation \(\dif x_t = \sin\!\left(x_t\right)\dif t + \dif W_t\), from the initial condition \(x_0 = 1\) and over the time interval \((0,\pi)\).
+		The solution to the corresponding deterministic system \(\od{w_t}{t} = \sin\!\left(w_t\right)\) with the same initial condition is in black.
+		(Right) The numerically estimated probability density function of the solution \(x_\pi\), using 10000 samples.}
+	\label{fig:sde_sol_sample}
+\end{figure}
 
 
 % Stochastic differential equations also arise as the limit of deterministic slow-fast systems, where the average behaviour of the `fast' dynamics can be shown to converge to the solution of a stochastic differential equation \citep[e.g.]{WongZakai_1965_ConvergenceOrdinaryIntegrals,MelbourneStuart_2011_NoteDiffusionLimits,GottwaldMelbourne_2013_HomogenizationDeterministicMaps}\lb{Maybe some better citations out there.}.
