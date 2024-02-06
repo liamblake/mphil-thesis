@@ -25,6 +25,7 @@
 
 \RequirePackage[T1]{fontenc}
 \RequirePackage[activate={true,nocompatibility},final,tracking=true,kerning=true,spacing=true,factor=1100,stretch=10,shrink=10]{microtype}
+\microtypecontext{spacing=nonfrench}
 
 \RequirePackage{graphicx}
 \RequirePackage[dvipsnames]{xcolor}
@@ -373,3 +374,6 @@
 	$\!\aligned[#1]}
 {\endaligned$\egroup}
 \makeatother
+
+% Specific issue: allow more breaks of the name Blagoveshchenskii
+\hyphenation{Blagovesh-chen-skii}

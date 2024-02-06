@@ -42,7 +42,6 @@ where the initial condition \(x_0 \in \R^n\) is fixed.
 The formal convergence of the stochastic solution \(y_t^{(\epsilon)}\) (under certain conditions on the initial condition) to the deterministic \(y_{t}^{(0)}\) in the limit as \(\epsilon \to 0\) is well-established using the large deviations principle \citep[e.g]{FreidlinWentzell_1998_RandomPerturbationsDynamical}.
 We refer to \cref{eqn:ode_det} as the \emph{reference} deterministic model associated with \cref{eqn:sde_y}.
 Solutions to the reference deterministic model are more readily available, e.g.\ in terms of computational efficiency when solving numerically, than those of the stochastic model, but do not account for inevitable uncertainty.
-
 Let the flow map \(F_{0}^{t}\colon \R^n \to \R^n\) be the function which evolves an initial condition from time \(0\) to time \(t\) according to the flow of \cref{eqn:ode_det}, i.e.\ \(F_0^t\!\left(x_0\right) = y_t^{(0)}\).
 
 We assume certain smoothness and boundedness conditions on the various terms outlined, which are stated explicitly in \Cref{hyp:smooth}.
@@ -123,7 +122,11 @@ Our first and primary result, \Cref{thm:main}, provides an explicit bound on the
 
 \begin{theorem}[Linearisation error is bounded]\label{thm:main}
 	Let \(y_t^{(\epsilon)}\) be the strong solution to the SDE \cref{eqn:sde_y} and \(l_t^{(\epsilon)}\) be the strong solution to the corresponding linearisation \cref{eqn:linear_sde_inform}, both driven by the same Wiener process \(W_t\) and subject to the same random initial condition \(y_0^{(\epsilon)} = l_0^{(\epsilon)} = x\).
-	Then, for any \(r \geq 1\) such that \(\delta_{2r} < \infty\) and \(t \in [0,T]\), there exist constants \( D_1\!\left(r,t, K_{\nabla u}, K_{\sigma}\right), \, D_2\!\left(r,t, K_{\nabla u}\right), \, D_3\!\left(r,t, K_{\nabla u}\right) \in [0, \infty) \) independent of \(x\) and \(x_0\) such that for all \(\epsilon > 0\),
+	Then, for any \(r \geq 1\) such that \(\delta_{2r} < \infty\) and \(t \in [0,T]\), there exist constants
+	\[
+		D_1\!\left(r,t, K_{\nabla u}, K_{\sigma}\right), \, D_2\!\left(r,t, K_{\nabla u}\right), \, D_3\!\left(r,t, K_{\nabla u}\right) \in [0, \infty)
+	\]
+	independent of \(x\) and \(x_0\) such that for all \(\epsilon > 0\),
 	\begin{equation}
 		\avg{\norm{y_t^{(\epsilon)} - l_t^{(\epsilon)}}^r} \leq \begin{multlined}[t]
 			\left(K_{\nabla\nabla u}^r + K_{\nabla\sigma}^r\right) D_1\!\left(r,t, K_{\nabla u}, K_\sigma\right)\, \epsilon^{2r} \\
@@ -387,7 +390,7 @@ The natural restating of this original definition of stochastic sensitivity \cit
 \end{figure}
 
 \begin{definition}[Stochastic sensitivity in \(\R^n\)]\label{def:ss_Rn}
-	The \emph{stochastic sensitivity} is a scalar field \(S^2\colon \R^n \times [0,T] \to \left[0, \infty\right)\) given by
+	The \emph{stochastic sensitivity} is the scalar field \(S^2\colon \R^n \times [0,T] \to \left[0, \infty\right)\) given by
 	\begin{equation*}
 		S^2\!\left(x_0,t\right) \coloneqq \lim_{\epsilon\downarrow 0}\sup\set{\var{\frac{1}{\epsilon}p^{\T}\left(y_t^{(\epsilon)} - F_0^t\!\left(x_0\right)\right)} \,: \, p \in \R^n, \, \norm{p} = 1}.
 	\end{equation*}
