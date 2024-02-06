@@ -1,8 +1,6 @@
 \chapter{Discussion and future outlook}\label{ch:outlook}
 To conclude this thesis, we shall summarise the results we have presented and raise several discussion points on the implications and extensions of our work.
 This is by no means an exhaustive list; since we have provided results for a general class of stochastic differential equations, our results have the potential to be applied across a wide range of fields, well beyond the scope of this thesis.
-
-\td{Fit in better}
 Broadly speaking, our theoretical work (namely the error bound in \Cref{thm:main}) may be useful to investigate the validity of SDE linearisations in application domains such as Stochastic Parameterisation \citep{BernerEtAl_2017_StochasticParameterizationNew,Palmer_2019_StochasticWeatherClimate,LeutbecherEtAl_2017_StochasticRepresentationsModel} or Data Assimilation \citep{BudhirajaEtAl_2019_AssimilatingDataModels,ReichCotter_2015_ProbabilisticForecastingBayesian,LawEtAl_2015_DataAssimilationMathematical}, or to improve such linearisations by monitoring the skew or kurtosis.
 
 The later sections of this chapter cover:
@@ -351,7 +349,7 @@ The need for stochastic simulation leads to the same practical issues as with SD
 However, these are approaches to approximating the behaviour of the CTMC that circumvent these computational difficulties.
 Seminal work by \citet{Kurtz_1970_SolutionsOrdinaryDifferential,Kurtz_1971_LimitTheoremsSequences} showed that the stochastic evolution of certain CTMCs converges to the solutions to an ordinary and a stochastic differential equation in the limit of infinite population size.
 These results hold when the process is modelling a fixed population size and is density dependent.
-A CTMC is density dependent when the transition rates only depend on \(\frac1M X_t\) and not \(X_t\) directly for a population process \(X_t\) evolving with a fixed population size \(M\)\lb{Reconsider this sentence}.
+A CTMC population process \(X_t\) with a fixed population size \(M\) is density dependent when the transition rates only depend on \(\frac1M X_t\) and not \(X_t\) directly.
 Similar results for relaxations of these conditions exist \citep{Pollett_1990_ModelInterferenceSearching}, however.
 We briefly summarise these results here---\Cref{app:epi_kurtz} provides further details---and can draw analogies with our work.
 Let \(X_t^{(M)}\) denote an \(n\)-dimensional population process, with each component taking values on the discrete set \(\set{0, 1, \dotsc, M}\).

@@ -272,7 +272,7 @@ The mixture model algorithm is as follows:
 \begin{figure}
 	\centering
 	\begin{subfigure}{\textwidth}
-		\begin{tikzpicture}
+		\begin{tikzpicture}[scale=0.9]
 			\draw (1,1.5) .. controls (3,3.5) and (5,-1.5) .. (7,1.5);
 
 			% Initial position
@@ -291,10 +291,10 @@ The mixture model algorithm is as follows:
 			\node[red] at ($(7,1.5)+(75:30pt and 70pt)$) {\(\Pi_t\)};
 		\end{tikzpicture}
 
-		\caption{The mean \(x\) and covariance matrix \(\Sigma\) of the component is propagated forward by solving \cref{eqn:gauss_de_gmm} to obtained \(w_t\) and \(\Pi_t\) respectively.}
+		\caption{The mean \(x\) and covariance matrix \(\Sigma\) of the component is propagated forward by solving \cref{eqn:gauss_de_gmm} to obtain \(w_t\) and \(\Pi_t\) respectively.}
 	\end{subfigure}
 	\begin{subfigure}{\textwidth}
-		\begin{tikzpicture}
+		\begin{tikzpicture}[scale=0.9]
 			% Trajectory
 			\draw[gray] (1,-4) .. controls (3,-2) and (5,-7) .. (7,-4);
 
@@ -322,33 +322,36 @@ The mixture model algorithm is as follows:
 		\caption{Once the splitting criterion is met, the mapped component is split into \(K\) new components with corresponding means (in blue) satisfying \cref{eqn:cov_split_points}.}
 	\end{subfigure}
 	\begin{subfigure}{\textwidth}
-		\begin{tikzpicture}
-			\fill[blue] (3,-13) circle[radius=1pt];
-			\fill[blue, rotate around = {30: (3,-13)}] ($(3,-13)+(0:30pt and 70pt)$) circle[radius=1pt];
-			\fill[blue, rotate around = {30: (3,-13)}] ($(3,-13)+(90:30pt and 70pt)$) circle[radius=1pt];
-			\fill[blue, rotate around = {30: (3,-13)}] ($(3,-13)+(180:30pt and 70pt)$) circle[radius=1pt];
-			\fill[blue, rotate around = {30: (3,-13)}] ($(3,-13)+(270:30pt and 70pt)$) circle[radius=1pt];
+		\begin{tikzpicture}[scale=0.9]
+			% Invisible node for alignment
+			\fill[white] (1,-13) circle[radius=1pt] node[anchor = east] {\(x\)};
+
+			\fill[blue] (7,-13) circle[radius=1pt];
+			\fill[blue, rotate around = {30: (7,-13)}] ($(7,-13)+(0:30pt and 70pt)$) circle[radius=1pt];
+			\fill[blue, rotate around = {30: (7,-13)}] ($(7,-13)+(90:30pt and 70pt)$) circle[radius=1pt];
+			\fill[blue, rotate around = {30: (7,-13)}] ($(7,-13)+(180:30pt and 70pt)$) circle[radius=1pt];
+			\fill[blue, rotate around = {30: (7,-13)}] ($(7,-13)+(270:30pt and 70pt)$) circle[radius=1pt];
 
 			% New trajectories
-			\draw[black,  rotate around = {30: (3,-13)}] ($(3,-13)+(90:30pt and 70pt)$) .. controls (5,-14) and (8, -12) .. (10, -13);
-			\draw[black,  rotate around = {30: (3,-13)}] ($(3,-13)+(0:30pt and 70pt)$) .. controls (5,-15) and (8, -12) .. (10, -14.5);
-			\draw[black] (3,-13) .. controls (5,-15) and (8, -10) .. (12, -11.75);
-			\draw[black,  rotate around = {30: (3,-13)}] ($(3,-13)+(180:30pt and 70pt)$) .. controls (5,-17) and (7, -15) .. (10, -18);
-			\draw[black,  rotate around = {30: (3,-13)}] ($(3,-13)+(270:30pt and 70pt)$) .. controls (5,-17) and (7, -15) .. (8, -18);
+			\draw[black,  rotate around = {30: (7,-13)}] ($(7,-13)+(90:30pt and 70pt)$) .. controls (9,-14) and (12, -12) .. (14, -13);
+			\draw[black,  rotate around = {30: (7,-13)}] ($(7,-13)+(0:30pt and 70pt)$) .. controls (9,-15) and (12, -12) .. (14, -14.5);
+			\draw[black] (7,-13) .. controls (9,-15) and (12, -10) .. (16, -11.75);
+			\draw[black,  rotate around = {30: (7,-13)}] ($(7,-13)+(180:30pt and 70pt)$) .. controls (9,-17) and (11, -15) .. (14, -18);
+			\draw[black,  rotate around = {30: (7,-13)}] ($(7,-13)+(270:30pt and 70pt)$) .. controls (9,-17) and (11, -15) .. (12, -18);
 
 			% Mapped points
-			\fill[black, rotate around = {30: (3,-13)}] ($(10,-13)$) circle[radius=1pt];
-			\fill[black, rotate around = {30: (3,-13)}] ($(10,-14.5)$) circle[radius=1pt];
-			\fill[black] (12,-11.75) circle[radius=1pt];
-			\fill[black, rotate around = {30: (3,-13)}] ($(10,-18)$) circle[radius=1pt];
-			\fill[black, rotate around = {30: (3,-13)}] ($(8,-18)$) circle[radius=1pt];
+			\fill[black, rotate around = {30: (7,-13)}] ($(14,-13)$) circle[radius=1pt];
+			\fill[black, rotate around = {30: (7,-13)}] ($(14,-14.5)$) circle[radius=1pt];
+			\fill[black] (16,-11.75) circle[radius=1pt];
+			\fill[black, rotate around = {30: (7,-13)}] ($(14,-18)$) circle[radius=1pt];
+			\fill[black, rotate around = {30: (7,-13)}] ($(12,-18)$) circle[radius=1pt];
 
 			% Updated ellipses
-			\draw[dashed, rotate around = {30: (3, -13)}, red] (10,-13) ellipse[x radius=30pt, y radius=70pt, rotate=75];
-			\draw[dashed, rotate around = {30: (3, -13)}, red] (10,-14.5) ellipse[x radius=20pt, y radius=70pt, rotate=68];
-			\draw[dashed, red] (12,-11.75) ellipse[x radius=10pt, y radius=50pt, rotate=70];
-			\draw[dashed, rotate around = {30: (3, -13)}, red] (10,-18) ellipse[x radius=21pt, y radius=70pt];
-			\draw[dashed, rotate around = {30: (3, -13)}, red] (8,-18) ellipse[x radius=10pt, y radius=50pt, rotate=15];
+			\draw[dashed, rotate around = {30: (7, -13)}, red] (14,-13) ellipse[x radius=30pt, y radius=70pt, rotate=75];
+			\draw[dashed, rotate around = {30: (7, -13)}, red] (14,-14.5) ellipse[x radius=20pt, y radius=70pt, rotate=68];
+			\draw[dashed, red] (16,-11.75) ellipse[x radius=10pt, y radius=50pt, rotate=70];
+			\draw[dashed, rotate around = {30: (7, -13)}, red] (14,-18) ellipse[x radius=21pt, y radius=70pt];
+			\draw[dashed, rotate around = {30: (7, -13)}, red] (12,-18) ellipse[x radius=10pt, y radius=50pt, rotate=15];
 
 		\end{tikzpicture}
 
