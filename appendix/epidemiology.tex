@@ -83,29 +83,28 @@ The sums are taken across all the possible transitions from the current state, a
 \section{Details of 5-dimensional Ebola model}\label{app:ebola}
 \begin{figure}
 	\begin{center}
-		\begin{tabular}{|c|c|p{7cm}|}
+		\begin{tabular}{|c|c|p{8cm}|}
 			\hline
-			Parameter       & Value               & Source                                                                                                                                 \\ \hhline{|=|=|=|}
-			\(M\)           & 200000              & \citet{DowellEtAl_1999_TransmissionEbolaHemorrhagic}                                                                                   \\ \hline
-			\(I_0\)         & 3                   & \citet{KhanEtAl_1999_ReemergenceEbolaHemorrhagic}                                                                                      \\ \hline
-			\(\alpha\)      & \(1\) per week      & \citet{DowellEtAl_1999_TransmissionEbolaHemorrhagic,BwakaEtAl_1999_EbolaHemorrhagicFever,NdambiEtAl_1999_EpidemiologicClinicalAspects} \\ \hline
-			\(\gamma_h\)    & \(35/48\) per week  & \citet{KhanEtAl_1999_ReemergenceEbolaHemorrhagic}                                                                                      \\ \hline
-			\(\gamma_i\)    & \(7 / 10\) per week & \citet{DowellEtAl_1999_TransmissionEbolaHemorrhagic,RoweEtAl_1999_ClinicalVirologicImmunologic}                                        \\
-			\(\gamma_d\)    & \(7 / 2\) per week  & \citet{KhanEtAl_1999_ReemergenceEbolaHemorrhagic}                                                                                      \\ \hline
-			\(\theta_1\)    & \(0.67\)            & \citet{KhanEtAl_1999_ReemergenceEbolaHemorrhagic}                                                                                      \\ \hline
-			\(\delta_1\)    & \(0.8\)             & \citet{KhanEtAl_1999_ReemergenceEbolaHemorrhagic}                                                                                      \\ \hline
-			\(\delta_2\)    & \(0.8\)             & \citet{KhanEtAl_1999_ReemergenceEbolaHemorrhagic}                                                                                      \\ \hline
-			\(\beta_I\)     & \(0.588\) per week  & \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola}                                                                                    \\ \hline
-			\(\beta_H\)     & \(0.794\) per week  & \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola}                                                                                    \\ \hline
-			\(\beta_F\)     & \(7.653\) per week  & \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola}                                                                                    \\ \hline
-			\(\gamma_{dh}\) & per week            & \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola}                                                                                    \\ \hline
-			\(\gamma_{ih}\) & per week            & \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola}                                                                                    \\ \hline
+			Parameter       & Value                & Source                                                                                                                                 \\ \hhline{|=|=|=|}
+			\(M\)           & 200000               & \citet{DowellEtAl_1999_TransmissionEbolaHemorrhagic}                                                                                   \\ \hline
+			\(I_0\)         & 3                    & \citet{KhanEtAl_1999_ReemergenceEbolaHemorrhagic}                                                                                      \\ \hline
+			\(\alpha\)      & \(1\) per week       & \citet{DowellEtAl_1999_TransmissionEbolaHemorrhagic,BwakaEtAl_1999_EbolaHemorrhagicFever,NdambiEtAl_1999_EpidemiologicClinicalAspects} \\ \hline
+			\(\gamma_h\)    & \(7 / 5\) per week   & \citet{KhanEtAl_1999_ReemergenceEbolaHemorrhagic}                                                                                      \\ \hline
+			\(\gamma_i\)    & \(7 / 10\) per week  & \citet{DowellEtAl_1999_TransmissionEbolaHemorrhagic,RoweEtAl_1999_ClinicalVirologicImmunologic}                                        \\ \hline
+			\(\gamma_d\)    & \(35 / 48\) per week & \citet{KhanEtAl_1999_ReemergenceEbolaHemorrhagic}                                                                                      \\ \hline
+			\(\theta_1\)    & \(0.67\)             & \citet{KhanEtAl_1999_ReemergenceEbolaHemorrhagic}                                                                                      \\ \hline
+			\(\delta_1\)    & \(0.8\)              & \citet{KhanEtAl_1999_ReemergenceEbolaHemorrhagic}                                                                                      \\ \hline
+			\(\delta_2\)    & \(0.8\)              & \citet{KhanEtAl_1999_ReemergenceEbolaHemorrhagic}                                                                                      \\ \hline
+			\(\beta_I\)     & \(0.588\) per week   & \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola}                                                                                    \\ \hline
+			\(\beta_H\)     & \(0.794\) per week   & \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola}                                                                                    \\ \hline
+			\(\beta_F\)     & \(7.653\) per week   & \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola}                                                                                    \\ \hline
+			\(\gamma_{dh}\) & \(35 / 23\) per week & \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola}                                                                                    \\ \hline
+			\(\gamma_{ih}\) & \(7 / 5\) per week   & \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola}                                                                                    \\ \hline
 		\end{tabular}
 	\end{center}
 	\caption{Parameter values for the Ebola model, estimated from the 1995 outbreak in the Democratic Republic of Congo.
 		This table is adapted from Tables 3 and 4 of \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola}, where values sourced directly from \citet{LegrandEtAl_2007_UnderstandingDynamicsEbola} have been estimated from morbidity data.
 		See the original paper for the interpretations of the parameters.}
-	\td{Fill in values!! Also need to make sure simulation is up to date with these value}
 	\label{tab:ebola_param_vals}
 \end{figure}
 
