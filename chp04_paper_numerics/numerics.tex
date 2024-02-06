@@ -41,49 +41,47 @@ Moreover, \citet{Mazzoni_2008_ComputationalAspectsContinuous} shows through nume
 We therefore employ the Mazzoni method for all subsequent computations of the linearisation solution.
 
 \begin{figure}
-	\begin{center}
+	\centering
+	\begin{tikzpicture}[node distance=70pt]
+		\tikzstyle{arrow} = [->,>=stealth]
 
-		\begin{tikzpicture}[node distance=70pt]
-			\tikzstyle{arrow} = [->,>=stealth]
+		\node (s) [rectangle, rounded corners, draw=black, align=center] {\textbf{Start} \\ Given \(t, x_0, \Sigma_0\) \\ Specify \(\delta \tau_{\mathrm{min}}, \beta, \gamma\)};
 
-			\node (s) [rectangle, rounded corners, draw=black, align=center] {\textbf{Start} \\ Given \(t, x_0, \Sigma_0\) \\ Specify \(\delta \tau_{\mathrm{min}}, \beta, \gamma\)};
+		\node (a) [rectangle, below of=s, draw=black, align=center, yshift=-10pt] {Set \(\tau_0 = 0\) \\ Set \(w_{\tau_0} = x_0\) \\ Set \(\Pi_{\tau_0} = \Sigma_0\) Set \(\delta \tau = \delta \tau_{\mathrm{min}}\) \\ Set \(k = 0\)};
+		\node (b) [rectangle, below of=a, draw=black, align=center, yshift=-20pt] {Set \(\tau_{k+1} = \tau_k + \delta \tau\) \\ Compute \(w_{\tau_{k+1}}\) with \cref{eqn:mazzoni_state_update} \\
+			Compute \(e\) with \cref{eqn:mazzoni_e} \\ Set \(\delta \tau_{\mathrm{new}} = \max\left\{\delta \tau_{\mathrm{min}}, \beta \delta \tau \sqrt{\frac{\gamma}{\hat{\gamma}}}\right\}\)};
 
-			\node (a) [rectangle, below of=s, draw=black, align=center, yshift=-10pt] {Set \(\tau_0 = 0\) \\ Set \(w_{\tau_0} = x_0\) \\ Set \(\Pi_{\tau_0} = \Sigma_0\) Set \(\delta \tau = \delta \tau_{\mathrm{min}}\) \\ Set \(k = 0\)};
-			\node (b) [rectangle, below of=a, draw=black, align=center, yshift=-20pt] {Set \(\tau_{k+1} = \tau_k + \delta \tau\) \\ Compute \(w_{\tau_{k+1}}\) with \cref{eqn:mazzoni_state_update} \\
-				Compute \(e\) with \cref{eqn:mazzoni_e} \\ Set \(\delta \tau_{\mathrm{new}} = \max\left\{\delta \tau_{\mathrm{min}}, \beta \delta \tau \sqrt{\frac{\gamma}{\hat{\gamma}}}\right\}\)};
+		\node (d) [diamond, below of=b, draw=black, align=center, yshift=-40pt] {\(\hat{\gamma} \leq \gamma\) or \\ \(\delta \tau \leq \delta \tau_{\mathrm{min}}\)?};
+		\node (c) [rectangle, left of=d, draw=black, align=center, xshift=-75pt] {Set \(\delta\tau = \delta \tau_{\mathrm{new}}\)};
 
-			\node (d) [diamond, below of=b, draw=black, align=center, yshift=-40pt] {\(\hat{\gamma} \leq \gamma\) or \\ \(\delta \tau \leq \delta \tau_{\mathrm{min}}\)?};
-			\node (c) [rectangle, left of=d, draw=black, align=center, xshift=-75pt] {Set \(\delta\tau = \delta \tau_{\mathrm{new}}\)};
+		\node (e) [rectangle, below of=d, draw=black, align=center, yshift=-20pt] {Compute \(\Pi_{\tau_{k+1}}\) with \crefrange{eqn:mazzoni_cov_terms1}{eqn:mazzoni_cov_terms3} \\ Set \(k = k + 1\)};
 
-			\node (e) [rectangle, below of=d, draw=black, align=center, yshift=-20pt] {Compute \(\Pi_{\tau_{k+1}}\) with \crefrange{eqn:mazzoni_cov_terms1}{eqn:mazzoni_cov_terms3} \\ Set \(k = k + 1\)};
+		\node (f) [diamond, below of=e, draw=black, align=center] {\(\tau_k = t\)?};
 
-			\node (f) [diamond, below of=e, draw=black, align=center] {\(\tau_k = t\)?};
+		\node (g) [rectangle, rounded corners, left of=f, draw=black, align = center, xshift = -30pt] {\textbf{Stop}};
+		\node (h) [rectangle, right of=f, draw=black, align = center, xshift = 75pt] {\(\delta \tau = \min\left\{\delta \tau_{\mathrm{new}}, t - \tau_k\right\}\)};
 
-			\node (g) [rectangle, rounded corners, left of=f, draw=black, align = center, xshift = -30pt] {\textbf{Stop}};
-			\node (h) [rectangle, right of=f, draw=black, align = center, xshift = 75pt] {\(\delta \tau = \min\left\{\delta \tau_{\mathrm{new}}, t - \tau_k\right\}\)};
+		\draw [arrow] (s) -- (a);
 
-			\draw [arrow] (s) -- (a);
+		\draw [arrow] (a) -- (b);
+		\draw [arrow] (b) -- (d);
 
-			\draw [arrow] (a) -- (b);
-			\draw [arrow] (b) -- (d);
+		\draw [arrow] (d) -- node[anchor=south] {no} (c);
+		\draw [arrow] (d) -- node[anchor=east] {yes} (e);
 
-			\draw [arrow] (d) -- node[anchor=south] {no} (c);
-			\draw [arrow] (d) -- node[anchor=east] {yes} (e);
+		\draw [arrow] (c) |- (b);
 
-			\draw [arrow] (c) |- (b);
+		\draw [arrow] (e) -- (f);
 
-			\draw [arrow] (e) -- (f);
+		\draw [arrow] (f) -- node[anchor=south] {yes} (g);
+		\draw [arrow] (f) -- node[anchor=south] {no} (h);
 
-			\draw [arrow] (f) -- node[anchor=south] {yes} (g);
-			\draw [arrow] (f) -- node[anchor=south] {no} (h);
-
-			\draw [arrow] (h) |- (b);
-		\end{tikzpicture}
-		\caption{A flowchart of the Mazzoni algorithm with adaptive time stepping to solve \cref{eqn:gauss_de} over the time interval \([0,t]\).
-			The minimum step size \(\delta \tau_{\mathrm{min}}\) is specified and enforced to ensure that the step size does not become too small to compromise computationally efficiency.
-			Recreated from Figure 2 of \citet{Mazzoni_2008_ComputationalAspectsContinuous}.}
-		\label{fig:mazzoni_alg}
-	\end{center}
+		\draw [arrow] (h) |- (b);
+	\end{tikzpicture}
+	\caption{A flowchart of the Mazzoni algorithm with adaptive time stepping to solve \cref{eqn:gauss_de} over the time interval \([0,t]\).
+		The minimum step size \(\delta \tau_{\mathrm{min}}\) is specified and enforced to ensure that the step size does not become too small to compromise computationally efficiency.
+		Recreated from Figure 2 of \citet{Mazzoni_2008_ComputationalAspectsContinuous}.}
+	\label{fig:mazzoni_alg}
 \end{figure}
 
 We summarise the algorithm in the following and provide a diagram of the full implementation in \Cref{fig:mazzoni_alg}.
@@ -199,24 +197,23 @@ To numerically validate this bound under the Gaussian initial condition \cref{eq
 which is a Monte Carlo estimator of the right-hand side of \cref{eqn:main_ineq}, where \(\hat{y}_1^{(\epsilon)},\dotsc, \hat{y}_N^{(\epsilon)}\) and \(\hat{l}_1^{(\epsilon)},\dotsc, \hat{l}_N^{(\epsilon)}\) are \(N\) numerical samples of the solutions to SDE \cref{eqn:sde_y} and the linearisation \cref{eqn:linear_sde_inform} respectively.
 
 \begin{figure}
-	\begin{center}
-		\begin{subfigure}{\textwidth}
-			\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/sine/str_err_eps_r_1.0_log.pdf}
-			\caption{Estimates of the strong error (with \(r = 1\)) in linearising \cref{eqn:sine_sde} with \cref{eqn:sine_linear}, for varying ongoing uncertainty parameter \(\epsilon\).
-				Each colour corresponds to a different value of the initial uncertainty parameter \(\rho\).
-				A (least squares) line of best fit of the form \(\beta_0 + \beta_1 \epsilon^2\) is included in the corresponding colour.}
-			\label{fig:sine_eps_lines}
-		\end{subfigure}
-		\begin{subfigure}{\textwidth}
-			\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/sine/str_err_rho_r_1.0_log.pdf}
-			\caption{Estimates of the strong error (with \(r = 1\)) for varying initial uncertainty parameter \(\rho\).
-				Each colour corresponds to a different value of the ongoing uncertainty parameter \(\epsilon\).
-				A (least squares) line of best fit of the form \(\beta_0 + \beta_1 \rho^2\) is included in the corresponding colour.}
-			\label{fig:sine_delta_lines}
-		\end{subfigure}
-		\caption{Validation of the theoretical bound predicted by \Cref{thm:main}, when \(r = 1\), on numerical realisations of the solution to the 1D example \cref{eqn:sine_sde}.}
-		\label{fig:sine_delta_eps_lines}
-	\end{center}
+	\centering
+	\begin{subfigure}{\textwidth}
+		\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/sine/str_err_eps_r_1.0_log.pdf}
+		\caption{Estimates of the strong error (with \(r = 1\)) in linearising \cref{eqn:sine_sde} with \cref{eqn:sine_linear}, for varying ongoing uncertainty parameter \(\epsilon\).
+			Each colour corresponds to a different value of the initial uncertainty parameter \(\rho\).
+			A (least squares) line of best fit of the form \(\beta_0 + \beta_1 \epsilon^2\) is included in the corresponding colour.}
+		\label{fig:sine_eps_lines}
+	\end{subfigure}
+	\begin{subfigure}{\textwidth}
+		\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/sine/str_err_rho_r_1.0_log.pdf}
+		\caption{Estimates of the strong error (with \(r = 1\)) for varying initial uncertainty parameter \(\rho\).
+			Each colour corresponds to a different value of the ongoing uncertainty parameter \(\epsilon\).
+			A (least squares) line of best fit of the form \(\beta_0 + \beta_1 \rho^2\) is included in the corresponding colour.}
+		\label{fig:sine_delta_lines}
+	\end{subfigure}
+	\caption{Validation of the theoretical bound predicted by \Cref{thm:main}, when \(r = 1\), on numerical realisations of the solution to the 1D example \cref{eqn:sine_sde}.}
+	\label{fig:sine_delta_eps_lines}
 \end{figure}
 
 We directly validate the \emph{form} of the error bound (as a function of \(\epsilon\) and \(\rho\)) in \Cref{fig:sine_delta_eps_lines}, by computing \(E_1\) using samples for each pair of \(\epsilon\) and \(\rho\) values.
@@ -251,11 +248,10 @@ We take the initial point \(\mu = 2\) and consider the solutions at time \(t = 1
 To generate numerical realisations of the solutions to \cref{eqn:1d_mult} and \cref{eqn:1d_mult_linear} with the same realisations of \(W_t\), we use the same set-up as in the previous example.
 
 \begin{figure}
-	\begin{center}
-		\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/multiplicative/selected_hists.pdf}
-		\caption{The same arrangement as \Cref{fig:sine_hists}, but for the 1D multiplicative noise SDE \cref{eqn:1d_mult}.}
-		\label{fig:1d_mult_hists}
-	\end{center}
+	\centering
+	\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/multiplicative/selected_hists.pdf}
+	\caption{The same arrangement as \Cref{fig:sine_hists}, but for the 1D multiplicative noise SDE \cref{eqn:1d_mult}.}
+	\label{fig:1d_mult_hists}
 \end{figure}
 
 In \Cref{fig:1d_mult_hists}, we show histograms of \(N = 10000\) samples of the multiplicative noise SDE \cref{eqn:1d_mult} and the corresponding probability density function of the linearised solution, for different combinations of \(\epsilon\) and \(\rho\).
@@ -263,24 +259,23 @@ We again see that in the limit of both small initial and small ongoing uncertain
 
 
 \begin{figure}
-	\begin{center}
-		\begin{subfigure}{\textwidth}
-			\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/multiplicative/str_err_eps_r_1.0_log.pdf}
-			\caption{Estimates of the strong order (with \(r = 1\)) for varying ongoing uncertainty parameter \(\epsilon\).
-				Each colour corresponds to a different value of the initial uncertainty parameter \(\rho\).
-				A (least squares) line of best fit of the form \(\beta_1 \epsilon + \beta_2 \epsilon^2\) is included in the corresponding colour.}
-			\label{fig:multiplicative_eps_lines}
-		\end{subfigure}
-		\begin{subfigure}{\textwidth}
-			\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/multiplicative/str_err_rho_r_1.0_log.pdf}
-			\caption{Estimates of the strong order (with \(r = 1\)) for varying initial uncertainty parameter \(\rho\).
-				Each colour corresponds to a different value of the ongoing uncertainty parameter \(\epsilon\).
-				A (least squares) line of best fit of the form \(\beta_0 + \beta_1 \rho\) is included in the corresponding colour.}
-			\label{fig:multiplicative_delta_lines}
-		\end{subfigure}
-		\caption{Validation of the theoretical bound predicted by \Cref{thm:main}, when \(r = 1\), on numerical realisations of the solution to the 1D example \cref{eqn:1d_mult}.}
-		\label{fig:multiplicative_delta_eps_lines}
-	\end{center}
+	\centering
+	\begin{subfigure}{\textwidth}
+		\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/multiplicative/str_err_eps_r_1.0_log.pdf}
+		\caption{Estimates of the strong order (with \(r = 1\)) for varying ongoing uncertainty parameter \(\epsilon\).
+			Each colour corresponds to a different value of the initial uncertainty parameter \(\rho\).
+			A (least squares) line of best fit of the form \(\beta_1 \epsilon + \beta_2 \epsilon^2\) is included in the corresponding colour.}
+		\label{fig:multiplicative_eps_lines}
+	\end{subfigure}
+	\begin{subfigure}{\textwidth}
+		\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/multiplicative/str_err_rho_r_1.0_log.pdf}
+		\caption{Estimates of the strong order (with \(r = 1\)) for varying initial uncertainty parameter \(\rho\).
+			Each colour corresponds to a different value of the ongoing uncertainty parameter \(\epsilon\).
+			A (least squares) line of best fit of the form \(\beta_0 + \beta_1 \rho\) is included in the corresponding colour.}
+		\label{fig:multiplicative_delta_lines}
+	\end{subfigure}
+	\caption{Validation of the theoretical bound predicted by \Cref{thm:main}, when \(r = 1\), on numerical realisations of the solution to the 1D example \cref{eqn:1d_mult}.}
+	\label{fig:multiplicative_delta_eps_lines}
 \end{figure}
 
 Since the drift term is linear and the noise multiplicative in \cref{eqn:1d_mult}, the bound predicted by \Cref{thm:main} has the form
@@ -328,33 +323,32 @@ Specifically, \cref{eqn:pi_ode} is solved jointly with the deterministic state e
 This hybrid method combines a Taylor-Heun approximation with a Gauss-Legendre one and ensures that the numerical solution of the covariance equation is symmetric and positive semi-definite while maintaining both accuracy and computational efficiency.
 
 \begin{figure}
-	\begin{center}
-		\begin{subfigure}{0.49\textwidth}
-			\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/rossby/hist_0.1.pdf}
-			\caption{\(\epsilon = 10^{-1}\)}
-			\label{fig:y_hists_a}
-		\end{subfigure}
-		\begin{subfigure}{0.49\textwidth}
-			\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/rossby/hist_0.03162277660168379.pdf}
-			\caption{\(\epsilon = 10^{-1.5}\)}
-			\label{fig:y_hists_b}
-		\end{subfigure}
-		\begin{subfigure}{0.49\textwidth}
-			\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/rossby/hist_0.010000000000000002.pdf}
-			\caption{\(\epsilon = 10^{-2}\)}
-			\label{fig:y_hists_c}
-		\end{subfigure}
-		\begin{subfigure}{0.49\textwidth}
-			\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/rossby/hist_0.001.pdf}
-			\caption{\(\epsilon = 10^{-3}\)}
-			\label{fig:y_hists_d}
-		\end{subfigure}
-		\caption{Histograms of \(y_t^{(\epsilon)}\) from direct simulation of the SDE with drift \cref{eqn:jet_ex} and diffusivity \cref{eqn:jet_ex_sigma} subject to the fixed initial condition, for four different \(\epsilon\) values.
-		Overlaid in black are contours of the Gaussian solution \cref{eqn:linear_gauss_sol} of the linearised SDE \cref{eqn:linear_sde_inform}, which correspond to the first three standard deviation levels centred at the mean \(F_0^t(x)\).
-		In dashed blue are corresponding contours computed from the sample covariance matrix of the realisations.
-		}
-		\label{fig:y_hists}
-	\end{center}
+	\centering
+	\begin{subfigure}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/rossby/hist_0.1.pdf}
+		\caption{\(\epsilon = 10^{-1}\)}
+		\label{fig:y_hists_a}
+	\end{subfigure}
+	\begin{subfigure}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/rossby/hist_0.03162277660168379.pdf}
+		\caption{\(\epsilon = 10^{-1.5}\)}
+		\label{fig:y_hists_b}
+	\end{subfigure}
+	\begin{subfigure}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/rossby/hist_0.010000000000000002.pdf}
+		\caption{\(\epsilon = 10^{-2}\)}
+		\label{fig:y_hists_c}
+	\end{subfigure}
+	\begin{subfigure}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/rossby/hist_0.001.pdf}
+		\caption{\(\epsilon = 10^{-3}\)}
+		\label{fig:y_hists_d}
+	\end{subfigure}
+	\caption{Histograms of \(y_t^{(\epsilon)}\) from direct simulation of the SDE with drift \cref{eqn:jet_ex} and diffusivity \cref{eqn:jet_ex_sigma} subject to the fixed initial condition, for four different \(\epsilon\) values.
+	Overlaid in black are contours of the Gaussian solution \cref{eqn:linear_gauss_sol} of the linearised SDE \cref{eqn:linear_sde_inform}, which correspond to the first three standard deviation levels centred at the mean \(F_0^t(x)\).
+	In dashed blue are corresponding contours computed from the sample covariance matrix of the realisations.
+	}
+	\label{fig:y_hists}
 \end{figure}
 
 
@@ -365,32 +359,31 @@ The first three standard-deviation levels of the \(2\times 2\) sample covariance
 As \(\epsilon\) decreases towards \(0\), the samples increasingly resemble a Gaussian distribution, and both the mean and covariance coincide with the corresponding limits.
 
 \begin{figure}
-	\begin{center}
-		\begin{subfigure}{0.49\textwidth}
-			\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/rossby/str_err_r_1.0.pdf}
-			\caption{\(r = 1\) (mean)}
-			\label{fig:gamma_z_valid_1}
-		\end{subfigure}
-		\begin{subfigure}{0.49\textwidth}
-			\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/rossby/str_err_r_2.0.pdf}
-			\caption{\(r = 2\) (variance)}
-			\label{fig:gamma_z_valid_2}
-		\end{subfigure}
-		\begin{subfigure}{0.49\textwidth}
-			\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/rossby/str_err_r_3.0.pdf}
-			\caption{\(r = 3\) (skewness)}
-			\label{fig:gamma_z_valid_3}
-		\end{subfigure}
-		\begin{subfigure}{0.49\textwidth}
-			\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/rossby/str_err_r_4.0.pdf}
-			\caption{\(r = 4\) (kurtosis)}
-			\label{fig:gamma_z_valid_4}
-		\end{subfigure}
+	\centering
+	\begin{subfigure}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/rossby/str_err_r_1.0.pdf}
+		\caption{\(r = 1\) (mean)}
+		\label{fig:gamma_z_valid_1}
+	\end{subfigure}
+	\begin{subfigure}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/rossby/str_err_r_2.0.pdf}
+		\caption{\(r = 2\) (variance)}
+		\label{fig:gamma_z_valid_2}
+	\end{subfigure}
+	\begin{subfigure}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/rossby/str_err_r_3.0.pdf}
+		\caption{\(r = 3\) (skewness)}
+		\label{fig:gamma_z_valid_3}
+	\end{subfigure}
+	\begin{subfigure}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{chp04_paper_numerics/figures/rossby/str_err_r_4.0.pdf}
+		\caption{\(r = 4\) (kurtosis)}
+		\label{fig:gamma_z_valid_4}
+	\end{subfigure}
 
-		\caption{Validation of \Cref{thm:main}, by plotting the sample \(r\)th raw moment distance (the error metric \(E_r(\epsilon)\)) between \(10000\) realisations of the meandering jet SDE and a corresponding linearisation, for decreasing values of \(\epsilon\).
-			A line of best fit (in red) is placed on each, and the resulting slope indicated.}
-		\label{fig:gamma_z_valid}
-	\end{center}
+	\caption{Validation of \Cref{thm:main}, by plotting the sample \(r\)th raw moment distance (the error metric \(E_r(\epsilon)\)) between \(10000\) realisations of the meandering jet SDE and a corresponding linearisation, for decreasing values of \(\epsilon\).
+		A line of best fit (in red) is placed on each, and the resulting slope indicated.}
+	\label{fig:gamma_z_valid}
 \end{figure}
 
 For a fixed initial condition, \cref{eqn:main_ineq} predicts that the expected distance between the original SDE solution and that of a linearisation satisfies
@@ -414,24 +407,23 @@ These computations are primarily demonstrative, so we keep the analysis of the r
 \subsection{In 2-dimensions}\label{sec:compute_s2_2d}
 
 \begin{figure}
-	\begin{center}
-		\begin{subfigure}{\textwidth}
-			\includegraphics[width=0.49\textwidth]{chp04_paper_numerics/figures/rossby/S2_zero_0.3}
-			\includegraphics[width=0.49\textwidth]{chp04_paper_numerics/figures/rossby/S2_robust_0.3}
-			\caption{\(\oldepsilon_{\mathrm{mj}} = 0.3\)}
-			\label{fig:s2_field_0.3}
-		\end{subfigure}
-		\begin{subfigure}{\textwidth}
-			\includegraphics[width=0.49\textwidth]{chp04_paper_numerics/figures/rossby/s2_zero_1.0}
-			\includegraphics[width=0.49\textwidth]{chp04_paper_numerics/figures/rossby/s2_robust_1.0}
-			\caption{\(\oldepsilon_{\mathrm{mj}} = 1.0\)}
-			\label{fig:s2_field_1.0}
-		\end{subfigure}
-		\caption{(Left) The \(S^2\) field of the meandering jet flow \cref{eqn:jet_ex} over the time interval \([0,1]\), for two different sets of parameters with qualitatively different behaviour.
-			% The \(S^2\) value for each initial condition is computed directly as the operator norm of the covariance matrix \(\Sigma_0^1\!\left(x_0\right)\), as per \cref{eqn:s2_calculation}.
-			(Right) Robust sets \(\mathrm{RS}\!\left(10\right)\) extracted from the stochastic sensitivity fields, by taking the initial conditions with a stochastic sensitivity value about a threshold of \(10\).}
-		\label{fig:ex_jet_s2_field}
-	\end{center}
+	\centering
+	\begin{subfigure}{\textwidth}
+		\includegraphics[width=0.49\textwidth]{chp04_paper_numerics/figures/rossby/S2_zero_0.3}
+		\includegraphics[width=0.49\textwidth]{chp04_paper_numerics/figures/rossby/S2_robust_0.3}
+		\caption{\(\oldepsilon_{\mathrm{mj}} = 0.3\)}
+		\label{fig:s2_field_0.3}
+	\end{subfigure}
+	\begin{subfigure}{\textwidth}
+		\includegraphics[width=0.49\textwidth]{chp04_paper_numerics/figures/rossby/s2_zero_1.0}
+		\includegraphics[width=0.49\textwidth]{chp04_paper_numerics/figures/rossby/s2_robust_1.0}
+		\caption{\(\oldepsilon_{\mathrm{mj}} = 1.0\)}
+		\label{fig:s2_field_1.0}
+	\end{subfigure}
+	\caption{(Left) The \(S^2\) field of the meandering jet flow \cref{eqn:jet_ex} over the time interval \([0,1]\), for two different sets of parameters with qualitatively different behaviour.
+		% The \(S^2\) value for each initial condition is computed directly as the operator norm of the covariance matrix \(\Sigma_0^1\!\left(x_0\right)\), as per \cref{eqn:s2_calculation}.
+		(Right) Robust sets \(\mathrm{RS}\!\left(10\right)\) extracted from the stochastic sensitivity fields, by taking the initial conditions with a stochastic sensitivity value about a threshold of \(10\).}
+	\label{fig:ex_jet_s2_field}
 \end{figure}
 
 We again consider the meandering jet \cref{eqn:jet_ex} with multiplicative noise described by \cref{eqn:jet_ex_sigma} and take the same choice of parameters as in \cref{sec:numerics_2d}, except for the perturbation amplitude \(\oldepsilon_{\mathrm{mj}}\), which is varied to obtain qualitatively different behaviour in the system.
@@ -606,13 +598,12 @@ The flow then comprises a network of vortex structures and homoclinic orbits tha
 % \end{figure}
 
 \begin{figure}
-	\begin{center}
-		\includegraphics[width=0.3\textwidth]{chp04_paper_numerics/figures/gabc/S2_slices_yz_key}
-		\includegraphics[width=0.3\textwidth]{chp04_paper_numerics/figures/gabc/S2_slices_xz_key}
-		\includegraphics[width=0.3\textwidth]{chp04_paper_numerics/figures/gabc/S2_slices_xy_key}
-		\caption{The arrangement of figures in \Cref{fig:gabc_S2}.}
-		\label{fig:gabc_S2_key}
-	\end{center}
+	\centering
+	\includegraphics[width=0.3\textwidth]{chp04_paper_numerics/figures/gabc/S2_slices_yz_key}
+	\includegraphics[width=0.3\textwidth]{chp04_paper_numerics/figures/gabc/S2_slices_xz_key}
+	\includegraphics[width=0.3\textwidth]{chp04_paper_numerics/figures/gabc/S2_slices_xy_key}
+	\caption{The arrangement of figures in \Cref{fig:gabc_S2}.}
+	\label{fig:gabc_S2_key}
 \end{figure}
 
 To introduce 3-dimensional noise to the system, we set \(\sigma = I\), the \(3 \times 3\) identity matrix, and compute stochastic sensitivity for a \(200\times 200\times 200\) grid of initial conditions within the cube \([0,2\pi] \times [0,2\pi] \times [0,2\pi]\).

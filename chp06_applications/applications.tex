@@ -404,22 +404,21 @@ By increasing the resolution, we can therefore identify regions of low uncertain
 \section{Exploring a single trajectory}\label{sec:na_single}
 
 \begin{figure}
-	\begin{center}
-		\begin{subfigure}[t]{0.7\textwidth}
-			\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/det_traj.pdf}
-			\caption{The solution to the deterministic model \cref{eqn:natl_ode}.}
-			\label{fig:natl_det_traj}
-		\end{subfigure}
-		\begin{subfigure}[t]{0.7\textwidth}
-			\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/traj_stoch_rels}
-			\caption{Realisations of the solution to the stochastic model \cref{eqn:natl_sde}.}
-			\label{fig:natl_stoch_rels}
-		\end{subfigure}
-		\caption{Solutions to the (a) deterministic model \cref{eqn:natl_ode} and (b) stochastic model \cref{eqn:natl_sde} for fixed initial condition \((-60.5, 39)^{\T}\) from midnight \DTMdisplaydate{2021}{01}{01}{-1} (\(t = 0\)) to midnight \DTMdisplaydate{2021}{01}{08}{-1} (\(t = 7\)), corresponding to a drifter on the surface of the Gulf Stream.
-			The deterministic prediction at \(t = 7\) is indicated in blue in both figures, with the time evolution of the deterministic trajectory in black in (a).
-			In (b), each red point corresponds to one of 2500 EM realisations of the stochastic solution at midnight \DTMdisplaydate{2021}{01}{08}{-1}.
-			Contours of the sea surface height at \(t = 7\) are included in grey.}
-	\end{center}
+	\centering
+	\begin{subfigure}[t]{0.7\textwidth}
+		\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/det_traj.pdf}
+		\caption{The solution to the deterministic model \cref{eqn:natl_ode}.}
+		\label{fig:natl_det_traj}
+	\end{subfigure}
+	\begin{subfigure}[t]{0.7\textwidth}
+		\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/traj_stoch_rels}
+		\caption{Realisations of the solution to the stochastic model \cref{eqn:natl_sde}.}
+		\label{fig:natl_stoch_rels}
+	\end{subfigure}
+	\caption{Solutions to the (a) deterministic model \cref{eqn:natl_ode} and (b) stochastic model \cref{eqn:natl_sde} for fixed initial condition \((-60.5, 39)^{\T}\) from midnight \DTMdisplaydate{2021}{01}{01}{-1} (\(t = 0\)) to midnight \DTMdisplaydate{2021}{01}{08}{-1} (\(t = 7\)), corresponding to a drifter on the surface of the Gulf Stream.
+		The deterministic prediction at \(t = 7\) is indicated in blue in both figures, with the time evolution of the deterministic trajectory in black in (a).
+		In (b), each red point corresponds to one of 2500 EM realisations of the stochastic solution at midnight \DTMdisplaydate{2021}{01}{08}{-1}.
+		Contours of the sea surface height at \(t = 7\) are included in grey.}
 \end{figure}
 
 
@@ -486,36 +485,35 @@ A second cluster of realisations departs the stream starting around \(t = 4\) an
 The final distribution of realisations is therefore complicated, comprising numerous realisations that remained in the stream, a second cluster that is transported northwards by an eddy, and a small number that are scattered westwards.
 
 \begin{figure}
-	\begin{center}
-		\begin{subfigure}{0.49\textwidth}
-			\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/traj_stoch_em_1.0}
-			\caption{\(t = 1\) (midnight \DTMdisplaydate{2021}{01}{01}{-1})}
-		\end{subfigure}
-		\begin{subfigure}{0.49\textwidth}
-			\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/traj_stoch_em_2.0}
-			\caption{\(t = 2\) (midnight \DTMdisplaydate{2021}{01}{02}{-1})}
-		\end{subfigure}
-		\begin{subfigure}{0.49\textwidth}
-			\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/traj_stoch_em_3.0}
-			\caption{\(t = 3\) (midnight \DTMdisplaydate{2021}{01}{03}{-1})}
-			\label{fig:natl_em_3}
-		\end{subfigure}
-		\begin{subfigure}{0.49\textwidth}
-			\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/traj_stoch_em_4.0}
-			\caption{\(t = 4\) (midnight \DTMdisplaydate{2021}{01}{04}{-1})}
-		\end{subfigure}
-		\begin{subfigure}{0.49\textwidth}
-			\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/traj_stoch_em_5.0}
-			\caption{\(t = 5\) (midnight \DTMdisplaydate{2021}{01}{05}{-1})}
-		\end{subfigure}
-		\begin{subfigure}{0.49\textwidth}
-			\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/traj_stoch_em_6.0}
-			\caption{\(t = 6\) (midnight \DTMdisplaydate{2021}{01}{06}{-1})}
-		\end{subfigure}
-		\caption{The time evolution of \(10000\) Euler-Maruyama realisations of the solution to \cref{eqn:natl_sde}, with the Gaussian density arising from a linearisation of \cref{eqn:natl_sde} about the deterministic trajectory overlaid in red.
-			The bivariate plot shows contours of the probability density function (or equivalently standard deviation bounds) of the Gaussian approximation, whereas each marginal plot on the longitudinal and latitudinal axis show the PDFs themselves of the Gaussian marginals.}
-		\label{fig:natl_em}
-	\end{center}
+	\centering
+	\begin{subfigure}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/traj_stoch_em_1.0}
+		\caption{\(t = 1\) (midnight \DTMdisplaydate{2021}{01}{01}{-1})}
+	\end{subfigure}
+	\begin{subfigure}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/traj_stoch_em_2.0}
+		\caption{\(t = 2\) (midnight \DTMdisplaydate{2021}{01}{02}{-1})}
+	\end{subfigure}
+	\begin{subfigure}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/traj_stoch_em_3.0}
+		\caption{\(t = 3\) (midnight \DTMdisplaydate{2021}{01}{03}{-1})}
+		\label{fig:natl_em_3}
+	\end{subfigure}
+	\begin{subfigure}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/traj_stoch_em_4.0}
+		\caption{\(t = 4\) (midnight \DTMdisplaydate{2021}{01}{04}{-1})}
+	\end{subfigure}
+	\begin{subfigure}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/traj_stoch_em_5.0}
+		\caption{\(t = 5\) (midnight \DTMdisplaydate{2021}{01}{05}{-1})}
+	\end{subfigure}
+	\begin{subfigure}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/traj_stoch_em_6.0}
+		\caption{\(t = 6\) (midnight \DTMdisplaydate{2021}{01}{06}{-1})}
+	\end{subfigure}
+	\caption{The time evolution of \(10000\) Euler-Maruyama realisations of the solution to \cref{eqn:natl_sde}, with the Gaussian density arising from a linearisation of \cref{eqn:natl_sde} about the deterministic trajectory overlaid in red.
+		The bivariate plot shows contours of the probability density function (or equivalently standard deviation bounds) of the Gaussian approximation, whereas each marginal plot on the longitudinal and latitudinal axis show the PDFs themselves of the Gaussian marginals.}
+	\label{fig:natl_em}
 \end{figure}
 
 
@@ -532,12 +530,11 @@ While the large number of realisations that remain in the stream maintain a Gaus
 To account for this, the variance of the Gaussian approximation grows larger over time, particularly in the longitudinal direction.
 
 \begin{figure}
-	\begin{center}
-		% \begin{subfigure}[t]{0.49\textwidth}
-		\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/traj_stoch_hell_dist_0.25}
-		\caption{The estimated Hellinger distance between \(10000\) Euler-Maruyama samples of \cref{eqn:natl_sde} and the Gaussian process solution to the linearisation, \(t\) days after midnight \DTMdisplaydate{2021}{01}{01}{-1}.}
-		\label{fig:natl_hell}
-	\end{center}
+	\centering
+	% \begin{subfigure}[t]{0.49\textwidth}
+	\includegraphics[width=\textwidth]{chp06_applications/figures/gulf_stream/traj_stoch_hell_dist_0.25}
+	\caption{The estimated Hellinger distance between \(10000\) Euler-Maruyama samples of \cref{eqn:natl_sde} and the Gaussian process solution to the linearisation, \(t\) days after midnight \DTMdisplaydate{2021}{01}{01}{-1}.}
+	\label{fig:natl_hell}
 \end{figure}
 
 To quantitatively evaluate the quality of the Gaussian approximation over time, \Cref{fig:natl_hell} plots the estimated Hellinger distance between the Gaussian approximation and Euler-Maruyama samples solving \cref{eqn:natl_sde}.
