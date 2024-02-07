@@ -2,7 +2,7 @@
 % Do not change without consultation - haha
 
 % add extra information to date so included on titlepage
-\def\@date{\today
+\def\@date{7 February, 2024%\today
 	\\\vfil\vfil\em
 	Thesis submitted for the degree of\\
 	\ifx\degree\undefined Specify {\tt$\backslash$degree}%
@@ -221,7 +221,7 @@
 % Todo notes, annotations, etc.
 % Thanks JM
 % TODO: Optional args seems to not be working
-\RequirePackage[colorinlistoftodos,prependcaption,textsize=scriptsize]{todonotes}
+\RequirePackage[colorinlistoftodos,prependcaption,textsize=scriptsize,disable]{todonotes}
 
 \newcommandx{\note}[2][1=]{
 	\todo[inline,linecolor=black,backgroundcolor=violet!5,bordercolor=violet,#1]{
