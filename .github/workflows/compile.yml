@@ -11,7 +11,7 @@ jobs:
       - name: Compile LaTeX document
         uses: xu-cheng/latex-action@3.2.0
         with:
-          pre_compile: "tlmgr update --self && tlmgr update --all"
+          pre_compile: "tlmgr install biber"
           root_file: thesis.tex
 
       - name: Upload PDF file
