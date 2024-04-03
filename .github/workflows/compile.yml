@@ -11,6 +11,7 @@ jobs:
       - name: Compile LaTeX document
         uses: xu-cheng/latex-action@3.2.0
         with:
+          pre_compile: "tlmgr update --self && tlmgr update --all"
           root_file: thesis.tex
 
       - name: Upload PDF file
