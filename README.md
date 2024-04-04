@@ -1,4 +1,4 @@
-
+This is my completed thesis for my Master of Philosophy in applied mathematics at the University of Adelaide. This thesis was awarded a high distinction and Dean's Commendation. 
 
 ## Abstract
 Differential equations are an invaluable tool for predicting and understanding phenomena across many fields. These models are inevitably subject to uncertainties, including because of measurement error, unresolved components, and resolution limitations. Accounting for these uncertainties can improve models, but this endeavour is analytically challenging and often requires computationally expensive Monte Carlo simulation. In this thesis, we consider Itô stochastic differential equations, which extend ordinary differential equations to include stochastic terms and provide a rich framework for explicitly parameterising uncertainties in the model. We look to address the need for computationally efficient characterisations of uncertainty that do not require bulk simulation.
